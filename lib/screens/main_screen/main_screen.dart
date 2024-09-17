@@ -17,16 +17,18 @@ class _MainScreenState extends State<MainScreen> {
   Widget? screen1, screen2, screen3, screen4;
 
   int selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
     screen1 = const HomeScreen();
-    // screen2 = const ServicesScreen();
+    screen2 = const HomeScreen();
     screen3 = const SearchScreen();
-    // screen4 = const ViewProfileScreen();
+    screen4 = const SearchScreen();
 
-   // initPref();
+    // initPref();
   }
+
   Widget getBody() {
     if (selectedIndex == 0) {
       return screen1!;
@@ -44,11 +46,10 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: getBody(),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         onPressed: () {
           // if (userid == null) {
           //   Navigator.push(context,
@@ -66,8 +67,7 @@ class _MainScreenState extends State<MainScreen> {
               right: 10,
               top: 10,
               bottom: 10,
-              child:
-              Image.asset(
+              child: Image.asset(
                 'assets/images/star.png',
                 // color: Colors.white,
               ),
@@ -76,7 +76,6 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
       bottomNavigationBar: ClipRRect(
         borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(30)),
@@ -102,9 +101,10 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         Image.asset(
                           "assets/images/home.png",
-                          height: 23,
-                          width: 23,
-                          color: selectedIndex == 0 ? greyBackColor : Colors.black,
+                          height: selectedIndex == 0 ? 25 : 23,
+                          width: selectedIndex == 0 ? 25 : 23,
+                          color:
+                              selectedIndex == 0 ? Colors.black : Colors.black,
                         ),
                         sizedBoxH2,
                       ],
@@ -122,7 +122,8 @@ class _MainScreenState extends State<MainScreen> {
                           "assets/images/camera.png",
                           height: 25,
                           width: 25,
-                          color: selectedIndex == 1 ? greyBackColor : Colors.black,
+                          color:
+                              selectedIndex == 1 ? greyBackColor : Colors.black,
                         ),
                       ],
                     ),
@@ -130,30 +131,22 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 const Expanded(
                     child: SizedBox()), // this will handle the fab spacing
-                WillPopScope(
-                  onWillPop: () async {
-                    return selectedIndex == 0;
-                    // if (kDebugMode) {
-                    //    print("jnfkfjbk");
-                    //  }
-                    //  return false;
-                  },
-                  child: Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        onTapHandler(2);
-                      },
-                      child: Column(
-                        children: [
-                          Image.asset(
-                            "assets/images/search.png",
-                            height: 25,
-                            width: 25,
-                            color:
-                            selectedIndex == 2 ? greyBackColor : Colors.black,
-                          ),
-                        ],
-                      ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      onTapHandler(2);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/search.png",
+                          height: 25,
+                          width: 25,
+                          color: selectedIndex == 2
+                              ? greyBackColor
+                              : Colors.black,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -164,8 +157,8 @@ class _MainScreenState extends State<MainScreen> {
                       //   Navigator.push(context,
                       //       MaterialPageRoute(builder: (context) => const Login()));
                       // } else {
-                        onTapHandler(3);
-                    //  }
+                      onTapHandler(3);
+                      //  }
                     },
                     child: Column(
                       children: [
@@ -173,7 +166,8 @@ class _MainScreenState extends State<MainScreen> {
                           "assets/images/profile.png",
                           height: 25,
                           width: 25,
-                          color: selectedIndex == 3 ? greyBackColor : Colors.black,
+                          color:
+                              selectedIndex == 3 ? greyBackColor : Colors.black,
                         ),
                       ],
                     ),
@@ -184,7 +178,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-
     );
   }
 

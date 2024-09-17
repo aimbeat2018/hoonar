@@ -1,8 +1,13 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/constants/text_constants.dart';
+import 'package:hoonar/model/slider_model.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:video_player/video_player.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +23,64 @@ class _HomeScreenState extends State<HomeScreen> {
     vocals, //2
     dance, //3
   ];
+  List<SliderModel> sliderModelList = [
+    SliderModel(
+        raps,
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        '',
+        '@abcd@123'),
+    SliderModel(
+        vocals,
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        '',
+        '@abcd@123'),
+    SliderModel(
+        dance,
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+        '',
+        '@abcd@123'),
+  ];
+  List<VideoPlayerController> _controllers = [];
+  List<ChewieController> _chewieControllers = [];
+  int _currentIndex = 0;
+  final CarouselSliderController _controller = CarouselSliderController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    for (var model in sliderModelList) {
+      // Initialize video controllers and Chewie controllers
+      VideoPlayerController videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(model.video));
+      _controllers.add(videoPlayerController);
+
+      ChewieController chewieController = ChewieController(
+          videoPlayerController: videoPlayerController,
+          autoPlay: true,
+          showControls: true,
+          looping: false,
+          fullScreenByDefault: true);
+      _chewieControllers.add(chewieController);
+
+      videoPlayerController.initialize().then((_) {
+        setState(() {}); // Update UI once the video is initialized
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose all controllers when the widget is disposed
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    for (var chewieController in _chewieControllers) {
+      chewieController.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             sizedBoxW10,
             Text(
-              'Hoonar Star'.toUpperCase(),
+              appName.toUpperCase(),
               style: GoogleFonts.poppins(
                 fontSize: 16,
                 color: Colors.white,
@@ -48,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: const Icon(
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Icon(
               Icons.notifications,
               color: Colors.white,
             ),
@@ -61,89 +124,19 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: SizedBox(
-                  height: 35,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: ListView.builder(
-                        itemCount: typeList.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedType = (index + 1).toString();
-                                  // Future.delayed(
-                                  //     Duration.zero,
-                                  //         () {
-                                  //       loadData(
-                                  //           selectedType,
-                                  //           "0",
-                                  //           "0");
-                                  //     });
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 5),
-                                decoration: selectedType ==
-                                        (index + 1).toString()
-                                    ? const BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment(0.00, 1.00),
-                                          end: Alignment(0, -1),
-                                          colors: [
-                                            Colors.black,
-                                            Color(0xFF313131),
-                                            Color(0xFF636363)
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(7.96),
-                                          topRight: Radius.circular(7.96),
-                                        ),
-                                        border: Border(
-                                          // left: BorderSide(color: Colors.white),
-                                          top: BorderSide(
-                                              width: 0.80, color: Colors.white),
-                                          // right: BorderSide(color: Colors.white),
-                                          // bottom: BorderSide(color: Colors.white),
-                                        ),
-                                      )
-                                    : BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                /*border: Border.all(
-                                                        color: Colors.black,
-                                                  width: 0.5)*/
-                                child: Center(
-                                  child: Text(
-                                    typeList[index],
-                                    textAlign: TextAlign.start,
-                                    style: GoogleFonts.poppins(
-                                        color: selectedType ==
-                                                (index + 1).toString()
-                                            ? Colors.white
-                                            : Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: selectedType ==
-                                                (index + 1).toString()
-                                            ? 16
-                                            : 14),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
+              sliderWidget(),
+              AnimatedSmoothIndicator(
+                activeIndex: _currentIndex,
+                count: sliderModelList.length,
+                effect: const ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: Colors.white,
+                  dotColor: Colors.grey,
                 ),
+                onDotClicked: (index) {
+                  _controller.animateToPage(index);
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
@@ -155,7 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: 2,
                           height: 20,
-                          decoration: BoxDecoration(color: Color(0xFFDCB398)),
+                          decoration:
+                              const BoxDecoration(color: Color(0xFFDCB398)),
                         ),
                         sizedBoxW5,
                         Expanded(
@@ -169,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-
                         InkWell(
                           onTap: () {},
                           child: Text(
@@ -192,7 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (BuildContext context, int index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.4,
                               clipBehavior: Clip.antiAlias,
@@ -206,11 +200,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   // Background Image
                                   Container(
-                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     // height: 23.06,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       image: DecorationImage(
-                                        image: AssetImage('assets/images/judgesCh.png'),
+                                        image: AssetImage(
+                                            'assets/images/judgesCh.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -219,7 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Positioned(
                                     bottom: 0,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
                                       height: 48.25,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -242,9 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Container(
                                           width: 14.78,
                                           height: 14.78,
-                                          decoration: ShapeDecoration(
+                                          decoration: const ShapeDecoration(
                                             image: DecorationImage(
-                                              image: AssetImage('assets/images/user_profile.png'),
+                                              image: AssetImage(
+                                                  'assets/images/user_profile.png'),
                                               fit: BoxFit.fill,
                                             ),
                                             shape: OvalBorder(
@@ -262,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           'abcd@123',
                                           style: GoogleFonts.poppins(
@@ -281,7 +279,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),
@@ -295,7 +292,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: 2,
                           height: 20,
-                          decoration: BoxDecoration(color: Color(0xFFDCB398)),
+                          decoration:
+                              const BoxDecoration(color: Color(0xFFDCB398)),
                         ),
                         sizedBoxW5,
                         Expanded(
@@ -309,7 +307,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-
                         InkWell(
                           onTap: () {},
                           child: Text(
@@ -332,7 +329,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (BuildContext context, int index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.4,
                               clipBehavior: Clip.antiAlias,
@@ -346,11 +344,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   // Background Image
                                   Container(
-                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     // height: 23.06,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       image: DecorationImage(
-                                        image: AssetImage('assets/images/judgesChoice.png'),
+                                        image: AssetImage(
+                                            'assets/images/judgesChoice.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -359,7 +359,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Positioned(
                                     bottom: 0,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
                                       height: 48.25,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -382,9 +383,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Container(
                                           width: 14.78,
                                           height: 14.78,
-                                          decoration: ShapeDecoration(
+                                          decoration: const ShapeDecoration(
                                             image: DecorationImage(
-                                              image: AssetImage('assets/images/user_profile.png'),
+                                              image: AssetImage(
+                                                  'assets/images/user_profile.png'),
                                               fit: BoxFit.fill,
                                             ),
                                             shape: OvalBorder(
@@ -402,7 +404,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           'abcd@123',
                                           style: GoogleFonts.poppins(
@@ -421,12 +423,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20, left: 15, right: 15,bottom: 0),
+                padding: const EdgeInsets.only(
+                    top: 20, left: 15, right: 15, bottom: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -435,7 +437,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: 2,
                           height: 20,
-                          decoration: BoxDecoration(color: Color(0xFFDCB398)),
+                          decoration:
+                              const BoxDecoration(color: Color(0xFFDCB398)),
                         ),
                         sizedBoxW5,
                         Expanded(
@@ -449,7 +452,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-
                         InkWell(
                           onTap: () {},
                           child: Text(
@@ -472,7 +474,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (BuildContext context, int index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Container(
                               width: MediaQuery.of(context).size.width * 0.4,
                               clipBehavior: Clip.antiAlias,
@@ -486,11 +489,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   // Background Image
                                   Container(
-                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     // height: 23.06,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       image: DecorationImage(
-                                        image: AssetImage('assets/images/foryours.png'),
+                                        image: AssetImage(
+                                            'assets/images/foryours.png'),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -499,7 +504,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Positioned(
                                     bottom: 0,
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
                                       height: 48.25,
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -522,9 +528,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Container(
                                           width: 14.78,
                                           height: 14.78,
-                                          decoration: ShapeDecoration(
+                                          decoration: const ShapeDecoration(
                                             image: DecorationImage(
-                                              image: AssetImage('assets/images/user_profile.png'),
+                                              image: AssetImage(
+                                                  'assets/images/user_profile.png'),
                                               fit: BoxFit.fill,
                                             ),
                                             shape: OvalBorder(
@@ -542,7 +549,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ],
                                           ),
                                         ),
-                                        SizedBox(width: 5),
+                                        const SizedBox(width: 5),
                                         Text(
                                           'abcd@123',
                                           style: GoogleFonts.poppins(
@@ -561,11 +568,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                     ),
-
                   ],
                 ),
               ),
-
             ],
           ),
         ),
@@ -573,6 +578,91 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget sliderWidget() {
+    return CarouselSlider.builder(
+      carouselController: _controller,
+      itemCount: sliderModelList.length,
+      itemBuilder: (context, index, realIndex) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: _currentIndex == index
+                    ? const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(0.00, 1.00),
+                          end: Alignment(0, -1),
+                          colors: [
+                            Colors.black,
+                            Color(0xFF313131),
+                            Color(0xFF636363)
+                          ],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(7.96),
+                          topRight: Radius.circular(7.96),
+                        ),
+                        border: Border(
+                          // left: BorderSide(color: Colors.white),
+                          top: BorderSide(width: 0.80, color: Colors.white),
+                          // right: BorderSide(color: Colors.white),
+                          // bottom: BorderSide(color: Colors.white),
+                        ),
+                      )
+                    : BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                /*border: Border.all(
+                                                      color: Colors.black,
+                                                width: 0.5)*/
+                child: Center(
+                  child: Text(
+                    sliderModelList[index].category,
+                    textAlign: TextAlign.start,
+                    style: GoogleFonts.poppins(
+                        color: _currentIndex == index
+                            ? Colors.white
+                            : Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: _currentIndex == index ? 13 : 12),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(height: 200, child: _buildVideoPlayer(index))
+          ],
+        );
+      },
+      options: CarouselOptions(
+        height: 350.0,
+        // Set height for your carousel
+        autoPlay: false,
+        autoPlayInterval: const Duration(seconds: 5),
+        viewportFraction: 0.5,
+        enlargeCenterPage: true,
+        enableInfiniteScroll: true,
+        onPageChanged: (index, reason) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildVideoPlayer(int index) {
+    return Center(
+      child: _controllers[index].value.isInitialized
+          ? Chewie(
+              controller: _chewieControllers[index],
+            )
+          : CircularProgressIndicator(),
+    );
+  }
 }
-
-

@@ -21,6 +21,7 @@ const greyTextColor = Color(0xFF434343);
 const greyTextColor1 = Color(0xFF474447);
 const greyTextColor2 = Color(0xFF3F3D56);
 const greyTextColor3 = Color(0xFF727172);
+const greyTextColor4 = Color(0xFF737373);
 const greyBackColor = Color(0xFFD9D9D9);
 const greyBackColor1 = Color(0xFFF3F3F3);
 const borderGreyColor = Color(0xFFDADADA);

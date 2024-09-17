@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/color_constants.dart';
+import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
 
-class SplashScreens extends StatefulWidget  {
+class SplashScreens extends StatefulWidget {
   const SplashScreens({super.key});
 
   @override
   State<SplashScreens> createState() => _SplashScreensState();
 }
 
-class _SplashScreensState extends State<SplashScreens> with TickerProviderStateMixin{
+class _SplashScreensState extends State<SplashScreens>
+    with TickerProviderStateMixin {
   late AnimationController animation;
   late Animation<double> _fadeInFadeOut;
 
@@ -31,14 +33,15 @@ class _SplashScreensState extends State<SplashScreens> with TickerProviderStateM
       }
     });
     animation.forward();
-    
-    Future.delayed(const Duration(seconds: 6),(){
+
+    Future.delayed(const Duration(seconds: 6), () {
       animation.stop();
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-
+      Navigator.pushAndRemoveUntil(
+        context,
+        SlideRightRoute(page: LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
     });
-
-
   }
 
   @override
@@ -47,13 +50,12 @@ class _SplashScreensState extends State<SplashScreens> with TickerProviderStateM
       backgroundColor: Colors.black,
       body: Container(
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
-          color: Colors.black
-          // image: DecorationImage(
-          //   image: AssetImage("assets/images/splash_back.jpg"),
-          //   fit: BoxFit.cover,
-          // ),
-        ),
+        decoration: const BoxDecoration(color: Colors.black
+            // image: DecorationImage(
+            //   image: AssetImage("assets/images/splash_back.jpg"),
+            //   fit: BoxFit.cover,
+            // ),
+            ),
         child: Center(
           child: FadeTransition(
             opacity: _fadeInFadeOut,
@@ -65,7 +67,6 @@ class _SplashScreensState extends State<SplashScreens> with TickerProviderStateM
           ),
         ),
       ),
-
     );
   }
 }
