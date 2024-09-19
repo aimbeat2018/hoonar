@@ -1,13 +1,20 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
+import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
+import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
+import 'package:hoonar/screens/home/widgets/reels_screen.dart';
+import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:video_player/video_player.dart';
+
+import '../../constants/color_constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,68 +24,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedType = "1";
-  List<String> typeList = [
-    raps, //1
-    vocals, //2
-    dance, //3
-  ];
   List<SliderModel> sliderModelList = [
-    SliderModel(
-        raps,
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-        '',
-        '@abcd@123'),
-    SliderModel(
-        vocals,
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-        '',
-        '@abcd@123'),
-    SliderModel(
-        dance,
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-        '',
-        '@abcd@123'),
+    SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
+    SliderModel(vocals, 'assets/images/video2.mp4', '', '@abcd@123'),
+    SliderModel(dance, 'assets/images/video3.mp4', '', '@abcd@123'),
   ];
-  List<VideoPlayerController> _controllers = [];
-  List<ChewieController> _chewieControllers = [];
   int _currentIndex = 0;
-  final CarouselSliderController _controller = CarouselSliderController();
+  SwiperController controller = SwiperController();
+  SwiperController videoSwiperController = SwiperController();
+  bool _isSyncing = false;
 
-  @override
+  /*@override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
-    for (var model in sliderModelList) {
-      // Initialize video controllers and Chewie controllers
-      VideoPlayerController videoPlayerController =
-          VideoPlayerController.networkUrl(Uri.parse(model.video));
-      _controllers.add(videoPlayerController);
+    // Add listener to the first swiper to sync with the second swiper
+    controller.addListener(() {
+      if (!_isSyncing && controller.index != videoSwiperController.index) {
+        _isSyncing = true; // Prevent endless loop
+        videoSwiperController.move(controller.index);
+        _isSyncing = false;
+      }
+    });
 
-      ChewieController chewieController = ChewieController(
-          videoPlayerController: videoPlayerController,
-          autoPlay: true,
-          showControls: true,
-          looping: false,
-          fullScreenByDefault: true);
-      _chewieControllers.add(chewieController);
-
-      videoPlayerController.initialize().then((_) {
-        setState(() {}); // Update UI once the video is initialized
-      });
-    }
-  }
+    // Add listener to the second swiper to sync with the first swiper
+    videoSwiperController.addListener(() {
+      if (!_isSyncing && videoSwiperController.index != controller.index) {
+        _isSyncing = true; // Prevent endless loop
+        controller.move(videoSwiperController.index);
+        _isSyncing = false;
+      }
+    });
+  }*/
 
   @override
   void dispose() {
-    // Dispose all controllers when the widget is disposed
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var chewieController in _chewieControllers) {
-      chewieController.dispose();
-    }
+    controller.dispose();
+    videoSwiperController.dispose();
     super.dispose();
   }
 
@@ -124,19 +106,121 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              sliderWidget(),
-              AnimatedSmoothIndicator(
-                activeIndex: _currentIndex,
-                count: sliderModelList.length,
-                effect: const ExpandingDotsEffect(
-                  dotHeight: 8,
-                  dotWidth: 8,
-                  activeDotColor: Colors.white,
-                  dotColor: Colors.grey,
+              SizedBox(
+                height: 50,
+                child: Swiper(
+                  controller: controller,
+                  itemCount: sliderModelList.length,
+                  onIndexChanged: (index) {
+                    // videoSwiperController.move(index);
+                    setState(() {
+                      _currentIndex = index;
+                      if (!_isSyncing) {
+                        _isSyncing = true;
+                        videoSwiperController.move(index);
+                        _isSyncing = false;
+                      }
+                    });
+                  },
+                  onTap: (index) {
+                    setState(() {
+                      if (!_isSyncing) {
+                        _isSyncing = true;
+                        videoSwiperController.move(index);
+                        _isSyncing = false;
+                      }
+                    });
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      /*margin:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
+                      // 10% of the screen width for margin
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      decoration: _currentIndex == index
+                          ? const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment(0.00, 1.00),
+                                end: Alignment(0, -1),
+                                colors: [
+                                  Colors.black,
+                                  Color(0xFF313131),
+                                  Color(0xFF636363)
+                                ],
+                              ),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(7.96),
+                                topRight: Radius.circular(7.96),
+                              ),
+                              border: Border(
+                                top: BorderSide(
+                                    width: 0.80, color: Colors.white),
+                              ),
+                            )
+                          : BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                      child: Center(
+                        child: Text(
+                          sliderModelList[index].category,
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: _currentIndex == index ? 13 : 12,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  physics: const PageScrollPhysics(),
+                  viewportFraction: 0.3,
+                  scale: 0.9,
                 ),
-                onDotClicked: (index) {
-                  _controller.animateToPage(index);
-                },
+              ),
+              swiperSlider(),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(page: CategoryWiseVideosListScreen()),
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 15),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        gradient: const LinearGradient(
+                          colors: [
+                            greyTextColor5,
+                            greyTextColor6,
+                            greyTextColor5
+                          ],
+                        )),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.arrow_drop_down_sharp,
+                          color: Colors.white,
+                        ),
+                        Text(
+                          viewMore,
+                          textAlign: TextAlign.start,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
@@ -146,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 2,
+                          width: 3,
                           height: 20,
                           decoration:
                               const BoxDecoration(color: Color(0xFFDCB398)),
@@ -170,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.start,
                             style: GoogleFonts.inter(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.normal,
                                 fontSize: 12),
                           ),
                         ),
@@ -290,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 2,
+                          width: 3,
                           height: 20,
                           decoration:
                               const BoxDecoration(color: Color(0xFFDCB398)),
@@ -314,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.start,
                             style: GoogleFonts.inter(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.normal,
                                 fontSize: 12),
                           ),
                         ),
@@ -435,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       children: [
                         Container(
-                          width: 2,
+                          width: 3,
                           height: 20,
                           decoration:
                               const BoxDecoration(color: Color(0xFFDCB398)),
@@ -459,7 +543,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             textAlign: TextAlign.start,
                             style: GoogleFonts.inter(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.normal,
                                 fontSize: 12),
                           ),
                         ),
@@ -578,16 +662,58 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget sliderWidget() {
-    return CarouselSlider.builder(
-      carouselController: _controller,
-      itemCount: sliderModelList.length,
-      itemBuilder: (context, index, realIndex) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50.0),
-              child: Container(
+  Widget swiperSlider() {
+    // Get screen width and height using MediaQuery
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return SizedBox(
+      height: screenHeight * 0.6, // 50% of the screen height
+      child: Swiper(
+        controller: videoSwiperController,
+        physics: const PageScrollPhysics(),
+        viewportFraction: 0.60,
+        scale: 0.8,
+        pagination: SwiperCustomPagination(
+          builder: (BuildContext context, SwiperPluginConfig config) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: AnimatedSmoothIndicator(
+                activeIndex: config.activeIndex,
+                count: config.itemCount,
+                effect: const ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: Colors.white,
+                  dotColor: Colors.grey,
+                ),
+              ),
+            );
+          },
+        ),
+        scrollDirection: Axis.horizontal,
+        itemCount: sliderModelList.length,
+        onIndexChanged: (index) {
+          setState(() {
+            if (!_isSyncing) {
+              _isSyncing = true;
+              controller.move(index);
+              _isSyncing = false;
+            }
+          });
+
+          // setState(() {
+          //   _currentIndex = index;
+          // });
+        },
+        itemBuilder: (context, index) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /* Container(
+                margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                // 10% of the screen width for margin
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: _currentIndex == index
@@ -606,63 +732,39 @@ class _HomeScreenState extends State<HomeScreen> {
                           topRight: Radius.circular(7.96),
                         ),
                         border: Border(
-                          // left: BorderSide(color: Colors.white),
                           top: BorderSide(width: 0.80, color: Colors.white),
-                          // right: BorderSide(color: Colors.white),
-                          // bottom: BorderSide(color: Colors.white),
                         ),
                       )
                     : BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                /*border: Border.all(
-                                                      color: Colors.black,
-                                                width: 0.5)*/
                 child: Center(
                   child: Text(
                     sliderModelList[index].category,
                     textAlign: TextAlign.start,
                     style: GoogleFonts.poppins(
-                        color: _currentIndex == index
-                            ? Colors.white
-                            : Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: _currentIndex == index ? 13 : 12),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: _currentIndex == index ? 13 : 12,
+                    ),
+                  ),
+                ),
+              ),*/
+              SizedBox(height: screenHeight * 0.02),
+              // Adjust height dynamically (2% of screen height)
+              AspectRatio(
+                aspectRatio: 9 / 16,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: ReelsScreen(
+                    model: sliderModelList[index],
                   ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(height: 200, child: _buildVideoPlayer(index))
-          ],
-        );
-      },
-      options: CarouselOptions(
-        height: 350.0,
-        // Set height for your carousel
-        autoPlay: false,
-        autoPlayInterval: const Duration(seconds: 5),
-        viewportFraction: 0.5,
-        enlargeCenterPage: true,
-        enableInfiniteScroll: true,
-        onPageChanged: (index, reason) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+            ],
+          ),
+        ),
       ),
-    );
-  }
-
-  Widget _buildVideoPlayer(int index) {
-    return Center(
-      child: _controllers[index].value.isInitialized
-          ? Chewie(
-              controller: _chewieControllers[index],
-            )
-          : CircularProgressIndicator(),
     );
   }
 }

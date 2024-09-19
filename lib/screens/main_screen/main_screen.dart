@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
-import 'package:hoonar/screens/home/search_screen.dart';
+import 'package:hoonar/screens/search/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -46,33 +46,37 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: getBody(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-        onPressed: () {
-          // if (userid == null) {
-          //   Navigator.push(context,
-          //       MaterialPageRoute(builder: (context) => const Login()));
-          // } else {
-          //   Navigator.push(context,
-          //       MaterialPageRoute(builder: (context) => const Payments()));
-          // }
-          // Navigator.pushNamed(context, Payments.routeName);
-        },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              left: 10,
-              right: 10,
-              top: 10,
-              bottom: 10,
-              child: Image.asset(
-                'assets/images/star.png',
-                // color: Colors.white,
+      floatingActionButton: SizedBox(
+        height: 65, // Set custom height
+        width: 65, // Set custom width
+        child: FloatingActionButton(
+          backgroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
+          onPressed: () {
+            // if (userid == null) {
+            //   Navigator.push(context,
+            //       MaterialPageRoute(builder: (context) => const Login()));
+            // } else {
+            //   Navigator.push(context,
+            //       MaterialPageRoute(builder: (context) => const Payments()));
+            // }
+            // Navigator.pushNamed(context, Payments.routeName);
+          },
+          child: Stack(
+            children: [
+              Positioned.fill(
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+                child: Image.asset(
+                  'assets/images/star.png',
+                  // color: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -120,10 +124,10 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         Image.asset(
                           "assets/images/camera.png",
-                          height: 25,
-                          width: 25,
+                          height: selectedIndex == 1 ? 25 : 23,
+                          width: selectedIndex == 1 ? 25 : 23,
                           color:
-                              selectedIndex == 1 ? greyBackColor : Colors.black,
+                              selectedIndex == 1 ? Colors.black : Colors.black,
                         ),
                       ],
                     ),
@@ -140,11 +144,10 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         Image.asset(
                           "assets/images/search.png",
-                          height: 25,
-                          width: 25,
-                          color: selectedIndex == 2
-                              ? greyBackColor
-                              : Colors.black,
+                          height: selectedIndex == 2 ? 25 : 23,
+                          width: selectedIndex == 2 ? 25 : 23,
+                          color:
+                              selectedIndex == 2 ? Colors.black : Colors.black,
                         ),
                       ],
                     ),
@@ -164,10 +167,10 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         Image.asset(
                           "assets/images/profile.png",
-                          height: 25,
-                          width: 25,
+                          height: selectedIndex == 3 ? 25 : 23,
+                          width: selectedIndex == 3 ? 25 : 23,
                           color:
-                              selectedIndex == 3 ? greyBackColor : Colors.black,
+                              selectedIndex == 3 ? Colors.black : Colors.black,
                         ),
                       ],
                     ),

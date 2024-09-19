@@ -32,6 +32,7 @@ dependencies:
   chewie: ^1.8.5
   video_player: ^2.9.1
   smooth_page_indicator: ^1.2.0+3
+  card_swiper: ^3.0.1
 
 
 dev_dependencies:
