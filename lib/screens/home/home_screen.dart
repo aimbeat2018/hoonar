@@ -1,9 +1,5 @@
 import 'package:card_swiper/card_swiper.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
@@ -11,7 +7,6 @@ import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/reels_screen.dart';
-import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../constants/color_constants.dart';
@@ -33,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   SwiperController controller = SwiperController();
   SwiperController videoSwiperController = SwiperController();
   bool _isSyncing = false;
+  int currentIndex = 0;
 
   /*@override
   void initState() {
@@ -672,8 +668,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Swiper(
         controller: videoSwiperController,
         physics: const PageScrollPhysics(),
-        viewportFraction: 0.60,
-        scale: 0.8,
+        viewportFraction: 0.70,
+        scale: 1,
         pagination: SwiperCustomPagination(
           builder: (BuildContext context, SwiperPluginConfig config) {
             return Align(

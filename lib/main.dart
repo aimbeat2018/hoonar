@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/screens/splash_screen/splash_screens.dart';
+import 'package:hoonar/slider_page_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
       title: 'Hoonar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: bkgColor),
-      home: const SplashScreens(),
+      // home: const SplashScreens(),
+      home: SliderPageView(),
     );
   }
 }

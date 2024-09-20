@@ -20,6 +20,8 @@ class CreatePasswordScreen extends StatefulWidget {
 class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   TextEditingController newpassController = TextEditingController();
   TextEditingController conpassController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  bool newPasswordVisibility = true, confirmNewPasswordVisibility = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,207 +38,212 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
             fit: BoxFit.cover, // Ensures the image covers the entire container
           ),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildAppbar(context),
-              SizedBox(
-                height: 10,
-              ),
-              Center(
-                child: Text(
-                  createPass,
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
+        child: Scrollbar(
+          controller: scrollController,
+          // Add a ScrollController
+          thumbVisibility: true,
+          thickness: 4.0,
+          radius: Radius.circular(10),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildAppbar(context),
+                SizedBox(
+                  height: 30,
+                ),
+                Center(
+                  child: Text(
+                    createPass,
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 98,
-              ),
-              Form(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      newPassword,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(1),
-                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      gradient: const LinearGradient(
-                        colors: [Colors.white, greyTextColor4],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        // Background color for TextFormField
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextFormField(
-                        maxLines: 1,
-                        obscureText: true,
-                        controller: newpassController,
-                        cursorColor: Colors.white,
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          // hintText: enterPhoneNumber,
-                          hintStyle: GoogleFonts.poppins(
-                            color: hintGreyColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              color: textFieldGreyColor,
-                              width: 1.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              color: textFieldGreyColor,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        keyboardType: TextInputType.text,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 68),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      confirmPassword,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(1),
-                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      gradient: const LinearGradient(
-                        colors: [Colors.white, greyTextColor4],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        // Background color for TextFormField
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextFormField(
-                        obscureText: true,
-                        maxLines: 1,
-                        controller: conpassController,
-                        cursorColor: Colors.white,
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          // hintText: enterPhoneNumber,
-                          hintStyle: GoogleFonts.poppins(
-                            color: hintGreyColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 20),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              color: textFieldGreyColor,
-                              width: 1.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: const BorderSide(
-                              color: textFieldGreyColor,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        keyboardType: TextInputType.text,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 90,
-                  ),
-                  InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      SlideRightRoute(page: MainScreen()),
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      margin: const EdgeInsets.only(
-                          top: 15, left: 60, right: 60, bottom: 5),
-                      decoration: ShapeDecoration(
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            strokeAlign: BorderSide.strokeAlignOutside,
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(80),
-                        ),
-                      ),
+                const SizedBox(
+                  height: 35,
+                ),
+                Form(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        letsGo,
-                        textAlign: TextAlign.center,
+                        newPassword,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ))
-            ],
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(1),
+                      margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: const LinearGradient(
+                          colors: [Colors.white, greyTextColor4],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          // Background color for TextFormField
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: TextFormField(
+                          maxLines: 1,
+                          obscureText: !newPasswordVisibility,
+                          controller: newpassController,
+                          cursorColor: Colors.white,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              // hintText: enterPhoneNumber,
+                              hintStyle: GoogleFonts.poppins(
+                                color: hintGreyColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 20),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    newPasswordVisibility =
+                                        !newPasswordVisibility;
+                                  });
+                                },
+                                child: Icon(
+                                  newPasswordVisibility
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: textFieldGreyColor,
+                                ),
+                              )),
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text(
+                        confirmPassword,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(1),
+                      margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: const LinearGradient(
+                          colors: [Colors.white, greyTextColor4],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          // Background color for TextFormField
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: TextFormField(
+                          maxLines: 1,
+                          obscureText: confirmNewPasswordVisibility,
+                          controller: conpassController,
+                          cursorColor: Colors.white,
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              // hintText: enterPhoneNumber,
+                              hintStyle: GoogleFonts.poppins(
+                                color: hintGreyColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 20),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    confirmNewPasswordVisibility =
+                                        !confirmNewPasswordVisibility;
+                                  });
+                                },
+                                child: Icon(
+                                  confirmNewPasswordVisibility
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: textFieldGreyColor,
+                                ),
+                              )),
+                          keyboardType: TextInputType.text,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.push(
+                        context,
+                        SlideRightRoute(page: MainScreen()),
+                      ),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        margin: const EdgeInsets.only(
+                            top: 15, left: 60, right: 60, bottom: 5),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              strokeAlign: BorderSide.strokeAlignOutside,
+                              color: Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(80),
+                          ),
+                        ),
+                        child: Text(
+                          letsGo,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
+              ],
+            ),
           ),
         ),
       ),

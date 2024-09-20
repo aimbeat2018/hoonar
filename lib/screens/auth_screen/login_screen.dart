@@ -166,43 +166,38 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: TextFormField(
-                          validator: (v) {
-                            if (v!.trim().isEmpty) {
-                              return enterPassword;
-                            }
-                            return null;
-                          },
-                          obscureText: _isObscure,
                           maxLines: 1,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 3),
-                            /*  suffix: InkWell(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Icon(
-                                  _isObscure
-                                      ? Icons.visibility
-                                      : Icons.visibility_off, color: Colors.white,
-                                  size: 18,
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  _isObscure = !_isObscure;
-                                });
-                              },
-                            ),*/
-                          ),
+                          obscureText: _isObscure,
                           controller: passwordController,
                           cursorColor: Colors.white,
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontSize: 14,
                           ),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              // hintText: enterPhoneNumber,
+                              hintStyle: GoogleFonts.poppins(
+                                color: hintGreyColor,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 20),
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                                child: Icon(
+                                  _isObscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: textFieldGreyColor,
+                                ),
+                              )),
                           keyboardType: TextInputType.text,
-                          onChanged: (value) {},
                         ),
                       ),
                     ),
