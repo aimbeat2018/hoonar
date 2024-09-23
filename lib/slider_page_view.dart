@@ -203,8 +203,9 @@ class _SliderPageViewState extends State<SliderPageView>
                       }
                     },
                     // Use Chewie player to play the video
-                    child: AspectRatio(
-                      aspectRatio: MediaQuery.of(context).size.width/MediaQuery.of(context).size.height,
+                    child: SizedBox(
+                      width:MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
                       // Ensures video fits within its container
                       child: Chewie(
                         controller: _chewieController,
