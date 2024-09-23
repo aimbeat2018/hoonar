@@ -7,8 +7,9 @@ import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/reels_screen.dart';
+import 'package:hoonar/slider_page_view.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
+import 'package:carousel_slider/carousel_slider.dart' as CS;
 import '../../constants/color_constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
     SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
     SliderModel(vocals, 'assets/images/video2.mp4', '', '@abcd@123'),
     SliderModel(dance, 'assets/images/video3.mp4', '', '@abcd@123'),
+  ];
+  List<String> typeList = [
+    'raps', //1
+    'vocals', //2
+    'dance', //3
+    'dance', //3
   ];
   int _currentIndex = 0;
   SwiperController controller = SwiperController();
@@ -62,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -102,86 +111,81 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(
-                height: 50,
-                child: Swiper(
-                  controller: controller,
-                  itemCount: sliderModelList.length,
-                  onIndexChanged: (index) {
-                    // videoSwiperController.move(index);
-                    setState(() {
-                      _currentIndex = index;
-                      if (!_isSyncing) {
-                        _isSyncing = true;
-                        videoSwiperController.move(index);
-                        _isSyncing = false;
-                      }
-                    });
-                  },
-                  onTap: (index) {
-                    setState(() {
-                      if (!_isSyncing) {
-                        _isSyncing = true;
-                        videoSwiperController.move(index);
-                        _isSyncing = false;
-                      }
-                    });
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      /*margin:
+              CS.CarouselSlider.builder(
+                itemCount: typeList.length,
+                itemBuilder: (BuildContext context, int index, int realIndex) {
+                  return Container(
+                    /*margin:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
-                      // 10% of the screen width for margin
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      decoration: _currentIndex == index
-                          ? const BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(0.00, 1.00),
-                                end: Alignment(0, -1),
-                                colors: [
-                                  Colors.black,
-                                  Color(0xFF313131),
-                                  Color(0xFF636363)
-                                ],
-                              ),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(7.96),
-                                topRight: Radius.circular(7.96),
-                              ),
-                              border: Border(
-                                top: BorderSide(
-                                    width: 0.80, color: Colors.white),
-                              ),
-                            )
-                          : BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                    // 10% of the screen width for margin
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    decoration: _currentIndex == index
+                        ? const BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, 1.00),
+                              end: Alignment(0, -1),
+                              colors: [
+                                Colors.black,
+                                Color(0xFF313131),
+                                Color(0xFF636363)
+                              ],
                             ),
-                      child: Center(
-                        child: Text(
-                          sliderModelList[index].category,
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: _currentIndex == index ? 13 : 12,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(7.96),
+                              topRight: Radius.circular(7.96),
+                            ),
+                            border: Border(
+                              top: BorderSide(width: 0.80, color: Colors.white),
+                            ),
+                          )
+                        : BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                    child: Center(
+                      child: Text(
+                        typeList[index],
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: _currentIndex == index ? 13 : 12,
                         ),
                       ),
-                    );
-                  },
-                  physics: const PageScrollPhysics(),
+                    ),
+                  );
+                },
+                options: CS.CarouselOptions(
+                  height: 50.0,
+                  autoPlay: false,
+                  enlargeCenterPage: true,
+                  aspectRatio: 4 / 3,
+                  autoPlayInterval: const Duration(seconds: 3),
+                  enableInfiniteScroll: true,
                   viewportFraction: 0.3,
-                  scale: 0.9,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _currentIndex = index; // Update the current index
+                    });
+                  },
                 ),
               ),
-              swiperSlider(),
+              const SizedBox(
+                height: 20,
+              ),
+              SizedBox(
+                  height: screenHeight * 0.4,
+                  child: SliderPageView(
+                    sliderModelList: sliderModelList,
+                  )),
+              // swiperSlider(),
               Center(
                 child: InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
-                      SlideRightRoute(page: CategoryWiseVideosListScreen()),
+                      SlideRightRoute(
+                          page: const CategoryWiseVideosListScreen()),
                     );
                   },
                   child: Container(

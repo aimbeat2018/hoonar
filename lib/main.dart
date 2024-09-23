@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/color_constants.dart';
+import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/splash_screen/splash_screens.dart';
 import 'package:hoonar/slider_page_view.dart';
 
@@ -17,8 +18,8 @@ class MyApp extends StatelessWidget {
       title: 'Hoonar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: bkgColor),
-      // home: const SplashScreens(),
-      home: SliderPageView(),
+      home: const MainScreen(),
+      // home: SliderPageView(),
     );
   }
 }
