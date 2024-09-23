@@ -187,7 +187,7 @@ class _SliderPageViewState extends State<SliderPageView>
           children: [
             // Display the video when it's initialized
             // _chewieController != null &&
-                    _chewieController.videoPlayerController.value.isInitialized
+            _chewieController.videoPlayerController.value.isInitialized
                 ? GestureDetector(
                     onTap: () {
                       if (_videoPlayerController.value.isPlaying) {
@@ -204,7 +204,7 @@ class _SliderPageViewState extends State<SliderPageView>
                     },
                     // Use Chewie player to play the video
                     child: SizedBox(
-                      width:MediaQuery.of(context).size.width,
+                      width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       // Ensures video fits within its container
                       child: Chewie(
