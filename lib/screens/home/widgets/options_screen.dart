@@ -19,10 +19,18 @@ class _OptionsScreenState extends State<OptionsScreen> {
     super.initState();
   }
 
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    if (details.primaryVelocity! > 0) {
+      // User swiped right
+      // _callAPI(); // Call API when swiped right
+      print('slide');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
@@ -30,25 +38,31 @@ class _OptionsScreenState extends State<OptionsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: [
-                  Image.asset(
-                    // 'assets/images/vote_not_given.png',
-                    'assets/images/vote_given.png',
-                    scale: 5,
-                  ),
-                  SizedBox(
-                    height: 3,
-                  ),
-                  Text(
-                    votes,
-                    style: GoogleFonts.poppins(
-                      fontSize: 8,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
+              GestureDetector(
+                onTap: () {
+                  print('vote tap');
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/vote_not_given.png',
+                      // 'assets/images/vote_given.png',
+                      height: 20,
+                      width: 20,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 3,
+                    ),
+                    Text(
+                      votes,
+                      style: GoogleFonts.poppins(
+                        fontSize: 8,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(
                 height: 15,
@@ -56,8 +70,8 @@ class _OptionsScreenState extends State<OptionsScreen> {
               Column(
                 children: [
                   Image.asset(
-                    'assets/images/like.png',
-                    // 'assets/images/unlike.png',
+                    // 'assets/images/like.png',
+                    'assets/images/unlike.png',
                     scale: 7,
                   ),
                   SizedBox(

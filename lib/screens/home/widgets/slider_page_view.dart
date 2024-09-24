@@ -2,15 +2,18 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/model/slider_model.dart';
+import 'package:hoonar/screens/auth_screen/forgot_password_screen.dart';
 import 'package:hoonar/screens/customSlider/carousel_item.dart';
+import 'package:hoonar/screens/customSlider/carousel_slider.dart';
 import 'package:hoonar/screens/customSlider/enums.dart';
 import 'package:hoonar/screens/customSlider/models.dart';
+import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:video_player/video_player.dart';
 
-import 'constants/text_constants.dart';
-import 'screens/home/widgets/reels_screen.dart';
+import '../../../constants/text_constants.dart';
 
 class SliderPageView extends StatefulWidget {
   final List<SliderModel> sliderModelList;
@@ -110,44 +113,22 @@ class _SliderPageViewState extends State<SliderPageView>
   late AnimationController controller;
   SwiperController controllerS = SwiperController();
   List<Widget> children = [];
-
-  // late VideoPlayerController _videoPlayerController;
-  // ChewieController? _chewieController;
-  bool _liked = false;
   bool _isPaused = false;
 
   @override
   void initState() {
     super.initState();
 
-    // children = [
-    //   Container(
-    //     color: Colors.white,
-    //   ),
-    //   Container(
-    //     color: Colors.blue,
-    //   ),
-    //   Container(
-    //     color: Colors.white,
-    //   ),
-    //   /*Container(
-    //   color: Colors.green,
-    // ),
-    // Container(
-    //   color: Colors.blue,
-    // ),
-    // Container(
-    //   color: Colors.black,
-    // ),
-    // Container(
-    //   color: Colors.green,
-    // ),*/
-    // ];
     setChildrenDataWidget();
 
     // intitialize the animation
     controller = AnimationController(vsync: this, duration: animationDuration);
     controller.addListener(() {
+      // int currentPage = controller.page!.round(); // Get the current page index
+      // // Pause the video when the page changes
+      // if (_videoPlayerController.value.isPlaying) {
+      //   _videoPlayerController.pause();
+      // }
       setState(() {});
     });
     controller.addStatusListener((status) {
@@ -162,7 +143,9 @@ class _SliderPageViewState extends State<SliderPageView>
       late VideoPlayerController _videoPlayerController;
       ChewieController? _chewieController;
       // Initialize the VideoPlayerController with the video asset
-      _videoPlayerController = VideoPlayerController.asset(data.video);
+      _videoPlayerController = VideoPlayerController.asset(
+        data.video,
+      );
 
       // Wait for the video to initialize
       await _videoPlayerController.initialize();
@@ -170,18 +153,15 @@ class _SliderPageViewState extends State<SliderPageView>
       // Set the aspect ratio to fit the video player's aspect ratio
       _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
-        aspectRatio: _videoPlayerController.value.aspectRatio,
-        // Preserve the video aspect ratio
         autoPlay: false,
         showControls: false,
         looping: true,
       );
 
-      // Add a container with a video player inside
       children.add(Container(
         width: 250,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20), color: Colors.white),
+            borderRadius: BorderRadius.circular(35), color: Colors.white),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -202,17 +182,27 @@ class _SliderPageViewState extends State<SliderPageView>
                         });
                       }
                     },
+                    onDoubleTap: () {
+                      Navigator.push(
+                        context,
+                        SlideRightRoute(page: CategoryWiseVideosListScreen()),
+                      );
+                    },
                     // Use Chewie player to play the video
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      // Ensures video fits within its container
-                      child: Chewie(
-                        controller: _chewieController,
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: 250,
+                        // Set the desired width
+                        height: 250 / _videoPlayerController.value.aspectRatio,
+                        // Calculate height based on aspect ratio
+                        child: Chewie(
+                          controller: _chewieController,
+                        ),
                       ),
                     ),
                   )
-                : Column(
+                : const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(),
@@ -220,69 +210,71 @@ class _SliderPageViewState extends State<SliderPageView>
                       Text('Loading...')
                     ],
                   ),
-            // Add other content like options and avatar
             Align(
               alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: OptionsScreen(
-                      model: data,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 5),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 13.0, // size of the avatar
-                            backgroundImage: NetworkImage(
-                                'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Text(
-                                  data.userName,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: 5),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 3),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white),
-                                  child: Text(
-                                    follow,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 8,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 5),
+                          child: Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 13.0, // size of the avatar
+                                backgroundImage: NetworkImage(
+                                    'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      data.userName,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 10,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
+                                    Container(
+                                      margin: const EdgeInsets.only(left: 5),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 3),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white),
+                                      child: Text(
+                                        follow,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 8,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  )
-                ],
+                    OptionsScreen(
+                      model: data,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -294,6 +286,7 @@ class _SliderPageViewState extends State<SliderPageView>
     double length = children.length / 2;
     activePage = children.length - length.round();
     previousPage = activePage - length.round();
+    setState(() {});
   }
 
   // @override
@@ -315,8 +308,8 @@ class _SliderPageViewState extends State<SliderPageView>
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
-      height: screenHeight * 0.6,
+    return SizedBox(
+      height: screenHeight,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -331,17 +324,20 @@ class _SliderPageViewState extends State<SliderPageView>
             }),
             child: SizedBox(
               width: double.maxFinite,
-              height: 350,
+              height: 400,
               child: Stack(
                 children: children.isNotEmpty ? stackItems() : [],
               ),
             ),
           ),
-          /*if (children.length > 1)
+          const SizedBox(
+            height: 20,
+          ),
+          if (children.length > 1)
             CarouselSlider(
               position: activePage,
               amount: children.length,
-            )*/
+            )
         ],
       ),
     );
@@ -374,12 +370,13 @@ class _SliderPageViewState extends State<SliderPageView>
       ...afterActive,
       currentPage,
     ];
+
     return currentItemList.map((item) {
       return CarouselItem(
           bigItemWidth: 250,
           bigItemHeight: MediaQuery.of(context).size.height,
           smallItemWidth: 250,
-          smallItemHeight: 280,
+          smallItemHeight: 300,
           animation: 1 - controller.value,
           forward: activePage > previousPage,
           startAnimating: controller.isAnimating,

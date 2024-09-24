@@ -42,7 +42,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           controller: scrollController,
           // Add a ScrollController
           thumbVisibility: true,
-          thickness: 4.0,
+          thickness: 2.5,
           radius: Radius.circular(10),
           child: SingleChildScrollView(
             child: Column(

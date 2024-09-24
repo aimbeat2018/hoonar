@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
-import 'package:hoonar/screens/home/widgets/options_screen.dart';
+import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:video_player/video_player.dart';
 
 class ReelsWidget extends StatefulWidget {
@@ -15,11 +15,14 @@ class ReelsWidget extends StatefulWidget {
   State<ReelsWidget> createState() => _ReelsWidgetState();
 }
 
-class _ReelsWidgetState extends State<ReelsWidget> {
+class _ReelsWidgetState extends State<ReelsWidget>
+    with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
-  bool _liked = false;
   bool _isPaused = false;
+  bool isFollow = false;
+  List<bool> isDismissed = [false, false];
+  final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
 
   @override
   void initState() {
@@ -74,11 +77,21 @@ class _ReelsWidgetState extends State<ReelsWidget> {
                     }
                     // _videoPlayerController.pause();
                   },
-                  child: Chewie(
-                    controller: _chewieController!,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      // Set the desired width
+                      height: MediaQuery.of(context).size.width /
+                          _videoPlayerController.value.aspectRatio,
+                      // Calculate height based on aspect ratio
+                      child: Chewie(
+                        controller: _chewieController!,
+                      ),
+                    ),
                   ),
                 )
-              : Column(
+              : const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircularProgressIndicator(),
@@ -89,163 +102,245 @@ class _ReelsWidgetState extends State<ReelsWidget> {
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15),
               child: Row(
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 20.0, // size of the avatar
-                              backgroundImage: NetworkImage(
-                                  'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Text(
-                                    widget.model.userName,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 10),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 5),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Colors.white),
-                                    child: Text(
-                                      follow,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                radius: 20.0, // size of the avatar
+                                backgroundImage: NetworkImage(
+                                    'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      widget.model.userName,
                                       style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Colors.black,
+                                        fontSize: 14,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                  )
-                                ],
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          isFollow = !isFollow;
+                                        });
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(left: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            border: Border.all(
+                                                color: isFollow
+                                                    ? Colors.white
+                                                    : Colors.transparent,
+                                                width: 1),
+                                            color: isFollow
+                                                ? Colors.transparent
+                                                : Colors.white),
+                                        child: Text(
+                                          isFollow ? unfollow : follow,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            color: isFollow
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.normal,
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Column(
-                          children: [
-                            Image.asset(
-                              // 'assets/images/vote_not_given.png',
-                              'assets/images/vote_given.png',
-                              scale: 5,
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            Text(
-                              votes,
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Column(
+                            children: [
+                              isDismissed[0]
+                                  ? Dismissible(
+                                      key: const Key('1'),
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          // Mark the item as dismissed
+                                          isDismissed[0] = false;
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        // 'assets/images/vote_not_given.png',
+                                        'assets/images/vote_given.png',
+                                        width: 35,
+                                        height: 35,
+                                      ),
+                                    )
+                                  : Dismissible(
+                                      key: const Key('0'),
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          // Mark the item as dismissed
+                                          isDismissed[0] = true;
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/vote_not_given.png',
+                                        // 'assets/images/vote_given.png',
+                                        width: 35,
+                                        height: 35,
+                                      ),
+                                    ),
+                              const SizedBox(
+                                height: 5,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/like.png',
-                              // 'assets/images/unlike.png',
-                              scale: 5,
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            Text(
-                              likes,
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                votes,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/comment.png',
-                              scale: 5,
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            Text(
-                              comments,
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Column(
+                            children: [
+                              isDismissed[1]
+                                  ? Dismissible(
+                                      key: const Key('2'),
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          // Mark the item as dismissed
+                                          isDismissed[1] = false;
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        // 'assets/images/like.png',
+                                        'assets/images/unlike.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
+                                    )
+                                  : Dismissible(
+                                      key: const Key('3'),
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          // Mark the item as dismissed
+                                          isDismissed[1] = true;
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/like.png',
+                                        // 'assets/images/unlike.png',
+                                        width: 30,
+                                        height: 30,
+                                      ),
+                                    ),
+                              const SizedBox(
+                                height: 3,
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/share.png',
-                              scale: 5,
-                            ),
-                            SizedBox(
-                              height: 3,
-                            ),
-                            Text(
-                              share,
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                              Text(
+                                likes,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _openCommentBottomSheet(context);
+                            },
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/images/comment.png',
+                                  width: 28,
+                                  height: 28,
+                                ),
+                                const SizedBox(
+                                  height: 3,
+                                ),
+                                Text(
+                                  comments,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Column(
+                            children: [
+                              Image.asset(
+                                'assets/images/share.png',
+                                width: 28,
+                                height: 28,
+                              ),
+                              const SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                share,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -254,6 +349,29 @@ class _ReelsWidgetState extends State<ReelsWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  void _openCommentBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: const BoxDecoration(
+              color: Colors.black, // Adjust as per your theme
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: VideoCommentScreen(
+                key: _bottomSheetKey,
+              ),
+            ));
+      },
     );
   }
 }

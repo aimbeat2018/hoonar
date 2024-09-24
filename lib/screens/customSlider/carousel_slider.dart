@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 // ignore: must_be_immutable
 class CarouselSlider extends StatelessWidget {
@@ -18,36 +19,46 @@ class CarouselSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 10,
       child: Stack(
         children: [
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 200),
-            top: 0,
-            bottom: 0,
-            left: position * 200,
-            // left: xPos,
-            child: Container(
-              width: 200,
-              height: 10,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(10 / 2),
-              ),
+          AnimatedSmoothIndicator(
+            activeIndex:position,
+            count: amount,
+            effect: const ExpandingDotsEffect(
+              dotHeight: 8,
+              dotWidth: 8,
+              activeDotColor: Colors.white,
+              dotColor: Colors.grey,
             ),
           ),
+          // AnimatedPositioned(
+          //   duration: const Duration(milliseconds: 200),
+          //   top: 0,
+          //   bottom: 0,
+          //   left: position * 200,
+          //   // left: xPos,
+          //   child: Container(
+          //     width: 200,
+          //     height: 10,
+          //     decoration: BoxDecoration(
+          //       color: Colors.blue,
+          //       borderRadius: BorderRadius.circular(10 / 2),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  double get xPos {
-    double freeLength = 10 - sliderLength;
-    if (freeLength <= 1) {
-      return 0;
-    }
-    freeLength = (freeLength * position) / freeLength;
-    return -0.9 + (2 * freeLength);
-    // return 12;
-  }
+  // double get xPos {
+  //   double freeLength = 10 - sliderLength;
+  //   if (freeLength <= 1) {
+  //     return 0;
+  //   }
+  //   freeLength = (freeLength * position) / freeLength;
+  //   return -0.9 + (2 * freeLength);
+  //   // return 12;
+  // }
 }

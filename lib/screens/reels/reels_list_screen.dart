@@ -26,16 +26,37 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: buildAppbar(context),
-      body: Swiper(
-        controller: controller,
-        itemBuilder: (BuildContext context, int index) {
-          return ReelsWidget(
-            model: sliderModelList[index],
-          );
-        },
-        itemCount: sliderModelList.length,
-        scrollDirection: Axis.vertical,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Swiper(
+              controller: controller,
+              itemBuilder: (BuildContext context, int index) {
+                return ReelsWidget(
+                  model: sliderModelList[index],
+                );
+              },
+              itemCount: sliderModelList.length,
+              scrollDirection: Axis.vertical,
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(left: 13, top: 15),
+                  child: Image.asset(
+                    'assets/images/back_image.png',
+                    height: 28,
+                    width: 28,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

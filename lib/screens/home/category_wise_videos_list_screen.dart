@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
-import 'package:hoonar/screens/home/widgets/reels_screen.dart';
-import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 
 import '../../constants/slide_right_route.dart';
-import '../../constants/text_constants.dart';
-import '../../model/slider_model.dart';
 
 class CategoryWiseVideosListScreen extends StatefulWidget {
   const CategoryWiseVideosListScreen({super.key});
@@ -127,7 +123,7 @@ class _CategoryWiseVideosListScreenState
                       crossAxisSpacing: 0,
                       mainAxisSpacing: 2,
                       childAspectRatio:
-                          0.7, // Adjust according to image dimensions
+                          0.6, // Adjust according to image dimensions
                     ),
                     itemCount: imageUrls.length,
                     itemBuilder: (context, index) {
