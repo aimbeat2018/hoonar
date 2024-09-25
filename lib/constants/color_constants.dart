@@ -25,6 +25,7 @@ const greyTextColor4 = Color(0xFF737373);
 const greyTextColor5 = Color(0x50D4D4D4);
 const greyTextColor6 = Color(0x50666666);
 const greyTextColor7 = Color(0xFFC1C1C1);
+const greyTextColor8 = Color(0xFF999999);
 const greyBackColor = Color(0xFFD9D9D9);
 const greyBackColor1 = Color(0xFFF3F3F3);
 const borderGreyColor = Color(0xFFDADADA);
@@ -42,7 +43,7 @@ const lightGreenColor = Color(0xFF0C9B00);
 const tableCellGreen = Color(0xFF0B8500);
 const contBlueColor1 = Color(0xFF0486C4);
 const buttonBlueColor = Color(0xFF0A6699);
-const orangeColor = Color(0xFFF56233);
+const orangeColor = Color(0xFFFFBB00);
 //Income expenses list
 var contColors = [
   const Color(0xFF6365ED),

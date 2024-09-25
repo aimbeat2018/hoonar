@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Hoonar',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(scaffoldBackgroundColor: bkgColor),
-      home: const SignupScreen(),
+      home: const MainScreen(),
       // home: DummyScreen(),
     );
   }

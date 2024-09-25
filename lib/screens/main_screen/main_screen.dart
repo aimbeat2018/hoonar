@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
+import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _MainScreenState extends State<MainScreen> {
     screen1 = const HomeScreen();
     screen2 = const HomeScreen();
     screen3 = const SearchScreen();
-    screen4 = const SearchScreen();
+    screen4 = const ProfileScreen(from: 'main');
 
     // initPref();
   }
@@ -44,7 +45,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: getBody(),
       floatingActionButton: SizedBox(
         height: 65, // Set custom height
