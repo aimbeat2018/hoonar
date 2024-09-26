@@ -50,3 +50,4 @@ const following = "Following";
 const feeds = "Feeds";
 const hoonar_star = "Hoonar Star";
 const drafts = "Drafts";
+const editProfile = "Edit Profile";

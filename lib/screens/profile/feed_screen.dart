@@ -44,11 +44,10 @@ class _FeedScreenState extends State<FeedScreen> {
             (context, index) {
               return InkWell(
                 onTap: () {
-                  // SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
-                  // Navigator.push(
-                  //   context,
-                  //   SlideRightRoute(page: ReelsListScreen()),
-                  // );
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(page: ReelsListScreen()),
+                  );
                 },
                 child: Image.asset(
                   imageUrls[index],

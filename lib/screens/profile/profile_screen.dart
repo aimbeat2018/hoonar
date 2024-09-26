@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
-import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/profile/drafts_screen.dart';
+import 'package:hoonar/screens/profile/edit_profile_screen.dart';
 import 'package:hoonar/screens/profile/feed_screen.dart';
-import 'package:hoonar/screens/profile/followers_screen.dart';
+import 'package:hoonar/screens/profile/followers_tabs_screen.dart';
 import 'package:hoonar/screens/profile/hoonar_star_screen.dart';
 
 import '../../constants/slide_right_route.dart';
@@ -52,9 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/images/screens_back.png'),
-              // Path to your image
-              fit:
-                  BoxFit.cover, // Ensures the image covers the entire container
+              fit: BoxFit.cover,
             ),
           ),
           child: CustomScrollView(
@@ -102,11 +100,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            radius: avatarSize / 7,
-                                            // Set the radius based on available size
-                                            backgroundImage: const NetworkImage(
-                                              'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
+                                          Hero(
+                                            tag: 'profileImage',
+                                            child: CircleAvatar(
+                                              radius: avatarSize / 7,
+                                              // Set the radius based on available size
+                                              backgroundImage:
+                                                  const NetworkImage(
+                                                'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(
@@ -150,7 +152,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: InkWell(
                                 onTap: () => Navigator.push(
                                   context,
-                                  SlideRightRoute(page: FollowersScreen()),
+                                  SlideRightRoute(
+                                      page: FollowersTabScreen(
+                                    currentTabFrom: 0,
+                                  )),
                                 ),
                                 child: Column(
                                   children: [
@@ -176,52 +181,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               )),
                               Expanded(
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    gradient: const LinearGradient(
-                                      colors: [Colors.white, greyTextColor8],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
+                                child: InkWell(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: FollowersTabScreen(
+                                      currentTabFrom: 1,
+                                    )),
                                   ),
-                                  child: Text(
-                                    votes.toUpperCase(),
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 15.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      gradient: const LinearGradient(
+                                        colors: [Colors.white, greyTextColor8],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      votes.toUpperCase(),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                               Expanded(
-                                  child: Column(
-                                children: [
-                                  Text(
-                                    '1.6K',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                  child: InkWell(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  SlideRightRoute(
+                                      page: FollowersTabScreen(
+                                    currentTabFrom: 2,
+                                  )),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '1.6K',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    following,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: orangeColor,
-                                      fontWeight: FontWeight.w500,
+                                    Text(
+                                      following,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: orangeColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ))
                             ],
                           ),
@@ -367,6 +390,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 1 tap
+            Navigator.push(context, SlideRightRoute(page: EditProfileScreen()));
           },
         ),
         PopupMenuItem(
