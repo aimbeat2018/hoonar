@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
+import 'package:hoonar/screens/camera/draft_videos_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
@@ -23,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     screen1 = const HomeScreen();
-    screen2 = const HomeScreen();
+    screen2 = const DraftVideosScreen();
     screen3 = const SearchScreen();
     screen4 = const ProfileScreen(from: 'main');
 

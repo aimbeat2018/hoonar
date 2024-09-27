@@ -39,13 +39,13 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            image: DecorationImage(
+              /*image: DecorationImage(
               image: AssetImage('assets/images/screens_back.png'),
               // Path to your image
               fit:
                   BoxFit.cover, // Ensures the image covers the entire container
-            ),
-          ),
+            ),*/
+              color: Colors.black),
           child: Column(
             children: [
               Stack(
@@ -151,7 +151,7 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                     alignment: Alignment.topRight,
                     child: currentTab == 0
                         ? Text(
-                            '1244 Followers',
+                            '1244 $followers',
                             textAlign: TextAlign.end,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
@@ -161,7 +161,7 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                           )
                         : currentTab == 2
                             ? Text(
-                                '124 Following',
+                                '124 $following',
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,

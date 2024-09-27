@@ -65,16 +65,13 @@ class _FollowingScreenState extends State<FollowingScreen>
       body: AnimatedList(
         initialItemCount: 10,
         itemBuilder: (context, index, animation) {
-          bool isEven = index % 2 == 0;
-          return isEven
-              ? buildEvenItem(animation, index)
-              : buildOddItem(animation, index); // Build each list item
+          return buildItem(animation, index); // Build each list item
         },
       ),
     );
   }
 
-  Widget buildOddItem(Animation<double> animation, int index) {
+  Widget buildItem(Animation<double> animation, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
@@ -89,33 +86,11 @@ class _FollowingScreenState extends State<FollowingScreen>
         ),
       ),
       child: itemCommon(animation, index),
-    ).animate().moveX(
+    ) /*.animate().moveX(
             begin: 200,
             end: 0,
-            duration: 800.ms) // Moves from -200px to 0px (top to center)
+            duration: 800.ms)*/ // Moves from -200px to 0px (top to center)
         ; // Fade in effect;
-  }
-
-  Widget buildEvenItem(Animation<double> animation, int index) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            width: 0.80,
-            strokeAlign: BorderSide.strokeAlignOutside,
-            color: Colors.white,
-          ),
-          borderRadius: BorderRadius.circular(6.19),
-        ),
-      ),
-      child: itemCommon(animation, index),
-    ).animate().moveX(
-            begin: -200,
-            end: 0,
-            duration: 800.ms) // Moves from +200px to 0px (bottom to center)
-        ; // Fade in effect
   }
 
   Widget itemCommon(Animation<double> animation, int index) {
@@ -157,9 +132,9 @@ class _FollowingScreenState extends State<FollowingScreen>
                     )
                   ],
                 )
-                    .animate()
+                    /*.animate()
                     .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                    .slide(),
+                    .slide()*/,
               ),
             ],
           ),

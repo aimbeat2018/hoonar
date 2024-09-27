@@ -31,13 +31,13 @@ class _SearchScreenState extends State<SearchScreen> {
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-            image: DecorationImage(
+              /*image: DecorationImage(
               image: AssetImage('assets/images/screens_back.png'),
               // Path to your image
               fit:
                   BoxFit.cover, // Ensures the image covers the entire container
-            ),
-          ),
+            ),*/
+              color: Colors.black),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -60,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           Expanded(
                             child: TextFormField(
                               decoration: InputDecoration(
-                                hintText: 'Search Name, Id',
+                                hintText: searchHint,
                                 hintStyle: GoogleFonts.poppins(
                                   color: hintGreyColor,
                                   fontWeight: FontWeight.w600,

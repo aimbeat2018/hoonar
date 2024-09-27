@@ -125,9 +125,10 @@ class _FollowersScreenState extends State<FollowersScreen>
                       )
                     ],
                   )
-                      .animate()
+                  /* .animate()
                       .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                      .slide(),
+                      .slide()*/
+                  ,
                 ),
               ],
             ),
@@ -138,25 +139,21 @@ class _FollowersScreenState extends State<FollowersScreen>
                 isFollow = !isFollow;
               });
             },
-            child: SlideTransition(
-              position: _rightAnimation,
-              child: Container(
-                margin: const EdgeInsets.only(left: 10),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                        color: isFollow ? Colors.white : Colors.transparent,
-                        width: 1),
-                    color: isFollow ? Colors.transparent : Colors.white),
-                child: Text(
-                  isFollow ? unfollow : follow,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: isFollow ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w600,
-                  ),
+            child: Container(
+              margin: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(
+                      color: isFollow ? Colors.white : Colors.transparent,
+                      width: 1),
+                  color: isFollow ? Colors.transparent : Colors.white),
+              child: Text(
+                isFollow ? unfollow : follow,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  color: isFollow ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

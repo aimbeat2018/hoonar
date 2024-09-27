@@ -3,10 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/profile/drafts_screen.dart';
-import 'package:hoonar/screens/profile/edit_profile_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/about_app_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/app_content_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
 import 'package:hoonar/screens/profile/feed_screen.dart';
 import 'package:hoonar/screens/profile/followers_tabs_screen.dart';
 import 'package:hoonar/screens/profile/hoonar_star_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/help_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/manage_devices_screen.dart';
 
 import '../../constants/slide_right_route.dart';
 
@@ -50,11 +54,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
-            image: DecorationImage(
+              /* image: DecorationImage(
               image: AssetImage('assets/images/screens_back.png'),
               fit: BoxFit.cover,
-            ),
-          ),
+            ),*/
+              color: Colors.black),
           child: CustomScrollView(
             controller: controller,
             slivers: [
@@ -65,21 +69,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Column(
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Stack(
                             children: [
                               widget.from != 'main'
-                                  ? InkWell(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 13),
-                                        child: Image.asset(
-                                          'assets/images/back_image.png',
-                                          height: 28,
-                                          width: 28,
+                                  ? Positioned(
+                                      left: 5,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 13),
+                                          child: Image.asset(
+                                            'assets/images/back_image.png',
+                                            height: 28,
+                                            width: 28,
+                                          ),
                                         ),
                                       ),
                                     )
@@ -138,10 +144,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   },
                                 ),
                               ),
-                              Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: menuItemsWidget())
+                              Positioned(
+                                right: 5,
+                                child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: menuItemsWidget()),
+                              )
                             ],
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 3),
+                              child: Text(
+                                'About You',
+                                textAlign: TextAlign.start,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.white60,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(
                             height: 15,
@@ -169,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                     Text(
-                                      followers,
+                                      follower,
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.poppins(
                                         fontSize: 14,
@@ -410,6 +435,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 2 tap
+            Navigator.push(context, SlideRightRoute(page: HelpScreen()));
           },
         ),
         PopupMenuItem(
@@ -429,6 +455,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 3 tap
+            Navigator.push(
+                context,
+                SlideRightRoute(
+                    page: AppContentScreen(
+                  from: 'terms',
+                )));
           },
         ),
         PopupMenuItem(
@@ -448,6 +480,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 3 tap
+            Navigator.push(
+                context,
+                SlideRightRoute(
+                    page: AppContentScreen(
+                  from: 'privacy',
+                )));
           },
         ),
         PopupMenuItem(
@@ -467,6 +505,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 3 tap
+            Navigator.push(
+                context, SlideRightRoute(page: ManageDevicesScreen()));
           },
         ),
         PopupMenuItem(
@@ -486,6 +526,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 3 tap
+            Navigator.push(context, SlideRightRoute(page: AboutAppScreen()));
           },
         ),
         PopupMenuItem(

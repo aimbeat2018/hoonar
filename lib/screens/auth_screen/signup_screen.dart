@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +6,6 @@ import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/auth_screen/create_password_screen.dart';
-import 'package:hoonar/screens/auth_screen/login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

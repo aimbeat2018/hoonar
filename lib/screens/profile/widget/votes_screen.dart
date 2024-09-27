@@ -95,7 +95,7 @@ class _VotesScreenState extends State<VotesScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Zone Leve',
+                  'Zone Level',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: Colors.white,
@@ -112,9 +112,9 @@ class _VotesScreenState extends State<VotesScreen>
                 )
               ],
             )
-                .animate()
+              /*  .animate()
                 .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                .slideX(duration: 800.ms),
+                .slideX(duration: 800.ms)*/,
           ),
           Text.rich(
             textAlign: TextAlign.center,
@@ -142,8 +142,8 @@ class _VotesScreenState extends State<VotesScreen>
         ],
       ),
     )
-        .animate()
+        /*.animate()
         // .shimmer(blendMode: BlendMode.srcOver, color: Colors.white12)
-        .move(begin: const Offset(-16, 0), curve: Curves.easeOutQuad);
+        .move(begin: const Offset(-16, 0), curve: Curves.easeOutQuad)*/;
   }
 }

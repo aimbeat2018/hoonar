@@ -99,7 +99,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
-                        hintText: 'Add a comment...',
+                        hintText: addAComment,
                         hintStyle: GoogleFonts.poppins(color: Colors.grey),
                         border: InputBorder.none,
                       ),
@@ -171,7 +171,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                                 _selectedCommentIndex = commentIndex;
                               });
                             },
-                            child: Text("Reply",
+                            child: Text(reply,
                                 style: GoogleFonts.poppins(
                                     color: Colors.grey, fontSize: 12)),
                           ),
@@ -181,7 +181,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                         ),
                         if (comment.replies.isNotEmpty)
                           Text(
-                              '${comment.replies.length} ${comment.replies.length == 1 ? 'reply' : 'replies'}',
+                              '${comment.replies.length} ${comment.replies.length == 1 ? reply.toLowerCase() : replies}',
                               style: GoogleFonts.poppins(
                                   color: Colors.grey, fontSize: 12)),
                       ],

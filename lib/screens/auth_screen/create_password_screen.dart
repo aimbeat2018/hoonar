@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/text_constants.dart';
-import 'package:hoonar/screens/auth_screen/signup_screen.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 
 class CreatePasswordScreen extends StatefulWidget {
@@ -31,7 +29,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
         padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.png'),
             // Path to your image
