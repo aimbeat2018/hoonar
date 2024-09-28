@@ -1,16 +1,23 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
+import 'package:hoonar/constants/text_constants.dart';
+import 'package:hoonar/screens/camera/preview_screen.dart';
+import 'package:hoonar/screens/camera/widget/seconds_tab.dart';
 import 'package:hoonar_camera/hoonar_camera.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../constants/const_res.dart';
 import '../../model/sound.dart';
@@ -248,7 +255,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               setState(() {});
                             },
                             isSelected: isSelected15s,
-                            title: AppRes.fiftySecond,
+                            title: '15',
                           ),
                           SizedBox(width: 15),
                           SecondsTab(
@@ -258,7 +265,7 @@ class _CameraScreenState extends State<CameraScreen> {
                               setState(() {});
                             },
                             isSelected: !isSelected15s,
-                            title: AppRes.thirtySecond,
+                            title: '30',
                           ),
                         ],
                       ),
@@ -302,12 +309,12 @@ class _CameraScreenState extends State<CameraScreen> {
                           child: isStartRecording
                               ? Icon(
                                   Icons.pause,
-                                  color: ColorRes.colorTheme,
+                                  color: buttonBlueColor,
                                   size: 50,
                                 )
                               : Container(
                                   decoration: BoxDecoration(
-                                    color: ColorRes.colorTheme,
+                                    color: buttonBlueColor,
                                     shape: isStartRecording
                                         ? BoxShape.rectangle
                                         : BoxShape.circle,
@@ -323,7 +330,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           size: 20,
                           onTap: () async {
                             if (!isRecordingStaring) {
-                              CommonUI.showToast(msg: LKey.videoIsToShort.tr);
+                              // CommonUI.showToast(msg: LKey.videoIsToShort.tr);
                             } else {
                               if (soundId != null &&
                                   soundId!.isNotEmpty &&
@@ -346,7 +353,7 @@ class _CameraScreenState extends State<CameraScreen> {
             Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              color: ColorRes.colorPrimaryDark,
+              color: buttonBlueColor,
               child: SafeArea(
                 child: Column(
                   children: [
@@ -354,7 +361,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       alignment: Alignment.topRight,
                       child: InkWell(
                         onTap: () {
-                          Get.back();
+                          // Get.back();
                         },
                         child: Container(
                             height: 35,
@@ -362,10 +369,10 @@ class _CameraScreenState extends State<CameraScreen> {
                             margin: const EdgeInsets.all(15),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: ColorRes.white.withOpacity(0.1)),
+                                color: Colors.white.withOpacity(0.1)),
                             alignment: Alignment.center,
                             child: const Icon(Icons.close_rounded,
-                                color: ColorRes.white, size: 25)),
+                                color: Colors.white, size: 25)),
                       ),
                     ),
                     const Spacer(),
@@ -373,20 +380,15 @@ class _CameraScreenState extends State<CameraScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 30.0),
                       child: RichText(
                         text: TextSpan(
-                          text: '${LKey.allow.tr} ',
+                          text: 'Allow',
                           children: [
                             TextSpan(
                                 text: appName,
                                 style: TextStyle(
-                                    color: ColorRes.colorPink,
-                                    fontFamily: FontRes.fNSfUiBold,
-                                    fontSize: 17)),
-                            TextSpan(
-                                text:
-                                    ' ${LKey.toAccessYourCameraAndMicrophone}')
+                                    color: Colors.pink, fontSize: 17)),
+                            TextSpan(text: ' Access permission')
                           ],
                           style: TextStyle(
-                            fontFamily: FontRes.fNSfUiSemiBold,
                             fontSize: 20,
                           ),
                         ),
@@ -397,11 +399,8 @@ class _CameraScreenState extends State<CameraScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 30.0),
                       child: Text(
-                        LKey.ifAppearsThatCameraPermissionHasNotBeenGrantedEtc
-                            .tr,
-                        style: TextStyle(
-                            fontFamily: FontRes.fNSfUiRegular,
-                            color: ColorRes.white),
+                        ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+                        style: TextStyle(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -416,15 +415,12 @@ class _CameraScreenState extends State<CameraScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 10),
                         decoration: BoxDecoration(
-                          color: ColorRes.white,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          LKey.openSettings.tr,
-                          style: TextStyle(
-                              color: ColorRes.colorPink,
-                              fontFamily: FontRes.fNSfUiSemiBold,
-                              fontSize: 15),
+                          openSettings,
+                          style: TextStyle(color: Colors.pink, fontSize: 15),
                         ),
                       ),
                     ),
@@ -496,7 +492,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void downloadMusic() async {
     _localMusic =
-        (await _findLocalPath()) + Platform.pathSeparator + UrlRes.camera;
+        (await _findLocalPath()) + Platform.pathSeparator + ConstRes.camera;
     final savedDir = Directory(_localMusic!);
     bool hasExisted = await savedDir.exists();
     if (!hasExisted) {
@@ -505,13 +501,13 @@ class _CameraScreenState extends State<CameraScreen> {
     if (File(_localMusic! + widget.soundUrl!).existsSync()) {
       File(_localMusic! + widget.soundUrl!).deleteSync();
     }
-    await FlutterDownloader.enqueue(
+    /*await FlutterDownloader.enqueue(
       url: ConstRes.itemBaseUrl + widget.soundUrl!,
       savedDir: _localMusic!,
       showNotification: false,
       openFileFromNotification: false,
     );
-    CommonUI.showLoader(context);
+    CommonUI.showLoader(context);*/
   }
 
   // Recording
@@ -588,7 +584,7 @@ class _CameraScreenState extends State<CameraScreen> {
   // Stop Merge For iOS
   Future<void> _stopAndMergeVideoForIos({bool isAutoStop = false}) async {
     print('_stopAndMergeVideoForIos');
-    CommonUI.showLoader(context);
+    // CommonUI.showLoader(context);
     if (isAutoStop) {
       await HoonarCamera.pauseRecording;
     }
@@ -598,7 +594,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void gotoPreviewScreen(String pathOfVideo) async {
     if (soundId != null && soundId!.isNotEmpty) {
-      CommonUI.showLoader(context);
+      // CommonUI.showLoader(context);
       try {
         String localPath = await _findLocalPath();
         if (!Platform.isAndroid) {
@@ -661,7 +657,7 @@ class _CameraScreenState extends State<CameraScreen> {
       return;
     }
 
-    CommonUI.showLoader(context);
+    // CommonUI.showLoader(context);
     try {
       String localPath = await _findLocalPath();
       String soundPath =
@@ -702,53 +698,53 @@ class _CameraScreenState extends State<CameraScreen> {
       }
     } catch (e) {
       Navigator.pop(context);
-      CommonUI.showToast(msg: LKey.anErrorOccurredWhileProcessingTheEtc.tr);
+      // CommonUI.showToast(msg: LKey.anErrorOccurredWhileProcessingTheEtc.tr);
     }
   }
 
   void _showFilePicker() async {
     HapticFeedback.mediumImpact();
-    CommonUI.getLoader();
+    // CommonUI.getLoader();
     try {
       final videoFile = await _picker.pickVideo(
           source: ImageSource.gallery, maxDuration: Duration(minutes: 1));
-      Get.back();
-
+      // Get.back();
+      Navigator.pop(context);
       if (videoFile != null && videoFile.path.isNotEmpty) {
         double fileSize = await getFileSizeInMB(File(videoFile.path));
         try {
           VideoData? videoInfo =
               await _flutterVideoInfo.getVideoInfo(videoFile.path);
           if (fileSize > maxUploadMB) {
-            Get.dialog(ConfirmationDialog(
-              aspectRatio: 1.8,
-              title1: LKey.tooLargeVideo,
-              title2: LKey.thisVideoIsGreaterThan50MbNPleaseSelectAnother.tr,
-              positiveText: LKey.selectAnother.tr,
-              onPositiveTap: () {
-                Get.back();
-                _showFilePicker();
-              },
-            ));
+            // Get.dialog(ConfirmationDialog(
+            //   aspectRatio: 1.8,
+            //   title1: LKey.tooLargeVideo,
+            //   title2: LKey.thisVideoIsGreaterThan50MbNPleaseSelectAnother.tr,
+            //   positiveText: LKey.selectAnother.tr,
+            //   onPositiveTap: () {
+            //     Get.back();
+            //     _showFilePicker();
+            //   },
+            // ));
 
             return;
           }
 
           if (((videoInfo?.duration ?? 0) / 1000) > maxUploadSecond) {
-            Get.dialog(ConfirmationDialog(
-              aspectRatio: 1.8,
-              title1: LKey.tooLongVideo.tr,
-              title2: LKey.thisVideoIsGreaterThan1MinNPleaseSelectAnother.tr,
-              positiveText: LKey.selectAnother.tr,
-              onPositiveTap: () {
-                Get.back();
-                _showFilePicker();
-              },
-            ));
-            return;
+            // Get.dialog(ConfirmationDialog(
+            //   aspectRatio: 1.8,
+            //   title1: LKey.tooLongVideo.tr,
+            //   title2: LKey.thisVideoIsGreaterThan1MinNPleaseSelectAnother.tr,
+            //   positiveText: LKey.selectAnother.tr,
+            //   onPositiveTap: () {
+            //     Get.back();
+            //     _showFilePicker();
+            //   },
+            // ));
+            // return;
           }
 
-          CommonUI.getLoader();
+          // CommonUI.getLoader();
 
           try {
             String localPath = await _findLocalPath();
@@ -757,27 +753,39 @@ class _CameraScreenState extends State<CameraScreen> {
             await FFmpegKit.execute(
                 '-i "${videoFile.path}" -y -ss 00:00:01.000 -vframes 1 "$localPath${Platform.pathSeparator}thumbNail.png"');
 
-            Get.back(); // Close the loader
-            Get.to(() => PreviewScreen(
-                  postVideo: videoFile.path,
-                  thumbNail: "$localPath${Platform.pathSeparator}thumbNail.png",
-                  sound: "$localPath${Platform.pathSeparator}sound.wav",
-                  duration: (videoInfo?.duration ?? 0) ~/ 1000,
-                ));
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PreviewScreen(
+                          postVideo: videoFile.path,
+                          thumbNail:
+                              "$localPath${Platform.pathSeparator}thumbNail.png",
+                          sound: "$localPath${Platform.pathSeparator}sound.wav",
+                          duration: (videoInfo?.duration ?? 0) ~/ 1000,
+                        )));
+            // Get.back(); // Close the loader
+            // Get.to(() => PreviewScreen(
+            //       postVideo: videoFile.path,
+            //       thumbNail: "$localPath${Platform.pathSeparator}thumbNail.png",
+            //       sound: "$localPath${Platform.pathSeparator}sound.wav",
+            //       duration: (videoInfo?.duration ?? 0) ~/ 1000,
+            //     ));
           } catch (e) {
-            Get.back(); // Close the loader if FF mpeg fails
-            CommonUI.showToast(
-                msg: LKey.anErrorOccurredWhileProcessingTheEtc.tr);
+            // Get.back(); // Close the loader if FF mpeg fails
+            Navigator.pop(context);
+            print(anErrorOccurredWhileProcessingTheEtc);
+            // CommonUI.showToast(
+            //     msg: LKey.anErrorOccurredWhileProcessingTheEtc.tr);
           }
         } catch (e) {
-          CommonUI.showToast(
-              msg: LKey.pleaseAcceptLibraryPermissionToPickAVideo.tr);
+          Navigator.pop(context);
+          print(pleaseAcceptLibraryPermissionToPickAVideo);
         }
       }
     } catch (e) {
-      Get.back(); // Close the loader if picking video fails
-      CommonUI.showToast(
-          msg: LKey.pleaseAcceptLibraryPermissionToPickAVideo.tr);
+      Navigator.pop(context);
+      print(pleaseAcceptLibraryPermissionToPickAVideo);
     }
   }
 
@@ -855,9 +863,8 @@ class IconWithRoundGradient extends StatelessWidget {
           height: 38,
           width: 38,
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [ColorRes.colorTheme, ColorRes.colorPink])),
-          child: Icon(iconData, color: ColorRes.white, size: size),
+              gradient: LinearGradient(colors: [Colors.blue, Colors.pink])),
+          child: Icon(iconData, color: Colors.white, size: size),
         ),
       ),
     );
@@ -878,14 +885,14 @@ class ImageWithRoundGradient extends StatelessWidget {
         width: 38,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [ColorRes.colorTheme, ColorRes.colorPink],
+            colors: [Colors.blue, Colors.pink],
           ),
         ),
         child: Padding(
           padding: EdgeInsets.all(padding),
           child: Image(
             image: AssetImage(imageData),
-            color: ColorRes.white,
+            color: Colors.white,
           ),
         ),
       ),

@@ -87,3 +87,15 @@ const addAComment = 'Add a comment...';
 const reply = 'Reply';
 const replies = 'replies';
 const searchHint = 'Search Name, Id';
+const videoIsToShort = 'videoIsToShort';
+const allow = 'allow';
+const toAccessYourCameraAndMicrophone = 'toAccessYourCameraAndMicrophone';
+const ifAppearsThatCameraPermissionHasNotBeenGrantedEtc =
+    'ifAppearsThatCameraPermissionHasNotBeenGrantedEtc';
+const openSettings = 'openSettings';
+const anErrorOccurredWhileProcessingTheEtc =
+    'anErrorOccurredWhileProcessingTheEtc';
+const pleaseAcceptLibraryPermissionToPickAVideo =
+    'pleaseAcceptLibraryPermissionToPickAVideo';
+const shareThisVideo = 'shareThisVideo';
+const videoDownloadingStarted = 'videoDownloadingStarted';
