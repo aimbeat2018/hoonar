@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
-import 'package:hoonar/screens/camera/draft_videos_screen.dart';
+import 'package:hoonar/screens/camera/camera_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
+
+import '../../constants/slide_right_route.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,11 +26,8 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     screen1 = const HomeScreen();
-    screen2 = const DraftVideosScreen();
-    screen3 = const SearchScreen();
-    screen4 = const ProfileScreen(from: 'main');
-
-    // initPref();
+    screen2 = const SearchScreen();
+    screen3 = const ProfileScreen(from: 'main');
   }
 
   Widget getBody() {
@@ -36,10 +35,8 @@ class _MainScreenState extends State<MainScreen> {
       return screen1!;
     } else if (selectedIndex == 1) {
       return screen2!;
-    } else if (selectedIndex == 2) {
-      return screen3!;
     } else {
-      return screen4!;
+      return screen3!;
     }
   }
 
@@ -56,14 +53,7 @@ class _MainScreenState extends State<MainScreen> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
           onPressed: () {
-            // if (userid == null) {
-            //   Navigator.push(context,
-            //       MaterialPageRoute(builder: (context) => const Login()));
-            // } else {
-            //   Navigator.push(context,
-            //       MaterialPageRoute(builder: (context) => const Payments()));
-            // }
-            // Navigator.pushNamed(context, Payments.routeName);
+            // Optional Floating Action Button logic
           },
           child: Stack(
             children: [
@@ -74,7 +64,6 @@ class _MainScreenState extends State<MainScreen> {
                 bottom: 10,
                 child: Image.asset(
                   'assets/images/star.png',
-                  // color: Colors.white,
                 ),
               ),
             ],
@@ -96,7 +85,6 @@ class _MainScreenState extends State<MainScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: InkWell(
@@ -109,8 +97,7 @@ class _MainScreenState extends State<MainScreen> {
                           "assets/images/home.png",
                           height: selectedIndex == 0 ? 25 : 23,
                           width: selectedIndex == 0 ? 25 : 23,
-                          color:
-                              selectedIndex == 0 ? Colors.black : Colors.black,
+                          color: Colors.black,
                         ),
                         sizedBoxH2,
                       ],
@@ -120,7 +107,7 @@ class _MainScreenState extends State<MainScreen> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      onTapHandler(1);
+                      openCameraScreen();
                     },
                     child: Column(
                       children: [
@@ -128,15 +115,30 @@ class _MainScreenState extends State<MainScreen> {
                           "assets/images/camera.png",
                           height: selectedIndex == 1 ? 25 : 23,
                           width: selectedIndex == 1 ? 25 : 23,
-                          color:
-                              selectedIndex == 1 ? Colors.black : Colors.black,
+                          color: Colors.black,
                         ),
                       ],
                     ),
                   ),
                 ),
-                const Expanded(
-                    child: SizedBox()), // this will handle the fab spacing
+                const Expanded(child: SizedBox()), // Handle FAB spacing
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      onTapHandler(1);
+                    },
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/search.png",
+                          height: selectedIndex == 2 ? 25 : 23,
+                          width: selectedIndex == 2 ? 25 : 23,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: InkWell(
                     onTap: () {
@@ -145,34 +147,10 @@ class _MainScreenState extends State<MainScreen> {
                     child: Column(
                       children: [
                         Image.asset(
-                          "assets/images/search.png",
-                          height: selectedIndex == 2 ? 25 : 23,
-                          width: selectedIndex == 2 ? 25 : 23,
-                          color:
-                              selectedIndex == 2 ? Colors.black : Colors.black,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      // if (userid == null) {
-                      //   Navigator.push(context,
-                      //       MaterialPageRoute(builder: (context) => const Login()));
-                      // } else {
-                      onTapHandler(3);
-                      //  }
-                    },
-                    child: Column(
-                      children: [
-                        Image.asset(
                           "assets/images/profile.png",
                           height: selectedIndex == 3 ? 25 : 23,
                           width: selectedIndex == 3 ? 25 : 23,
-                          color:
-                              selectedIndex == 3 ? Colors.black : Colors.black,
+                          color: Colors.black,
                         ),
                       ],
                     ),
@@ -190,5 +168,12 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       selectedIndex = index;
     });
+  }
+
+  void openCameraScreen() {
+    Navigator.push(
+      context,
+      SlideRightRoute(page: CameraScreen()),
+    );
   }
 }

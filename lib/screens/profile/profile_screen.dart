@@ -11,7 +11,7 @@ import 'package:hoonar/screens/profile/followers_tabs_screen.dart';
 import 'package:hoonar/screens/profile/hoonar_star_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/help_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/manage_devices_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../constants/slide_right_route.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,14 +25,14 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isVisible = false;
-  final List<String> optionsList = [
-    'Edit Profile',
-    'Help',
-    'Terms & Conditions',
-    'Privacy Policy',
-    'Manage Device',
-    'About App',
-    'Logout'
+  List<String> optionsList = [
+    editProfile,
+    help,
+    termsConditions,
+    privacyPolicy,
+    manageDevices,
+    aboutApp,
+    'logout'
   ];
 
   // Toggles both the fade and scale animation
@@ -43,6 +43,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   ScrollController controller = ScrollController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,59 +96,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     )
                                   : const SizedBox(),
-                              Expanded(
-                                child: LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    // Use the smaller dimension (width or height) for CircleAvatar's size
-                                    double avatarSize = constraints.maxWidth <
-                                            constraints.maxHeight
-                                        ? constraints.maxWidth
-                                        : constraints.maxHeight;
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  // Use the smaller dimension (width or height) for CircleAvatar's size
+                                  double avatarSize = constraints.maxWidth <
+                                          constraints.maxHeight
+                                      ? constraints.maxWidth
+                                      : constraints.maxHeight;
 
-                                    return Center(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Hero(
-                                            tag: 'profileImage',
-                                            child: CircleAvatar(
-                                              radius: avatarSize / 7,
-                                              // Set the radius based on available size
-                                              backgroundImage:
-                                                  const NetworkImage(
-                                                'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
-                                              ),
+                                  return Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Hero(
+                                          tag: 'profileImage',
+                                          child: CircleAvatar(
+                                            radius: avatarSize / 7,
+                                            // Set the radius based on available size
+                                            backgroundImage: const NetworkImage(
+                                              'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
                                             ),
                                           ),
-                                          const SizedBox(
-                                            height: 10,
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          'Hitesh Male',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                          Text(
-                                            'Hitesh Male',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                        ),
+                                        Text(
+                                          '@hitesh.m',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.normal,
                                           ),
-                                          Text(
-                                            '@hitesh.m',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.normal,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                               Positioned(
                                 right: 5,
@@ -178,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onTap: () => Navigator.push(
                                   context,
                                   SlideRightRoute(
-                                      page: FollowersTabScreen(
+                                      page: const FollowersTabScreen(
                                     currentTabFrom: 0,
                                   )),
                                 ),
@@ -210,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   onTap: () => Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: FollowersTabScreen(
+                                        page: const FollowersTabScreen(
                                       currentTabFrom: 1,
                                     )),
                                   ),
@@ -244,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onTap: () => Navigator.push(
                                   context,
                                   SlideRightRoute(
-                                      page: FollowersTabScreen(
+                                      page: const FollowersTabScreen(
                                     currentTabFrom: 2,
                                   )),
                                 ),
@@ -300,9 +303,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               indicatorSize: TabBarIndicatorSize.label,
                               // Indicator under the label only
                               tabs: [
-                                Tab(text: feeds),
-                                Tab(text: hoonar_star),
-                                Tab(text: drafts),
+                                const Tab(text: feeds),
+                                const Tab(text: hoonar_star),
+                                const Tab(text: drafts),
                               ],
                             ),
                           ),
@@ -400,11 +403,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       itemBuilder: (context) => [
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[0],
+              AppLocalizations.of(context)!.editProfile,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -415,16 +418,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 1 tap
-            Navigator.push(context, SlideRightRoute(page: EditProfileScreen()));
+            Navigator.push(
+                context, SlideRightRoute(page: const EditProfileScreen()));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[1],
+              AppLocalizations.of(context)!.help,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -435,16 +439,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 2 tap
-            Navigator.push(context, SlideRightRoute(page: HelpScreen()));
+            Navigator.push(context, SlideRightRoute(page: const HelpScreen()));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[2],
+              AppLocalizations.of(context)!.termsConditions,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -458,18 +462,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.push(
                 context,
                 SlideRightRoute(
-                    page: AppContentScreen(
+                    page: const AppContentScreen(
                   from: 'terms',
                 )));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[3],
+              AppLocalizations.of(context)!.privacyPolicy,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -483,18 +487,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.push(
                 context,
                 SlideRightRoute(
-                    page: AppContentScreen(
+                    page: const AppContentScreen(
                   from: 'privacy',
                 )));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[4],
+              AppLocalizations.of(context)!.manageDevices,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -506,16 +510,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap: () {
             // Handle item 3 tap
             Navigator.push(
-                context, SlideRightRoute(page: ManageDevicesScreen()));
+                context, SlideRightRoute(page: const ManageDevicesScreen()));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[5],
+              AppLocalizations.of(context)!.aboutApp,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,
@@ -526,16 +530,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           onTap: () {
             // Handle item 3 tap
-            Navigator.push(context, SlideRightRoute(page: AboutAppScreen()));
+            Navigator.push(
+                context, SlideRightRoute(page: const AboutAppScreen()));
           },
         ),
         PopupMenuItem(
           height: 0,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
             alignment: Alignment.centerRight,
             child: Text(
-              optionsList[6],
+              AppLocalizations.of(context)!.logout,
               textAlign: TextAlign.end,
               style: GoogleFonts.montserrat(
                 fontSize: 14,

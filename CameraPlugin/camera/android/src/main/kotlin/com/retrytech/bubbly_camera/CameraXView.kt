@@ -35,6 +35,7 @@ import androidx.core.content.PermissionChecker
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
@@ -223,24 +224,55 @@ internal class CameraXView(
 
             cameraProvider.unbindAll()
 
+            /*   camera = cameraProvider.bindToLifecycle(
+                   object : LifecycleOwner {
+                       override val lifecycle: Lifecycle
+                           get() = object : Lifecycle() {
+                               override val currentState: State
+                                   get() = State.STARTED
+
+                               override fun addObserver(observer: LifecycleObserver) {
+                               }
+
+                               override fun removeObserver(observer: LifecycleObserver) {
+                               }
+
+                           }
+
+                   }, cameraSelector, useCaseGroup
+               )*/
+
             camera = cameraProvider.bindToLifecycle(
                 object : LifecycleOwner {
-                    override val lifecycle: Lifecycle
-                        get() = object : Lifecycle() {
-                            override val currentState: State
-                                get() = State.STARTED
+                    private val lifecycleRegistry = LifecycleRegistry(this)
 
-                            override fun addObserver(observer: LifecycleObserver) {
-                            }
+                    init {
+                        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+                    }
 
-                            override fun removeObserver(observer: LifecycleObserver) {
-                            }
-
-                        }
-
+                    override fun getLifecycle(): Lifecycle {
+                        return lifecycleRegistry
+                    }
                 }, cameraSelector, useCaseGroup
             )
 
+            /* camera = cameraProvider.bindToLifecycle(
+                 object : LifecycleOwner {
+                     private val lifecycleRegistry = LifecycleRegistry(this)
+
+                     init {
+                         // You can set the desired lifecycle state here
+                         lifecycleRegistry.currentState = Lifecycle.State.STARTED
+                     }
+
+                     override fun getLifecycle(): Lifecycle {
+                         return lifecycleRegistry
+                     }
+                 },
+                 cameraSelector,
+                 useCaseGroup
+             )
+ */
 
             viewFinder.setOnTouchListener { _, motionEvent ->
                 val meteringPoint = viewFinder.meteringPointFactory

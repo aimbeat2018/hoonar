@@ -3,7 +3,6 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     ext.kotlin_version = '1.9.20'
-//    ext.kotlin_version = '1.7.1'
     repositories {
         mavenCentral()
         google()
@@ -35,14 +34,14 @@ android {
         main.java.srcDirs += 'src/main/kotlin/com/retrytech/bubbly_camera'
     }
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures.dataBinding = true
 }

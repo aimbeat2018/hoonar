@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/languagesSupported/change_language_screen.dart';
+import 'package:hoonar/screens/reels/reels_list_screen.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/text_constants.dart';
 import '../../../constants/theme.dart';
 
@@ -25,13 +28,12 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
-        /*image: DecorationImage(
+          /*image: DecorationImage(
           image: AssetImage('assets/images/screens_back.png'),
           // Path to your image
           fit: BoxFit.cover, // Ensures the image covers the entire container
         ),*/
-          color: Colors.black
-      ),
+          color: Colors.black),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,12 +83,15 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
               subtitle: 'customercare@hoonarstar.in',
             ),
             _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/language.png',
-              title: language,
-              subtitle: languageSubTitle,
-            ),
+            _buildSection(context,
+                icon: 'assets/images/language.png',
+                title: language,
+                subtitle: languageSubTitle, onTap: () {
+              Navigator.push(
+                context,
+                SlideRightRoute(page: ChangeLanguageScreen()),
+              );
+            }),
             _buildDivider(),
             _buildSection(
               context,
@@ -125,54 +130,58 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
       {required String icon,
       required String title,
       required String subtitle,
-      Widget? trailing}) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Image.asset(
-                  icon,
-                  height: 25,
-                  width: 25,
-                ),
-                SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: Colors.white60,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+      Widget? trailing,
+      Function()? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Image.asset(
+                    icon,
+                    height: 25,
+                    width: 25,
                   ),
-                ),
-              ],
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: Colors.white60,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (trailing != null) trailing, // Show trailing widget if it exists
-        ],
+            if (trailing != null) trailing, // Show trailing widget if it exists
+          ],
+        ),
       ),
     );
   }

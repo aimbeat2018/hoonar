@@ -1,4 +1,4 @@
-package com.retrytech.bubbly// MyApplication.kt (create this file if it doesn't exist in your project)
+package com.hoonar.hoonar// MyApplication.kt (create this file if it doesn't exist in your project)
 
 import io.flutter.app.FlutterApplication
 import io.flutter.embedding.engine.FlutterEngine

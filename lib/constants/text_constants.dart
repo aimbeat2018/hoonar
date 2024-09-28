@@ -89,13 +89,29 @@ const replies = 'replies';
 const searchHint = 'Search Name, Id';
 const videoIsToShort = 'videoIsToShort';
 const allow = 'allow';
-const toAccessYourCameraAndMicrophone = 'toAccessYourCameraAndMicrophone';
+const toAccessYourCameraAndMicrophone = 'to access your camera and microphone';
 const ifAppearsThatCameraPermissionHasNotBeenGrantedEtc =
-    'ifAppearsThatCameraPermissionHasNotBeenGrantedEtc';
-const openSettings = 'openSettings';
+    'If appears that camera permission has not been granted. To the App, you\'ll need to allow access to the camera from the settings';
+const openSettings = 'Open Settings';
 const anErrorOccurredWhileProcessingTheEtc =
-    'anErrorOccurredWhileProcessingTheEtc';
+    'An error occurred while processing the video. Please try again.';
 const pleaseAcceptLibraryPermissionToPickAVideo =
-    'pleaseAcceptLibraryPermissionToPickAVideo';
-const shareThisVideo = 'shareThisVideo';
-const videoDownloadingStarted = 'videoDownloadingStarted';
+    'Please Accept library permission to pick a video';
+const shareThisVideo = 'Share This video';
+const videoDownloadingStarted = 'Video downloading started';
+const cancel = 'Cancel';
+const yes = 'Yes';
+const areYouSure = 'Are you sure';
+const doYouReallyWantToGoBack = 'Do you really want to go back?';
+const english = 'English';
+const hindi = 'Hindi';
+const bengali = 'Bengali';
+const marathi = 'Marathi';
+const telugu = 'Telugu';
+const tamil = 'Tamil';
+const gujarati = 'Gujarati';
+const urdu = 'Urdu';
+const kannada = 'Kannada';
+const odia = 'Odia';
+const malayalam = 'Malayalam';
+const punjabi = 'Punjabi';

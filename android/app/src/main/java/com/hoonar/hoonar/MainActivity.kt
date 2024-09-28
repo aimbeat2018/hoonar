@@ -1,4 +1,4 @@
-package com.retrytech.bubbly
+package com.hoonar.hoonar
 
 import android.content.Intent
 import androidx.annotation.NonNull
@@ -10,6 +10,7 @@ class MainActivity : FlutterActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
     }
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
     }

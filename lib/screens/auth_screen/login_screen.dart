@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/auth_screen/forgot_password_screen.dart';
 import 'package:hoonar/screens/auth_screen/signup_screen.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../constants/color_constants.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -56,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Center(
                   child: Text(
-                    login,
+                    AppLocalizations.of(context)!.login,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       color: Colors.white,
@@ -74,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        phoneNumber,
+                        AppLocalizations.of(context)!.phoneNumber,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -105,9 +104,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: TextFormField(
                           validator: (v) {
                             if (v!.trim().isEmpty) {
-                              return enterPhoneNumber;
+                              return AppLocalizations.of(context)!
+                                  .enterPhoneNumber;
                             } else if (v.length != 10) {
-                              return enterValidPhoneNumber;
+                              return AppLocalizations.of(context)!
+                                  .enterValidPhoneNumber;
                             }
                             return null;
                           },
@@ -137,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        password,
+                        AppLocalizations.of(context)!.password,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -218,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }),
                         Expanded(
                           child: Text(
-                            rememberMe,
+                            AppLocalizations.of(context)!.rememberMe,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.white,
@@ -232,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             SlideRightRoute(page: ForgotPasswordScreen()),
                           ),
                           child: Text(
-                            forgotPass,
+                            AppLocalizations.of(context)!.forgotPass,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.white,
@@ -265,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: Text(
-                          login,
+                          AppLocalizations.of(context)!.login,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
@@ -296,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: Text(
-                          createAcc,
+                          AppLocalizations.of(context)!.createAcc,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
@@ -313,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Center(
                   child: Text(
-                    loginWith,
+                    AppLocalizations.of(context)!.loginWith,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 14,

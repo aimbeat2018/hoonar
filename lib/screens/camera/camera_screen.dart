@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/camera/preview_screen.dart';
+import 'package:hoonar/screens/camera/widget/confirmation_dialog.dart';
 import 'package:hoonar/screens/camera/widget/seconds_tab.dart';
 import 'package:hoonar_camera/hoonar_camera.dart';
 import 'package:image_picker/image_picker.dart';
@@ -37,7 +38,7 @@ class _CameraScreenState extends State<CameraScreen> {
   bool isFlashOn = false;
   bool isFront = false;
   bool isSelected15s = true;
-  bool isMusicSelect = false;
+  bool isMusicSelect = true;
   bool isStartRecording = false;
   bool isRecordingStaring = false;
   bool isShowPlayer = false;
@@ -108,6 +109,51 @@ class _CameraScreenState extends State<CameraScreen> {
             children: [
               SizedBox(height: 10),
               SafeArea(
+                  child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/music.png',
+                      height: 33,
+                      width: 33,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Image.asset(
+                      'assets/images/timer.png',
+                      height: 33,
+                      width: 33,
+                    ),
+                    Spacer(),
+                    InkWell(
+                      onTap: (){
+                        showDialog(
+                            context: context,
+                            builder: (mContext) {
+                              return ConfirmationDialog(
+                                aspectRatio: 2,
+                                title1: areYouSure,
+                                title2: doYouReallyWantToGoBack,
+                                positiveText: yes,
+                                onPositiveTap: () async {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                              );
+                            });
+                      },
+                      child: Image.asset(
+                        'assets/images/close.png',
+                        height: 33,
+                        width: 33,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+              SafeArea(
                 bottom: false,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
@@ -151,20 +197,20 @@ class _CameraScreenState extends State<CameraScreen> {
                         size: 22,
                         iconData: Icons.close_rounded,
                         onTap: () {
-                          /* showDialog(
+                          showDialog(
                               context: context,
                               builder: (mContext) {
                                 return ConfirmationDialog(
                                   aspectRatio: 2,
-                                  title1: LKey.areYouSure.tr,
-                                  title2: LKey.doYouReallyWantToGoBack.tr,
-                                  positiveText: LKey.yes.tr,
+                                  title1: areYouSure,
+                                  title2: doYouReallyWantToGoBack,
+                                  positiveText: yes,
                                   onPositiveTap: () async {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                   },
                                 );
-                              });*/
+                              });
                         },
                       ),
                     ),
