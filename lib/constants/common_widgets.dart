@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Appbar Widget
-PreferredSizeWidget buildAppbar(BuildContext context) {
+PreferredSizeWidget buildAppbar(BuildContext context, bool isDarkMode) {
   return AppBar(
     elevation: 0,
     toolbarHeight: 28,
@@ -18,6 +18,7 @@ PreferredSizeWidget buildAppbar(BuildContext context) {
           'assets/images/back_image.png',
           height: 28,
           width: 28,
+          color: isDarkMode ? Colors.white : Colors.black,
         ),
       ),
     ),

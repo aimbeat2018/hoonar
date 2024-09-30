@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/auth_screen/create_password_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -53,10 +53,10 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildAppbar(context),
+                buildAppbar(context, false),
                 Center(
                   child: Text(
-                    signup,
+                    AppLocalizations.of(context)!.signup,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       color: Colors.white,
@@ -74,7 +74,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        fullName,
+                        AppLocalizations.of(context)!.fullName,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -105,12 +105,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: TextFormField(
                           validator: (v) {
                             if (v!.trim().isEmpty) {
-                              return enterFullName;
+                              return AppLocalizations.of(context)!
+                                  .enterFullName;
                             }
                             return null;
                           },
                           maxLines: 1,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 3),
@@ -132,7 +133,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        email,
+                        AppLocalizations.of(context)!.email,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -163,7 +164,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: TextFormField(
                           validator: (v) {
                             if (v!.trim().isEmpty) {
-                              return enterEmail;
+                              return AppLocalizations.of(context)!.enterEmail;
                             }
                             return null;
                           },
@@ -190,7 +191,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        phone,
+                        AppLocalizations.of(context)!.phone,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -221,9 +222,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: TextFormField(
                           validator: (v) {
                             if (v!.trim().isEmpty) {
-                              return enterPhoneNumber;
+                              return AppLocalizations.of(context)!
+                                  .enterPhoneNumber;
                             } else if (v.length != 10) {
-                              return enterValidPhoneNumber;
+                              return AppLocalizations.of(context)!
+                                  .enterValidPhoneNumber;
                             }
                             return null;
                           },
@@ -253,7 +256,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        dob,
+                        AppLocalizations.of(context)!.dob,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -284,7 +287,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: TextFormField(
                           validator: (v) {
                             if (v!.trim().isEmpty) {
-                              return enterDob;
+                              return AppLocalizations.of(context)!.enterDob;
                             }
                             return null;
                           },
@@ -311,7 +314,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        pinCode,
+                        AppLocalizations.of(context)!.pinCode,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -380,7 +383,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0),
                                 child: Text(
-                                  city,
+                                  AppLocalizations.of(context)!.city,
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     color: Colors.white,
@@ -460,7 +463,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15.0),
                                 child: Text(
-                                  state,
+                                  AppLocalizations.of(context)!.state,
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     color: Colors.white,
@@ -540,7 +543,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        school,
+                        AppLocalizations.of(context)!.school,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -626,7 +629,8 @@ class _SignupScreenState extends State<SignupScreen> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: acceptTer,
+                                    text:
+                                        AppLocalizations.of(context)!.acceptTer,
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: Colors.white,
@@ -634,7 +638,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: privacyPolicy,
+                                    text: AppLocalizations.of(context)!
+                                        .privacyPolicy,
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: const Color(0xFFFFCDB3),
@@ -672,7 +677,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
                         child: Text(
-                          createAcc,
+                          AppLocalizations.of(context)!.createAcc,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,

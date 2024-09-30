@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OptionsScreen extends StatefulWidget {
   final SliderModel? model;
@@ -54,7 +54,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                       height: 3,
                     ),
                     Text(
-                      votes,
+                      AppLocalizations.of(context)!.votes,
                       style: GoogleFonts.poppins(
                         fontSize: 8,
                         color: Colors.white,
@@ -78,7 +78,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     height: 3,
                   ),
                   Text(
-                    likes,
+                    AppLocalizations.of(context)!.likes,
                     style: GoogleFonts.poppins(
                       fontSize: 8,
                       color: Colors.white,
@@ -100,7 +100,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     height: 3,
                   ),
                   Text(
-                    comments,
+                    AppLocalizations.of(context)!.comments,
                     style: GoogleFonts.poppins(
                       fontSize: 8,
                       color: Colors.white,
@@ -122,7 +122,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     height: 3,
                   ),
                   Text(
-                    share,
+                    AppLocalizations.of(context)!.share,
                     style: GoogleFonts.poppins(
                       fontSize: 8,
                       color: Colors.white,

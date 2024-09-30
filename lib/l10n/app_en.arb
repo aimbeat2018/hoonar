@@ -102,5 +102,10 @@
   "cancel": "Cancel",
   "yes": "Yes",
   "areYouSure": "Are you sure?",
-  "doYouReallyWantToGoBack": "Do you really want to go back?"
+  "doYouReallyWantToGoBack": "Do you really want to go back?",
+  "darkMode": "Dark Mode",
+  "darkModeSubtitle": "Change your app theme",
+  "lightMode": "Light Mode",
+  "systemDefault": "System Default",
+  "changeTheme": "Change Theme"
 }

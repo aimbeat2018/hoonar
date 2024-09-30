@@ -7,9 +7,8 @@ import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/auth_screen/create_password_screen.dart';
-import 'package:hoonar/screens/auth_screen/signup_screen.dart';
-import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -42,13 +41,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              buildAppbar(context),
+              buildAppbar(context, false),
               const SizedBox(
                 height: 10,
               ),
               Center(
                 child: Text(
-                  forgotPass.replaceAll("?", ""),
+                  AppLocalizations.of(context)!.forgotPass.replaceAll("?", ""),
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     color: Colors.white,
@@ -68,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        phone,
+                        AppLocalizations.of(context)!.phone,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -134,6 +133,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                           ],
+                          validator: (v) {
+                            if (v!.trim().isEmpty) {
+                              return AppLocalizations.of(context)!
+                                  .enterPhoneNumber;
+                            } else if (v.length != 10) {
+                              return AppLocalizations.of(context)!
+                                  .enterValidPhoneNumber;
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ),
@@ -158,7 +167,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                         ),
                         child: Text(
-                          sendOtp,
+                          AppLocalizations.of(context)!.sendOtp,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
@@ -180,7 +189,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: otpSentMsg,
+                              text: AppLocalizations.of(context)!.otpSentMsg,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -282,7 +291,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ),
                           ),
                           child: Text(
-                            verifyOtp,
+                            AppLocalizations.of(context)!.verifyOtp,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                               fontSize: 14,

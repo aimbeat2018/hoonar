@@ -101,5 +101,10 @@
   "yes": "అవును",
   "areYouSure": "మీరు ఖచ్చితంగా ఉన్నారా",
   "doYouReallyWantToGoBack": "మీరు నిజంగా వెనక్కి వెళ్లాలనుకుంటున్నారా?",
-  "logout": "లాగ్ అవుట్"
+  "logout": "లాగ్ అవుట్",
+  "darkMode": "చీకటి మోడ్",
+  "darkModeSubtitle": "మీ యాప్ థీమ్‌ను మార్చండి",
+  "lightMode": "వెన్నెల మోడ్",
+  "systemDefault": "సిస్టమ్ డిఫాల్ట్",
+  "changeTheme" :  "థీమ్ మార్చండి"
 }

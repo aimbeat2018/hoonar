@@ -202,7 +202,7 @@ class MyLoading extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isDark = true;
+  bool _isDark = false;
 
   bool get isDark => _isDark;
 
@@ -218,6 +218,7 @@ class MyLoading extends ChangeNotifier {
       _isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
     );
     sessionManager.saveBoolean(KeyRes.themeLoading, _isDark);
+    // notifyListeners();
   }
 
   void getPrefData() {

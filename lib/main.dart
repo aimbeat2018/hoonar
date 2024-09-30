@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
+import 'package:hoonar/theme/style.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'constants/const_res.dart';
@@ -56,8 +57,9 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: supportedLocales,
             locale: Locale(myLoading.languageCode),
-            // fallbackLocale: const Locale(byDefaultLanguage),
-            // theme: myLoading.isDark ? darkTheme(context) : lightTheme(context),
+            theme: myLoading.isDark
+                ? ThemeUtils.darkTheme(context)
+                : ThemeUtils.lightTheme(context),
             home: MainScreen(),
           );
         },

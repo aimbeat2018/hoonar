@@ -101,5 +101,10 @@
   "yes": "ஆம்",
   "areYouSure": "நீங்கள் உறுதியாக இருக்கிறீர்களா",
   "doYouReallyWantToGoBack": "நீங்கள் உண்மையாக பின்னுக்கு போவேனா?",
-  "logout": "வெளியேறு"
+  "logout": "வெளியேறு",
+  "darkMode": "டார்க் மோடு",
+  "darkModeSubtitle": "உங்கள் ஆப்லின் தீமை மாற்றுங்கள்",
+  "lightMode": "லைட் மோடு",
+  "systemDefault": "சிஸ்டம் இயல்புநிலை",
+  "changeTheme": "தீமை மாற்றவும்"
 }

@@ -101,5 +101,10 @@
   "yes": "ਹਾਂ",
   "areYouSure": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਹਾਂ",
   "doYouReallyWantToGoBack": "ਕੀ ਤੁਸੀਂ ਸੱਚਮੁੱਚ ਵਾਪਸ ਜਾਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
-  "logout": "ਲੌਗ ਆਉਟ"
+  "logout": "ਲੌਗ ਆਉਟ",
+  "darkMode": "ਗੋਲ਼ ਮੋਡ",
+  "darkModeSubtitle": "ਆਪਣੇ ਐਪ ਦੇ ਥੀਮ ਨੂੰ ਬਦਲੋ",
+  "lightMode": "ਲਾਈਟ ਮੋਡ",
+  "systemDefault": "ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ",
+  "changeTheme": "ਥੀਮ ਬਦਲੋ"
 }

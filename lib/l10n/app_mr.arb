@@ -101,5 +101,10 @@
   "yes": "होय",
   "areYouSure": "तुम्हाला खात्री आहे का",
   "doYouReallyWantToGoBack": "तुम्हाला खरोखर परत जावेसे वाटते का?",
-  "logout": "लॉगआउट"
+  "logout": "लॉगआउट",
+  "darkMode": "डार्क मोड",
+  "darkModeSubtitle": "आपल्या अॅपचा थीम बदला",
+  "lightMode": "लाईट मोड",
+  "systemDefault": "सिस्टम डिफॉल्ट",
+  "changeTheme": "थीम बदला"
 }

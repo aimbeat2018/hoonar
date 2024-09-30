@@ -5,6 +5,7 @@ import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReelsScreen extends StatefulWidget {
   final SliderModel model;
@@ -18,7 +19,6 @@ class ReelsScreen extends StatefulWidget {
 class _ReelsScreenState extends State<ReelsScreen> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
-  bool _liked = false;
   bool _isPaused = false;
 
   @override
@@ -30,8 +30,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
   Future initializePlayer() async {
     // _videoPlayerController =
     //     VideoPlayerController.networkUrl(Uri.parse(widget.model.video));
-    _videoPlayerController =
-        VideoPlayerController.asset(widget.model.video);
+    _videoPlayerController = VideoPlayerController.asset(widget.model.video);
     await Future.wait([_videoPlayerController.initialize()]);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -102,7 +101,8 @@ class _ReelsScreenState extends State<ReelsScreen> {
                 Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 5),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 5),
                     child: Row(
                       children: [
                         CircleAvatar(
@@ -132,7 +132,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.white),
                                 child: Text(
-                                  follow,
+                                  AppLocalizations.of(context)!.follow,
                                   style: GoogleFonts.poppins(
                                     fontSize: 8,
                                     color: Colors.black,

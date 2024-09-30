@@ -10,8 +10,10 @@ import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/judges_choice_screen.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import '../../constants/color_constants.dart';
+import '../../constants/my_loading/my_loading.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,34 +39,44 @@ class _HomeScreenState extends State<HomeScreen> {
       CS.CarouselSliderController();
   SwiperController controller = SwiperController();
   SwiperController videoSwiperController = SwiperController();
-  bool _isSyncing = false;
   int currentIndex = 0;
-  List<OtherListModel> otherList = [
-    OtherListModel(judgesChoice, [
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-    ]),
-    OtherListModel(favrite, [
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-    ]),
-    OtherListModel(foryours, [
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-      'assets/images/judgesCh.png',
-      'assets/images/foryours.png',
-    ])
-  ];
+  List<OtherListModel> otherList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        otherList = [
+          OtherListModel(AppLocalizations.of(context)!.judgesChoice, [
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+          ]),
+          OtherListModel(AppLocalizations.of(context)!.favrite, [
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+          ]),
+          OtherListModel(AppLocalizations.of(context)!.foryours, [
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+            'assets/images/judgesCh.png',
+            'assets/images/foryours.png',
+          ])
+        ];
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -77,189 +89,210 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        backgroundColor: Colors.black,
-        title: Row(
-          children: [
-            InkWell(
-              child: Image.asset(
-                'assets/images/small_logo.png',
-                height: 30,
-                width: 30,
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: false,
+          backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+          title: Row(
+            children: [
+              InkWell(
+                child: Image.asset(
+                  'assets/images/small_logo.png',
+                  height: 30,
+                  width: 30,
+                  color: myLoading.isDark ? Colors.white : Colors.black,
+                ),
               ),
-            ),
-            sizedBoxW10,
-            Text(
-              appName.toUpperCase(),
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
+              sizedBoxW10,
+              Text(
+                AppLocalizations.of(context)!.appName.toUpperCase(),
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: myLoading.isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child: Icon(
+                Icons.notifications,
+                color: myLoading.isDark ? Colors.white : Colors.black,
               ),
             ),
           ],
         ),
-        actions: <Widget>[
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(
-              Icons.notifications,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              CS.CarouselSlider.builder(
-                carouselController: _carouselController,
-                itemCount: typeList.length,
-                itemBuilder: (BuildContext context, int index, int realIndex) {
-                  return GestureDetector(
-                    onTap: () {
-                      // On tap, go to the next slide
-                      setState(() {
-                        _currentIndex = index;
-                        _carouselController
-                            .animateToPage(index); // Jump to the tapped item
-                      });
-                    },
-                    child: Container(
-                      /*margin:
-                            EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
-                      // 10% of the screen width for margin
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                      decoration: _currentIndex == index
-                          ? const BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(0.00, 1.00),
-                                end: Alignment(0, -1),
-                                colors: [
-                                  Colors.black,
-                                  Color(0xFF313131),
-                                  Color(0xFF636363)
-                                ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 10,
+                ),
+                CS.CarouselSlider.builder(
+                  carouselController: _carouselController,
+                  itemCount: typeList.length,
+                  itemBuilder:
+                      (BuildContext context, int index, int realIndex) {
+                    return GestureDetector(
+                      onTap: () {
+                        // On tap, go to the next slide
+                        setState(() {
+                          _currentIndex = index;
+                          _carouselController
+                              .animateToPage(index); // Jump to the tapped item
+                        });
+                      },
+                      child: Container(
+                        /*margin:
+                                EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
+                        // 10% of the screen width for margin
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        decoration: _currentIndex == index
+                            ? BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment(0.00, 1.00),
+                                  end: Alignment(0, -1),
+                                  colors: [
+                                    Colors.black,
+                                    Color(0xFF313131),
+                                    Color(0xFF636363)
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(7.96),
+                                  topRight: Radius.circular(7.96),
+                                ),
+                                border: Border(
+                                  top: BorderSide(
+                                    width: 1.5,
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              )
+                            : BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(7.96),
-                                topRight: Radius.circular(7.96),
-                              ),
-                              border: Border(
-                                top:
-                                    BorderSide(width: 1.5, color: Colors.white),
-                              ),
-                            )
-                          : BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
+                        child: Center(
+                          child: Text(
+                            typeList[index],
+                            textAlign: TextAlign.start,
+                            style: GoogleFonts.poppins(
+                              color: _currentIndex == index
+                                  ? Colors.white
+                                  : myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: _currentIndex == index ? 13 : 12,
                             ),
-                      child: Center(
-                        child: Text(
-                          typeList[index],
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                            fontSize: _currentIndex == index ? 13 : 12,
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-                options: CS.CarouselOptions(
-                  height: 50.0,
-                  autoPlay: false,
-                  enlargeCenterPage: true,
-                  aspectRatio: 4 / 3,
-                  autoPlayInterval: const Duration(seconds: 3),
-                  enableInfiniteScroll: true,
-                  viewportFraction: 0.3,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentIndex = index; // Update the current index
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                  height: screenHeight * 0.58,
-                  child: SliderPageView(
-                    sliderModelList: sliderModelList,
-                  )),
-              // swiperSlider(),
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      SlideRightRoute(
-                          page: const CategoryWiseVideosListScreen()),
                     );
                   },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        gradient: const LinearGradient(
-                          colors: [
-                            greyTextColor5,
-                            greyTextColor6,
-                            greyTextColor5
-                          ],
-                        )),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: Colors.white,
-                        ),
-                        Text(
-                          viewMore,
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
+                  options: CS.CarouselOptions(
+                    height: 50.0,
+                    autoPlay: false,
+                    enlargeCenterPage: true,
+                    aspectRatio: 4 / 3,
+                    autoPlayInterval: const Duration(seconds: 3),
+                    enableInfiniteScroll: true,
+                    viewportFraction: 0.3,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentIndex = index; // Update the current index
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                    height: screenHeight * 0.58,
+                    child: SliderPageView(
+                      sliderModelList: sliderModelList,
+                    )),
+                // swiperSlider(),
+                Center(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        SlideRightRoute(
+                            page: const CategoryWiseVideosListScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          gradient: LinearGradient(
+                            colors: [
+                              myLoading.isDark
+                                  ? greyTextColor5
+                                  : greyTextColor6,
+                              myLoading.isDark
+                                  ? greyTextColor6
+                                  : greyTextColor8,
+                              myLoading.isDark
+                                  ? greyTextColor5
+                                  : greyTextColor6,
+                            ],
+                          )),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.arrow_drop_down_sharp,
                             color: Colors.white,
-                            fontWeight: FontWeight.w500,
                           ),
-                        ),
-                      ],
+                          Text(
+                            AppLocalizations.of(context)!.viewMore,
+                            textAlign: TextAlign.start,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              ListView.builder(
-                itemCount: otherList.length,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return otherListWidget(otherList[index]);
-                },
-              ),
+                ListView.builder(
+                  itemCount: otherList.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return otherListWidget(otherList[index],myLoading.isDark);
+                  },
+                ),
 
-              SizedBox(
-                height: 50,
-              )
-            ],
+                SizedBox(
+                  height: 50,
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget otherListWidget(OtherListModel model) {
+  Widget otherListWidget(OtherListModel model,bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 0),
       child: Column(
@@ -279,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   textAlign: TextAlign.start,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
-                    color: Colors.white,
+                    color: isDarkMode?Colors.white:Colors.black,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -292,10 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 child: Text(
-                  viewAll,
+                  AppLocalizations.of(context)!.viewAll,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.inter(
-                      color: Colors.white,
+                      color: isDarkMode?Colors.white:Colors.black,
                       fontWeight: FontWeight.normal,
                       fontSize: 12),
                 ),

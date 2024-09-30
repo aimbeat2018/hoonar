@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/languagesSupported/change_language_screen.dart';
-import 'package:hoonar/screens/reels/reels_list_screen.dart';
-
+import 'package:hoonar/screens/profile/menuOptionsScreens/change_language_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/change_theme_screen.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
-import '../../../constants/text_constants.dart';
 import '../../../constants/theme.dart';
 
 class AboutAppScreen extends StatefulWidget {
@@ -22,111 +23,135 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-      padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
-      width: double.infinity,
-      height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-          /*image: DecorationImage(
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+          body: Container(
+        padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+            /*image: DecorationImage(
           image: AssetImage('assets/images/screens_back.png'),
           // Path to your image
           fit: BoxFit.cover, // Ensures the image covers the entire container
         ),*/
-          color: Colors.black),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildAppbar(context),
-            const SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: GradientText(
-                aboutApp,
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                ),
-                gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.topRight,
-                    colors: [Colors.white, greyTextColor8]),
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms)
-                  .then(delay: 200.ms) // baseline=800ms
-                  .slide(),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            _buildSection(context,
-                icon: 'assets/images/notification.png',
-                title: notification,
-                subtitle: notificationSubTitle,
-                trailing: _buildCustomSwitch(false)),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/app_version.png',
-              title: appVersion,
-              subtitle: '1.3',
-            ),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/contact_email.png',
-              title: contactEmail,
-              subtitle: 'customercare@hoonarstar.in',
-            ),
-            _buildDivider(),
-            _buildSection(context,
-                icon: 'assets/images/language.png',
-                title: language,
-                subtitle: languageSubTitle, onTap: () {
-              Navigator.push(
+            color: myLoading.isDark ? Colors.black : Colors.white),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildAppbar(context, myLoading.isDark),
+              const SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: GradientText(
+                  AppLocalizations.of(context)!.aboutApp,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    color: myLoading.isDark ? Colors.black : Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.topRight,
+                      colors: [
+                        myLoading.isDark ? Colors.white : Colors.black,
+                        myLoading.isDark ? Colors.white : Colors.black,
+                        myLoading.isDark ? greyTextColor8 : Colors.grey.shade700
+                      ]),
+                )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .then(delay: 200.ms) // baseline=800ms
+                    .slide(),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              _buildSection(context, myLoading.isDark,
+                  icon: 'assets/images/notification.png',
+                  title: AppLocalizations.of(context)!.notification,
+                  subtitle: AppLocalizations.of(context)!.notificationSubTitle,
+                  trailing: _buildCustomSwitch(false)),
+              _buildDivider(),
+              _buildSection(
                 context,
-                SlideRightRoute(page: ChangeLanguageScreen()),
-              );
-            }),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/copyright.png',
-              title: copyright,
-              subtitle: copyrightSubTitle,
-            ),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/faq.png',
-              title: faq,
-              subtitle: faqSubTitle,
-            ),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/share_app.png',
-              title: share,
-              subtitle: shareSubTitle,
-            ),
-            _buildDivider(),
-            _buildSection(
-              context,
-              icon: 'assets/images/delete_account.png',
-              title: deleteAccount,
-              subtitle: deleteAccountSubTitle,
-            ),
-          ],
+                myLoading.isDark,
+                icon: 'assets/images/app_version.png',
+                title: AppLocalizations.of(context)!.appVersion,
+                subtitle: '1.3',
+              ),
+              _buildDivider(),
+              _buildSection(
+                context,
+                myLoading.isDark,
+                icon: 'assets/images/contact_email.png',
+                title: AppLocalizations.of(context)!.contactEmail,
+                subtitle: 'customercare@hoonarstar.in',
+              ),
+              _buildDivider(),
+              _buildSection(context, myLoading.isDark,
+                  icon: 'assets/images/language.png',
+                  title: AppLocalizations.of(context)!.language,
+                  subtitle: AppLocalizations.of(context)!.languageSubTitle,
+                  onTap: () {
+                Navigator.push(
+                  context,
+                  SlideRightRoute(page: const ChangeLanguageScreen()),
+                );
+              }),
+              _buildDivider(),
+              _buildSection(context, myLoading.isDark,
+                  icon: 'assets/images/change_theme.png',
+                  title: AppLocalizations.of(context)!.darkMode,
+                  subtitle: AppLocalizations.of(context)!.darkModeSubtitle,
+                  onTap: () {
+                Navigator.push(
+                  context,
+                  SlideRightRoute(page: const ChangeThemeScreen()),
+                );
+              }),
+              _buildDivider(),
+              _buildSection(
+                context,
+                myLoading.isDark,
+                icon: 'assets/images/copyright.png',
+                title: AppLocalizations.of(context)!.copyright,
+                subtitle: AppLocalizations.of(context)!.copyrightSubTitle,
+              ),
+              _buildDivider(),
+              _buildSection(
+                context,
+                myLoading.isDark,
+                icon: 'assets/images/faq.png',
+                title: AppLocalizations.of(context)!.faq,
+                subtitle: AppLocalizations.of(context)!.faqSubTitle,
+              ),
+              _buildDivider(),
+              _buildSection(
+                context,
+                myLoading.isDark,
+                icon: 'assets/images/share_app.png',
+                title: AppLocalizations.of(context)!.share,
+                subtitle: AppLocalizations.of(context)!.shareSubTitle,
+              ),
+              _buildDivider(),
+              _buildSection(
+                context,
+                myLoading.isDark,
+                icon: 'assets/images/delete_account.png',
+                title: AppLocalizations.of(context)!.deleteAccount,
+                subtitle: AppLocalizations.of(context)!.deleteAccountSubTitle,
+              ),
+            ],
+          ),
         ),
-      ),
-    ));
+      ));
+    });
   }
 
-  Widget _buildSection(BuildContext context,
+  Widget _buildSection(BuildContext context, bool isDarkMode,
       {required String icon,
       required String title,
       required String subtitle,
@@ -151,7 +176,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                     height: 25,
                     width: 25,
                   ),
-                  SizedBox(width: 15),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,16 +185,16 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                           title,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
-                            color: Colors.white,
+                            color: isDarkMode ? Colors.white : Colors.black,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           subtitle,
                           style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: Colors.white60,
+                            color: isDarkMode ? Colors.white60 : Colors.grey,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -188,11 +213,15 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
 
   Widget _buildCustomSwitch(bool value) {
     enableNotification = value;
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        // Handle switch toggle here if needed
         setState(() {
-          enableNotification = !enableNotification;
+          if (enableNotification) {
+            enableNotification = false;
+          } else {
+            enableNotification = true;
+          }
+          // enableNotification = !enableNotification;
         });
       },
       child: Container(
@@ -204,14 +233,14 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
         ),
         alignment:
             enableNotification ? Alignment.centerRight : Alignment.centerLeft,
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: Row(
           children: [
             enableNotification
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: Text(
-                      on.toUpperCase(),
+                      AppLocalizations.of(context)!.on.toUpperCase(),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: Colors.white60,
@@ -219,11 +248,11 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                       ),
                     ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
             Container(
               width: 22,
               height: 22,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
@@ -232,7 +261,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5.0),
                     child: Text(
-                      off.toUpperCase(),
+                      AppLocalizations.of(context)!.off.toUpperCase(),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: Colors.white60,
@@ -240,7 +269,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                       ),
                     ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
       ),
@@ -248,7 +277,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
   }
 
   Widget _buildDivider() {
-    return Divider(
+    return const Divider(
       color: greyTextColor8,
     ); // Add spacing between sections
   }

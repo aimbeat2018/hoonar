@@ -101,5 +101,10 @@
   "yes": "ಹೌದು",
   "areYouSure": "ನೀವು ಖಚಿತವಾಗಿ ಇದ್ದೀರಾ",
   "doYouReallyWantToGoBack": "ನೀವು ನಿಜವಾಗಿಯೂ ಹಿಂದಕ್ಕೆ ಹೋಗಲು ಬಯಸುತ್ತೀರಾ?",
-  "logout": "ನಲಾಗ್ ಔಟ್"
+  "logout": "ನಲಾಗ್ ಔಟ್",
+  "darkMode": "ಡಾರ್ಕ್ ಮೋಡ್",
+  "darkModeSubtitle": "ನಿಮ್ಮ ಆಪ್ ಥೀಮ್ ಅನ್ನು ಬದಲಾಯಿಸಿ",
+  "lightMode": "ಲೈಟ್ ಮೋಡ್",
+  "systemDefault": "ಸಿಸ್ಟಮ್ ಡೀಫಾಲ್ಟ್",
+  "changeTheme": "ಥೀಮ್ ಬದಲಾಯಿಸಿ"
 }

@@ -5,12 +5,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 class CarouselSlider extends StatelessWidget {
   final int amount;
   final int position;
-
+  final bool? isDarkMode;
   late double sliderLength;
 
   CarouselSlider({
     Key? key,
     required this.position,
+    required this.isDarkMode,
     required this.amount,
   }) : super(key: key) {
     // sliderLength = properties.trackbarLength / amount;
@@ -23,12 +24,12 @@ class CarouselSlider extends StatelessWidget {
       child: Stack(
         children: [
           AnimatedSmoothIndicator(
-            activeIndex:position,
+            activeIndex: position,
             count: amount,
-            effect: const ExpandingDotsEffect(
+            effect: ExpandingDotsEffect(
               dotHeight: 8,
               dotWidth: 8,
-              activeDotColor: Colors.white,
+              activeDotColor: isDarkMode! ? Colors.white : Colors.black,
               dotColor: Colors.grey,
             ),
           ),
@@ -52,13 +53,13 @@ class CarouselSlider extends StatelessWidget {
     );
   }
 
-  // double get xPos {
-  //   double freeLength = 10 - sliderLength;
-  //   if (freeLength <= 1) {
-  //     return 0;
-  //   }
-  //   freeLength = (freeLength * position) / freeLength;
-  //   return -0.9 + (2 * freeLength);
-  //   // return 12;
-  // }
+// double get xPos {
+//   double freeLength = 10 - sliderLength;
+//   if (freeLength <= 1) {
+//     return 0;
+//   }
+//   freeLength = (freeLength * position) / freeLength;
+//   return -0.9 + (2 * freeLength);
+//   // return 12;
+// }
 }

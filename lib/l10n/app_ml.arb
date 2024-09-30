@@ -101,5 +101,10 @@
   "yes": "അതെ",
   "areYouSure": "നിങ്ങൾക്ക് ഉറപ്പാണോ",
   "doYouReallyWantToGoBack": "നിങ്ങൾക്ക് നจริงയായി തിരിച്ചു പോകണമെന്ന് തോന്നുന്നുണ്ടോ?",
-  "logout": " ലോഡ്\u200C ഔട്ട്"
+  "logout": " ലോഡ്\u200C ഔട്ട്",
+  "darkMode": "ഡാർക്ക് മോഡ്",
+  "darkModeSubtitle": "ആപ്പിന്റെ തീം മാറ്റുക",
+  "lightMode": "ലൈറ്റ് മോഡ്",
+  "systemDefault": "സിസ്റ്റം ഡീഫോൾട്ട്",
+  "changeTheme": "തീം മാറ്റുക"
 }

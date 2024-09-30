@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import '../../constants/my_loading/my_loading.dart';
 import '../../model/comment.dart';
 
 class VideoCommentScreen extends StatefulWidget {
@@ -52,73 +53,78 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
   Widget build(BuildContext context) {
     double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
-    return SafeArea(
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        height: keyboardHeight > 0 ? _height + keyboardHeight : _height,
-        child: Column(
-          children: [
-            Container(
-              width: 50,
-              height: 5,
-              margin: const EdgeInsets.only(top: 10, bottom: 10),
-              decoration: BoxDecoration(
-                color: Colors.grey[600],
-                borderRadius: BorderRadius.circular(10),
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return SafeArea(
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          height: keyboardHeight > 0 ? _height + keyboardHeight : _height,
+          child: Column(
+            children: [
+              Container(
+                width: 50,
+                height: 5,
+                margin: const EdgeInsets.only(top: 10, bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.grey[600],
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-            ),
-            Text(
-              comments,
-              style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14),
-            ),
+              Text(
+                AppLocalizations.of(context)!.comments,
+                style: GoogleFonts.poppins(
+                    color: myLoading.isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14),
+              ),
 
-            Expanded(
-              child: ListView.builder(
-                itemCount: commentList.length,
-                itemBuilder: (context, index) {
-                  return _buildCommentItem(commentList[index], index);
-                },
+              Expanded(
+                child: ListView.builder(
+                  itemCount: commentList.length,
+                  itemBuilder: (context, index) {
+                    return _buildCommentItem(
+                        commentList[index], index, myLoading.isDark);
+                  },
+                ),
               ),
-            ),
-            // Reaction bar
-            SizedBox(height: 10),
-            // Add comment input
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18.0, // size of the avatar
-                    backgroundImage: NetworkImage(
-                        'https://img.freepik.com/free-photo/portrait-beautiful-indian-woman_23-2150913228.jpg'), // or AssetImage('assets/avatar.png')
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: addAComment,
-                        hintStyle: GoogleFonts.poppins(color: Colors.grey),
-                        border: InputBorder.none,
+              // Reaction bar
+              SizedBox(height: 10),
+              // Add comment input
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18.0, // size of the avatar
+                      backgroundImage: NetworkImage(
+                          'https://img.freepik.com/free-photo/portrait-beautiful-indian-woman_23-2150913228.jpg'), // or AssetImage('assets/avatar.png')
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.addAComment,
+                          hintStyle: GoogleFonts.poppins(color: Colors.grey),
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.send, color: Colors.white),
-                    onPressed: () {},
-                  ),
-                ],
+                    IconButton(
+                      icon: Icon(Icons.send,
+                          color:
+                              myLoading.isDark ? Colors.white : Colors.black),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Widget _buildCommentItem(Comment comment, int commentIndex) {
+  Widget _buildCommentItem(Comment comment, int commentIndex, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -143,7 +149,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                         Text(
                           comment.username,
                           style: GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: isDarkMode ? Colors.white : Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -159,7 +165,8 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                     Text(
                       comment.commentText,
                       style: GoogleFonts.poppins(
-                          color: Colors.white, fontSize: 13),
+                          color: isDarkMode ? Colors.white : Colors.black,
+                          fontSize: 13),
                     ),
                     Row(
                       children: [
@@ -171,7 +178,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                                 _selectedCommentIndex = commentIndex;
                               });
                             },
-                            child: Text(reply,
+                            child: Text(AppLocalizations.of(context)!.reply,
                                 style: GoogleFonts.poppins(
                                     color: Colors.grey, fontSize: 12)),
                           ),
@@ -181,7 +188,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                         ),
                         if (comment.replies.isNotEmpty)
                           Text(
-                              '${comment.replies.length} ${comment.replies.length == 1 ? reply.toLowerCase() : replies}',
+                              '${comment.replies.length} ${comment.replies.length == 1 ? AppLocalizations.of(context)!.reply.toLowerCase() : AppLocalizations.of(context)!.replies}',
                               style: GoogleFonts.poppins(
                                   color: Colors.grey, fontSize: 12)),
                       ],
@@ -191,10 +198,13 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
               ),
               Row(
                 children: [
-                  Icon(Icons.favorite_border, size: 18, color: Colors.white),
+                  Icon(Icons.favorite_border,
+                      size: 18,
+                      color: isDarkMode ? Colors.white : Colors.black),
                   SizedBox(width: 5),
                   Text(20.toString(),
-                      style: GoogleFonts.poppins(color: Colors.white)),
+                      style: GoogleFonts.poppins(
+                          color: isDarkMode ? Colors.white : Colors.black)),
                 ],
               ),
             ],

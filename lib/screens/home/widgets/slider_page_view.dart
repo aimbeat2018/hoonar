@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/model/slider_model.dart';
-import 'package:hoonar/screens/auth_screen/forgot_password_screen.dart';
 import 'package:hoonar/screens/customSlider/carousel_item.dart';
 import 'package:hoonar/screens/customSlider/carousel_slider.dart';
 import 'package:hoonar/screens/customSlider/enums.dart';
 import 'package:hoonar/screens/customSlider/models.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../../constants/text_constants.dart';
+import '../../../constants/my_loading/my_loading.dart';
 
 class SliderPageView extends StatefulWidget {
   final List<SliderModel> sliderModelList;
@@ -23,87 +24,6 @@ class SliderPageView extends StatefulWidget {
   @override
   _SliderPageViewState createState() => _SliderPageViewState();
 }
-
-/*class _SliderPageViewState extends State<SliderPageView> {
-  late PageController _pageController;
-  double currentPageValue = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController(viewportFraction: 0.5);
-    _pageController.addListener(() {
-      setState(() {
-        currentPageValue = _pageController.page!;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PageView with Overlap'),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: 5, // Adjust the number of items
-            itemBuilder: (context, index) {
-              // Call the custom item builder
-              return _buildPageItem(index);
-            },
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPageItem(int index) {
-    double scaleFactor = 0.9;
-    double currentScale =
-        (1 - (currentPageValue - index).abs()).clamp(0.8, 1.0);
-    double currentTranslation = 0.0;
-
-    if (currentPageValue - index < 0) {
-      currentTranslation = 60 * (0 - currentScale);
-    } else if (currentPageValue - index > 0) {
-      currentTranslation = -60 * (0 - currentScale);
-    }
-
-    return Transform.translate(
-      offset: Offset(currentTranslation, 0),
-      child: Transform.scale(
-        scale: currentScale,
-        child: Card(
-          elevation: 5,
-          color: Colors.blueAccent,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              color: Colors.blueAccent,
-            ),
-            child: Center(
-              child: Text(
-                'Page $index',
-                style: const TextStyle(fontSize: 24, color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}*/
 
 class _SliderPageViewState extends State<SliderPageView>
     with SingleTickerProviderStateMixin {
@@ -118,17 +38,13 @@ class _SliderPageViewState extends State<SliderPageView>
   @override
   void initState() {
     super.initState();
-
-    setChildrenDataWidget();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setChildrenDataWidget();
+    });
 
     // intitialize the animation
     controller = AnimationController(vsync: this, duration: animationDuration);
     controller.addListener(() {
-      // int currentPage = controller.page!.round(); // Get the current page index
-      // // Pause the video when the page changes
-      // if (_videoPlayerController.value.isPlaying) {
-      //   _videoPlayerController.pause();
-      // }
       setState(() {});
     });
     controller.addStatusListener((status) {
@@ -254,7 +170,7 @@ class _SliderPageViewState extends State<SliderPageView>
                                               BorderRadius.circular(10),
                                           color: Colors.white),
                                       child: Text(
-                                        follow,
+                                        AppLocalizations.of(context)!.follow,
                                         style: GoogleFonts.poppins(
                                           fontSize: 8,
                                           color: Colors.black,
@@ -308,39 +224,42 @@ class _SliderPageViewState extends State<SliderPageView>
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return SizedBox(
-      height: screenHeight,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onHorizontalDragEnd: ((details) {
-              if (details.velocity.pixelsPerSecond.dx > 0) {
-                _leftSwipe();
-              } else {
-                _rightSwipe();
-              }
-            }),
-            child: SizedBox(
-              width: double.maxFinite,
-              height: 400,
-              child: Stack(
-                children: children.isNotEmpty ? stackItems() : [],
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return SizedBox(
+        height: screenHeight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onHorizontalDragEnd: ((details) {
+                if (details.velocity.pixelsPerSecond.dx > 0) {
+                  _leftSwipe();
+                } else {
+                  _rightSwipe();
+                }
+              }),
+              child: SizedBox(
+                width: double.maxFinite,
+                height: 400,
+                child: Stack(
+                  children: children.isNotEmpty ? stackItems() : [],
+                ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          if (children.length > 1)
-            CarouselSlider(
-              position: activePage,
-              amount: children.length,
-            )
-        ],
-      ),
-    );
+            const SizedBox(
+              height: 20,
+            ),
+            if (children.length > 1)
+              CarouselSlider(
+                position: activePage,
+                amount: children.length,
+                isDarkMode: myLoading.isDark,
+              )
+          ],
+        ),
+      );
+    });
   }
 
   List<Widget> stackItems() {

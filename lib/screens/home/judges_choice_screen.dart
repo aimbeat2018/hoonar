@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../constants/common_widgets.dart';
+import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 
 class JudgesChoiceScreen extends StatefulWidget {
@@ -40,40 +42,42 @@ class _JudgesChoiceScreenState extends State<JudgesChoiceScreen> {
     // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: buildAppbar(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: GridView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(8),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 0,
-              mainAxisSpacing: 2,
-              childAspectRatio: 0.6, // Adjust according to image dimensions
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+        appBar: buildAppbar(context, myLoading.isDark ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: GridView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(8),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 0,
+                mainAxisSpacing: 2,
+                childAspectRatio: 0.6, // Adjust according to image dimensions
+              ),
+              itemCount: imageUrls.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    // SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(page: ReelsListScreen()),
+                    );
+                  },
+                  child: Image.asset(
+                    imageUrls[index],
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
             ),
-            itemCount: imageUrls.length,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  // SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
-                  Navigator.push(
-                    context,
-                    SlideRightRoute(page: ReelsListScreen()),
-                  );
-                },
-                child: Image.asset(
-                  imageUrls[index],
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
+import 'package:provider/provider.dart';
+
+import '../../../constants/my_loading/my_loading.dart';
 
 class FollowersScreen extends StatefulWidget {
   const FollowersScreen({super.key});
@@ -14,75 +17,44 @@ class _FollowersScreenState extends State<FollowersScreen>
     with SingleTickerProviderStateMixin {
   bool isFollow = false;
   late AnimationController _controller;
-  late Animation<Offset> _leftAnimation;
-  late Animation<Offset> _rightAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
-
-    _leftAnimation = Tween<Offset>(
-      begin: Offset(0.0, -1.0), // Start from the left
-      end: Offset(0.0, 0.0), // End at the center
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-
-    _scaleAnimation = Tween<double>(
-      begin: 0.0, // Start at 0 (invisible)
-      end: 1, // End at 1 (original size)
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-
-    _rightAnimation = Tween<Offset>(
-      begin: Offset(1.0, 0.0), // Start from the right
-      end: Offset(0.0, 0.0), // End at the center
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
-
-    _controller.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AnimatedList(
-        initialItemCount: 10,
-        itemBuilder: (context, index, animation) {
-          return buildItem(animation, index); // Build each list item
-        },
-      ),
-    );
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AnimatedList(
+          initialItemCount: 10,
+          itemBuilder: (context, index, animation) {
+            return buildItem(
+                animation, index, myLoading.isDark); // Build each list item
+          },
+        ),
+      );
+    });
   }
 
-  Widget buildItem(Animation<double> animation, int index) {
+  Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
-          side: const BorderSide(
+          side: BorderSide(
             width: 0.80,
             strokeAlign: BorderSide.strokeAlignOutside,
-            color: Colors.white,
+            color: isDarkMode ? Colors.white : Colors.black,
           ),
           borderRadius: BorderRadius.circular(6.19),
         ),
@@ -111,7 +83,7 @@ class _FollowersScreenState extends State<FollowersScreen>
                         'Hitesh Malekar',
                         style: GoogleFonts.poppins(
                           fontSize: 13,
-                          color: Colors.white,
+                          color: isDarkMode ? Colors.white : Colors.black,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -143,16 +115,26 @@ class _FollowersScreenState extends State<FollowersScreen>
               margin: const EdgeInsets.only(left: 10),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(
-                      color: isFollow ? Colors.white : Colors.transparent,
-                      width: 1),
-                  color: isFollow ? Colors.transparent : Colors.white),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: isFollow
+                      ? (isDarkMode ? Colors.white : Colors.black)
+                      : Colors.transparent,
+                  width: 1,
+                ),
+                color: isFollow
+                    ? Colors.transparent
+                    : (isDarkMode ? Colors.white : Colors.black),
+              ),
               child: Text(
-                isFollow ? unfollow : follow,
+                isFollow
+                    ? AppLocalizations.of(context)!.unfollow
+                    : AppLocalizations.of(context)!.follow,
                 style: GoogleFonts.poppins(
                   fontSize: 12,
-                  color: isFollow ? Colors.white : Colors.black,
+                  color: isFollow
+                      ? (isDarkMode ? Colors.white : Colors.black)
+                      : (isDarkMode ? Colors.black : Colors.white),
                   fontWeight: FontWeight.w600,
                 ),
               ),

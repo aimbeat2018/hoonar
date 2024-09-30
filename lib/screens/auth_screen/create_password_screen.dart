@@ -5,6 +5,7 @@ import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreatePasswordScreen extends StatefulWidget {
   final String from;
@@ -29,7 +30,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
         padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.png'),
             // Path to your image
@@ -41,18 +42,18 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           // Add a ScrollController
           thumbVisibility: true,
           thickness: 2.5,
-          radius: Radius.circular(10),
+          radius: const Radius.circular(10),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildAppbar(context),
-                SizedBox(
+                buildAppbar(context, false),
+                const SizedBox(
                   height: 30,
                 ),
                 Center(
                   child: Text(
-                    createPass,
+                    AppLocalizations.of(context)!.createPass,
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       color: Colors.white,
@@ -70,7 +71,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        newPassword,
+                        AppLocalizations.of(context)!.newPassword,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -78,7 +79,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Container(
@@ -135,11 +136,11 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Text(
-                        confirmPassword,
+                        AppLocalizations.of(context)!.confirmPassword,
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.white,
@@ -147,7 +148,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Container(
@@ -204,13 +205,13 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
                     InkWell(
                       onTap: () => Navigator.push(
                         context,
-                        SlideRightRoute(page: MainScreen()),
+                        SlideRightRoute(page: const MainScreen()),
                       ),
                       child: Container(
                         width: MediaQuery.of(context).size.width,
@@ -220,7 +221,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                         decoration: ShapeDecoration(
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(
+                            side: const BorderSide(
                               strokeAlign: BorderSide.strokeAlignOutside,
                               color: Colors.black,
                             ),
@@ -228,7 +229,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                           ),
                         ),
                         child: Text(
-                          letsGo,
+                          AppLocalizations.of(context)!.letsGo,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,

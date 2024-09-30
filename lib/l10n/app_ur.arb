@@ -101,5 +101,10 @@
   "yes": "جی ہاں",
   "areYouSure": "کیا آپ کو یقین ہے",
   "doYouReallyWantToGoBack": "کیا آپ واقعی واپس جانا چاہتے ہیں؟",
-  "logout": "لاگ آؤٹ"
+  "logout": "لاگ آؤٹ",
+  "darkMode": "تاریک موڈ",
+  "darkModeSubtitle": "اپنی ایپ کا تھیم تبدیل کریں",
+  "lightMode": "ہلکا موڈ",
+  "systemDefault": "سسٹم ڈیفالٹ",
+  "changeTheme": "تھیم تبدیل کریں"
 }

@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hoonar/constants/my_loading/my_loading.dart';
 import 'package:provider/provider.dart';
-import '../constants/color_constants.dart';
-import '../constants/common_widgets.dart';
-import '../constants/const_res.dart';
-import '../constants/theme.dart';
+import '../../../constants/color_constants.dart';
+import '../../../constants/common_widgets.dart';
+import '../../../constants/const_res.dart';
+import '../../../constants/theme.dart';
 
 class ChangeLanguageScreen extends StatefulWidget {
   const ChangeLanguageScreen({super.key});
@@ -27,19 +27,19 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
           padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               /*image: DecorationImage(
             image: AssetImage('assets/images/screens_back.png'),
             // Path to your image
             fit: BoxFit.cover, // Ensures the image covers the entire container
           ),*/
-              color: Colors.black),
+              color: myLoading.isDark ? Colors.black : Colors.white),
           child: SingleChildScrollView(
             controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildAppbar(context),
+                buildAppbar(context, myLoading.isDark),
                 const SizedBox(
                   height: 10,
                 ),
@@ -48,13 +48,17 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                     AppLocalizations.of(context)!.languageSubTitle,
                     style: GoogleFonts.poppins(
                       fontSize: 20,
-                      color: Colors.white,
+                      color: myLoading.isDark ? Colors.white : Colors.black,
                       fontWeight: FontWeight.w400,
                     ),
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.topRight,
-                        colors: [Colors.white, Colors.white, greyTextColor8]),
+                        colors: [
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          greyTextColor8
+                        ]),
                   )
                       .animate()
                       .fadeIn(duration: 600.ms)
@@ -77,7 +81,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                         language['title'],
                         style: GoogleFonts.poppins(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: myLoading.isDark ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -85,7 +89,8 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                         language['subHeading'],
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Colors.white60,
+                          color:
+                              myLoading.isDark ? Colors.white60 : Colors.grey,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -96,10 +101,9 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(
-                      thickness: 0.5,
-                      color: Colors.white60,
-                    );
+                    return Divider(
+                        thickness: 0.5,
+                        color: myLoading.isDark ? Colors.white60 : Colors.grey);
                   },
                 ),
               ],
