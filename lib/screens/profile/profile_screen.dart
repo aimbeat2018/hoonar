@@ -303,7 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 20,
                             ),
                             Container(
-                              color: const Color(0x403F3F3F66),
+                              color: const Color(0x403F3F3F),
                               // padding: EdgeInsets.symmetric(vertical: 5),
                               child: TabBar(
                                 labelColor: myLoading.isDark

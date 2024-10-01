@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
@@ -11,13 +11,15 @@ class ConfirmationDialog extends StatelessWidget {
       required this.title2,
       required this.onPositiveTap,
       required this.aspectRatio,
-      this.positiveText})
+      this.positiveText,
+      this.isDarkMode})
       : super(key: key);
 
   final String title1;
   final String title2;
   final VoidCallback onPositiveTap;
   final double aspectRatio;
+  final bool? isDarkMode;
   final String? positiveText;
 
   @override
@@ -31,7 +33,7 @@ class ConfirmationDialog extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.black,
+              color: isDarkMode! ? Colors.black : Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -45,7 +47,8 @@ class ConfirmationDialog extends StatelessWidget {
                       child: Text(
                         title1,
                         style: GoogleFonts.poppins(
-                            color: Colors.white, fontSize: 20),
+                            color: isDarkMode! ? Colors.white : Colors.black,
+                            fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -57,7 +60,7 @@ class ConfirmationDialog extends StatelessWidget {
                       child: Text(
                         title2,
                         style: GoogleFonts.poppins(
-                          color: Colors.white,
+                          color: isDarkMode! ? Colors.white : Colors.black,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -69,7 +72,10 @@ class ConfirmationDialog extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                          color: Colors.white.withOpacity(0.8), width: 0.5),
+                          color: isDarkMode!
+                              ? Colors.white.withOpacity(0.8)
+                              : Colors.grey,
+                          width: 0.5),
                     ),
                   ),
                   child: Row(
@@ -87,17 +93,24 @@ class ConfirmationDialog extends StatelessWidget {
                                 right: BorderSide(
                                   color: Directionality.of(context) ==
                                           TextDirection.rtl
-                                      ? Colors.transparent
-                                      : Colors.white.withOpacity(0.8),
+                                      ? (isDarkMode!
+                                          ? Colors.transparent
+                                          : Colors.grey.shade50)
+                                      : (isDarkMode!
+                                          ? Colors.white.withOpacity(0.8)
+                                          : Colors.grey.shade500),
                                   width: 0.5,
                                 ),
                               ),
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              cancel,
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.white),
+                              AppLocalizations.of(context)!.cancel,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 17,
+                                  color: isDarkMode!
+                                      ? Colors.white
+                                      : Colors.black),
                             ),
                           ),
                         ),
@@ -120,10 +133,9 @@ class ConfirmationDialog extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              positiveText ?? yes,
+                              positiveText ?? AppLocalizations.of(context)!.yes,
                               style: GoogleFonts.poppins(
-                                  fontSize: 17,
-                                  color: Colors.pink),
+                                  fontSize: 17, color: Colors.pink),
                             ),
                           ),
                         ),

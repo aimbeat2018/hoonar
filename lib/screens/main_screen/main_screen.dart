@@ -5,6 +5,7 @@ import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/camera_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/join_competition/select_category_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +57,10 @@ class _MainScreenState extends State<MainScreen> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0)),
             onPressed: () {
-              // Optional Floating Action Button logic
+              Navigator.push(
+                context,
+                SlideRightRoute(page: SelectCategoryScreen()),
+              );
             },
             child: Stack(
               children: [
@@ -182,7 +186,12 @@ class _MainScreenState extends State<MainScreen> {
   void openCameraScreen() {
     Navigator.push(
       context,
-      SlideRightRoute(page: CameraScreen()),
+      SlideRightRoute(
+          page: CameraScreen(
+        soundId: "1",
+        soundTitle: "hgh",
+        soundUrl: "ghs",
+      )),
     );
   }
 }

@@ -19,8 +19,10 @@ import 'package:hoonar_camera/hoonar_camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../constants/const_res.dart';
+import '../../constants/my_loading/my_loading.dart';
 import '../../model/sound.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -87,164 +89,35 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: Stack(
-        children: [
-          Platform.isAndroid
-              ? AndroidView(
-                  viewType: 'camera',
-                  layoutDirection: TextDirection.ltr,
-                  creationParams: creationParams,
-                  creationParamsCodec: StandardMessageCodec(),
-                )
-              : UiKitView(
-                  viewType: 'camera',
-                  layoutDirection: TextDirection.ltr,
-                  creationParams: creationParams,
-                  creationParamsCodec: StandardMessageCodec(),
-                ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              SafeArea(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/music.png',
-                      height: 33,
-                      width: 33,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Image.asset(
-                      'assets/images/timer.png',
-                      height: 33,
-                      width: 33,
-                    ),
-                    Spacer(),
-                    InkWell(
-                      onTap: (){
-                        showDialog(
-                            context: context,
-                            builder: (mContext) {
-                              return ConfirmationDialog(
-                                aspectRatio: 2,
-                                title1: areYouSure,
-                                title2: doYouReallyWantToGoBack,
-                                positiveText: yes,
-                                onPositiveTap: () async {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                },
-                              );
-                            });
-                      },
-                      child: Image.asset(
-                        'assets/images/close.png',
-                        height: 33,
-                        width: 33,
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-              SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: LinearProgressIndicator(
-                        backgroundColor: Colors.white,
-                        minHeight: 3,
-                        value: currentPercentage / 100,
-                        color: orangeColor),
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Stack(
+          children: [
+            Platform.isAndroid
+                ? AndroidView(
+                    viewType: 'camera',
+                    layoutDirection: TextDirection.ltr,
+                    creationParams: creationParams,
+                    creationParamsCodec: StandardMessageCodec(),
+                  )
+                : UiKitView(
+                    viewType: 'camera',
+                    layoutDirection: TextDirection.ltr,
+                    creationParams: creationParams,
+                    creationParamsCodec: StandardMessageCodec(),
                   ),
-                ),
-              ),
-              Visibility(
-                visible: isMusicSelect,
-                replacement: SizedBox(height: 10),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text(
-                    widget.soundTitle != null
-                        ? '${widget.soundTitle ?? ''}'
-                        : _selectedMusic != null
-                            ? "${_selectedMusic?.soundTitle ?? ''}"
-                            : '',
-                    style:
-                        GoogleFonts.poppins(fontSize: 15, color: Colors.white),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (!isStartRecording)
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: IconWithRoundGradient(
-                        size: 22,
-                        iconData: Icons.close_rounded,
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (mContext) {
-                                return ConfirmationDialog(
-                                  aspectRatio: 2,
-                                  title1: areYouSure,
-                                  title2: doYouReallyWantToGoBack,
-                                  positiveText: yes,
-                                  onPositiveTap: () async {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              });
-                        },
-                      ),
-                    ),
-                  Spacer(),
-                  Column(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10),
+
+                /*top options*/
+                SafeArea(
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: IconWithRoundGradient(
-                          size: 20,
-                          iconData: !isFlashOn
-                              ? Icons.flash_on_rounded
-                              : Icons.flash_off_rounded,
-                          onTap: () async {
-                            isFlashOn = !isFlashOn;
-                            setState(() {});
-                            await HoonarCamera.flashOnOff;
-                          },
-                        ),
-                      ),
-                      isStartRecording
-                          ? SizedBox()
-                          : Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: IconWithRoundGradient(
-                                iconData: Icons.flip_camera_android_rounded,
-                                size: 20,
-                                onTap: () async {
-                                  isFront = !isFront;
-                                  await HoonarCamera.toggleCamera;
-                                  setState(() {});
-                                },
-                              ),
-                            ),
                       isRecordingStaring
                           ? SizedBox()
                           : Visibility(
@@ -252,249 +125,365 @@ class _CameraScreenState extends State<CameraScreen> {
                               child: InkWell(
                                 onTap: () {
                                   /*showModalBottomSheet(
-                                    context: context,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(15))),
-                                    backgroundColor: blueButtonColor,
-                                    isScrollControlled: true,
-                                    builder: (context) {
-                                      return MusicScreen(
-                                        (data, localMusic) async {
-                                          isMusicSelect = true;
-                                          _selectedMusic = data;
-                                          _localMusic = localMusic;
-                                          soundId = data?.soundId.toString();
-                                          setState(() {});
+                                        context: context,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.vertical(
+                                                top: Radius.circular(15))),
+                                        backgroundColor: blueButtonColor,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return MusicScreen(
+                                            (data, localMusic) async {
+                                              isMusicSelect = true;
+                                              _selectedMusic = data;
+                                              _localMusic = localMusic;
+                                              soundId = data?.soundId.toString();
+                                              setState(() {});
+                                            },
+                                          );
                                         },
-                                      );
-                                    },
-                                  ).then((value) {
-                                    Provider.of<MyLoading>(context,
-                                            listen: false)
-                                        .setLastSelectSoundId('');
-                                  });*/
+                                      ).then((value) {
+                                        Provider.of<MyLoading>(context,
+                                                listen: false)
+                                            .setLastSelectSoundId('');
+                                      });*/
                                 },
-                                child: Padding(
-                                  padding: EdgeInsets.only(top: 20),
-                                  child: ImageWithRoundGradient(
-                                      'assets/images/copyright.png', 11),
+                                child: Image.asset(
+                                  'assets/images/music.png',
+                                  height: 33,
+                                  width: 33,
                                 ),
                               ),
                             ),
-                    ],
-                  )
-                ],
-              ),
-              Spacer(),
-              isRecordingStaring
-                  ? SizedBox()
-                  : Visibility(
-                      visible: !isMusicSelect,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SecondsTab(
-                            onTap: () {
-                              isSelected15s = true;
-                              totalSeconds = 15;
-                              setState(() {});
-                            },
-                            isSelected: isSelected15s,
-                            title: '15',
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Image.asset(
+                        'assets/images/timer.png',
+                        height: 33,
+                        width: 33,
+                      ),
+                      Spacer(),
+                      if (!isStartRecording)
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (mContext) {
+                                  return ConfirmationDialog(
+                                    aspectRatio: 2,
+                                    title1: AppLocalizations.of(context)!
+                                        .areYouSure,
+                                    title2: AppLocalizations.of(context)!
+                                        .doYouReallyWantToGoBack,
+                                    positiveText:
+                                        AppLocalizations.of(context)!.yes,
+                                    isDarkMode: myLoading.isDark,
+                                    onPositiveTap: () async {
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                  );
+                                });
+                          },
+                          child: Image.asset(
+                            'assets/images/close.png',
+                            height: 33,
+                            width: 33,
                           ),
-                          SizedBox(width: 15),
-                          SecondsTab(
-                            onTap: () {
-                              isSelected15s = false;
-                              totalSeconds = 30;
+                        ),
+                    ],
+                  ),
+                )),
+                Visibility(
+                  visible: isMusicSelect,
+                  replacement: SizedBox(height: 10),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: myLoading.isDark
+                            ? Colors.white.withOpacity(0.3)
+                            : Colors.black.withOpacity(0.3)),
+                    child: Text(
+                      widget.soundTitle != null
+                          ? widget.soundTitle ?? ''
+                          : _selectedMusic != null
+                              ? _selectedMusic?.soundTitle ?? ''
+                              : '',
+                      style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color:
+                              myLoading.isDark ? Colors.white : Colors.black),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+                Spacer(),
+                isRecordingStaring
+                    ? SizedBox()
+                    : Visibility(
+                        visible: !isMusicSelect,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SecondsTab(
+                              onTap: () {
+                                isSelected15s = true;
+                                totalSeconds = 15;
+                                setState(() {});
+                              },
+                              isSelected: isSelected15s,
+                              title: '15',
+                            ),
+                            SizedBox(width: 15),
+                            SecondsTab(
+                              onTap: () {
+                                isSelected15s = false;
+                                totalSeconds = 30;
+                                setState(() {});
+                              },
+                              isSelected: !isSelected15s,
+                              title: '30',
+                            ),
+                          ],
+                        ),
+                      ),
+                SizedBox(height: 5),
+                SafeArea(
+                  top: false,
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          isRecordingStaring
+                              ? SizedBox(
+                                  width: 40,
+                                  height: isMusicSelect ? 0 : 40,
+                                )
+                              : Container(
+                                  width: 40,
+                                  height: isMusicSelect ? 0 : 40,
+                                  child: IconWithRoundGradient(
+                                    iconData: Icons.image,
+                                    size: isMusicSelect ? 0 : 20,
+                                    onTap: () => _showFilePicker(),
+                                  ),
+                                ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: IconWithRoundGradient(
+                              size: 20,
+                              iconData: !isFlashOn
+                                  ? Icons.flash_on_rounded
+                                  : Icons.flash_off_rounded,
+                              onTap: () async {
+                                isFlashOn = !isFlashOn;
+                                setState(() {});
+                                await HoonarCamera.flashOnOff;
+                              },
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              isStartRecording = !isStartRecording;
+                              isRecordingStaring = true;
                               setState(() {});
+                              startProgress();
                             },
-                            isSelected: !isSelected15s,
-                            title: '30',
+                            child: Container(
+                              height: 80,
+                              width: 80,
+                              decoration: BoxDecoration(
+                                  color: Colors.white60,
+                                  shape: BoxShape.circle),
+                              // padding: EdgeInsets.all(10.0),
+                              alignment: Alignment.center,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 80,
+                                    width: 80,
+                                    child: CircularProgressIndicator(
+                                        backgroundColor: Colors.white60,
+                                        strokeWidth: 20,
+                                        value: currentPercentage / 100,
+                                        color: orangeColor),
+                                  ),
+                                  isStartRecording
+                                      ? Container(
+                                          height: 80,
+                                          width: 80,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.pause,
+                                            color: buttonBlueColor,
+                                            size: 50,
+                                          ),
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: isStartRecording
+                                                ? BoxShape.rectangle
+                                                : BoxShape.circle,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          isStartRecording
+                              ? SizedBox()
+                              : IconWithRoundGradient(
+                                  iconData: Icons.flip_camera_android_rounded,
+                                  size: 20,
+                                  onTap: () async {
+                                    isFront = !isFront;
+                                    await HoonarCamera.toggleCamera;
+                                    setState(() {});
+                                  },
+                                ),
+                          Visibility(
+                            visible: !isStartRecording,
+                            replacement: SizedBox(height: 38, width: 38),
+                            child: IconWithRoundGradient(
+                              iconData: Icons.check_circle_rounded,
+                              size: 20,
+                              onTap: () async {
+                                if (!isRecordingStaring) {
+                                  // CommonUI.showToast(msg: LKey.videoIsToShort.tr);
+                                } else {
+                                  if (soundId != null &&
+                                      soundId!.isNotEmpty &&
+                                      Platform.isIOS) {
+                                    await _stopAndMergeVideoForIos();
+                                  } else {
+                                    await HoonarCamera.stopRecording;
+                                  }
+                                }
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
-              SizedBox(height: 5),
-              SafeArea(
-                top: false,
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                ),
+              ],
+            ),
+            if (!_permissionNotGranted)
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: buttonBlueColor,
+                child: SafeArea(
+                  child: Column(
                     children: [
-                      isRecordingStaring
-                          ? SizedBox(
-                              width: 40,
-                              height: isMusicSelect ? 0 : 40,
-                            )
-                          : Container(
-                              width: 40,
-                              height: isMusicSelect ? 0 : 40,
-                              child: IconWithRoundGradient(
-                                iconData: Icons.image,
-                                size: isMusicSelect ? 0 : 20,
-                                onTap: () => _showFilePicker(),
-                              ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                          onTap: () {
+                            // Get.back();
+                          },
+                          child: Container(
+                              height: 35,
+                              width: 35,
+                              margin: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white.withOpacity(0.1)),
+                              alignment: Alignment.center,
+                              child: const Icon(Icons.close_rounded,
+                                  color: Colors.white, size: 25)),
+                        ),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Allow',
+                            children: [
+                              TextSpan(
+                                  text: appName,
+                                  style: TextStyle(
+                                      color: Colors.pink, fontSize: 17)),
+                              TextSpan(text: ' Access permission')
+                            ],
+                            style: TextStyle(
+                              fontSize: 20,
                             ),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Text(
+                          ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
                       InkWell(
-                        onTap: () async {
-                          isStartRecording = !isStartRecording;
-                          isRecordingStaring = true;
-                          setState(() {});
-                          startProgress();
+                        onTap: () {
+                          openAppSettings();
                         },
                         child: Container(
-                          height: 85,
-                          width: 85,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
-                              color: Colors.white, shape: BoxShape.circle),
-                          padding: EdgeInsets.all(10.0),
-                          alignment: Alignment.center,
-                          child: isStartRecording
-                              ? Icon(
-                                  Icons.pause,
-                                  color: buttonBlueColor,
-                                  size: 50,
-                                )
-                              : Container(
-                                  decoration: BoxDecoration(
-                                    color: buttonBlueColor,
-                                    shape: isStartRecording
-                                        ? BoxShape.rectangle
-                                        : BoxShape.circle,
-                                  ),
-                                ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            openSettings,
+                            style: TextStyle(color: Colors.pink, fontSize: 15),
+                          ),
                         ),
                       ),
-                      Visibility(
-                        visible: !isStartRecording,
-                        replacement: SizedBox(height: 38, width: 38),
-                        child: IconWithRoundGradient(
-                          iconData: Icons.check_circle_rounded,
-                          size: 20,
-                          onTap: () async {
-                            if (!isRecordingStaring) {
-                              // CommonUI.showToast(msg: LKey.videoIsToShort.tr);
-                            } else {
-                              if (soundId != null &&
-                                  soundId!.isNotEmpty &&
-                                  Platform.isIOS) {
-                                await _stopAndMergeVideoForIos();
-                              } else {
-                                await HoonarCamera.stopRecording;
-                              }
-                            }
-                          },
+                      const Spacer(),
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 33),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            width: 40,
+                            height: isMusicSelect ? 0 : 40,
+                            child: IconWithRoundGradient(
+                              iconData: Icons.image,
+                              size: isMusicSelect ? 0 : 20,
+                              onTap: () => _showFilePicker(),
+                            ),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 15)
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          if (!_permissionNotGranted)
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: buttonBlueColor,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: InkWell(
-                        onTap: () {
-                          // Get.back();
-                        },
-                        child: Container(
-                            height: 35,
-                            width: 35,
-                            margin: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.white.withOpacity(0.1)),
-                            alignment: Alignment.center,
-                            child: const Icon(Icons.close_rounded,
-                                color: Colors.white, size: 25)),
-                      ),
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Allow',
-                          children: [
-                            TextSpan(
-                                text: appName,
-                                style: TextStyle(
-                                    color: Colors.pink, fontSize: 17)),
-                            TextSpan(text: ' Access permission')
-                          ],
-                          style: TextStyle(
-                            fontSize: 20,
-                          ),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30.0),
-                      child: Text(
-                        ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        openAppSettings();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          openSettings,
-                          style: TextStyle(color: Colors.pink, fontSize: 15),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 33),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          width: 40,
-                          height: isMusicSelect ? 0 : 40,
-                          child: IconWithRoundGradient(
-                            iconData: Icons.image,
-                            size: isMusicSelect ? 0 : 20,
-                            onTap: () => _showFilePicker(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15)
-                  ],
-                ),
-              ),
-            )
-        ],
-      ),
-    );
+              )
+          ],
+        ),
+      );
+    });
   }
 
   void _bindBackgroundIsolate() {
@@ -651,7 +640,7 @@ class _CameraScreenState extends State<CameraScreen> {
             context,
             MaterialPageRoute(
               builder: (context) => PreviewScreen(
-                postVideo: '$pathOfVideo',
+                postVideo: pathOfVideo,
                 thumbNail: "$localPath${Platform.pathSeparator}thumbNail.png",
                 soundId: soundId,
                 duration: currentSecond.toInt(),
