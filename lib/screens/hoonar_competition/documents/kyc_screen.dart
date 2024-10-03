@@ -130,7 +130,7 @@ class _KycScreenState extends State<KycScreen> {
                               borderRadius: BorderRadius.circular(5),
                               color: Colors.white),
                           child: Text(
-                            AppLocalizations.of(context)!.upload,
+                            AppLocalizations.of(context)!.clickHere,
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.black,
