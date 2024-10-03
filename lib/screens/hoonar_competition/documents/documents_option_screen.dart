@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/screens/hoonar_competition/competitionHub/competition_hub_screen.dart';
-import 'package:hoonar/screens/hoonar_competition/create_upload_video/create_upload_options_screen.dart';
-import 'package:hoonar/screens/hoonar_competition/documents/documents_option_screen.dart';
-import 'package:hoonar/screens/hoonar_competition/guideline/guideline_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/documents/kyc_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/documents/upload_documents_screen.dart';
 import 'package:provider/provider.dart';
-
+import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
+import '../../../constants/theme.dart';
 import '../../../model/star_category_model.dart';
-import '../newsEvents/news_and_events_screen.dart';
-import '../yourRewards/your_rewards_screen.dart';
+import '../join_competition/select_contest_level.dart';
 
-class ContestJoinOptionsScreen extends StatefulWidget {
-  const ContestJoinOptionsScreen({super.key});
+class DocumentsOptionScreen extends StatefulWidget {
+  const DocumentsOptionScreen({super.key});
 
   @override
-  State<ContestJoinOptionsScreen> createState() =>
-      _ContestJoinOptionsScreenState();
+  State<DocumentsOptionScreen> createState() => _DocumentsOptionScreenState();
 }
 
-class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
+class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
   List<StarCategoryModel> optionsList = [];
 
   @override
@@ -30,29 +28,13 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       optionsList = [
         StarCategoryModel(
-            'assets/light_mode_icons/create_upload_light.png',
-            AppLocalizations.of(context)!.createAndUpload,
-            'assets/dark_mode_icons/create_upload.png'),
+            'assets/light_mode_icons/upload_documents_light.png',
+            AppLocalizations.of(context)!.uploadDocuments,
+            'assets/dark_mode_icons/upload_documents_dark.png'),
         StarCategoryModel(
-            'assets/light_mode_icons/hub_light.png',
-            AppLocalizations.of(context)!.competitionHub,
-            'assets/dark_mode_icons/hub_dark.png'),
-        StarCategoryModel(
-            'assets/light_mode_icons/news_events_light.png',
-            AppLocalizations.of(context)!.news_events,
-            'assets/dark_mode_icons/news_event_dark.png'),
-        StarCategoryModel(
-            'assets/light_mode_icons/rewards_light.png',
-            AppLocalizations.of(context)!.rewards,
-            'assets/dark_mode_icons/reward_dark.png'),
-        StarCategoryModel(
-            'assets/light_mode_icons/guidelines_light.png',
-            AppLocalizations.of(context)!.guidelines,
-            'assets/dark_mode_icons/guidelines_dark.png'),
-        StarCategoryModel(
-            'assets/light_mode_icons/documents_light.png',
-            AppLocalizations.of(context)!.documents,
-            'assets/dark_mode_icons/documents.png'),
+            'assets/light_mode_icons/kyc_light.png',
+            AppLocalizations.of(context)!.kyc,
+            'assets/dark_mode_icons/kyc_dark.png'),
       ];
       setState(() {});
     });
@@ -61,10 +43,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
-
-    // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 2 : 3;
-
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -85,7 +64,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(left: 15.0, top: 30, bottom: 30),
+                        const EdgeInsets.only(left: 15.0, top: 30, bottom: 0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: InkWell(
@@ -101,14 +80,41 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                       ),
                     ),
                   ),
+                  Center(
+                    child: GradientText(
+                      AppLocalizations.of(context)!.documentsAndKyc,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark
+                                ? greyTextColor8
+                                : Colors.grey.shade700
+                          ]),
+                    )
+                        .animate()
+                        .fadeIn(duration: 600.ms)
+                        .then(delay: 200.ms) // baseline=800ms
+                        .slide(),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 25,
+                      mainAxisSpacing: 20,
                       childAspectRatio:
                           1.1, // Adjust according to image dimensions
                     ),
@@ -119,33 +125,12 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                           if (index == 0) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(
-                                  page: CreateUploadOptionsScreen()),
+                              SlideRightRoute(page: UploadDocumentsScreen()),
                             );
                           } else if (index == 1) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(page: CompetitionHubScreen()),
-                            );
-                          } else if (index == 2) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: NewsAndEventsScreen()),
-                            );
-                          } else if (index == 3) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: YourRewardsScreen()),
-                            );
-                          } else if (index == 4) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: GuidelineScreen()),
-                            );
-                          } else if (index == 5) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: DocumentsOptionScreen()),
+                              SlideRightRoute(page: KycScreen()),
                             );
                           }
                         },

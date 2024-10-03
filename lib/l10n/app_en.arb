@@ -109,7 +109,9 @@
   "systemDefault": "System Default",
   "changeTheme": "Change Theme",
   "chooseYourStarCategory": "Choose your star Category",
+  "category": "Category",
   "beAContestant": "Be a Contestant",
+  "level": "Level",
   "zone_leve": "Zone Level",
   "divisionLevel": "Division Level",
   "districtLevel": "District Level",
@@ -185,5 +187,6 @@
   "scanFaceDesc": "Keep your face in front of your screen during the scanning process",
   "clickHere": "Click Here",
   "payNowToBecomeContestant": "Pay now to become a Contestant",
-  "payNow": "Pay Now"
+  "payNow": "Pay Now",
+  "uploadDocuments": "Upload Documents"
 }

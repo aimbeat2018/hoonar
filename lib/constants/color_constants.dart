@@ -41,7 +41,7 @@ const greenColor = Color(0xFF24DDA7);
 const greenColor1 = Color(0xFF08A3AB);
 const lightGreenColor = Color(0xFF0C9B00);
 const tableCellGreen = Color(0xFF0B8500);
-const contBlueColor1 = Color(0xFF0486C4);
+const contBlueColor1 = Color(0xFFB5EAFF);
 const buttonBlueColor = Color(0xFF0A6699);
 const orangeColor = Color(0xFFFFBB00);
 //Income expenses list

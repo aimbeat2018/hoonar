@@ -344,52 +344,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                        // menu options layout
-                        Positioned(
-                          top: 25,
-                          right: 10,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.easeInOut,
-                            width: _isVisible ? optionsList.length * 30.0 : 0,
-                            // Adjust this as needed
-                            height: _isVisible ? optionsList.length * 70.0 : 0,
-                            // Adjust height based on number of options
-                            child: Card(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: ListView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
-                                shrinkWrap: true,
-                                itemCount: optionsList.length,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      // setState(() {
-                                      //   selectedCategory = optionsList[index];
-                                      // });
-                                      _toggleAnimation();
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        optionsList[index],
-                                        textAlign: TextAlign.end,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        )
                       ],
                     ),
                   ),

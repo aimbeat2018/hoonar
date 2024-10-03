@@ -98,9 +98,9 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
                       crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
+                      mainAxisSpacing: 10,
                       childAspectRatio:
-                          1, // Adjust according to image dimensions
+                          0.9, // Adjust according to image dimensions
                     ),
                     itemCount: starCategoryModelList.length,
                     itemBuilder: (context, index) {
@@ -115,10 +115,10 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                           elevation: 5,
                           shadowColor: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              : Color(0x253F3F3F),
                           color: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              : Color(0x253F3F3F),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(
@@ -129,7 +129,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                                         .lightModeImage!
                                     : starCategoryModelList[index]
                                         .darkModeImage!,
-                                height: 140,
+                                height: 120,
                                 width: 150,
                               ),
                               Text(

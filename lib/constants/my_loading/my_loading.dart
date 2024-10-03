@@ -202,7 +202,7 @@ class MyLoading extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isDark = false;
+  bool _isDark = true;
 
   bool get isDark => _isDark;
 
