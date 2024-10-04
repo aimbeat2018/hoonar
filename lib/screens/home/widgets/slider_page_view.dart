@@ -42,7 +42,6 @@ class _SliderPageViewState extends State<SliderPageView>
       setChildrenDataWidget();
     });
 
-    // intitialize the animation
     controller = AnimationController(vsync: this, duration: animationDuration);
     controller.addListener(() {
       setState(() {});
