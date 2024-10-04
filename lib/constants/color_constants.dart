@@ -43,11 +43,14 @@ const lightGreenColor = Color(0xFF0C9B00);
 const tableCellGreen = Color(0xFF0B8500);
 const contBlueColor1 = Color(0xFFB5EAFF);
 const buttonBlueColor = Color(0xFF0A6699);
+const buttonBlueColor1 = Color(0xFF1453AB);
 const orangeColor = Color(0xFFFFBB00);
+const purpleColor = Color(0xFFA300CC);
 //Income expenses list
 var contColors = [
   const Color(0xFF6365ED),
   const Color(0xFF009C6D),
+  const Color(0xFFF34547),
   const Color(0xFFF34547),
   const Color(0xFFE94899),
   const Color(0xFF000000),

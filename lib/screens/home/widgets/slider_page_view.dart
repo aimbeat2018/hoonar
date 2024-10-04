@@ -29,7 +29,7 @@ class _SliderPageViewState extends State<SliderPageView>
     with SingleTickerProviderStateMixin {
   int activePage = 1;
   int previousPage = 0;
-  Duration animationDuration = const Duration(milliseconds: 200);
+  Duration animationDuration = const Duration(milliseconds: 100);
   late AnimationController controller;
   SwiperController controllerS = SwiperController();
   List<Widget> children = [];

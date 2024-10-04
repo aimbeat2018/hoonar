@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/screens/hoonar_competition/create_upload_video/connectShare/connect_share_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_options_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../model/star_category_model.dart';
 
@@ -135,6 +138,17 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
+                          if (index == 0) {
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(page: UploadVideoOptionsScreen()),
+                            );
+                          } else if (index == 5) {
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(page: ConnectShareScreen()),
+                            );
+                          }
                           // Navigator.push(
                           //   context,
                           //   SlideRightRoute(page: SelectContestLevel()),
