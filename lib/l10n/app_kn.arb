@@ -186,6 +186,10 @@
   "payNowToBecomeContestant": "ಪ್ರತಿಭಾಗಿಯಾಗಿ ಬೇಕಾದರೆ ಈಗ ಪಾವತಿ ಮಾಡಿ",
   "payNow": "ಈಗ ಪಾವತಿ ಮಾಡಿ",
   "level": "ಹಂತ",
-  "category": "ವರ್ಗ","uploadDocuments": "ದಾಖಲೆಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ"
+  "category": "ವರ್ಗ",
+  "uploadDocuments": "ದಾಖಲೆಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
+  "profilePhoto": "ಪ್ರೊಫೈಲ್ ಫೋಟೋ",
+  "camera": "ಕ್ಯಾಮೆರಾ",
+  "avatar": "ಅವತಾರ"
 
 }

@@ -187,5 +187,8 @@
   "payNow": "ഇപ്പോൾ പണമടയ്ക്കുക",
   "level": "തരം",
   "category": "വിഭാഗം",
-  "uploadDocuments": "രേഖകൾ അപ്ലോഡ് ചെയ്യുക"
+  "uploadDocuments": "രേഖകൾ അപ്ലോഡ് ചെയ്യുക",
+  "profilePhoto": "പ്രൊഫൈല്‍ ഫോട്ടോ",
+  "camera": "ക്യാമറ",
+  "avatar": "അവതാര്‍"
 }

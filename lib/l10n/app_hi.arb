@@ -187,5 +187,8 @@
   "payNow": "अभी भुगतान करें",
   "level": "स्तर",
   "category": "श्रेणी",
-  "uploadDocuments": "दस्तावेज़ अपलोड करें"
+  "uploadDocuments": "दस्तावेज़ अपलोड करें",
+  "profilePhoto": "प्रोफ़ाइल फ़ोटो",
+  "camera": "कैमरा",
+  "avatar": "अवतार"
 }

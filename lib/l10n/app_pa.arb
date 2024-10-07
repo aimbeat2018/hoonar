@@ -187,5 +187,8 @@
   "payNow": "ਹੁਣੇ ਭੁਗਤਾਨ ਕਰੋ",
   "level": "ਸਤਰ",
   "category": "ਸ਼੍ਰੇਣੀ",
-  "uploadDocuments": "ਦਸਤਾਵੇਜ਼ ਅੱਪਲੋਡ ਕਰੋ"
+  "uploadDocuments": "ਦਸਤਾਵੇਜ਼ ਅੱਪਲੋਡ ਕਰੋ",
+  "profilePhoto": "ਪਰੋਫ਼ਾਈਲ ਫੋਟੋ",
+  "camera": "ਕੈਮਰਾ",
+  "avatar": "ਅਵਤਾਰ"
 }

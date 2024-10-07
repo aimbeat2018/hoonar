@@ -5,6 +5,7 @@ import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/change_password_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/change_profile_photo_option_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
@@ -98,10 +99,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Positioned(
                                   bottom: 5,
                                   right: 1,
-                                  child: Image.asset(
-                                    'assets/images/camera_edit.png',
-                                    height: 25,
-                                    width: 25,
+                                  child: InkWell(
+                                    onTap: () {
+                                      _openChangeProfileOptionsSheet(
+                                          context, myLoading.isDark);
+                                    },
+                                    child: Image.asset(
+                                      'assets/images/camera_edit.png',
+                                      height: 25,
+                                      width: 25,
+                                    ),
                                   ))
                               .animate()
                               .moveY(
@@ -516,5 +523,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       );
     });
+  }
+
+  void _openChangeProfileOptionsSheet(BuildContext context, bool isDarkMode) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return ChangeProfilePhotoOptionScreen(
+          isDarkMode: isDarkMode,
+        );
+      },
+    );
   }
 }

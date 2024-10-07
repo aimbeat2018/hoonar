@@ -187,5 +187,8 @@
   "payNow": "இப்போது பணம் செலுத்துங்கள்",
   "level": "தரம்",
   "category": "வகை",
-  "uploadDocuments": "ஆவணங்களை பதிவேற்றவும்"
+  "uploadDocuments": "ஆவணங்களை பதிவேற்றவும்",
+  "profilePhoto": "சுயவிவரப் புகைப்படம்",
+  "camera": "கேமரா",
+  "avatar": "அவதார்"
 }

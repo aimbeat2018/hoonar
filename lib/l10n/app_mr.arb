@@ -187,5 +187,8 @@
   "payNow": "आता पैसे भरा",
   "level": "स्तर",
   "category": "श्रेणी",
-  "uploadDocuments": "कागदपत्रे अपलोड करा"
+  "uploadDocuments": "कागदपत्रे अपलोड करा",
+  "profilePhoto": "प्रोफाइल फोटो",
+  "camera": "कॅमेरा",
+  "avatar": "अवतार"
 }

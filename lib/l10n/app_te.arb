@@ -187,5 +187,8 @@
   "payNow": "ఇప్పుడు చెల్లించండి",
   "level": "స్థాయి",
   "category": "వర్గం",
-  "uploadDocuments": "పత్రాలను అప్‌లోడ్ చేయండి"
+  "uploadDocuments": "పత్రాలను అప్‌లోడ్ చేయండి",
+  "profilePhoto": "ప్రొఫైల్ ఫోటో",
+  "camera": "కెమెరా",
+  "avatar": "అవతార్"
 }

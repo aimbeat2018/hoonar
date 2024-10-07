@@ -187,5 +187,8 @@
   "payNow": "এখনই অর্থ পরিশোধ করুন",
   "level": "স্তর",
   "category": "শ্রেণী",
-  "uploadDocuments": "দস্তাবেজ আপলোড করুন"
+  "uploadDocuments": "দস্তাবেজ আপলোড করুন",
+  "profilePhoto": "প্রোফাইল ছবি",
+  "camera": "ক্যামেরা",
+  "avatar": "অবতার"
 }

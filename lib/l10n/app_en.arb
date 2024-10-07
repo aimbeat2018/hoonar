@@ -188,5 +188,8 @@
   "clickHere": "Click Here",
   "payNowToBecomeContestant": "Pay now to become a Contestant",
   "payNow": "Pay Now",
-  "uploadDocuments": "Upload Documents"
+  "uploadDocuments": "Upload Documents",
+  "profilePhoto" : "Profile Photo",
+  "camera": "Camera",
+  "avatar" : "Avatar"
 }
