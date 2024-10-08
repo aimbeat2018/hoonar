@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/camera_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
@@ -14,7 +11,9 @@ import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int? fromIndex;
+
+  const MainScreen({super.key, this.fromIndex});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -28,6 +27,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        selectedIndex = widget.fromIndex!;
+        getBody();
+      });
+    });
+
     screen1 = const HomeScreen();
     screen2 = const SearchScreen();
     screen3 = const ProfileScreen(from: 'main');

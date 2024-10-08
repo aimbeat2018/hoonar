@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:hoonar/screens/profile/customCameraAndCrop/custom_gallery_screen.dart';
 
 import '../../../constants/slide_right_route.dart';
 
@@ -22,69 +20,6 @@ class ChangeProfilePhotoOptionScreen extends StatefulWidget {
 
 class _ChangeProfilePhotoOptionScreenState
     extends State<ChangeProfilePhotoOptionScreen> {
-  File? _imageFile;
-
-  // Method to request camera permission
-  Future<void> _requestPermissionAndCaptureImage() async {
-    // Request camera permission
-    PermissionStatus status = await Permission.camera.request();
-
-    if (status.isGranted) {
-      // If permission is granted, capture the image
-      _captureImageFromCamera();
-    } else if (status.isDenied) {
-      // If permission is denied, show a message
-      _showPermissionDeniedDialog();
-    } else if (status.isPermanentlyDenied) {
-      // If permission is permanently denied, open app settings
-      openAppSettings();
-    }
-  }
-
-  // Method to capture image from camera
-  Future<void> _captureImageFromCamera() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera);
-
-    if (pickedFile != null) {
-      Navigator.push(
-        context,
-        SlideRightRoute(
-            page: CropImageScreen(
-          selectedImageFile: pickedFile,
-        )),
-      );
-      // Navigator.pop(context);
-      // _imageFile = File(croppedFile.path);
-      // if (croppedFile != null) {
-      //   setState(() {
-      //
-      //   });
-      // }
-    }
-  }
-
-  // Show dialog if permission is denied
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Permission Denied'),
-          content: Text('Camera permission is required to take photos.'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Wrap(
@@ -143,7 +78,13 @@ class _ChangeProfilePhotoOptionScreenState
               )),
               Expanded(
                   child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(page: const CustomGalleryScreen()),
+                  );
+                },
                 child: Column(
                   children: [
                     Image.asset(

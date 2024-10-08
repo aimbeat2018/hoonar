@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          SlideRightRoute(page: MainScreen()),
+                          SlideRightRoute(page: MainScreen(fromIndex: 0)),
                         );
                       },
                       child: Container(

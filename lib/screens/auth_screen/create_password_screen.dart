@@ -211,7 +211,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                     InkWell(
                       onTap: () => Navigator.push(
                         context,
-                        SlideRightRoute(page: const MainScreen()),
+                        SlideRightRoute(page: const MainScreen(fromIndex: 0)),
                       ),
                       child: Container(
                         width: MediaQuery.of(context).size.width,

@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
+import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
+import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
 import 'package:hoonar/theme/style.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -60,7 +63,13 @@ class MyApp extends StatelessWidget {
             theme: myLoading.isDark
                 ? ThemeUtils.darkTheme(context)
                 : ThemeUtils.lightTheme(context),
-            home: MainScreen(),
+            routes: {
+              'CropImageScreen': (context) =>
+                  CropImageScreen(selectedImageFile: null),
+              'CameraScreen': (context) => CustomCameraScreen(),
+              'EditProfileScreen': (context) => EditProfileScreen()
+            },
+            home: MainScreen(fromIndex: 0),
           );
         },
       ),
