@@ -191,5 +191,8 @@
   "uploadDocuments": "Upload Documents",
   "profilePhoto" : "Profile Photo",
   "camera": "Camera",
-  "avatar" : "Avatar"
+  "avatar" : "Avatar",
+  "next" : "Next",
+  "done": "Done",
+  "selectFolder" : "Select Folder"
 }

@@ -217,7 +217,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
                                           fontSize: 14,
-                                          color: orangeColor,
+                                          color: redColor,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -290,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
                                           fontSize: 14,
-                                          color: orangeColor,
+                                          color: redColor,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -376,8 +376,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     });
   }
-
-
 
   Widget menuItemsWidget(bool isDarkMode) {
     return PopupMenuButton(

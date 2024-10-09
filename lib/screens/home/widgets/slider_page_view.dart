@@ -140,6 +140,7 @@ class _SliderPageViewState extends State<SliderPageView>
                           padding: const EdgeInsets.symmetric(
                               vertical: 0.0, horizontal: 5),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               const CircleAvatar(
                                 radius: 13.0, // size of the avatar
@@ -149,7 +150,7 @@ class _SliderPageViewState extends State<SliderPageView>
                               const SizedBox(
                                 width: 5,
                               ),
-                              Expanded(
+                              Flexible(
                                 child: Row(
                                   children: [
                                     Text(

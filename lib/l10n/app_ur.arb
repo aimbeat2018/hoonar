@@ -190,5 +190,8 @@
   "uploadDocuments": "دستاویزات اپ لوڈ کریں",
   "profilePhoto": "پروفائل فوٹو",
   "camera": "کیمرہ",
-  "avatar": "اوتار"
+  "avatar": "اوتار",
+  "next": "اگلا",
+  "done": "مکمل",
+  "selectFolder": "فولڈر منتخب کریں"
 }

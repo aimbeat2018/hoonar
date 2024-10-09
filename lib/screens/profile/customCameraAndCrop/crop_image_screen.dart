@@ -32,7 +32,14 @@ class _CropImageScreenState extends State<CropImageScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      covertFileToBytes();
+      if(widget.selectedImageFile !=null) {
+        covertFileToBytes();
+      }else{
+        fileBytes = widget.fileBytes;
+        setState(() {
+
+        });
+      }
     });
   }
 

@@ -190,6 +190,9 @@
   "uploadDocuments": "ଦଲିଲ ଅପଲୋଡ୍ କରନ୍ତୁ",
   "profilePhoto": "ପ୍ରୋଫାଇଲ୍ ଫୋଟୋ",
   "camera": "କ୍ୟାମେରା",
-  "avatar": "ଅବତାର"
+  "avatar": "ଅବତାର",
+  "next": "ପରବର୍ତ୍ତୀ",
+  "done": "ସମ୍ପୂର୍ଣ୍ଣ",
+  "selectFolder": "ଫୋଲ୍ଡର ଚୟନ କରନ୍ତୁ"
 
 }

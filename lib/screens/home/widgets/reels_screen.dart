@@ -1,7 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/slider_model.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:video_player/video_player.dart';
@@ -115,6 +114,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                         ),
                         Expanded(
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 widget.model.userName,
@@ -124,19 +124,21 @@ class _ReelsScreenState extends State<ReelsScreen> {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 5),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white),
-                                child: Text(
-                                  AppLocalizations.of(context)!.follow,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 8,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
+                              Flexible(
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 5),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 3),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.follow,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 8,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               )

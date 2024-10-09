@@ -190,5 +190,8 @@
   "uploadDocuments": "ਦਸਤਾਵੇਜ਼ ਅੱਪਲੋਡ ਕਰੋ",
   "profilePhoto": "ਪਰੋਫ਼ਾਈਲ ਫੋਟੋ",
   "camera": "ਕੈਮਰਾ",
-  "avatar": "ਅਵਤਾਰ"
+  "avatar": "ਅਵਤਾਰ",
+  "next": "ਅਗਲਾ",
+  "done": "ਪੂਰਾ",
+  "selectFolder": "ਫੋਲਡਰ ਚੁਣੋ"
 }

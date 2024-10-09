@@ -190,5 +190,8 @@
   "uploadDocuments": "দস্তাবেজ আপলোড করুন",
   "profilePhoto": "প্রোফাইল ছবি",
   "camera": "ক্যামেরা",
-  "avatar": "অবতার"
+  "avatar": "অবতার",
+  "next": "পরবর্তী",
+  "done": "সমাপ্ত",
+  "selectFolder": "ফোল্ডার নির্বাচন করুন"
 }

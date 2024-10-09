@@ -190,5 +190,8 @@
   "uploadDocuments": "दस्तावेज़ अपलोड करें",
   "profilePhoto": "प्रोफ़ाइल फ़ोटो",
   "camera": "कैमरा",
-  "avatar": "अवतार"
+  "avatar": "अवतार",
+  "next": "अगला",
+  "done": "पूर्ण",
+  "selectFolder": "फ़ोल्डर चुनें"
 }

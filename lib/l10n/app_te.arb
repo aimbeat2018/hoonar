@@ -190,5 +190,8 @@
   "uploadDocuments": "పత్రాలను అప్‌లోడ్ చేయండి",
   "profilePhoto": "ప్రొఫైల్ ఫోటో",
   "camera": "కెమెరా",
-  "avatar": "అవతార్"
+  "avatar": "అవతార్",
+  "next": "తర్వాత",
+  "done": "పూర్తి",
+  "selectFolder": "ఫోల్డర్ ఎంపికచేయండి"
 }

@@ -190,5 +190,8 @@
   "uploadDocuments": "कागदपत्रे अपलोड करा",
   "profilePhoto": "प्रोफाइल फोटो",
   "camera": "कॅमेरा",
-  "avatar": "अवतार"
+  "avatar": "अवतार",
+  "next": "पुढे",
+  "done": "पूर्ण",
+  "selectFolder": "फोल्डर निवडा"
 }

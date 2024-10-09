@@ -190,6 +190,9 @@
   "uploadDocuments": "ದಾಖಲೆಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",
   "profilePhoto": "ಪ್ರೊಫೈಲ್ ಫೋಟೋ",
   "camera": "ಕ್ಯಾಮೆರಾ",
-  "avatar": "ಅವತಾರ"
+  "avatar": "ಅವತಾರ",
+  "next": "ಮುಂದೆ",
+  "done": "ಮುಗಿಯಿತು",
+  "selectFolder": "ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ"
 
 }
