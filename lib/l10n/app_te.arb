@@ -193,5 +193,10 @@
   "avatar": "అవతార్",
   "next": "తర్వాత",
   "done": "పూర్తి",
-  "selectFolder": "ఫోల్డర్ ఎంపికచేయండి"
+  "selectFolder": "ఫోల్డర్ ఎంపికచేయండి",
+  "selectState": "రాష్ట్రాన్ని ఎంచుకోండి",
+  "selectCity": "నగరాన్ని ఎంచుకోండి",
+  "enterPincode": "పిన్‌కోడ్ ఎంటర్ చేయండి",
+  "acceptPrivacyPolicy": "గోప్యతా విధానాన్ని అంగీకరించండి",
+  "enterPhoneNumberError": "ఫోన్ నంబర్ ఎంటర్ చేయండి"
 }

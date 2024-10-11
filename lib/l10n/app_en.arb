@@ -189,10 +189,15 @@
   "payNowToBecomeContestant": "Pay now to become a Contestant",
   "payNow": "Pay Now",
   "uploadDocuments": "Upload Documents",
-  "profilePhoto" : "Profile Photo",
+  "profilePhoto": "Profile Photo",
   "camera": "Camera",
-  "avatar" : "Avatar",
-  "next" : "Next",
+  "avatar": "Avatar",
+  "next": "Next",
   "done": "Done",
-  "selectFolder" : "Select Folder"
+  "selectFolder": "Select Folder",
+  "selectState": "Select state",
+  "selectCity": "Select city",
+  "enterPincode": "Enter pincode",
+  "acceptPrivacyPolicy": "Accept privacy policy",
+  "enterPhoneNumberError" : "Enter phone number"
 }

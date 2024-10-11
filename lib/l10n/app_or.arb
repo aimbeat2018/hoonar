@@ -193,6 +193,11 @@
   "avatar": "ଅବତାର",
   "next": "ପରବର୍ତ୍ତୀ",
   "done": "ସମ୍ପୂର୍ଣ୍ଣ",
-  "selectFolder": "ଫୋଲ୍ଡର ଚୟନ କରନ୍ତୁ"
+  "selectFolder": "ଫୋଲ୍ଡର ଚୟନ କରନ୍ତୁ",
+  "selectState": "ରାଜ୍ୟ ବାଛନ୍ତୁ",
+  "selectCity": "ସହର ବାଛନ୍ତୁ",
+  "enterPincode": "ପିନକୋଡ୍ ଦିଅନ୍ତୁ",
+  "acceptPrivacyPolicy": "ଗୋପନୀୟତା ନୀତିକୁ ଗ୍ରହଣ କରନ୍ତୁ",
+  "enterPhoneNumberError": "ଫୋନ ନମ୍ବର ଦିଅନ୍ତୁ"
 
 }

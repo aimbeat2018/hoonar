@@ -193,5 +193,10 @@
   "avatar": "اوتار",
   "next": "اگلا",
   "done": "مکمل",
-  "selectFolder": "فولڈر منتخب کریں"
+  "selectFolder": "فولڈر منتخب کریں",
+  "selectState": "ریاست منتخب کریں",
+  "selectCity": "شہر منتخب کریں",
+  "enterPincode": "پن کوڈ درج کریں",
+  "acceptPrivacyPolicy": "رازداری کی پالیسی کو قبول کریں",
+  "enterPhoneNumberError": "فون نمبر درج کریں"
 }

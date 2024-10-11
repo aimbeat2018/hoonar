@@ -193,5 +193,10 @@
   "avatar": "അവതാര്‍",
   "next": "അടുത്തത്",
   "done": "പൂർത്തിയാക്കി",
-  "selectFolder": "ഫോൾഡർ തിരഞ്ഞെടുക്കുക"
+  "selectFolder": "ഫോൾഡർ തിരഞ്ഞെടുക്കുക",
+  "selectState": "സംസ്ഥാനം തിരഞ്ഞെടുക്കുക",
+  "selectCity": "നഗരം തിരഞ്ഞെടുക്കുക",
+  "enterPincode": "പിന്‍കോഡ് നൽകുക",
+  "acceptPrivacyPolicy": "സ്വകാര്യതാ നയം അംഗീകരിക്കുക",
+  "enterPhoneNumberError": "ഫോൺ നമ്പർ നൽകുക"
 }

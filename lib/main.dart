@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
+import 'package:hoonar/screens/splash_screen/splash_screens.dart';
+import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,6 +22,7 @@ String selectedLanguage = byDefaultLanguage;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupServiceLocator(); // Setup get_it
   // MobileAds.instance.initialize();
   // await Firebase.initializeApp();
   await FlutterDownloader.initialize(ignoreSsl: true);
@@ -35,8 +39,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MyLoading>(
-      create: (context) => MyLoading(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MyLoading()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
       child: Consumer<MyLoading>(
         builder: (context, MyLoading myLoading, child) {
           SystemChrome.setSystemUIOverlayStyle(
@@ -69,7 +76,7 @@ class MyApp extends StatelessWidget {
               'CameraScreen': (context) => CustomCameraScreen(),
               'EditProfileScreen': (context) => EditProfileScreen()
             },
-            home: MainScreen(fromIndex: 0),
+            home: SplashScreens(),
           );
         },
       ),

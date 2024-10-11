@@ -193,5 +193,10 @@
   "avatar": "অবতার",
   "next": "পরবর্তী",
   "done": "সমাপ্ত",
-  "selectFolder": "ফোল্ডার নির্বাচন করুন"
+  "selectFolder": "ফোল্ডার নির্বাচন করুন",
+  "selectState": "রাজ্য নির্বাচন করুন",
+  "selectCity": "শহর নির্বাচন করুন",
+  "enterPincode": "পিনকোড লিখুন",
+  "acceptPrivacyPolicy": "গোপনীয়তা নীতি গ্রহণ করুন",
+  "enterPhoneNumberError": "ফোন নম্বর লিখুন"
 }

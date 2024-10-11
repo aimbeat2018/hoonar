@@ -193,5 +193,10 @@
   "avatar": "ਅਵਤਾਰ",
   "next": "ਅਗਲਾ",
   "done": "ਪੂਰਾ",
-  "selectFolder": "ਫੋਲਡਰ ਚੁਣੋ"
+  "selectFolder": "ਫੋਲਡਰ ਚੁਣੋ","selectState": "ਰਾਜ ਚੁਣੋ",
+  "selectCity": "ਸ਼ਹਿਰ ਚੁਣੋ",
+  "enterPincode": "ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
+  "acceptPrivacyPolicy": "ਨਿੱਜਤਾ ਨੀਤੀ ਸਵੀਕਾਰ ਕਰੋ",
+  "enterPhoneNumberError": "ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ"
+
 }

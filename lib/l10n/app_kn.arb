@@ -193,6 +193,11 @@
   "avatar": "ಅವತಾರ",
   "next": "ಮುಂದೆ",
   "done": "ಮುಗಿಯಿತು",
-  "selectFolder": "ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ"
+  "selectFolder": "ಫೋಲ್ಡರ್ ಆಯ್ಕೆಮಾಡಿ",
+  "selectState": "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ",
+  "selectCity": "ನಗರ ಆಯ್ಕೆಮಾಡಿ",
+  "enterPincode": "ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
+  "acceptPrivacyPolicy": "ಗೋಪ್ಯತಾ ನೀತಿಯನ್ನು ಒಪ್ಪಿಕೊಳ್ಳಿ",
+  "enterPhoneNumberError": "ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ"
 
 }

@@ -193,5 +193,10 @@
   "avatar": "અવતાર",
   "next": "આગળ",
   "done": "પૂર્ણ",
-  "selectFolder": "ફોલ્ડર પસંદ કરો"
+  "selectFolder": "ફોલ્ડર પસંદ કરો",
+  "selectState": "રાજ્ય પસંદ કરો",
+  "selectCity": "શહેર પસંદ કરો",
+  "enterPincode": "પિનકોડ દાખલ કરો",
+  "acceptPrivacyPolicy": "ગોપનીયતા નીતિ સ્વીકારો",
+  "enterPhoneNumberError": "ફોન નંબર દાખલ કરો"
 }
