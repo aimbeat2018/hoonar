@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class DummyScreen extends StatefulWidget {
   const DummyScreen({super.key});
@@ -60,17 +61,35 @@ class _DummyScreenState extends State<DummyScreen> {
                   controller: scrollController,
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   children: [
-                    _buildComment(
-                      "divn.edits",
-                      "Presets available in bio 🙌❤️",
-                      "6h",
-                      56,
-                    ),
-                    _buildComment(
-                      "divn.edits",
-                      "Colorgrade using Preset pack. Name: C Crimson green.",
-                      "20h",
-                      347,
+                    // _buildComment(
+                    //   "divn.edits",
+                    //   "Presets available in bio 🙌❤️",
+                    //   "6h",
+                    //   56,
+                    // ),
+                    // _buildComment(
+                    //   "divn.edits",
+                    //   "Colorgrade using Preset pack. Name: C Crimson green.",
+                    //   "20h",
+                    //   347,
+                    // ),
+                    Html(
+                      data:
+                          '<p><br></p><table class=\\"table table-bordered\\"><tbody><tr><td><p><img src=\\"https://atrussama.com/maaj_maval//resources/uploads/complaint_images/banner3.png\\" style=\\"width: 1018.81px;\\"><br></p></td><td>To ensure that the uploaded images are saved properly in your database alongside the description, you need to modify your <code>store_info</code> method to include the image URL in the data being inserted. Here’s how you can do it:<br></td></tr></tbody></table><table class=\\"table table-bordered\\"><tbody><tr><td><p><img src=\\"https://atrussama.com/maaj_maval//resources/uploads/complaint_images/banner2.png\\" style=\\"width: 1018.81px;\\"><br></p></td><td>To ensure that the uploaded images are saved properly in your database alongside the description, you need to modify your <code>store_info</code> method to include the image URL in the data being inserted. Here’s how you can do it:<br></td></tr></tbody></table>',
+                      style: {
+                        "table": Style(
+                          width: Width.auto(),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        "th": Style(
+                          padding: HtmlPaddings.all(10),
+                          backgroundColor: Colors.grey[200],
+                        ),
+                        "td": Style(
+                          padding: HtmlPaddings.all(10),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                      },
                     ),
                     SizedBox(height: 10),
                   ],
@@ -84,9 +103,11 @@ class _DummyScreenState extends State<DummyScreen> {
                   children: [
                     _buildReactionButton(Icons.favorite, Colors.red),
                     _buildReactionButton(Icons.handshake, Colors.yellow),
-                    _buildReactionButton(Icons.local_fire_department, Colors.orange),
+                    _buildReactionButton(
+                        Icons.local_fire_department, Colors.orange),
                     _buildReactionButton(Icons.emoji_people, Colors.yellow),
-                    _buildReactionButton(Icons.emoji_emotions_outlined, Colors.yellow),
+                    _buildReactionButton(
+                        Icons.emoji_emotions_outlined, Colors.yellow),
                     _buildReactionButton(Icons.face, Colors.yellow),
                     _buildReactionButton(Icons.card_giftcard, Colors.purple),
                   ],
@@ -99,7 +120,8 @@ class _DummyScreenState extends State<DummyScreen> {
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage('assets/profile_image.png'), // Add user profile image
+                      backgroundImage: AssetImage('assets/profile_image.png'),
+                      // Add user profile image
                       radius: 18,
                     ),
                     SizedBox(width: 10),
@@ -127,13 +149,15 @@ class _DummyScreenState extends State<DummyScreen> {
   }
 
   // Widget for each comment item
-  Widget _buildComment(String username, String comment, String time, int likes) {
+  Widget _buildComment(
+      String username, String comment, String time, int likes) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage('assets/profile_image.png'), // Replace with user's profile image
+            backgroundImage: AssetImage('assets/profile_image.png'),
+            // Replace with user's profile image
             radius: 18,
           ),
           SizedBox(width: 10),
@@ -167,7 +191,8 @@ class _DummyScreenState extends State<DummyScreen> {
                   children: [
                     Icon(Icons.favorite_border, size: 18, color: Colors.white),
                     SizedBox(width: 5),
-                    Text(likes.toString(), style: TextStyle(color: Colors.white)),
+                    Text(likes.toString(),
+                        style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ],

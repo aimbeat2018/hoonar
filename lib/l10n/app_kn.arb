@@ -198,6 +198,10 @@
   "selectCity": "ನಗರ ಆಯ್ಕೆಮಾಡಿ",
   "enterPincode": "ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
   "acceptPrivacyPolicy": "ಗೋಪ್ಯತಾ ನೀತಿಯನ್ನು ಒಪ್ಪಿಕೊಳ್ಳಿ",
-  "enterPhoneNumberError": "ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ"
+  "enterPhoneNumberError": "ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ", "searchState": "ರಾಜ್ಯವನ್ನು ಹುಡುಕಿ",
+  "searchCity": "ನಗರವನ್ನು ಹುಡುಕಿ",
+  "stateNotFound": "ರಾಜ್ಯ ಕಂಡುಬಂದಿಲ್ಲ",
+  "cityNotFound": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ"
+
 
 }

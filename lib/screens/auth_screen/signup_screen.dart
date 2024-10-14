@@ -1,20 +1,26 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_async_autocomplete/flutter_async_autocomplete.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_holo_date_picker/date_picker.dart';
+import 'package:flutter_holo_date_picker/i18n/date_picker_i18n.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
-import 'package:hoonar/constants/slide_right_route.dart';
+import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
 import 'package:hoonar/model/success_models/state_list_model.dart';
 import 'package:hoonar/providers/auth_provider.dart';
-import 'package:hoonar/screens/auth_screen/create_password_screen.dart';
+import 'package:hoonar/screens/auth_screen/state_city_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/slide_right_route.dart';
+import '../../custom/snackbar_util.dart';
+import 'create_password_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -39,6 +45,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         // resizeToAvoidBottomInset: false,
@@ -67,7 +75,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildAppbar(context, false),
+                  buildAppbar(context, myLoading.isDark),
                   Center(
                     child: Text(
                       AppLocalizations.of(context)!.signup,
@@ -321,6 +329,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                 return null;
                               },
                               maxLines: 1,
+                              readOnly: true,
+                              onTap: () async {
+                                _selectDate(context, myLoading.isDark);
+                              },
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.black,
@@ -458,7 +470,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Padding(
+                                    /* Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 15.0),
                                       child: AsyncAutocomplete<StateListData>(
@@ -539,6 +551,62 @@ class _SignupScreenState extends State<SignupScreen> {
                                           ),
                                         ),
                                       ),
+                                    ),*/
+
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: TextFormField(
+                                        validator: (v) {
+                                          if (v!.trim().isEmpty) {
+                                            return AppLocalizations.of(context)!
+                                                .selectState;
+                                          }
+                                          return null;
+                                        },
+                                        maxLines: 1,
+                                        readOnly: true,
+                                        onTap: () => _showStateBottomSheet(
+                                            context, myLoading.isDark, true),
+                                        controller: stateController,
+                                        cursorColor: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        style: GoogleFonts.poppins(
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: Colors.black,
+                                          errorStyle: GoogleFonts.poppins(),
+                                          border: GradientOutlineInputBorder(
+                                            width: 1,
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                greyTextColor4
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                          ),
+                                          // hintText: enterPhoneNumber,
+                                          hintStyle: GoogleFonts.poppins(
+                                            color: hintGreyColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 3),
+                                        ),
+                                        keyboardType: TextInputType.text,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -564,7 +632,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(
                                       height: 5,
                                     ),
-                                    Padding(
+                                    /* Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: AsyncAutocomplete<CityListData>(
@@ -641,6 +709,70 @@ class _SignupScreenState extends State<SignupScreen> {
                                             ),
                                           ),
                                         ),
+                                      ),
+                                    ),*/
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0),
+                                      child: TextFormField(
+                                        validator: (v) {
+                                          if (v!.trim().isEmpty) {
+                                            return AppLocalizations.of(context)!
+                                                .selectCity;
+                                          }
+                                          return null;
+                                        },
+                                        maxLines: 1,
+                                        readOnly: true,
+                                        onTap: () {
+                                          if (selectedStateId.isNotEmpty) {
+                                            _showStateBottomSheet(context,
+                                                myLoading.isDark, false);
+                                          } else {
+                                            SnackbarUtil.showSnackBar(
+                                                context,
+                                                AppLocalizations.of(context)!
+                                                    .selectState);
+                                          }
+                                        },
+                                        controller: cityController,
+                                        cursorColor: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        style: GoogleFonts.poppins(
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: Colors.black,
+                                          errorStyle: GoogleFonts.poppins(),
+                                          border: GradientOutlineInputBorder(
+                                            width: 1,
+                                            gradient: LinearGradient(
+                                              colors: [
+                                                myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                greyTextColor4
+                                              ],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                            ),
+                                          ),
+                                          // hintText: enterPhoneNumber,
+                                          hintStyle: GoogleFonts.poppins(
+                                            color: hintGreyColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 3),
+                                        ),
+                                        keyboardType: TextInputType.text,
                                       ),
                                     ),
                                   ],
@@ -798,38 +930,47 @@ class _SignupScreenState extends State<SignupScreen> {
                               ],
                             ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              callRegisterApi();
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              margin: const EdgeInsets.only(
-                                  top: 15, left: 60, right: 60, bottom: 10),
-                              decoration: ShapeDecoration(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                    strokeAlign: BorderSide.strokeAlignOutside,
-                                    color: Colors.black,
+                          authProvider.isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    callRegisterApi();
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    margin: const EdgeInsets.only(
+                                        top: 15,
+                                        left: 60,
+                                        right: 60,
+                                        bottom: 10),
+                                    decoration: ShapeDecoration(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        side: const BorderSide(
+                                          strokeAlign:
+                                              BorderSide.strokeAlignOutside,
+                                          color: Colors.black,
+                                        ),
+                                        borderRadius: BorderRadius.circular(80),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.createAcc,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
-                                  borderRadius: BorderRadius.circular(80),
                                 ),
-                              ),
-                              child: Text(
-                                AppLocalizations.of(context)!.createAcc,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       )),
                 ],
@@ -841,15 +982,103 @@ class _SignupScreenState extends State<SignupScreen> {
     });
   }
 
-  callRegisterApi() {
-    if (_formKey.currentState!.validate()) {}
+  void _showStateBottomSheet(
+      BuildContext context, bool isDarkMode, bool isState) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+              // Adjust as per your theme
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: StateCityScreen(
+                selectedStateId: selectedStateId,
+                isDarkMode: isDarkMode,
+                isState: isState,
+              ),
+            ));
+      },
+    ).then((value) {
+      if (value != null) {
+        if (isState) {
+          StateListData model = value;
+          stateController.text = model.name ?? '';
+          selectedStateId = model.id.toString();
+        } else {
+          CityListData model = value;
+          cityController.text = model.name ?? '';
+          selectedCityId = model.id.toString();
+        }
+        setState(() {});
+      }
+    });
+  }
 
-    /*Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: const CreatePasswordScreen(
-                                from: 'register',
-                              )),
-                            )*/
+  Future<void> _selectDate(BuildContext context, bool isDarkMode) async {
+    var datePicked = await DatePicker.showSimpleDatePicker(
+      context,
+      // initialDate: DateTime(2020),
+      firstDate: DateTime(1970),
+      // lastDate: DateTime(2090),
+      lastDate: DateTime.now(),
+      dateFormat: "dd-MMMM-yyyy",
+      itemTextStyle: GoogleFonts.poppins(
+        fontSize: 15,
+        color: isDarkMode ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w500,
+      ),
+      locale: DateTimePickerLocale.en_us,
+      looping: false,
+      reverse: true,
+      backgroundColor: isDarkMode ? Colors.grey.shade900 : Colors.white,
+      textColor: isDarkMode ? Colors.white : Colors.black,
+      titleText: AppLocalizations.of(context)!.dob.replaceAll("*", ""),
+      confirmText: AppLocalizations.of(context)!.yes,
+      cancelText: AppLocalizations.of(context)!.cancel,
+    );
+    dobController.text =
+        DateFormat('yyyy-MM-dd').format(datePicked ?? DateTime.now());
+  }
+
+  Future<void> callRegisterApi() async {
+    if (_formKey.currentState!.validate()) {
+      if (accept) {
+        SignupRequestModel requestModel = SignupRequestModel(
+            fullName: fullNameController.text,
+            userEmail: emailController.text,
+            mobileNo: phoneController.text,
+            deviceToken: "",
+            identity: emailController.text,
+            loginType: "email",
+            platform: Platform.isAndroid ? "1" : "2",
+            //1 : android OR 2 : ios
+            dob: dobController.text,
+            cityId: selectedCityId,
+            stateId: selectedStateId,
+            pincode: pinCodeController.text,
+            college: schoolController.text);
+        Navigator.push(
+          context,
+          SlideRightRoute(
+              page: CreatePasswordScreen(
+            from: 'register',
+            requestModel: requestModel,
+          )),
+        );
+      } else {
+        SnackbarUtil.showSnackBar(
+          context,
+          AppLocalizations.of(context)!.acceptPrivacyPolicy,
+        );
+      }
+    }
   }
 }

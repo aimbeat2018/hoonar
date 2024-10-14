@@ -198,5 +198,9 @@
   "selectCity": "শহর নির্বাচন করুন",
   "enterPincode": "পিনকোড লিখুন",
   "acceptPrivacyPolicy": "গোপনীয়তা নীতি গ্রহণ করুন",
-  "enterPhoneNumberError": "ফোন নম্বর লিখুন"
+  "enterPhoneNumberError": "ফোন নম্বর লিখুন",
+  "searchState": "রাজ্য অনুসন্ধান করুন",
+  "searchCity": "শহর অনুসন্ধান করুন",
+  "stateNotFound": "রাজ্য পাওয়া যায়নি",
+  "cityNotFound": "শহর পাওয়া যায়নি"
 }

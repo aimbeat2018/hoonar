@@ -198,5 +198,9 @@
   "selectCity": "شہر منتخب کریں",
   "enterPincode": "پن کوڈ درج کریں",
   "acceptPrivacyPolicy": "رازداری کی پالیسی کو قبول کریں",
-  "enterPhoneNumberError": "فون نمبر درج کریں"
+  "enterPhoneNumberError": "فون نمبر درج کریں",
+  "searchState": "ریاست تلاش کریں",
+  "searchCity": "شہر تلاش کریں",
+  "stateNotFound": "ریاست نہیں ملی",
+  "cityNotFound": "شہر نہیں ملا"
 }

@@ -198,5 +198,9 @@
   "selectCity": "నగరాన్ని ఎంచుకోండి",
   "enterPincode": "పిన్‌కోడ్ ఎంటర్ చేయండి",
   "acceptPrivacyPolicy": "గోప్యతా విధానాన్ని అంగీకరించండి",
-  "enterPhoneNumberError": "ఫోన్ నంబర్ ఎంటర్ చేయండి"
+  "enterPhoneNumberError": "ఫోన్ నంబర్ ఎంటర్ చేయండి",
+  "searchState": "రాష్ట్రాన్ని శోధించండి",
+  "searchCity": "నగరాన్ని శోధించండి",
+  "stateNotFound": "రాష్ట్రం కనపడలేదు",
+  "cityNotFound": "నగరం కనపడలేదు"
 }

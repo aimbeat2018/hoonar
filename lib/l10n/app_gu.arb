@@ -198,5 +198,9 @@
   "selectCity": "શહેર પસંદ કરો",
   "enterPincode": "પિનકોડ દાખલ કરો",
   "acceptPrivacyPolicy": "ગોપનીયતા નીતિ સ્વીકારો",
-  "enterPhoneNumberError": "ફોન નંબર દાખલ કરો"
+  "enterPhoneNumberError": "ફોન નંબર દાખલ કરો",
+  "searchState": "રાજ્ય શોધો",
+  "searchCity": "શહેર શોધો",
+  "stateNotFound": "રાજ્ય મળ્યું નથી",
+  "cityNotFound": "શહેર મળ્યું નથી"
 }

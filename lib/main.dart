@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hoonar/dummy_screen.dart';
 import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
               'EditProfileScreen': (context) => EditProfileScreen()
             },
             home: SplashScreens(),
+            // home: DummyScreen(),
           );
         },
       ),

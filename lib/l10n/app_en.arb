@@ -199,5 +199,9 @@
   "selectCity": "Select city",
   "enterPincode": "Enter pincode",
   "acceptPrivacyPolicy": "Accept privacy policy",
-  "enterPhoneNumberError" : "Enter phone number"
+  "enterPhoneNumberError": "Enter phone number",
+  "searchState": "Search State",
+  "searchCity": "Search City",
+  "stateNotFound": "State not found",
+  "cityNotFound": "City not found"
 }

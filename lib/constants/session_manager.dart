@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'key_res.dart';
 
 class SessionManager {
   final Future<SharedPreferences> _pref = SharedPreferences.getInstance();
@@ -44,28 +47,29 @@ class SessionManager {
         : sharedPreferences!.getString(key);
   }
 
-  // void saveUser(String value) {
-  //   if (sharedPreferences != null)
-  //     sharedPreferences!.setString(KeyRes.user, value);
-  //   saveBoolean(KeyRes.login, true);
-  //   userId = getUser()?.data?.userId ?? -1;
-  //   accessToken = getUser()?.data?.token ?? '';
-  //   // print('✅ : ${getUser()?.data?.toJson()}');
-  // }
-  //
-  // User? getUser() {
-  //   if (sharedPreferences != null) {
-  //     String? strUser = sharedPreferences!.getString(KeyRes.user);
-  //     if (strUser != null && strUser.isNotEmpty) {
-  //       return User.fromJson(jsonDecode(strUser));
-  //     } else {
-  //       return null;
-  //     }
-  //   } else {
-  //     return null;
-  //   }
-  // }
-  //
+  void saveUser(String value) {
+    if (sharedPreferences != null) {
+      sharedPreferences!.setString(KeyRes.user, value);
+    }
+    saveBoolean(KeyRes.login, true);
+    userId = getUser()?.data?.userId ?? -1;
+    accessToken = getUser()?.data?.token ?? '';
+    // print('✅ : ${getUser()?.data?.toJson()}');
+  }
+
+  SignupSuccessModel? getUser() {
+    if (sharedPreferences != null) {
+      String? strUser = sharedPreferences!.getString(KeyRes.user);
+      if (strUser != null && strUser.isNotEmpty) {
+        return SignupSuccessModel.fromJson(jsonDecode(strUser));
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   // void saveSetting(String value) {
   //   if (sharedPreferences != null)
   //     sharedPreferences?.setString(KeyRes.setting, value);

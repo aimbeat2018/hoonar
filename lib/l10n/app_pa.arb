@@ -197,6 +197,10 @@
   "selectCity": "ਸ਼ਹਿਰ ਚੁਣੋ",
   "enterPincode": "ਪਿੰਨਕੋਡ ਦਰਜ ਕਰੋ",
   "acceptPrivacyPolicy": "ਨਿੱਜਤਾ ਨੀਤੀ ਸਵੀਕਾਰ ਕਰੋ",
-  "enterPhoneNumberError": "ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ"
+  "enterPhoneNumberError": "ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ",
+  "searchState": "ਰਾਜ ਦੀ ਭਾਲ ਕਰੋ",
+  "searchCity": "ਸ਼ਹਿਰ ਦੀ ਭਾਲ ਕਰੋ",
+  "stateNotFound": "ਰਾਜ ਨਹੀਂ ਮਿਲਿਆ",
+  "cityNotFound": "ਸ਼ਹਿਰ ਨਹੀਂ ਮਿਲਿਆ"
 
 }

@@ -1,23 +1,37 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
+import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/services/user_service.dart';
 
+import '../constants/session_manager.dart';
 import '../model/success_models/state_list_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final UserService _userService = GetIt.I<UserService>();
 
-  bool? _isLoading;
+  bool _isLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
+  List<StateListData>? _filteredStateList;
+  List<CityListData>? _filteredCityList;
+  SignupSuccessModel? _signupSuccessModel;
 
   List<StateListData>? get stateList => _stateList;
 
   List<CityListData>? get cityList => _cityList;
 
-  bool? get isLoading => _isLoading;
+  List<CityListData>? get filteredCityList => _filteredCityList;
+
+  List<StateListData>? get filteredStateList => _filteredStateList;
+
+  SignupSuccessModel? get signupSuccessModel => _signupSuccessModel;
+
+  bool get isLoading => _isLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -38,15 +52,22 @@ class AuthProvider extends ChangeNotifier {
   }
 
   // New method to filter states based on search query
-  Future<List<StateListData>> getFilteredStates(String query) async {
+  Future< /*List<StateListData>*/ void> getFilteredStates(String query) async {
     if (_stateList == null) {
       await getStateList(); // Fetch state list if not already fetched
     }
-    return _stateList!
-        .where((state) =>
-            state.name != null &&
-            state.name!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+
+    if (query.isEmpty) {
+      _filteredStateList = _stateList;
+    } else {
+      // Filter cities based on the search value
+      _filteredStateList = _stateList!
+          .where((state) =>
+              state.name != null &&
+              state.name!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 
   Future<void> getCityList(String stateId) async {
@@ -65,15 +86,38 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<CityListData>> getFilteredCities(
+  Future< /*List<StateListData>*/ void> getFilteredCities(
       String query, String stateId) async {
     if (_cityList == null) {
-      await getCityList(stateId); // Fetch state list if not already fetched
+      await getCityList(stateId);
     }
-    return _cityList!
-        .where((city) =>
-            city.name != null &&
-            city.name!.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+
+    if (query.isEmpty) {
+      _filteredCityList = _cityList;
+    } else {
+      _filteredCityList = _cityList!
+          .where((state) =>
+              state.name != null &&
+              state.name!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
+  }
+
+  Future<void> signUpUser(SignupRequestModel requestModel) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SignupSuccessModel successModel =
+          await _userService.signUpUser(requestModel: requestModel);
+      _signupSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

@@ -47,6 +47,7 @@ dependencies:
   dio: ^5.7.0
   flutter_async_autocomplete: ^0.1.1
   gradient_borders: ^1.0.1
+  flutter_holo_date_picker: ^2.0.0
 
 
 

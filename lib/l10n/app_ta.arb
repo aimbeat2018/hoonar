@@ -198,5 +198,9 @@
   "selectCity": "நகரத்தைத் தேர்ந்தெடுக்கவும்",
   "enterPincode": "பின்கோடு உள்ளிடவும்",
   "acceptPrivacyPolicy": "தனியுரிமைக் கொள்கையை ஏற்கவும்",
-  "enterPhoneNumberError": "தொலைபேசி எண்ணை உள்ளிடவும்"
+  "enterPhoneNumberError": "தொலைபேசி எண்ணை உள்ளிடவும்",
+  "searchState": "மாநிலத்தைத் தேடுக",
+  "searchCity": "நகரத்தைத் தேடுக",
+  "stateNotFound": "மாநிலம் கிடைக்கவில்லை",
+  "cityNotFound": "நகரம் கிடைக்கவில்லை"
 }

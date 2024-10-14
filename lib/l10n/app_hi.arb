@@ -198,5 +198,9 @@
   "selectCity": "शहर चुनें",
   "enterPincode": "पिनकोड दर्ज करें",
   "acceptPrivacyPolicy": "गोपनीयता नीति स्वीकार करें",
-  "enterPhoneNumberError": "फ़ोन नंबर दर्ज करें"
+  "enterPhoneNumberError": "फ़ोन नंबर दर्ज करें",
+  "searchState": "राज्य खोजें",
+  "searchCity": "शहर खोजें",
+  "stateNotFound": "राज्य नहीं मिला",
+  "cityNotFound": "शहर नहीं मिला"
 }
