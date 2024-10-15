@@ -202,5 +202,8 @@
   "searchState": "மாநிலத்தைத் தேடுக",
   "searchCity": "நகரத்தைத் தேடுக",
   "stateNotFound": "மாநிலம் கிடைக்கவில்லை",
-  "cityNotFound": "நகரம் கிடைக்கவில்லை"
+  "cityNotFound": "நகரம் கிடைக்கவில்லை",
+  "enterNewPassword": "புதிய கடவுச்சொல்லை உள்ளிடவும்",
+  "enterConfirmNewPassword": "புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+  "newPasswordAndConfirmPasswordShouldMatch": "புதிய கடவுச்சொல் மற்றும் உறுதிப்படுத்திய கடவுச்சொல் பொருந்த வேண்டும்"
 }

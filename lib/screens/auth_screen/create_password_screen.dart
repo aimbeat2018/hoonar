@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -108,12 +109,12 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                               validator: (v) {
                                 if (v!.trim().isEmpty) {
                                   return AppLocalizations.of(context)!
-                                      .enterFullName;
+                                      .enterNewPassword;
                                 }
                                 return null;
                               },
                               maxLines: 1,
-                              obscureText: !newPasswordVisibility,
+                              obscureText: newPasswordVisibility,
                               controller: newpassController,
                               cursorColor: Colors.white,
                               style: GoogleFonts.poppins(
@@ -154,8 +155,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                     },
                                     child: Icon(
                                       newPasswordVisibility
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                       color: textFieldGreyColor,
                                     ),
                                   )),
@@ -187,7 +188,10 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                               validator: (v) {
                                 if (v!.trim().isEmpty) {
                                   return AppLocalizations.of(context)!
-                                      .enterFullName;
+                                      .enterConfirmNewPassword;
+                                } else if (v != newpassController.text) {
+                                  return AppLocalizations.of(context)!
+                                      .newPasswordAndConfirmPasswordShouldMatch;
                                 }
                                 return null;
                               },
@@ -234,8 +238,8 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                     },
                                     child: Icon(
                                       confirmNewPasswordVisibility
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                       color: textFieldGreyColor,
                                     ),
                                   )),
@@ -245,7 +249,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                           const SizedBox(
                             height: 40,
                           ),
-                          authProvider.isLoading
+                          authProvider.isSignUpLoading
                               ? const Center(
                                   child:
                                       CircularProgressIndicator()) // Show loader when signing up
@@ -294,22 +298,31 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   }
 
   Future<void> callRegisterApi(BuildContext context) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (_formKey.currentState!.validate()) {
+      FirebaseMessaging.instance.getToken().then((value) async {
+        String? fcmToken = value;
 
-    await authProvider.signUpUser(widget.requestModel!);
+        widget.requestModel?.deviceToken = fcmToken;
+        widget.requestModel?.password = newpassController.text;
 
-    if (authProvider.errorMessage != null) {
-      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-    } else {
-      if (authProvider.signupSuccessModel?.status == 200) {
-        SnackbarUtil.showSnackBar(
-            context, authProvider.signupSuccessModel?.message! ?? '');
-        Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
-      } else {
-        SnackbarUtil.showSnackBar(
-            context, authProvider.signupSuccessModel?.message! ?? '');
-      }
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+        await authProvider.signUpUser(widget.requestModel!);
+
+        if (authProvider.errorMessage != null) {
+          SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+        } else {
+          if (authProvider.signupSuccessModel?.status == 200) {
+            SnackbarUtil.showSnackBar(
+                context, authProvider.signupSuccessModel?.message! ?? '');
+            Navigator.pushAndRemoveUntil(context,
+                SlideRightRoute(page: LoginScreen()), (route) => false);
+          } else {
+            SnackbarUtil.showSnackBar(
+                context, authProvider.signupSuccessModel?.message! ?? '');
+          }
+        }
+      });
     }
   }
 }

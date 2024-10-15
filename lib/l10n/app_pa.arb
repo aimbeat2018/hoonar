@@ -201,6 +201,9 @@
   "searchState": "ਰਾਜ ਦੀ ਭਾਲ ਕਰੋ",
   "searchCity": "ਸ਼ਹਿਰ ਦੀ ਭਾਲ ਕਰੋ",
   "stateNotFound": "ਰਾਜ ਨਹੀਂ ਮਿਲਿਆ",
-  "cityNotFound": "ਸ਼ਹਿਰ ਨਹੀਂ ਮਿਲਿਆ"
+  "cityNotFound": "ਸ਼ਹਿਰ ਨਹੀਂ ਮਿਲਿਆ",
+  "enterNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ",
+  "enterConfirmNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਪੁਸ਼ਟੀ ਕਰੋ",
+  "newPasswordAndConfirmPasswordShouldMatch": "ਨਵਾਂ ਪਾਸਵਰਡ ਅਤੇ ਪੁਸ਼ਟੀ ਪਾਸਵਰਡ ਮੇਲ ਖਾਉਣਾ ਚਾਹੀਦਾ ਹੈ"
 
 }

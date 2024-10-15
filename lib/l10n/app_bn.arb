@@ -202,5 +202,8 @@
   "searchState": "রাজ্য অনুসন্ধান করুন",
   "searchCity": "শহর অনুসন্ধান করুন",
   "stateNotFound": "রাজ্য পাওয়া যায়নি",
-  "cityNotFound": "শহর পাওয়া যায়নি"
+  "cityNotFound": "শহর পাওয়া যায়নি",
+  "enterNewPassword": "নতুন পাসওয়ার্ড লিখুন",
+  "enterConfirmNewPassword": "নতুন পাসওয়ার্ড নিশ্চিত করুন",
+  "newPasswordAndConfirmPasswordShouldMatch": "নতুন পাসওয়ার্ড এবং নিশ্চিত পাসওয়ার্ড মেলাতে হবে"
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -26,6 +27,15 @@ Future<void> main() async {
   setupServiceLocator(); // Setup get_it
   // MobileAds.instance.initialize();
   // await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+    apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
+    appId: '1:458800452771:android:a35d10f82ff6c25d279b16',
+    messagingSenderId: '458800452771',
+    projectId: 'hoonar-db73e',
+    storageBucket: 'hoonar-db73e.appspot.com',
+  ));
+
   await FlutterDownloader.initialize(ignoreSsl: true);
   await sessionManager.initPref();
   // await FlutterBranchSdk.init(useTestKey: true, enableLogging: true, disableTracking: false);

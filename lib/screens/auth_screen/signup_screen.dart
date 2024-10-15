@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
+import 'package:hoonar/constants/custom_dialog.dart';
+import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
 import 'package:hoonar/model/success_models/state_list_model.dart';
@@ -32,6 +36,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   bool accept = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _mobileFormKey = GlobalKey();
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -42,6 +47,23 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController stateController = TextEditingController();
   ScrollController scrollController = ScrollController();
   String selectedStateId = "", selectedCityId = "";
+  Timer? _debounce;
+  final Duration debounceDuration = Duration(seconds: 3);
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _debounce?.cancel();
+  }
+
+  void _onEmailTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+    _debounce = Timer(debounceDuration, () {
+      checkEmailAndMobile(emailController.text, "");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +207,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 if (v!.trim().isEmpty) {
                                   return AppLocalizations.of(context)!
                                       .enterEmail;
+                                } else if (!Validation.isValidEmail(v)) {
+                                  return AppLocalizations.of(context)!
+                                      .enterEmail;
                                 }
                                 return null;
                               },
@@ -221,7 +246,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 fontSize: 14,
                               ),
                               keyboardType: TextInputType.emailAddress,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (Validation.isValidEmail(value)) {
+                                  _onEmailTextChanged();
+                                }
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -295,7 +324,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 FilteringTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10),
                               ],
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                if (value.length == 10) {
+                                  checkEmailAndMobile("", value);
+                                }
+                              },
                             ),
                           ),
                           const SizedBox(
@@ -930,7 +963,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               ],
                             ),
                           ),
-                          authProvider.isLoading
+                          authProvider.isSignUpLoading
                               ? const Center(
                                   child: CircularProgressIndicator(),
                                 )
@@ -1044,8 +1077,21 @@ class _SignupScreenState extends State<SignupScreen> {
       confirmText: AppLocalizations.of(context)!.yes,
       cancelText: AppLocalizations.of(context)!.cancel,
     );
-    dobController.text =
-        DateFormat('yyyy-MM-dd').format(datePicked ?? DateTime.now());
+    if (datePicked != null) {
+      // Calculate the user's age
+      int age = DateTime.now().year - datePicked.year;
+      // Check if the user is at least 15 years old
+      if (age < 15 ||
+          (age == 15 &&
+              DateTime.now()
+                  .isBefore(datePicked.add(Duration(days: 15 * 365))))) {
+        // Show an error message or prevent the user from proceeding
+        SnackbarUtil.showSnackBar(
+            context, 'You must be at least 15 years old!');
+      } else {
+        dobController.text = DateFormat('yyyy-MM-dd').format(datePicked);
+      }
+    }
   }
 
   Future<void> callRegisterApi() async {
@@ -1077,6 +1123,38 @@ class _SignupScreenState extends State<SignupScreen> {
         SnackbarUtil.showSnackBar(
           context,
           AppLocalizations.of(context)!.acceptPrivacyPolicy,
+        );
+      }
+    }
+  }
+
+  Future<void> checkEmailAndMobile(String email, String mobile) async {
+    CheckUserRequestModel requestModel;
+    if (email.isEmpty) {
+      requestModel = CheckUserRequestModel(userEmail: "", mobileNo: mobile);
+    } else {
+      requestModel = CheckUserRequestModel(userEmail: email, mobileNo: "");
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    await authProvider.checkUser(requestModel);
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    } else {
+      if (authProvider.checkUserSuccessModel?.status != 200) {
+        showCupertinoDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoCustomDialog(
+              title: '',
+              message: authProvider.checkUserSuccessModel?.message ?? '',
+              confirmButtonText: AppLocalizations.of(context)!.done,
+              onConfirm: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+            );
+          },
         );
       }
     }

@@ -202,5 +202,8 @@
   "searchState": "ریاست تلاش کریں",
   "searchCity": "شہر تلاش کریں",
   "stateNotFound": "ریاست نہیں ملی",
-  "cityNotFound": "شہر نہیں ملا"
+  "cityNotFound": "شہر نہیں ملا",
+  "enterNewPassword": "نیا پاس ورڈ درج کریں",
+  "enterConfirmNewPassword": "نیا پاس ورڈ کی تصدیق درج کریں",
+  "newPasswordAndConfirmPasswordShouldMatch": "نیا پاس ورڈ اور تصدیق پاس ورڈ ایک جیسے ہونے چاہئیں"
 }

@@ -25,3 +25,13 @@ class SnackbarUtil {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
+
+class Validation {
+  static bool isValidEmail(String email) {
+    // Regular expression for validating an email address
+    String pattern =
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
+    RegExp regex = RegExp(pattern);
+    return regex.hasMatch(email);
+  }
+}

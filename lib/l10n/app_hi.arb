@@ -202,5 +202,8 @@
   "searchState": "राज्य खोजें",
   "searchCity": "शहर खोजें",
   "stateNotFound": "राज्य नहीं मिला",
-  "cityNotFound": "शहर नहीं मिला"
+  "cityNotFound": "शहर नहीं मिला",
+  "enterNewPassword": "नया पासवर्ड दर्ज करें",
+  "enterConfirmNewPassword": "नया पासवर्ड पुष्टि करें",
+  "newPasswordAndConfirmPasswordShouldMatch": "नया पासवर्ड और पुष्टि पासवर्ड मेल खाना चाहिए"
 }

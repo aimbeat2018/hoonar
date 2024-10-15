@@ -202,5 +202,8 @@
   "searchState": "రాష్ట్రాన్ని శోధించండి",
   "searchCity": "నగరాన్ని శోధించండి",
   "stateNotFound": "రాష్ట్రం కనపడలేదు",
-  "cityNotFound": "నగరం కనపడలేదు"
+  "cityNotFound": "నగరం కనపడలేదు",
+  "enterNewPassword": "కొత్త పాస్‌వర్డ్‌ను నమోదు చేయండి",
+  "enterConfirmNewPassword": "కొత్త పాస్‌వర్డ్‌ను నిర్ధారించండి",
+  "newPasswordAndConfirmPasswordShouldMatch": "కొత్త పాస్‌వర్డ్ మరియు నిర్ధారించిన పాస్‌వర్డ్ సరిపోవాలి"
 }

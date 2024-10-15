@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "458800452771",
+    "project_id": "hoonar-db73e",
+    "storage_bucket": "hoonar-db73e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458800452771:android:a35d10f82ff6c25d279b16",
+        "android_client_info": {
+          "package_name": "com.hoonar.hoonar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

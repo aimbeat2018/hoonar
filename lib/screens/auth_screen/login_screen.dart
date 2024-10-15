@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +25,35 @@ class _LoginScreenState extends State<LoginScreen> {
   bool passwordError = false, mobileError = false, passwordVisible = true;
   bool remeberme = false;
   bool _isObscure = true;
+  String deviceName = '';
+  String deviceType = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchDeviceInfo();
+  }
+
+  Future<void> fetchDeviceInfo() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      // For Android
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      setState(() {
+        deviceName = androidInfo.model ?? 'Unknown Android Device';
+        deviceType = 'Android';
+      });
+    } else if (Platform.isIOS) {
+      // For iOS
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      setState(() {
+        deviceName = iosInfo.name ?? 'Unknown iOS Device';
+        deviceType = 'iOS';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,8 +224,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Icon(
                                   _isObscure
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: textFieldGreyColor,
                                 ),
                               )),

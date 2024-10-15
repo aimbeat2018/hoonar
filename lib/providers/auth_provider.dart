@@ -1,25 +1,27 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
+import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/services/user_service.dart';
-
-import '../constants/session_manager.dart';
 import '../model/success_models/state_list_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final UserService _userService = GetIt.I<UserService>();
 
-  bool _isLoading = false;
+  bool _isStateLoading = false;
+  bool _isCityLoading = false;
+  bool _isSignUpLoading = false;
+  bool _isCheckUserLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
   List<StateListData>? _filteredStateList;
   List<CityListData>? _filteredCityList;
   SignupSuccessModel? _signupSuccessModel;
+  CheckUserSuccessModel? _checkUserSuccessModel;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -31,12 +33,20 @@ class AuthProvider extends ChangeNotifier {
 
   SignupSuccessModel? get signupSuccessModel => _signupSuccessModel;
 
-  bool get isLoading => _isLoading;
+  CheckUserSuccessModel? get checkUserSuccessModel => _checkUserSuccessModel;
+
+  bool get isStateLoading => _isStateLoading;
+
+  bool get isCityLoading => _isCityLoading;
+
+  bool get isSignUpLoading => _isSignUpLoading;
+
+  bool get isCheckUserLoading => _isCheckUserLoading;
 
   String? get errorMessage => _errorMessage;
 
   Future<void> getStateList() async {
-    _isLoading = true;
+    _isStateLoading = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -46,13 +56,13 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
-      _isLoading = false;
+      _isStateLoading = false;
       notifyListeners();
     }
   }
 
   // New method to filter states based on search query
-  Future< /*List<StateListData>*/ void> getFilteredStates(String query) async {
+  Future<void> getFilteredStates(String query) async {
     if (_stateList == null) {
       await getStateList(); // Fetch state list if not already fetched
     }
@@ -71,7 +81,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> getCityList(String stateId) async {
-    _isLoading = true;
+    _isCityLoading = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -81,13 +91,12 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
-      _isLoading = false;
+      _isCityLoading = false;
       notifyListeners();
     }
   }
 
-  Future< /*List<StateListData>*/ void> getFilteredCities(
-      String query, String stateId) async {
+  Future<void> getFilteredCities(String query, String stateId) async {
     if (_cityList == null) {
       await getCityList(stateId);
     }
@@ -104,8 +113,25 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> checkUser(CheckUserRequestModel requestModel) async {
+    _isCheckUserLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      CheckUserSuccessModel successModel = await _userService
+          .checkUserEmailAndMobile(requestModel: requestModel);
+      _checkUserSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSignUpLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> signUpUser(SignupRequestModel requestModel) async {
-    _isLoading = true;
+    _isSignUpLoading = true;
     _errorMessage = null;
     notifyListeners();
 
@@ -116,7 +142,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
-      _isLoading = false;
+      _isSignUpLoading = false;
       notifyListeners();
     }
   }

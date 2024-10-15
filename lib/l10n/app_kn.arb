@@ -198,10 +198,12 @@
   "selectCity": "ನಗರ ಆಯ್ಕೆಮಾಡಿ",
   "enterPincode": "ಪಿನ್‌ಕೋಡ್ ನಮೂದಿಸಿ",
   "acceptPrivacyPolicy": "ಗೋಪ್ಯತಾ ನೀತಿಯನ್ನು ಒಪ್ಪಿಕೊಳ್ಳಿ",
-  "enterPhoneNumberError": "ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ", "searchState": "ರಾಜ್ಯವನ್ನು ಹುಡುಕಿ",
+  "enterPhoneNumberError": "ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ",
+  "searchState": "ರಾಜ್ಯವನ್ನು ಹುಡುಕಿ",
   "searchCity": "ನಗರವನ್ನು ಹುಡುಕಿ",
   "stateNotFound": "ರಾಜ್ಯ ಕಂಡುಬಂದಿಲ್ಲ",
-  "cityNotFound": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ"
-
-
+  "cityNotFound": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ",
+  "enterNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ",
+  "enterConfirmNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
+  "newPasswordAndConfirmPasswordShouldMatch": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಮತ್ತು ದೃಢೀಕರಣ ಪಾಸ್ವರ್ಡ್ ಒಂದೇ ಆಗಿರಬೇಕು"
 }
