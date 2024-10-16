@@ -205,5 +205,7 @@
   "cityNotFound": "शहर सापडले नाही",
   "enterNewPassword": "नवीन पासवर्ड प्रविष्ट करा",
   "enterConfirmNewPassword": "नवीन पासवर्डची पुष्टी करा",
-  "newPasswordAndConfirmPasswordShouldMatch": "नवीन पासवर्ड आणि पुष्टी पासवर्ड जुळले पाहिजेत"
+  "newPasswordAndConfirmPasswordShouldMatch": "नवीन पासवर्ड आणि पुष्टी पासवर्ड जुळले पाहिजेत",
+  "enterOtp": "ओटीपी टाका"
+
 }

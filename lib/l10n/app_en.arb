@@ -206,5 +206,6 @@
   "cityNotFound": "City not found",
   "enterNewPassword": "Enter new password",
   "enterConfirmNewPassword": "Enter confirm new password",
-  "newPasswordAndConfirmPasswordShouldMatch": "New password and confirm new password should match"
+  "newPasswordAndConfirmPasswordShouldMatch": "New password and confirm new password should match",
+  "enterOtp": "Enter Otp"
 }

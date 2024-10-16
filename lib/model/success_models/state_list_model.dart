@@ -1,5 +1,5 @@
 class StateListModel {
-  int? status;
+  String? status;
   String? message;
   List<StateListData>? data;
 

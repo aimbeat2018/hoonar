@@ -205,6 +205,7 @@
   "cityNotFound": "ସହର ମିଳିଲା ନାହିଁ",
   "enterNewPassword": "ନୂତନ ପାସୱାର୍ଡ ଦାଖଲ କରନ୍ତୁ",
   "enterConfirmNewPassword": "ନୂତନ ପାସୱାର୍ଡର ପୁଷ୍ଟି ଦାଖଲ କରନ୍ତୁ",
-  "newPasswordAndConfirmPasswordShouldMatch": "ନୂତନ ପାସୱାର୍ଡ ଏବଂ ପୁଷ୍ଟି ପାସୱାର୍ଡ ମିଳିବା ଉଚିତ"
+  "newPasswordAndConfirmPasswordShouldMatch": "ନୂତନ ପାସୱାର୍ଡ ଏବଂ ପୁଷ୍ଟି ପାସୱାର୍ଡ ମିଳିବା ଉଚିତ",
+  "enterOtp": "OTP ଦାଖଲ କରନ୍ତୁ"
 
 }

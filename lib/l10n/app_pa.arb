@@ -204,6 +204,7 @@
   "cityNotFound": "ਸ਼ਹਿਰ ਨਹੀਂ ਮਿਲਿਆ",
   "enterNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ",
   "enterConfirmNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਪੁਸ਼ਟੀ ਕਰੋ",
-  "newPasswordAndConfirmPasswordShouldMatch": "ਨਵਾਂ ਪਾਸਵਰਡ ਅਤੇ ਪੁਸ਼ਟੀ ਪਾਸਵਰਡ ਮੇਲ ਖਾਉਣਾ ਚਾਹੀਦਾ ਹੈ"
+  "newPasswordAndConfirmPasswordShouldMatch": "ਨਵਾਂ ਪਾਸਵਰਡ ਅਤੇ ਪੁਸ਼ਟੀ ਪਾਸਵਰਡ ਮੇਲ ਖਾਉਣਾ ਚਾਹੀਦਾ ਹੈ",
+  "enterOtp": "OTP ਦਾਖਲ ਕਰੋ"
 
 }

@@ -7,5 +7,6 @@ const String login = 'login';
 const String sendForgetOtp = 'User/sendOtp';
 const String verifyForgetOtp = 'User/verifyOtp';
 const String changeForgetPassword = 'User/changePassword';
+const String getProfile = 'User/getProfile';
 
 const String headerUniqueKey = "dev123";

@@ -205,5 +205,6 @@
   "cityNotFound": "நகரம் கிடைக்கவில்லை",
   "enterNewPassword": "புதிய கடவுச்சொல்லை உள்ளிடவும்",
   "enterConfirmNewPassword": "புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
-  "newPasswordAndConfirmPasswordShouldMatch": "புதிய கடவுச்சொல் மற்றும் உறுதிப்படுத்திய கடவுச்சொல் பொருந்த வேண்டும்"
+  "newPasswordAndConfirmPasswordShouldMatch": "புதிய கடவுச்சொல் மற்றும் உறுதிப்படுத்திய கடவுச்சொல் பொருந்த வேண்டும்",
+  "enterOtp": "OTP உள்ளிடவும்"
 }

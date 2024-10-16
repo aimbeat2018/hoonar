@@ -21,6 +21,13 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
   SessionManager sessionManager = SessionManager();
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(

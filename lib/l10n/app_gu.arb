@@ -205,5 +205,6 @@
   "cityNotFound": "શહેર મળ્યું નથી",
   "enterNewPassword": "નવું પાસવર્ડ દાખલ કરો",
   "enterConfirmNewPassword": "નવું પાસવર્ડ પુષ્ટિ કરો",
-  "newPasswordAndConfirmPasswordShouldMatch": "નવું પાસવર્ડ અને પુષ્ટિ પાસવર્ડ મેળ ખાતું હોવું જોઈએ"
+  "newPasswordAndConfirmPasswordShouldMatch": "નવું પાસવર્ડ અને પુષ્ટિ પાસવર્ડ મેળ ખાતું હોવું જોઈએ",
+  "enterOtp": "ઓટિપિ દાખલ કરો"
 }

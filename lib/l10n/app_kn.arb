@@ -205,5 +205,6 @@
   "cityNotFound": "ನಗರ ಕಂಡುಬಂದಿಲ್ಲ",
   "enterNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ",
   "enterConfirmNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
-  "newPasswordAndConfirmPasswordShouldMatch": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಮತ್ತು ದೃಢೀಕರಣ ಪಾಸ್ವರ್ಡ್ ಒಂದೇ ಆಗಿರಬೇಕು"
+  "newPasswordAndConfirmPasswordShouldMatch": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಮತ್ತು ದೃಢೀಕರಣ ಪಾಸ್ವರ್ಡ್ ಒಂದೇ ಆಗಿರಬೇಕು",
+  "enterOtp": "ಒಟಿಪಿ ನಮೂದಿಸಿ"
 }

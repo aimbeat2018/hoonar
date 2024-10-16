@@ -1,5 +1,5 @@
 class CityListModel {
-  int? status;
+  String? status;
   String? message;
   List<CityListData>? data;
 

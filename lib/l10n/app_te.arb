@@ -205,5 +205,6 @@
   "cityNotFound": "నగరం కనపడలేదు",
   "enterNewPassword": "కొత్త పాస్‌వర్డ్‌ను నమోదు చేయండి",
   "enterConfirmNewPassword": "కొత్త పాస్‌వర్డ్‌ను నిర్ధారించండి",
-  "newPasswordAndConfirmPasswordShouldMatch": "కొత్త పాస్‌వర్డ్ మరియు నిర్ధారించిన పాస్‌వర్డ్ సరిపోవాలి"
+  "newPasswordAndConfirmPasswordShouldMatch": "కొత్త పాస్‌వర్డ్ మరియు నిర్ధారించిన పాస్‌వర్డ్ సరిపోవాలి",
+  "enterOtp": "OTPని నమోదు చేయండి"
 }

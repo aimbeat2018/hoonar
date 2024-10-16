@@ -9,8 +9,11 @@ import 'key_res.dart';
 class SessionManager {
   final Future<SharedPreferences> _pref = SharedPreferences.getInstance();
   SharedPreferences? sharedPreferences;
-  static int userId = -1;
-  static String accessToken = '';
+  static String userId = 'userId';
+  static String accessToken = 'accessToken';
+  static String userEmail = 'userEmail';
+  static String userPassword = 'userPassword';
+  static String rememberMe = 'rememberMe';
 
   Future initPref() async {
     sharedPreferences = await _pref;
@@ -36,6 +39,10 @@ class SessionManager {
     return sharedPreferences?.getString(key);
   }
 
+  void cleanString(String key) {
+    if (sharedPreferences != null) sharedPreferences!.remove(key);
+  }
+
   void saveString(String key, String? value) async {
     if (sharedPreferences != null) sharedPreferences!.setString(key, value!);
   }
@@ -52,9 +59,11 @@ class SessionManager {
       sharedPreferences!.setString(KeyRes.user, value);
     }
     saveBoolean(KeyRes.login, true);
-    userId = getUser()?.data?.userId ?? -1;
-    accessToken = getUser()?.data?.token ?? '';
-    // print('✅ : ${getUser()?.data?.toJson()}');
+    int userIdInt = getUser()?.data?.userId ?? -1;
+    // userId = userIdInt.toString();
+    // accessToken = getUser()?.data?.token ?? '';
+    saveString(SessionManager.userId, userIdInt.toString());
+    saveString(SessionManager.accessToken, getUser()?.data?.token ?? '');
   }
 
   SignupSuccessModel? getUser() {
@@ -119,7 +128,7 @@ class SessionManager {
 
   void clean() {
     sharedPreferences!.clear();
-    userId = -1;
-    accessToken = '';
+    // userId = -1;
+    // accessToken = '';
   }
 }

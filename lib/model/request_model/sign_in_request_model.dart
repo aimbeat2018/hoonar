@@ -3,6 +3,7 @@ class SignInRequestModel {
   String? password;
   String? deviceName;
   String? deviceType;
+  String? deviceToken;
   String? deviceOs;
 
   SignInRequestModel(
@@ -10,6 +11,7 @@ class SignInRequestModel {
       this.password,
       this.deviceName,
       this.deviceType,
+      this.deviceToken,
       this.deviceOs});
 
   SignInRequestModel.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class SignInRequestModel {
     password = json['password'];
     deviceName = json['device_name'];
     deviceType = json['device_type'];
+    deviceToken = json['device_token'];
     deviceOs = json['device_os'];
   }
 
@@ -26,6 +29,7 @@ class SignInRequestModel {
     data['password'] = password;
     data['device_name'] = deviceName;
     data['device_type'] = deviceType;
+    data['device_token'] = deviceToken;
     data['device_os'] = deviceOs;
     return data;
   }

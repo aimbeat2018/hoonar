@@ -1142,7 +1142,7 @@ class _SignupScreenState extends State<SignupScreen> {
     if (authProvider.errorMessage != null) {
       SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
     } else {
-      if (authProvider.checkUserSuccessModel?.status != 200) {
+      if (authProvider.checkUserSuccessModel?.status == '200') {
         showCupertinoDialog(
           context: context,
           builder: (BuildContext context) {

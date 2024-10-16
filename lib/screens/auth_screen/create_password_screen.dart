@@ -11,15 +11,17 @@ import 'package:hoonar/screens/auth_screen/login_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
+import '../../model/request_model/check_user_request_model.dart';
 import '../../model/request_model/signup_request_model.dart';
 import '../../providers/auth_provider.dart';
 
 class CreatePasswordScreen extends StatefulWidget {
   final String from;
   final SignupRequestModel? requestModel;
+  final String? mobile;
 
   const CreatePasswordScreen(
-      {super.key, required this.from, this.requestModel});
+      {super.key, required this.from, this.requestModel, this.mobile});
 
   @override
   State<CreatePasswordScreen> createState() => _CreatePasswordScreenState();
@@ -48,9 +50,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
               image: AssetImage(myLoading.isDark
                   ? 'assets/images/background.png'
                   : 'assets/images/bg_wht.png'),
-              // Path to your image
-              fit:
-                  BoxFit.cover, // Ensures the image covers the entire container
+              fit: BoxFit.cover,
             ),
           ),
           child: Scrollbar(
@@ -254,7 +254,9 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                                   child:
                                       CircularProgressIndicator()) // Show loader when signing up
                               : InkWell(
-                                  onTap: () => callRegisterApi(context),
+                                  onTap: () => widget.from == 'forgot'
+                                      ? changePassword(context)
+                                      : callRegisterApi(context),
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
                                     padding: const EdgeInsets.symmetric(
@@ -297,6 +299,31 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
     });
   }
 
+  Future<void> changePassword(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      CheckUserRequestModel requestModel = CheckUserRequestModel(
+          mobileNo: widget.mobile, password: newpassController.text);
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      await authProvider.changePasswordForget(requestModel);
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else {
+        if (authProvider.sendOtpSuccessModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        } else {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.message! ?? '');
+        }
+      }
+    }
+  }
+
   Future<void> callRegisterApi(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       FirebaseMessaging.instance.getToken().then((value) async {
@@ -312,7 +339,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
         if (authProvider.errorMessage != null) {
           SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
         } else {
-          if (authProvider.signupSuccessModel?.status == 200) {
+          if (authProvider.signupSuccessModel?.status == '200') {
             SnackbarUtil.showSnackBar(
                 context, authProvider.signupSuccessModel?.message! ?? '');
             Navigator.pushAndRemoveUntil(context,

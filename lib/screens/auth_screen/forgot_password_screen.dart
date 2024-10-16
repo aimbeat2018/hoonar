@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,11 +7,14 @@ import 'package:gradient_borders/input_borders/gradient_outline_input_border.dar
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
+import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/screens/auth_screen/create_password_screen.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
+import '../../custom/snackbar_util.dart';
+import '../../providers/auth_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,12 +24,23 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  ScrollController scrollController = ScrollController();
   TextEditingController phoneNumberController = TextEditingController();
   final _otpPinFieldController = GlobalKey<OtpPinFieldState>();
   bool otpVisible = false;
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  String enteredOtp = "";
+
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -38,12 +53,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               image: AssetImage(myLoading.isDark
                   ? 'assets/images/background.png'
                   : 'assets/images/bg_wht.png'),
-              // Path to your image
-              fit:
-                  BoxFit.cover, // Ensures the image covers the entire container
+              fit: BoxFit.cover,
             ),
           ),
           child: SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -69,129 +83,141 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Visibility(
                   visible: !otpVisible,
                   child: Form(
+                      key: _formKey,
                       child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          AppLocalizations.of(context)!.phone,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: TextFormField(
-                          maxLines: 1,
-                          controller: phoneNumberController,
-                          cursorColor: Colors.white,
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.black,
-                            errorStyle: GoogleFonts.poppins(),
-                            border: GradientOutlineInputBorder(
-                              width: 1,
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                colors: [
-                                  myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  greyTextColor4
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                            hintStyle: GoogleFonts.poppins(
-                              color: hintGreyColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                color: textFieldGreyColor,
-                                width: 1.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                color: textFieldGreyColor,
-                                width: 1.0,
-                              ),
-                            ),
-                          ),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(10),
-                          ],
-                          validator: (v) {
-                            if (v!.trim().isEmpty) {
-                              return AppLocalizations.of(context)!
-                                  .enterPhoneNumber;
-                            } else if (v.length != 10) {
-                              return AppLocalizations.of(context)!
-                                  .enterValidPhoneNumber;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 68),
-                      InkWell(
-                        onTap: () => setState(() {
-                          otpVisible = !otpVisible;
-                        }),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          margin: const EdgeInsets.only(
-                              top: 15, left: 60, right: 60, bottom: 5),
-                          decoration: ShapeDecoration(
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                strokeAlign: BorderSide.strokeAlignOutside,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Text(
+                              AppLocalizations.of(context)!.phone,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
                                 color: myLoading.isDark
                                     ? Colors.white
                                     : Colors.black,
+                                fontWeight: FontWeight.w500,
                               ),
-                              borderRadius: BorderRadius.circular(80),
                             ),
                           ),
-                          child: Text(
-                            AppLocalizations.of(context)!.sendOtp,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                              fontWeight: FontWeight.w600,
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: TextFormField(
+                              maxLines: 1,
+                              controller: phoneNumberController,
+                              cursorColor: Colors.white,
+                              style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.black,
+                                errorStyle: GoogleFonts.poppins(),
+                                border: GradientOutlineInputBorder(
+                                  width: 1,
+                                  borderRadius: BorderRadius.circular(8),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      greyTextColor4
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                ),
+                                hintStyle: GoogleFonts.poppins(
+                                  color: hintGreyColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  borderSide: const BorderSide(
+                                    color: textFieldGreyColor,
+                                    width: 1.0,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  borderSide: const BorderSide(
+                                    color: textFieldGreyColor,
+                                    width: 1.0,
+                                  ),
+                                ),
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(10),
+                              ],
+                              validator: (v) {
+                                if (v!.trim().isEmpty) {
+                                  return AppLocalizations.of(context)!
+                                      .enterPhoneNumber;
+                                } else if (v.length != 10) {
+                                  return AppLocalizations.of(context)!
+                                      .enterValidPhoneNumber;
+                                }
+                                return null;
+                              },
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  )),
+                          const SizedBox(height: 68),
+                          authProvider.isSendOtpLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : InkWell(
+                                  onTap: () => sendOtp(context),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    margin: const EdgeInsets.only(
+                                        top: 15,
+                                        left: 60,
+                                        right: 60,
+                                        bottom: 5),
+                                    decoration: ShapeDecoration(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                          strokeAlign:
+                                              BorderSide.strokeAlignOutside,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                        borderRadius: BorderRadius.circular(80),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.sendOtp,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: myLoading.isDark
+                                            ? Colors.black
+                                            : Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      )),
                 ),
                 Visibility(
                     visible: otpVisible,
@@ -244,13 +270,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           autoFillEnable: false,
                           textInputAction: TextInputAction.done,
                           onSubmit: (text) {
-                            print('Entered pin is $text');
+                            // print('Entered pin is $text');
                           },
                           onChange: (text) {
-                            print('Enter on change pin is $text');
+                            setState(() {
+                              enteredOtp = text;
+                            });
                           },
                           onCodeChanged: (code) {
-                            print('onCodeChanged  is $code');
+                            setState(() {
+                              enteredOtp = code;
+                            });
                           },
                           otpPinFieldStyle: OtpPinFieldStyle(
                             textStyle: GoogleFonts.poppins(
@@ -295,13 +325,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         ),
                         const SizedBox(height: 68),
                         InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            SlideRightRoute(
-                                page: const CreatePasswordScreen(
-                              from: 'forgot',
-                            )),
-                          ),
+                          onTap: () {
+                            if (enteredOtp.isEmpty) {
+                              SnackbarUtil.showSnackBar(context,
+                                  AppLocalizations.of(context)!.enterOtp);
+                            } else {
+                              verifyOtp(context, enteredOtp);
+                            }
+                          },
                           child: Container(
                             width: MediaQuery.of(context).size.width,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -342,5 +373,66 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       );
     });
+  }
+
+  Future<void> sendOtp(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      CheckUserRequestModel requestModel =
+          CheckUserRequestModel(mobileNo: phoneNumberController.text);
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      await authProvider.sendOtpForget(requestModel);
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else {
+        if (authProvider.sendOtpSuccessModel?.status == "200") {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.message! ?? '');
+          SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.otp!.toString() ?? '');
+
+          setState(() {
+            otpVisible = !otpVisible;
+          });
+        } else {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.message! ?? '');
+        }
+      }
+    }
+  }
+
+  Future<void> verifyOtp(BuildContext context, String otp) async {
+    CheckUserRequestModel requestModel =
+        CheckUserRequestModel(mobileNo: phoneNumberController.text, otp: otp);
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    await authProvider.verifyOtpForget(requestModel);
+
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    } else {
+      if (authProvider.sendOtpSuccessModel?.status == "200") {
+        SnackbarUtil.showSnackBar(
+            context, authProvider.sendOtpSuccessModel?.message! ?? '');
+        /*SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.otp!.toString() ?? '');*/
+
+        Navigator.push(
+          context,
+          SlideRightRoute(
+              page: CreatePasswordScreen(
+            from: 'forgot',
+            mobile: phoneNumberController.text,
+          )),
+        );
+      } else {
+        SnackbarUtil.showSnackBar(
+            context, authProvider.sendOtpSuccessModel?.message! ?? '');
+      }
+    }
   }
 }

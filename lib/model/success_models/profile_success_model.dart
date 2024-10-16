@@ -1,11 +1,11 @@
-class SignupSuccessModel {
+class ProfileSuccessModel {
   String? status;
   String? message;
   Data? data;
 
-  SignupSuccessModel({this.status, this.message, this.data});
+  ProfileSuccessModel({this.status, this.message, this.data});
 
-  SignupSuccessModel.fromJson(Map<String, dynamic> json) {
+  ProfileSuccessModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
@@ -42,20 +42,18 @@ class Data {
   String? fbUrl;
   String? instaUrl;
   String? youtubeUrl;
-  int? status;
-  int? freezOrNot;
   String? dob;
   int? cityId;
   int? stateId;
   String? pincode;
   String? college;
-  String? cityName;
-  String? stateName;
-  String? token;
+  int? isFollowingEachOther;
   int? followersCount;
   int? followingCount;
   int? myPostLikes;
   String? profileCategoryName;
+  int? isFollowing;
+  int? blockOrNot;
 
   Data(
       {this.userId,
@@ -77,20 +75,18 @@ class Data {
       this.fbUrl,
       this.instaUrl,
       this.youtubeUrl,
-      this.status,
-      this.freezOrNot,
       this.dob,
       this.cityId,
       this.stateId,
       this.pincode,
       this.college,
-      this.cityName,
-      this.stateName,
-      this.token,
+      this.isFollowingEachOther,
       this.followersCount,
       this.followingCount,
       this.myPostLikes,
-      this.profileCategoryName});
+      this.profileCategoryName,
+      this.isFollowing,
+      this.blockOrNot});
 
   Data.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -112,20 +108,18 @@ class Data {
     fbUrl = json['fb_url'];
     instaUrl = json['insta_url'];
     youtubeUrl = json['youtube_url'];
-    status = json['status'];
-    freezOrNot = json['freez_or_not'];
     dob = json['dob'];
     cityId = json['city_id'];
     stateId = json['state_id'];
     pincode = json['pincode'];
     college = json['college'];
-    cityName = json['city_name'];
-    stateName = json['state_name'];
-    token = json['token'];
+    isFollowingEachOther = json['is_following_eachOther'];
     followersCount = json['followers_count'];
     followingCount = json['following_count'];
     myPostLikes = json['my_post_likes'];
     profileCategoryName = json['profile_category_name'];
+    isFollowing = json['is_following'];
+    blockOrNot = json['block_or_not'];
   }
 
   Map<String, dynamic> toJson() {
@@ -149,20 +143,18 @@ class Data {
     data['fb_url'] = fbUrl;
     data['insta_url'] = instaUrl;
     data['youtube_url'] = youtubeUrl;
-    data['status'] = status;
-    data['freez_or_not'] = freezOrNot;
     data['dob'] = dob;
     data['city_id'] = cityId;
     data['state_id'] = stateId;
     data['pincode'] = pincode;
     data['college'] = college;
-    data['city_name'] = cityName;
-    data['state_name'] = stateName;
-    data['token'] = token;
+    data['is_following_eachOther'] = isFollowingEachOther;
     data['followers_count'] = followersCount;
     data['following_count'] = followingCount;
     data['my_post_likes'] = myPostLikes;
     data['profile_category_name'] = profileCategoryName;
+    data['is_following'] = isFollowing;
+    data['block_or_not'] = blockOrNot;
     return data;
   }
 }

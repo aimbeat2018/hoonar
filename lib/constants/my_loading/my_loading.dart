@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import '../../main.dart';
+import '../../model/success_models/signup_success_model.dart';
 import '../const_res.dart';
 import '../key_res.dart';
 
@@ -92,16 +93,16 @@ class MyLoading extends ChangeNotifier {
     notifyListeners();
   }
 
-  // User? _user;
-  //
-  // User? get getUser {
-  //   return _user;
-  // }
-  //
-  // setUser(User? user) {
-  //   _user = user;
-  //   notifyListeners();
-  // }
+  SignupSuccessModel? _user;
+
+  SignupSuccessModel? get getUser {
+    return _user;
+  }
+
+  setUser(SignupSuccessModel? user) {
+    _user = user;
+    notifyListeners();
+  }
 
   bool isScrollProfileVideo = false;
 

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../../constants/my_loading/my_loading.dart';
+import '../../constants/session_manager.dart';
+import '../main_screen/main_screen.dart';
 
 class SplashScreens extends StatefulWidget {
   const SplashScreens({super.key});
@@ -15,6 +20,7 @@ class _SplashScreensState extends State<SplashScreens>
     with TickerProviderStateMixin {
   late AnimationController animation;
   late Animation<double> _fadeInFadeOut;
+  SessionManager sessionManager = SessionManager();
 
   @override
   void initState() {
@@ -36,37 +42,51 @@ class _SplashScreensState extends State<SplashScreens>
 
     Future.delayed(const Duration(seconds: 6), () {
       animation.stop();
+      initSession();
+    });
+  }
+
+  initSession() async {
+    await sessionManager.initPref();
+    if (sessionManager.getUser() == null) {
       Navigator.pushAndRemoveUntil(
         context,
         SlideRightRoute(page: LoginScreen()),
         (Route<dynamic> route) => false,
       );
-    });
+    } else {
+      Navigator.pushAndRemoveUntil(context,
+          SlideRightRoute(page: MainScreen(fromIndex: 0)), (route) => false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(color: Colors.black
-            // image: DecorationImage(
-            //   image: AssetImage("assets/images/splash_back.jpg"),
-            //   fit: BoxFit.cover,
-            // ),
-            ),
-        child: Center(
-          child: FadeTransition(
-            opacity: _fadeInFadeOut,
-            child: Image.asset(
-              'assets/images/splash_logo.png',
-              height: 180,
-              width: 180,
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Scaffold(
+        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(color: Colors.black
+              // image: DecorationImage(
+              //   image: AssetImage("assets/images/splash_back.jpg"),
+              //   fit: BoxFit.cover,
+              // ),
+              ),
+          child: Center(
+            child: FadeTransition(
+              opacity: _fadeInFadeOut,
+              child: Image.asset(
+                myLoading.isDark
+                    ? 'assets/images/splash_logo.png'
+                    : 'assets/images/splash_logo_black.png',
+                height: 180,
+                width: 180,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -205,5 +205,6 @@
   "cityNotFound": "നഗരം കണ്ടെത്തിയില്ല",
   "enterNewPassword": "പുതിയ പാസ്‌വേഡ് നൽകുക",
   "enterConfirmNewPassword": "പുതിയ പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക",
-  "newPasswordAndConfirmPasswordShouldMatch": "പുതിയ പാസ്‌വേഡ് ഒത്തു പോകണം"
+  "newPasswordAndConfirmPasswordShouldMatch": "പുതിയ പാസ്‌വേഡ് ഒത്തു പോകണം",
+  "enterOtp": "ഒടിപി നൽകുക"
 }

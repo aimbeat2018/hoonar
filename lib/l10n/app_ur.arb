@@ -205,5 +205,6 @@
   "cityNotFound": "شہر نہیں ملا",
   "enterNewPassword": "نیا پاس ورڈ درج کریں",
   "enterConfirmNewPassword": "نیا پاس ورڈ کی تصدیق درج کریں",
-  "newPasswordAndConfirmPasswordShouldMatch": "نیا پاس ورڈ اور تصدیق پاس ورڈ ایک جیسے ہونے چاہئیں"
+  "newPasswordAndConfirmPasswordShouldMatch": "نیا پاس ورڈ اور تصدیق پاس ورڈ ایک جیسے ہونے چاہئیں",
+  "enterOtp": "او ٹی پی درج کریں"
 }
