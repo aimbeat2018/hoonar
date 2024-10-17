@@ -24,3 +24,17 @@ PreferredSizeWidget buildAppbar(BuildContext context, bool isDarkMode) {
     ),
   );
 }
+
+// Fallback to show initials if image is unavailable
+Widget buildInitialsAvatar(String initials, {double? fontSize}) {
+  return Center(
+    child: Text(
+      initials,
+      style: TextStyle(
+        fontSize: fontSize ?? 30, // Adjust the font size
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+    ),
+  );
+}

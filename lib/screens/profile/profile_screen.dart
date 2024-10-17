@@ -1,4 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/session_manager.dart';
@@ -7,20 +10,21 @@ import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
 import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/screens/profile/drafts_screen.dart';
-import 'package:hoonar/screens/profile/menuOptionsScreens/about_app_screen.dart';
-import 'package:hoonar/screens/profile/menuOptionsScreens/app_content_screen.dart';
-import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
 import 'package:hoonar/screens/profile/feed_screen.dart';
 import 'package:hoonar/screens/profile/followers_tabs_screen.dart';
 import 'package:hoonar/screens/profile/hoonar_star_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/about_app_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/app_content_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/help_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/manage_devices_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
+
+import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
-import '../../model/request_model/check_user_request_model.dart';
 import '../auth_screen/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -33,7 +37,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isVisible = false;
   List<String> optionsList = [
     editProfile,
     help,
@@ -46,12 +49,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   ScrollController controller = ScrollController();
   SessionManager sessionManager = SessionManager();
-  ProfileSuccessModel profileSuccessModel = ProfileSuccessModel();
 
   @override
   void initState() {
     super.initState();
-
+    sessionManager.initPref();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserProfile(context);
     });
@@ -68,9 +70,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-      } else {
+      } /*else {
         if (authProvider.profileSuccessModel?.status == '200') {
-          profileSuccessModel = authProvider.profileSuccessModel!;
         } else if (authProvider.profileSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
@@ -78,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Navigator.pushAndRemoveUntil(
               context, SlideRightRoute(page: LoginScreen()), (route) => false);
         }
-      }
+      }*/
     });
     setState(() {});
   }
@@ -91,302 +92,319 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(builder: (context, authProvider, child) {
-      return Consumer<MyLoading>(builder: (context, myLoading, child) {
-        return DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                  /* image: DecorationImage(
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+                /* image: DecorationImage(
                       image: AssetImage('assets/images/screens_back.png'),
                       fit: BoxFit.cover,
                     ),*/
-                  color: myLoading.isDark ? Colors.black : Colors.white),
-              child: CustomScrollView(
-                controller: controller,
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 50),
-                      child: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              authProvider.isProfileLoading
-                                  ? Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                  : Column(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            widget.from != 'main'
-                                                ? Positioned(
-                                                    left: 5,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(left: 13),
-                                                        child: Image.asset(
-                                                          'assets/images/back_image.png',
-                                                          height: 28,
-                                                          width: 28,
-                                                          color: myLoading
-                                                                  .isDark
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
-                                                : const SizedBox(),
-                                            LayoutBuilder(
-                                              builder: (context, constraints) {
-                                                // Use the smaller dimension (width or height) for CircleAvatar's size
-                                                double avatarSize = constraints
-                                                            .maxWidth <
-                                                        constraints.maxHeight
-                                                    ? constraints.maxWidth
-                                                    : constraints.maxHeight;
+                color: myLoading.isDark ? Colors.black : Colors.white),
+            child: CustomScrollView(
+              controller: controller,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: ValueListenableBuilder<ProfileSuccessModel?>(
+                        valueListenable: authProvider.profileNotifier,
+                        builder: (context, profile, child) {
+                          if (profile == null) {
+                            return const ProfileContentShimmer();
+                          } else if (profile.message ==
+                              'Unauthorized Access!') {
+                            Future.microtask(() {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  SlideRightRoute(page: LoginScreen()),
+                                  (route) => false);
+                            });
+                          }
 
-                                                return Center(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Hero(
-                                                        tag: 'profileImage',
-                                                        child: CircleAvatar(
-                                                          radius:
-                                                              avatarSize / 7,
-                                                          // Set the radius based on available size
-                                                          backgroundImage:
-                                                              const NetworkImage(
-                                                            'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Text(
-                                                        profileSuccessModel
-                                                                .data!
-                                                                .fullName ??
-                                                            'dfg',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 18,
-                                                          color: myLoading
-                                                                  .isDark
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        profileSuccessModel
-                                                                .data!
-                                                                .userName ??
-                                                            '',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                          fontSize: 14,
-                                                          color: myLoading
-                                                                  .isDark
-                                                              ? Colors.white
-                                                              : Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            Positioned(
-                                              right: 5,
-                                              child: Padding(
+                          return Column(
+                            children: [
+                              Column(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      widget.from != 'main'
+                                          ? Positioned(
+                                              left: 5,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: menuItemsWidget(
-                                                      myLoading.isDark)),
+                                                          left: 13),
+                                                  child: Image.asset(
+                                                    'assets/images/back_image.png',
+                                                    height: 28,
+                                                    width: 28,
+                                                    color: myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
                                             )
-                                          ],
+                                          : const SizedBox(),
+                                      LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          // Use the smaller dimension (width or height) for CircleAvatar's size
+                                          double avatarSize =
+                                              constraints.maxWidth <
+                                                      constraints.maxHeight
+                                                  ? constraints.maxWidth
+                                                  : constraints.maxHeight;
+
+                                          String initials =
+                                              profile.data?.fullName != null ||
+                                                      profile.data?.fullName !=
+                                                          ""
+                                                  ? profile.data!.fullName!
+                                                      .trim()
+                                                      .split(' ')
+                                                      .map((e) => e[0])
+                                                      .take(2)
+                                                      .join()
+                                                      .toUpperCase()
+                                                  : '';
+
+                                          return Center(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Hero(
+                                                  tag: 'profileImage',
+                                                  child: CircleAvatar(
+                                                    radius: avatarSize / 7,
+                                                    backgroundColor: myLoading
+                                                            .isDark
+                                                        ? Colors.grey.shade700
+                                                        : Colors.grey.shade200,
+                                                    child: ClipOval(
+                                                      child: profile.data
+                                                                  ?.userProfile !=
+                                                              ""
+                                                          ? CachedNetworkImage(
+                                                              imageUrl: profile
+                                                                  .data!
+                                                                  .userProfile!,
+                                                              placeholder: (context,
+                                                                      url) =>
+                                                                  const CircularProgressIndicator(),
+                                                              errorWidget: (context,
+                                                                      url,
+                                                                      error) =>
+                                                                  buildInitialsAvatar(
+                                                                      initials),
+                                                              fit: BoxFit.cover,
+                                                              width: 80,
+                                                              // Match the size of the CircleAvatar
+                                                              height: 80,
+                                                            )
+                                                          : buildInitialsAvatar(
+                                                              initials),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  profile.data?.fullName ??
+                                                      'No Name',
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 18,
+                                                    color: myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  profile.data?.userName ?? '',
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color: myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      Positioned(
+                                        right: 5,
+                                        child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 8.0),
+                                            child: menuItemsWidget(
+                                                myLoading.isDark)),
+                                      )
+                                    ],
+                                  ),
+                                  if (profile.data?.bio != "")
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0, vertical: 3),
+                                        child: Text(
+                                          profile.data?.bio ?? '',
+                                          textAlign: TextAlign.start,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: myLoading.isDark
+                                                ? Colors.white60
+                                                : Colors.grey,
+                                            fontWeight: FontWeight.normal,
+                                          ),
                                         ),
-                                        Align(
-                                          alignment: Alignment.center,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10.0, vertical: 3),
-                                            child: Text(
-                                              profileSuccessModel.data!.bio ??
-                                                  '',
-                                              textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: InkWell(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          SlideRightRoute(
+                                              page: const FollowersTabScreen(
+                                            currentTabFrom: 0,
+                                          )),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              profile.data?.followersCount
+                                                      .toString() ??
+                                                  '0',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                color: myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              AppLocalizations.of(context)!
+                                                  .followers,
+                                              textAlign: TextAlign.center,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: myLoading.isDark
-                                                    ? Colors.white60
-                                                    : Colors.grey,
-                                                fontWeight: FontWeight.normal,
+                                                color: redColor,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            SlideRightRoute(
+                                                page: const FollowersTabScreen(
+                                              currentTabFrom: 1,
+                                            )),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 15.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Colors.white,
+                                                  greyTextColor8
+                                                ],
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .votes
+                                                  .toUpperCase(),
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          height: 15,
+                                      ),
+                                      Expanded(
+                                          child: InkWell(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          SlideRightRoute(
+                                              page: const FollowersTabScreen(
+                                            currentTabFrom: 2,
+                                          )),
                                         ),
-                                        Row(
+                                        child: Column(
                                           children: [
-                                            Expanded(
-                                                child: InkWell(
-                                              onTap: () => Navigator.push(
-                                                context,
-                                                SlideRightRoute(
-                                                    page:
-                                                        const FollowersTabScreen(
-                                                  currentTabFrom: 0,
-                                                )),
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    '2.6K',
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 16,
-                                                      color: myLoading.isDark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .followers,
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: redColor,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )),
-                                            Expanded(
-                                              child: InkWell(
-                                                onTap: () => Navigator.push(
-                                                  context,
-                                                  SlideRightRoute(
-                                                      page:
-                                                          const FollowersTabScreen(
-                                                    currentTabFrom: 1,
-                                                  )),
-                                                ),
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 8),
-                                                  margin: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 15.0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        Colors.white,
-                                                        greyTextColor8
-                                                      ],
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .votes
-                                                        .toUpperCase(),
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
+                                            Text(
+                                              profile.data?.followingCount
+                                                      .toString() ??
+                                                  '0',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                color: myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            Expanded(
-                                                child: InkWell(
-                                              onTap: () => Navigator.push(
-                                                context,
-                                                SlideRightRoute(
-                                                    page:
-                                                        const FollowersTabScreen(
-                                                  currentTabFrom: 2,
-                                                )),
+                                            Text(
+                                              AppLocalizations.of(context)!
+                                                  .following,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: redColor,
+                                                fontWeight: FontWeight.w500,
                                               ),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    '1.6K',
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 16,
-                                                      color: myLoading.isDark
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    AppLocalizations.of(
-                                                            context)!
-                                                        .following,
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: redColor,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ))
+                                            ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ))
+                                    ],
+                                  ),
+                                ],
+                              ),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -431,38 +449,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ],
+                          );
+                        }),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: TabBarView(
+                        children: [
+                          FeedScreen(
+                            controller: controller,
+                          ),
+                          HoonarStarScreen(
+                            controller: controller,
+                          ),
+                          DraftsScreen(
+                            controller: controller,
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        child: TabBarView(
-                          children: [
-                            FeedScreen(
-                              controller: controller,
-                            ),
-                            HoonarStarScreen(
-                              controller: controller,
-                            ),
-                            DraftsScreen(
-                              controller: controller,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
-        );
-      });
+        ),
+      );
     });
   }
 
@@ -628,33 +644,235 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           onTap: () {
-            // Handle item 3 tap
+            showLogoutDialog(context, isDarkMode);
           },
         ),
       ],
     );
   }
+
+  void showLogoutDialog(BuildContext context, bool isDarkMode) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.logout,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.areYouSureLogout,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: GoogleFonts.poppins(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.logout,
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () async {
+                final authProvider =
+                    Provider.of<AuthProvider>(context, listen: false);
+
+                await authProvider.logoutUser();
+
+                if (authProvider.errorMessage != null) {
+                  Navigator.of(context).pop();
+                  SnackbarUtil.showSnackBar(
+                      context, authProvider.errorMessage ?? '');
+                } else {
+                  if (authProvider.logoutSuccessModel?.successCode == '200') {
+                    Navigator.of(context).pop();
+                    sessionManager.clean();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        SlideRightRoute(page: const LoginScreen()),
+                        (route) => false);
+                  } else if (authProvider.logoutSuccessModel?.responseMessage ==
+                      'Unauthorized Access!') {
+                    Navigator.of(context).pop();
+                    SnackbarUtil.showSnackBar(
+                        context,
+                        authProvider.logoutSuccessModel?.responseMessage! ??
+                            '');
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        SlideRightRoute(page: const LoginScreen()),
+                        (route) => false);
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  Consumer<MyLoading> consumer;
-
-  _SliverAppBarDelegate({required this.consumer});
+class ProfileContentShimmer extends StatelessWidget {
+  const ProfileContentShimmer({super.key});
 
   @override
-  double get minExtent => 52;
-
-  @override
-  double get maxExtent => 52;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return consumer;
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return false;
+  Widget build(BuildContext context) {
+    return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      return Shimmer.fromColors(
+        baseColor:
+            myLoading.isDark ? Colors.grey.shade900 : Colors.grey.shade200,
+        highlightColor:
+            myLoading.isDark ? Colors.grey.shade700 : Colors.grey.shade400,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: myLoading.isDark ? Colors.black : Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Center(
+              child: Container(
+                width: 150,
+                height: 15,
+                decoration: BoxDecoration(
+                  color: myLoading.isDark ? Colors.black : Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Center(
+              child: Container(
+                width: 100,
+                height: 15,
+                decoration: BoxDecoration(
+                  color: myLoading.isDark ? Colors.black : Colors.white,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Column(
+              children: [
+                Container(
+                  width: 250,
+                  height: 15,
+                  decoration: BoxDecoration(
+                    color: myLoading.isDark ? Colors.black : Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Container(
+                  width: 220,
+                  height: 15,
+                  decoration: BoxDecoration(
+                    color: myLoading.isDark ? Colors.black : Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Container(
+                  width: 240,
+                  height: 15,
+                  decoration: BoxDecoration(
+                    color: myLoading.isDark ? Colors.black : Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Row(
+              children: [
+                Expanded(
+                    child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 5),
+                      width: 40,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 5),
+                      width: 100,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                      ),
+                    ),
+                  ],
+                )),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 15.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      gradient: const LinearGradient(
+                        colors: [Colors.white, greyTextColor8],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                    child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 5),
+                      width: 40,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 5),
+                      width: 100,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                      ),
+                    ),
+                  ],
+                ))
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 }

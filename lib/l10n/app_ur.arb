@@ -206,5 +206,10 @@
   "enterNewPassword": "نیا پاس ورڈ درج کریں",
   "enterConfirmNewPassword": "نیا پاس ورڈ کی تصدیق درج کریں",
   "newPasswordAndConfirmPasswordShouldMatch": "نیا پاس ورڈ اور تصدیق پاس ورڈ ایک جیسے ہونے چاہئیں",
-  "enterOtp": "او ٹی پی درج کریں"
+  "enterOtp": "او ٹی پی درج کریں",
+  "areYouSureLogout": "کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟",
+  "youMustBeAtLeast": "آپ کی عمر کم از کم 15 سال ہونی چاہیے!",
+  "userName": "صارف کا نام",
+  "enterUserName": "صارف کا نام درج کریں",
+  "noDataFound": "کوئی ڈیٹا نہیں ملا"
 }

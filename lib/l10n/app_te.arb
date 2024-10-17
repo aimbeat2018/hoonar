@@ -206,5 +206,10 @@
   "enterNewPassword": "కొత్త పాస్‌వర్డ్‌ను నమోదు చేయండి",
   "enterConfirmNewPassword": "కొత్త పాస్‌వర్డ్‌ను నిర్ధారించండి",
   "newPasswordAndConfirmPasswordShouldMatch": "కొత్త పాస్‌వర్డ్ మరియు నిర్ధారించిన పాస్‌వర్డ్ సరిపోవాలి",
-  "enterOtp": "OTPని నమోదు చేయండి"
+  "enterOtp": "OTPని నమోదు చేయండి",
+  "areYouSureLogout": "మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?",
+  "youMustBeAtLeast": "మీ వయసు కనీసం 15 సంవత్సరాలు ఉండాలి!",
+  "userName": "వినియోగదారు పేరు",
+  "enterUserName": "వినియోగదారు పేరును నమోదు చేయండి",
+  "noDataFound": "డేటా కనుగొనబడలేదు"
 }

@@ -206,5 +206,10 @@
   "enterNewPassword": "പുതിയ പാസ്‌വേഡ് നൽകുക",
   "enterConfirmNewPassword": "പുതിയ പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക",
   "newPasswordAndConfirmPasswordShouldMatch": "പുതിയ പാസ്‌വേഡ് ഒത്തു പോകണം",
-  "enterOtp": "ഒടിപി നൽകുക"
+  "enterOtp": "ഒടിപി നൽകുക",
+  "areYouSureLogout": "നിങ്ങൾക്ക് ലോഗ്ഔട്ട് ചെയ്യണോ?",
+  "youMustBeAtLeast": "നിങ്ങളുടെ പ്രായം കുറഞ്ഞത് 15 വയസ്സായിരിക്കണം!",
+  "userName": "ഉപയോക്തൃ നാമം",
+  "enterUserName": "ഉപയോക്തൃ നാമം നൽകുക",
+  "noDataFound": "ഡാറ്റ ലഭിച്ചില്ല"
 }

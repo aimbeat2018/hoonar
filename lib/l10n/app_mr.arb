@@ -206,6 +206,10 @@
   "enterNewPassword": "नवीन पासवर्ड प्रविष्ट करा",
   "enterConfirmNewPassword": "नवीन पासवर्डची पुष्टी करा",
   "newPasswordAndConfirmPasswordShouldMatch": "नवीन पासवर्ड आणि पुष्टी पासवर्ड जुळले पाहिजेत",
-  "enterOtp": "ओटीपी टाका"
-
+  "enterOtp": "ओटीपी टाका",
+  "areYouSureLogout": "आपण खात्रीने लॉगआउट करू इच्छिता?",
+  "youMustBeAtLeast": "आपण किमान 15 वर्षांचे असले पाहिजे!",
+  "userName": "वापरकर्त्याचे नाव",
+  "enterUserName": "वापरकर्त्याचे नाव प्रविष्ट करा",
+  "noDataFound": "माहिती मिळाली नाही"
 }

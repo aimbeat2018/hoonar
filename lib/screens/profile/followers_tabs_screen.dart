@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/text_constants.dart';
+import '../../providers/user_provider.dart';
 
 class FollowersTabScreen extends StatefulWidget {
   final int? currentTabFrom;
@@ -34,6 +35,7 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: myLoading.isDark ? Color(0xFF373737) : Colors.white,
@@ -165,17 +167,22 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                     child: Align(
                       alignment: Alignment.topRight,
                       child: currentTab == 0
-                          ? Text(
-                              '1244 ${AppLocalizations.of(context)!.followers}',
-                              textAlign: TextAlign.end,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
+                          ? ValueListenableBuilder<String?>(
+                              valueListenable:
+                                  userProvider.followersCountNotifier,
+                              builder: (context, followersCount, child) {
+                                return Text(
+                                  '$followersCount ${AppLocalizations.of(context)!.followers}',
+                                  textAlign: TextAlign.end,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                );
+                              })
                           : currentTab == 2
                               ? Text(
                                   '124 ${AppLocalizations.of(context)!.following}',

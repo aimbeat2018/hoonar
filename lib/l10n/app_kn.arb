@@ -206,5 +206,10 @@
   "enterNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ",
   "enterConfirmNewPassword": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
   "newPasswordAndConfirmPasswordShouldMatch": "ಹೊಸ ಪಾಸ್ವರ್ಡ್ ಮತ್ತು ದೃಢೀಕರಣ ಪಾಸ್ವರ್ಡ್ ಒಂದೇ ಆಗಿರಬೇಕು",
-  "enterOtp": "ಒಟಿಪಿ ನಮೂದಿಸಿ"
+  "enterOtp": "ಒಟಿಪಿ ನಮೂದಿಸಿ",
+  "areYouSureLogout": "ನೀವು ಖಚಿತವಾಗಿ ಲಾಗ್ ಔಟ್ ಮಾಡಬೇಕೆಂದು ಬಯಸುವಿರಾ?",
+  "youMustBeAtLeast": "ನೀವು ಕನಿಷ್ಠ 15 ವರ್ಷ ವಯಸ್ಸಿನವರಾಗಿರಬೇಕು!",
+  "userName": "ಬಳಕೆದಾರ ಹೆಸರು",
+  "enterUserName": "ಬಳಕೆದಾರ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
+  "noDataFound": "ಡೇಟಾ ಕಂಡುಬಂದಿಲ್ಲ"
 }

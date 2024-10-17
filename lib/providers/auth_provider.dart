@@ -4,8 +4,10 @@ import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/sign_in_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
+import 'package:hoonar/model/request_model/update_profile_request_model.dart';
 import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
+import 'package:hoonar/model/success_models/logout_success_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/services/user_service.dart';
@@ -15,12 +17,15 @@ import '../model/success_models/state_list_model.dart';
 class AuthProvider extends ChangeNotifier {
   final UserService _userService = GetIt.I<UserService>();
 
+  ValueNotifier<ProfileSuccessModel?> profileNotifier = ValueNotifier(null);
+
   bool _isStateLoading = false;
   bool _isCityLoading = false;
   bool _isSignUpLoading = false;
   bool _isCheckUserLoading = false;
   bool _isSendOtpLoading = false;
   bool _isProfileLoading = false;
+  bool _isLogoutLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
@@ -30,6 +35,7 @@ class AuthProvider extends ChangeNotifier {
   CheckUserSuccessModel? _checkUserSuccessModel;
   SendOtpSuccessModel? _sendOtpSuccessModel;
   ProfileSuccessModel? _profileSuccessModel;
+  LogoutSuccessModel? _logoutSuccessModel;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -47,6 +53,8 @@ class AuthProvider extends ChangeNotifier {
 
   ProfileSuccessModel? get profileSuccessModel => _profileSuccessModel;
 
+  LogoutSuccessModel? get logoutSuccessModel => _logoutSuccessModel;
+
   bool get isStateLoading => _isStateLoading;
 
   bool get isCityLoading => _isCityLoading;
@@ -58,6 +66,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isSendOtpLoading => _isSendOtpLoading;
 
   bool get isProfileLoading => _isProfileLoading;
+
+  bool get isLogoutLoading => _isLogoutLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -240,10 +250,46 @@ class AuthProvider extends ChangeNotifier {
       ProfileSuccessModel successModel =
           await _userService.getUserProfile(requestModel: requestModel);
       _profileSuccessModel = successModel;
+      profileNotifier.value = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isProfileLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfile(UpdateProfileRequestModel requestModel) async {
+    _isProfileLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      ProfileSuccessModel successModel =
+          await _userService.updateUserProfile(requestModel: requestModel);
+      _profileSuccessModel = successModel;
+      profileNotifier.value = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isProfileLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> logoutUser() async {
+    _isLogoutLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      LogoutSuccessModel successModel = await _userService.logoutUser();
+      _logoutSuccessModel = successModel;
+      profileNotifier.value = null;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLogoutLoading = false;
       notifyListeners();
     }
   }

@@ -126,9 +126,15 @@ class SessionManager {
   //   return [];
   // }
 
-  void clean() {
+  Future<void> clean() async {
+    var value1 = sharedPreferences!.getString(userEmail) ?? '';
+    var value2 = sharedPreferences!.getString(userPassword) ?? '';
+    var value3 = sharedPreferences!.getString(rememberMe) ?? '';
+
     sharedPreferences!.clear();
-    // userId = -1;
-    // accessToken = '';
+
+    await sharedPreferences!.setString(userEmail, value1);
+    await sharedPreferences!.setString(userPassword, value2);
+    await sharedPreferences!.setString(rememberMe, value3);
   }
 }

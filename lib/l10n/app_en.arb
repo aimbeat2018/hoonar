@@ -207,5 +207,10 @@
   "enterNewPassword": "Enter new password",
   "enterConfirmNewPassword": "Enter confirm new password",
   "newPasswordAndConfirmPasswordShouldMatch": "New password and confirm new password should match",
-  "enterOtp": "Enter Otp"
+  "enterOtp": "Enter Otp",
+  "areYouSureLogout": "Are you sure you want to logout?",
+  "youMustBeAtLeast": "You must be at least 15 years old!",
+  "userName": "Username",
+  "enterUserName": "Enter username",
+  "noDataFound": "No Data Found"
 }

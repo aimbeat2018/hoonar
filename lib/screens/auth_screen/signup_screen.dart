@@ -36,7 +36,6 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   bool accept = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final GlobalKey<FormState> _mobileFormKey = GlobalKey();
   TextEditingController fullNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -1087,7 +1086,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   .isBefore(datePicked.add(Duration(days: 15 * 365))))) {
         // Show an error message or prevent the user from proceeding
         SnackbarUtil.showSnackBar(
-            context, 'You must be at least 15 years old!');
+          context,
+          AppLocalizations.of(context)!.youMustBeAtLeast,
+        );
       } else {
         dobController.text = DateFormat('yyyy-MM-dd').format(datePicked);
       }

@@ -206,5 +206,11 @@
   "enterNewPassword": "नया पासवर्ड दर्ज करें",
   "enterConfirmNewPassword": "नया पासवर्ड पुष्टि करें",
   "newPasswordAndConfirmPasswordShouldMatch": "नया पासवर्ड और पुष्टि पासवर्ड मेल खाना चाहिए",
-  "enterOtp": "ओटीपी दर्ज करें"
+  "enterOtp": "ओटीपी दर्ज करें",
+  "areYouSureLogout": "क्या आप वाकई लॉगआउट करना चाहते हैं?",
+  "youMustBeAtLeast": "आपकी आयु कम से कम 15 वर्ष होनी चाहिए!",
+  "userName": "उपयोगकर्ता नाम",
+  "enterUserName": "उपयोगकर्ता नाम दर्ज करें",
+  "noDataFound": "कोई डेटा नहीं मिला"
+
 }

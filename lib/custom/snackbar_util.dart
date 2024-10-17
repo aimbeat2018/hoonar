@@ -5,6 +5,7 @@ class SnackbarUtil {
   static void showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(
       backgroundColor: Colors.black.withOpacity(0.8),
+      behavior: SnackBarBehavior.floating,
       content: Text(
         message,
         style: GoogleFonts.poppins(
@@ -33,5 +34,21 @@ class Validation {
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
     RegExp regex = RegExp(pattern);
     return regex.hasMatch(email);
+  }
+}
+
+class LoaderDialog extends StatelessWidget {
+  final double strokeWidth;
+
+  LoaderDialog({this.strokeWidth = 4});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: CircularProgressIndicator(
+        color: Colors.white,
+        strokeWidth: strokeWidth,
+      ),
+    );
   }
 }

@@ -206,5 +206,10 @@
   "enterNewPassword": "புதிய கடவுச்சொல்லை உள்ளிடவும்",
   "enterConfirmNewPassword": "புதிய கடவுச்சொல்லை உறுதிப்படுத்தவும்",
   "newPasswordAndConfirmPasswordShouldMatch": "புதிய கடவுச்சொல் மற்றும் உறுதிப்படுத்திய கடவுச்சொல் பொருந்த வேண்டும்",
-  "enterOtp": "OTP உள்ளிடவும்"
+  "enterOtp": "OTP உள்ளிடவும்",
+  "areYouSureLogout": "நீங்கள் நிச்சயமாக வெளியேற விரும்புகிறீர்களா?",
+  "youMustBeAtLeast": "நீங்கள் குறைந்தபட்சம் 15 வயதுக்குட்பட்டவராக இருக்க வேண்டும்!",
+  "userName": "பயனர் பெயர்",
+  "enterUserName": "பயனர் பெயரை உள்ளிடவும்",
+  "noDataFound": "தகவல் கிடைக்கவில்லை"
 }

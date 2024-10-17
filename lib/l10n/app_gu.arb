@@ -206,5 +206,10 @@
   "enterNewPassword": "નવું પાસવર્ડ દાખલ કરો",
   "enterConfirmNewPassword": "નવું પાસવર્ડ પુષ્ટિ કરો",
   "newPasswordAndConfirmPasswordShouldMatch": "નવું પાસવર્ડ અને પુષ્ટિ પાસવર્ડ મેળ ખાતું હોવું જોઈએ",
-  "enterOtp": "ઓટિપિ દાખલ કરો"
+  "enterOtp": "ઓટિપિ દાખલ કરો",
+  "areYouSureLogout": "શું તમે ખરેખર લોગઆઉટ કરવું માંગો છો?",
+  "youMustBeAtLeast": "તમારી ઉંમર ઓછામાં ઓછું 15 વર્ષ હોવી જોઈએ!",
+  "userName": "વપરાશકર્તાનું નામ",
+  "enterUserName": "વપરાશકર્તાનું નામ દાખલ કરો",
+  "noDataFound": "ડેટા મળ્યો નથી"
 }

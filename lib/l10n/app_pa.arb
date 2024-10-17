@@ -205,6 +205,11 @@
   "enterNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਦਰਜ ਕਰੋ",
   "enterConfirmNewPassword": "ਨਵਾਂ ਪਾਸਵਰਡ ਪੁਸ਼ਟੀ ਕਰੋ",
   "newPasswordAndConfirmPasswordShouldMatch": "ਨਵਾਂ ਪਾਸਵਰਡ ਅਤੇ ਪੁਸ਼ਟੀ ਪਾਸਵਰਡ ਮੇਲ ਖਾਉਣਾ ਚਾਹੀਦਾ ਹੈ",
-  "enterOtp": "OTP ਦਾਖਲ ਕਰੋ"
+  "enterOtp": "OTP ਦਾਖਲ ਕਰੋ",
+  "areYouSureLogout": "ਕੀ ਤੁਸੀਂ ਲਾਗ ਆਉਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+  "youMustBeAtLeast": "ਤੁਹਾਡੀ ਉਮਰ ਘੱਟੋ ਘੱਟ 15 ਸਾਲ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ!",
+  "userName": "ਵਰਤੋਂਕਾਰ ਨਾਮ",
+  "enterUserName": "ਵਰਤੋਂਕਾਰ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
+  "noDataFound": "ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ"
 
 }

@@ -206,6 +206,11 @@
   "enterNewPassword": "ନୂତନ ପାସୱାର୍ଡ ଦାଖଲ କରନ୍ତୁ",
   "enterConfirmNewPassword": "ନୂତନ ପାସୱାର୍ଡର ପୁଷ୍ଟି ଦାଖଲ କରନ୍ତୁ",
   "newPasswordAndConfirmPasswordShouldMatch": "ନୂତନ ପାସୱାର୍ଡ ଏବଂ ପୁଷ୍ଟି ପାସୱାର୍ଡ ମିଳିବା ଉଚିତ",
-  "enterOtp": "OTP ଦାଖଲ କରନ୍ତୁ"
+  "enterOtp": "OTP ଦାଖଲ କରନ୍ତୁ",
+  "areYouSureLogout": "ଆପଣ ନିଶ୍ଚିତ ଲଗଆଉଟ୍ କରିବାକୁ ଚାହାଁନ୍ତି କି?",
+  "youMustBeAtLeast": "ଆପଣଙ୍କର ବୟସ୍ କମରେ କମ ୧୫ ବର୍ଷ ହେବା ଦରକାର!",
+  "userName": "ବ୍ୟବହାରକାରୀ ନାମ",
+  "enterUserName": "ବ୍ୟବହାରକାରୀ ନାମ ପ୍ରବେଶ କରାନ୍ତୁ",
+  "noDataFound": "ଡାଟା ମିଳିଲା ନାହିଁ"
 
 }
