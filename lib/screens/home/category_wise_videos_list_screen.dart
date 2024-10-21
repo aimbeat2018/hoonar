@@ -1,12 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/my_loading/my_loading.dart';
+import 'package:hoonar/constants/utils.dart';
+import 'package:hoonar/custom/data_not_found.dart';
+import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hoonar/shimmerLoaders/grid_shimmer.dart';
 import 'package:provider/provider.dart';
+
 import '../../constants/slide_right_route.dart';
+import '../../custom/snackbar_util.dart';
+import '../../providers/home_provider.dart';
+import '../../shimmerLoaders/category_shimmer.dart';
+import '../auth_screen/login_screen.dart';
 
 class CategoryWiseVideosListScreen extends StatefulWidget {
   const CategoryWiseVideosListScreen({super.key});
@@ -18,17 +27,8 @@ class CategoryWiseVideosListScreen extends StatefulWidget {
 
 class _CategoryWiseVideosListScreenState
     extends State<CategoryWiseVideosListScreen> {
-  final List<String> imageUrls = [
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-    'assets/images/image3.png',
-    'assets/images/image4.png',
-    'assets/images/image5.png',
-    'assets/images/image6.png',
-    'assets/images/image7.png',
-  ];
-
   String selectedCategory = 'Dance';
+  int selectedCategoryId = -1;
   List<String> categories = [];
   bool _isVisible = false;
 
@@ -36,17 +36,61 @@ class _CategoryWiseVideosListScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      selectedCategory = AppLocalizations.of(context)!.dance;
-      categories = [
-        AppLocalizations.of(context)!.dance,
-        AppLocalizations.of(context)!.vocals,
-        AppLocalizations.of(context)!.dance,
-        AppLocalizations.of(context)!.vocals,
-        AppLocalizations.of(context)!.dance,
-        AppLocalizations.of(context)!.vocals,
-      ];
-      setState(() {});
+      getCategoryList(context);
     });
+  }
+
+  Future<void> getCategoryList(BuildContext context) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    await homeProvider.getCategoryList();
+
+    if (homeProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+    } else {
+      if (homeProvider.categoryListSuccessModel?.status == '200') {
+        setState(() {
+          selectedCategory =
+              homeProvider.categoryListSuccessModel!.data![0].categoryName ??
+                  '';
+          selectedCategoryId =
+              homeProvider.categoryListSuccessModel!.data![0].categoryId ?? -1;
+
+          getPostByCategory(context);
+        });
+      } else if (homeProvider.categoryListSuccessModel?.message ==
+          'Unauthorized Access!') {
+        SnackbarUtil.showSnackBar(
+            context, homeProvider.categoryListSuccessModel?.message! ?? '');
+        Navigator.pushAndRemoveUntil(
+            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+      }
+    }
+
+    setState(() {});
+  }
+
+  Future<void> getPostByCategory(BuildContext context) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    ListCommonRequestModel requestModel = ListCommonRequestModel(
+        categoryId: selectedCategoryId, limit: paginationLimit);
+    await homeProvider.getPostList(requestModel);
+
+    if (homeProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+    } else {
+      if (homeProvider.postListSuccessModel?.status == '200') {
+      } else if (homeProvider.postListSuccessModel?.message ==
+          'Unauthorized Access!') {
+        SnackbarUtil.showSnackBar(
+            context, homeProvider.postListSuccessModel?.message! ?? '');
+        Navigator.pushAndRemoveUntil(
+            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+      }
+    }
+
+    setState(() {});
   }
 
   @override
@@ -68,17 +112,19 @@ class _CategoryWiseVideosListScreenState
 
     // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
+    final homeProvider = Provider.of<HomeProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
-        appBar: buildAppbar(context, false),
+        appBar: buildAppbar(context, myLoading.isDark),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Stack(
               children: [
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -128,33 +174,64 @@ class _CategoryWiseVideosListScreenState
                         ],
                       ),
                     ),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(8),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: crossAxisCount,
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 2,
-                        childAspectRatio:
-                            0.6, // Adjust according to image dimensions
-                      ),
-                      itemCount: imageUrls.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            // SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: ReelsListScreen()),
-                            );
-                          },
-                          child: Image.asset(
-                            imageUrls[index],
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
+                    homeProvider.isPostLoading ||
+                            homeProvider.postListSuccessModel == null
+                        ? GridShimmer()
+                        : homeProvider.postListSuccessModel!.data == null ||
+                                homeProvider.postListSuccessModel!.data!.isEmpty
+                            ? DataNotFound()
+                            : GridView.builder(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.all(8),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 0,
+                                  mainAxisSpacing: 2,
+                                  childAspectRatio:
+                                      0.6, // Adjust according to image dimensions
+                                ),
+                                itemCount: homeProvider
+                                    .postListSuccessModel!.data!.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        SlideRightRoute(
+                                            page: ReelsListScreen(
+                                          postList: homeProvider
+                                                  .postListSuccessModel!.data ??
+                                              [],
+                                          index: index,
+                                        )),
+                                      );
+                                    },
+                                    child: CachedNetworkImage(
+                                      imageUrl: homeProvider
+                                              .postListSuccessModel!
+                                              .data![index]
+                                              .postImage ??
+                                          '',
+
+                                      placeholder: (context, url) => Center(
+                                        child: SizedBox(
+                                            height: 15,
+                                            width: 15,
+                                            child:
+                                                const CircularProgressIndicator()),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          buildInitialsAvatar('No Image',
+                                              fontSize: 12),
+                                      fit: BoxFit.cover,
+                                      width: 80,
+                                      // Match the size of the CircleAvatar
+                                      height: 80,
+                                    ),
+                                  );
+                                },
+                              ),
                   ],
                 ),
                 Positioned(
@@ -164,40 +241,68 @@ class _CategoryWiseVideosListScreenState
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
-                    width: _isVisible ? categories.length * 60 : 0,
+                    width: _isVisible
+                        ? homeProvider.isCategoryLoading
+                            ? 5 * 60
+                            : homeProvider
+                                    .categoryListSuccessModel!.data!.length *
+                                60
+                        : 0,
                     // Animate width
-                    height: _isVisible ? categories.length * 50 : 0,
+                    height: _isVisible
+                        ? homeProvider.isCategoryLoading
+                            ? 5 * 50
+                            : homeProvider
+                                    .categoryListSuccessModel!.data!.length *
+                                50
+                        : 0,
                     // Animate height
                     child: Card(
                       color: Colors.white,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 10),
-                        shrinkWrap: true,
-                        itemCount: categories.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                selectedCategory = categories[index];
-                              });
-                              _toggleAnimation();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                categories[index],
-                                textAlign: TextAlign.start,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 17,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                      child: homeProvider.isCategoryLoading
+                          ? CategoryShimmer()
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              shrinkWrap: true,
+                              itemCount: homeProvider
+                                  .categoryListSuccessModel!.data!.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedCategory = homeProvider
+                                              .categoryListSuccessModel!
+                                              .data![index]
+                                              .categoryName ??
+                                          '';
+                                      selectedCategoryId = homeProvider
+                                              .categoryListSuccessModel!
+                                              .data![index]
+                                              .categoryId ??
+                                          -1;
+
+                                      getPostByCategory(context);
+                                    });
+                                    _toggleAnimation();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      homeProvider.categoryListSuccessModel!
+                                              .data![index].categoryName ??
+                                          '',
+                                      textAlign: TextAlign.start,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 17,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ),
                 )

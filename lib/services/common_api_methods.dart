@@ -49,6 +49,7 @@ class CommonApiMethods {
     String url, {
     dynamic data,
     String method = 'GET',
+    String? accessToken,
     required T Function(dynamic) fromJson,
   }) async {
     try {
@@ -57,7 +58,8 @@ class CommonApiMethods {
         data: data != null ? jsonEncode(data) : null,
         options: _dioOptions(
           method,
-          bearerToken: sessionManager.getString(SessionManager.accessToken),
+          bearerToken: sessionManager.getString(SessionManager.accessToken) ??
+              accessToken,
         ),
       );
 

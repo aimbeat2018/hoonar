@@ -10,6 +10,9 @@ import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/model/request_model/update_profile_request_model.dart';
 import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
+import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
+import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
+import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/get_followers_list_model.dart';
 import 'package:hoonar/model/success_models/logout_success_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
@@ -156,10 +159,32 @@ class UserService {
     ListCommonRequestModel? requestModel,
   }) async {
     return apiMethods.sendRequest<GetFollowersListModel>(
-      '$baseUrl$getFollowerList',
+      '$baseUrl$getFollowerListUrl',
       data: requestModel?.toJson(),
       method: 'POST',
       fromJson: (data) => GetFollowersListModel.fromJson(data),
+    );
+  }
+
+  Future<GetFollowersListModel> getFollowingList({
+    ListCommonRequestModel? requestModel,
+  }) async {
+    return apiMethods.sendRequest<GetFollowersListModel>(
+      '$baseUrl$getFollowingListUrl',
+      data: requestModel?.toJson(),
+      method: 'POST',
+      fromJson: (data) => GetFollowersListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> followUnfollowUser({
+    ListCommonRequestModel? requestModel,
+  }) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$followUnfollow',
+      data: requestModel?.toJson(),
+      method: 'POST',
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
 }

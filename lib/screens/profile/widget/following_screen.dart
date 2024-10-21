@@ -1,9 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
+import '../../../constants/utils.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
+import '../../../model/success_models/get_followers_list_model.dart';
+import '../../../providers/user_provider.dart';
+import '../../../shimmerLoaders/following_list_shimmer.dart';
+import '../../auth_screen/login_screen.dart';
 
 class FollowingScreen extends StatefulWidget {
   const FollowingScreen({super.key});
@@ -15,31 +27,126 @@ class FollowingScreen extends StatefulWidget {
 class _FollowingScreenState extends State<FollowingScreen>
     with SingleTickerProviderStateMixin {
   bool isFollow = false;
-  late AnimationController _controller;
+
+  final ScrollController _scrollController = ScrollController();
+  SessionManager sessionManager = SessionManager();
+  List<FollowersData> followingList = [];
+  bool isLoading = false;
+  bool isFollowLoading = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    sessionManager.initPref();
+    _scrollController.addListener(
+      () {
+        if (_scrollController.position.maxScrollExtent ==
+            _scrollController.position.pixels) {
+          if (!isLoading) {
+            getFollowingList(context);
+          }
+        }
+      },
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getFollowingList(context);
+    });
+  }
+
+  Future<void> getFollowingList(BuildContext context) async {
+    sessionManager.initPref().then((onValue) async {
+      String userId = sessionManager.getString(SessionManager.userId)!;
+      ListCommonRequestModel requestModel = ListCommonRequestModel(
+          userId: int.parse(userId),
+          start: followingList.length == 10 ? followingList.length : 0,
+          limit: paginationLimit);
+
+      isLoading = true;
+      setState(() {});
+      final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+      await authProvider.getFollowing(requestModel);
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else if (authProvider.getFollowersListModel!.status == "200") {
+        followingList.clear();
+        followingList.addAll(authProvider.getFollowersListModel!.data!);
+      } else if (authProvider.getFollowingListModel!.message ==
+          'Unauthorized Access!') {
+        Future.microtask(() {
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        });
+      }
+
+      isLoading = false;
+      setState(() {});
+    });
+  }
+
+  Future<void> followUnFollowUser(BuildContext context, int userId) async {
+    ListCommonRequestModel requestModel = ListCommonRequestModel(
+      toUserId: userId,
+    );
+
+    isFollowLoading = true;
+    final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+    await authProvider.followUnfollowUser(requestModel);
+
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    }
+
+    isFollowLoading = false;
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
-        body: AnimatedList(
-          initialItemCount: 10,
-          itemBuilder: (context, index, animation) {
-            return buildItem(
-                animation, index, myLoading.isDark); // Build each list item
-          },
-        ),
+        body: isLoading == true
+            ? FollowingListShimmer()
+            : followingList.isEmpty
+                ? DataNotFound()
+                : AnimatedList(
+                    initialItemCount: followingList.length,
+                    controller: _scrollController,
+                    itemBuilder: (context, index, animation) {
+                      return buildItem(animation, index, myLoading.isDark,
+                          userProvider); // Build each list item
+                    },
+                  ),
       );
     });
   }
 
-  Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
+  Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
+      UserProvider userProvider) {
+    String initials = followingList[index].fullName != null ||
+            followingList[index].fullName != ""
+        ? followingList[index]
+            .fullName!
+            .trim()
+            .split(' ')
+            .map((e) => e[0])
+            .take(2)
+            .join()
+            .toUpperCase()
+        : '';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
@@ -53,104 +160,116 @@ class _FollowingScreenState extends State<FollowingScreen>
           borderRadius: BorderRadius.circular(6.19),
         ),
       ),
-      child: itemCommon(animation, index,isDarkMode),
-    ) /*.animate().moveX(
-            begin: 200,
-            end: 0,
-            duration: 800.ms)*/ // Moves from -200px to 0px (top to center)
-        ; // Fade in effect;
-  }
-
-  Widget itemCommon(Animation<double> animation, int index,bool isDarkMode) {
-    return Row(
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              const CircleAvatar(
-                radius: 20,
-                // Set the radius based on available size
-                backgroundImage: NetworkImage(
-                  'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg',
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor:
+                      isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
+                  child: ClipOval(
+                    child: followingList[index].userProfile != ""
+                        ? CachedNetworkImage(
+                            imageUrl: followingList[index].userProfile!,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                buildInitialsAvatar(initials, fontSize: 14),
+                            fit: BoxFit.cover,
+                            width: 80,
+                            // Match the size of the CircleAvatar
+                            height: 80,
+                          )
+                        : buildInitialsAvatar(initials, fontSize: 14),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Hitesh Malekar',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: isDarkMode ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w400,
+                const SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        followingList[index].fullName ?? '',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '@hiteshm',
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFF939393),
-                        fontSize: 11,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    )
-                  ],
-                )
-                /*.animate()
-                    .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                    .slide()*/
-                ,
-              ),
-            ],
-          ),
-        ),
-        InkWell(
-          onTap: () {
-            setState(() {
-              isFollow = !isFollow;
-            });
-          },
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                isFollow = !isFollow;
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.only(left: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: isFollow
-                      ? (isDarkMode ? Colors.white : Colors.black)
-                      : Colors.transparent,
-                  width: 1,
+                      Text(
+                        followingList[index].userName ?? '',
+                        style: GoogleFonts.poppins(
+                          color: const Color(0xFF939393),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                color: isFollow
-                    ? Colors.transparent
-                    : (isDarkMode ? Colors.white : Colors.black),
-              ),
-              child: Text(
-                isFollow
-                    ? AppLocalizations.of(context)!.unfollow
-                    : AppLocalizations.of(context)!.follow,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: isFollow
-                      ? (isDarkMode ? Colors.white : Colors.black)
-                      : (isDarkMode ? Colors.black : Colors.white),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              ],
             ),
           ),
-        ),
-      ],
+          ValueListenableBuilder<int?>(
+              valueListenable: userProvider.followStatusNotifier,
+              builder: (context, followStatus, child) {
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      followUnFollowUser(
+                          context, followingList[index].fromUserId ?? 0);
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: followingList[index].isFollow == 1 ||
+                                followStatus == 1
+                            ? (isDarkMode ? Colors.white : Colors.black)
+                            : Colors.transparent,
+                        width: 1,
+                      ),
+                      color: followingList[index].isFollow == 1 ||
+                              followStatus == 1
+                          ? Colors.transparent
+                          : (isDarkMode ? Colors.white : Colors.black),
+                    ),
+                    child: isFollowLoading
+                        ? const Center(
+                            child: SizedBox(
+                                height: 10,
+                                width: 10,
+                                child: CircularProgressIndicator(
+                                  color: Colors.grey,
+                                )))
+                        : Text(
+                            followingList[index].isFollow == 1 ||
+                                    followStatus == 1
+                                ? AppLocalizations.of(context)!.unfollow
+                                : AppLocalizations.of(context)!.follow,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: followingList[index].isFollow == 1 ||
+                                      followStatus == 1
+                                  ? (isDarkMode ? Colors.white : Colors.black)
+                                  : (isDarkMode ? Colors.black : Colors.white),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                );
+              }),
+        ],
+      ),
     );
   }
 }

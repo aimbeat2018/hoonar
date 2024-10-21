@@ -40,6 +40,7 @@ class FollowersData {
   int? followingCount;
   int? myPostLikes;
   int? myPostCount;
+  int? isFollow;
 
   FollowersData(
       {this.followerId,
@@ -53,6 +54,7 @@ class FollowersData {
       this.followersCount,
       this.followingCount,
       this.myPostLikes,
+      this.isFollow,
       this.myPostCount});
 
   FollowersData.fromJson(Map<String, dynamic> json) {
@@ -68,6 +70,7 @@ class FollowersData {
     followingCount = json['following_count'];
     myPostLikes = json['my_post_likes'];
     myPostCount = json['my_post_count'];
+    isFollow = json['is_follow'];
   }
 
   Map<String, dynamic> toJson() {
@@ -84,6 +87,7 @@ class FollowersData {
     data['following_count'] = followingCount;
     data['my_post_likes'] = myPostLikes;
     data['my_post_count'] = myPostCount;
+    data['is_follow'] = isFollow;
     return data;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +15,16 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../model/success_models/home_post_success_model.dart';
 
 class SliderPageView extends StatefulWidget {
-  final List<SliderModel> sliderModelList;
+  final List<PostsListData> sliderModelList;
+  final bool isDarkMode;
 
-  const SliderPageView({super.key, required this.sliderModelList});
+  const SliderPageView(
+      {super.key, required this.sliderModelList, required this.isDarkMode});
 
   @override
   _SliderPageViewState createState() => _SliderPageViewState();
@@ -58,9 +63,8 @@ class _SliderPageViewState extends State<SliderPageView>
       late VideoPlayerController _videoPlayerController;
       ChewieController? _chewieController;
       // Initialize the VideoPlayerController with the video asset
-      _videoPlayerController = VideoPlayerController.asset(
-        data.video,
-      );
+      _videoPlayerController =
+          VideoPlayerController.networkUrl(Uri.parse(data.postVideo!));
 
       // Wait for the video to initialize
       await _videoPlayerController.initialize();
@@ -72,6 +76,16 @@ class _SliderPageViewState extends State<SliderPageView>
         showControls: false,
         looping: true,
       );
+
+      String initials = data.fullName != null || data.fullName != ""
+          ? data.fullName!
+              .trim()
+              .split(' ')
+              .map((e) => e[0])
+              .take(2)
+              .join()
+              .toUpperCase()
+          : '';
 
       children.add(Container(
         width: 250,
@@ -98,6 +112,10 @@ class _SliderPageViewState extends State<SliderPageView>
                       }
                     },
                     onDoubleTap: () {
+                      _videoPlayerController.pause();
+                      setState(() {
+                        _isPaused = !_isPaused;
+                      });
                       Navigator.push(
                         context,
                         SlideRightRoute(page: CategoryWiseVideosListScreen()),
@@ -133,35 +151,56 @@ class _SliderPageViewState extends State<SliderPageView>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 5),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const CircleAvatar(
-                                radius: 13.0, // size of the avatar
-                                backgroundImage: NetworkImage(
-                                    'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 5),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 15,
+                              backgroundColor: widget.isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade200,
+                              child: ClipOval(
+                                child: data.userProfile != ""
+                                    ? CachedNetworkImage(
+                                        imageUrl: data.userProfile!,
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            buildInitialsAvatar(initials,
+                                                fontSize: 10),
+                                        fit: BoxFit.cover,
+                                        width: 20,
+                                        height: 20,
+                                      )
+                                    : buildInitialsAvatar(initials,
+                                        fontSize: 10),
                               ),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      data.userName,
+                            ),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      data.userName ?? '',
                                       style: GoogleFonts.poppins(
                                         fontSize: 10,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
+                                      overflow: TextOverflow
+                                          .ellipsis, // Ensure text truncation
                                     ),
-                                    Container(
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Flexible(
+                                    child: Container(
                                       margin: const EdgeInsets.only(left: 5),
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10, vertical: 3),
@@ -176,23 +215,26 @@ class _SliderPageViewState extends State<SliderPageView>
                                           color: Colors.black,
                                           fontWeight: FontWeight.w600,
                                         ),
+                                        overflow: TextOverflow
+                                            .ellipsis, // Ensure text truncation
                                       ),
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    OptionsScreen(
-                      model: data,
+                    Flexible(
+                      // Wrap OptionsScreen to handle any overflow
+                      child: OptionsScreen(model: data),
                     ),
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       ));

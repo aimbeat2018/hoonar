@@ -3,8 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/slider_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../model/success_models/home_post_success_model.dart';
+
 class OptionsScreen extends StatefulWidget {
-  final SliderModel? model;
+  final PostsListData? model;
 
   OptionsScreen({Key? key, this.model}) : super(key: key);
 

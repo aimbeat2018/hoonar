@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/custom/data_not_found.dart';
-import 'package:hoonar/screens/shimmerLoaders/following_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/common_widgets.dart';
@@ -15,6 +14,7 @@ import '../../../custom/snackbar_util.dart';
 import '../../../model/request_model/list_common_request_model.dart';
 import '../../../model/success_models/get_followers_list_model.dart';
 import '../../../providers/user_provider.dart';
+import '../../../shimmerLoaders/following_list_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
 class FollowersScreen extends StatefulWidget {
@@ -30,7 +30,9 @@ class _FollowersScreenState extends State<FollowersScreen>
   final ScrollController _scrollController = ScrollController();
   SessionManager sessionManager = SessionManager();
   List<FollowersData> followersList = [];
-  bool isLoading = true;
+  bool isLoading = false;
+
+  bool isFollowLoading = false;
 
   @override
   void initState() {
@@ -61,24 +63,44 @@ class _FollowersScreenState extends State<FollowersScreen>
           limit: paginationLimit);
 
       isLoading = true;
+      setState(() {});
       final authProvider = Provider.of<UserProvider>(context, listen: false);
 
       await authProvider.getFollowers(requestModel);
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-      } /*else {
-        if (authProvider.profileSuccessModel?.status == '200') {
-        } else if (authProvider.profileSuccessModel?.message ==
-            'Unauthorized Access!') {
-          SnackbarUtil.showSnackBar(
-              context, authProvider.profileSuccessModel?.message! ?? '');
+      } else if (authProvider.getFollowersListModel!.status == "200") {
+        followersList.clear();
+        followersList.addAll(authProvider.getFollowersListModel!.data!);
+      } else if (authProvider.getFollowingListModel!.message ==
+          'Unauthorized Access!') {
+        Future.microtask(() {
           Navigator.pushAndRemoveUntil(
               context, SlideRightRoute(page: LoginScreen()), (route) => false);
-        }
-      }*/
+        });
+      }
+
+      isLoading = false;
+      setState(() {});
     });
-    isLoading = false;
+  }
+
+  Future<void> followUnFollowUser(BuildContext context, int userId) async {
+    ListCommonRequestModel requestModel = ListCommonRequestModel(
+      toUserId: userId,
+    );
+
+    isFollowLoading = true;
+    final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+    await authProvider.followUnfollowUser(requestModel);
+
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    }
+
+    isFollowLoading = false;
     setState(() {});
   }
 
@@ -88,44 +110,26 @@ class _FollowersScreenState extends State<FollowersScreen>
     final userProvider = Provider.of<UserProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return ValueListenableBuilder<GetFollowersListModel?>(
-          valueListenable: userProvider.followersNotifier,
-          builder: (context, followersDataList, child) {
-            if (followersDataList == null) {
-              return FollowingListShimmer();
-            }
-            /* else if (followersDataList.data == null ||
-                followersDataList.data!.isEmpty) {
-              return DataNotFound();
-            }*/
-            else if (followersDataList.message == 'Unauthorized Access!') {
-              Future.microtask(() {
-                Navigator.pushAndRemoveUntil(context,
-                    SlideRightRoute(page: LoginScreen()), (route) => false);
-              });
-            }
-
-            followersList.clear();
-            followersList.addAll(followersDataList.data!);
-
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              body: followersList.isEmpty
-                  ? DataNotFound()
-                  : AnimatedList(
-                      initialItemCount: followersList.length,
-                      controller: _scrollController,
-                      itemBuilder: (context, index, animation) {
-                        return buildItem(animation, index,
-                            myLoading.isDark); // Build each list item
-                      },
-                    ),
-            );
-          });
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        body: isLoading == true
+            ? FollowingListShimmer()
+            : followersList.isEmpty
+                ? DataNotFound()
+                : AnimatedList(
+                    initialItemCount: followersList.length,
+                    controller: _scrollController,
+                    itemBuilder: (context, index, animation) {
+                      return buildItem(animation, index, myLoading.isDark,
+                          userProvider); // Build each list item
+                    },
+                  ),
+      );
     });
   }
 
-  Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
+  Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
+      UserProvider userProvider) {
     String initials = followersList[index].fullName != null ||
             followersList[index].fullName != ""
         ? followersList[index]
@@ -200,50 +204,64 @@ class _FollowersScreenState extends State<FollowersScreen>
                         ),
                       )
                     ],
-                  )
-                  /* .animate()
-                      .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                      .slide()*/
-                  ,
+                  ),
                 ),
               ],
             ),
           ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                isFollow = !isFollow;
-              });
-            },
-            child: Container(
-              margin: const EdgeInsets.only(left: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: isFollow
-                      ? (isDarkMode ? Colors.white : Colors.black)
-                      : Colors.transparent,
-                  width: 1,
-                ),
-                color: isFollow
-                    ? Colors.transparent
-                    : (isDarkMode ? Colors.white : Colors.black),
-              ),
-              child: Text(
-                isFollow
-                    ? AppLocalizations.of(context)!.unfollow
-                    : AppLocalizations.of(context)!.follow,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: isFollow
-                      ? (isDarkMode ? Colors.white : Colors.black)
-                      : (isDarkMode ? Colors.black : Colors.white),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
+          ValueListenableBuilder<int?>(
+              valueListenable: userProvider.followStatusNotifier,
+              builder: (context, followStatus, child) {
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      followUnFollowUser(
+                          context, followersList[index].fromUserId ?? 0);
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: followersList[index].isFollow == 1 ||
+                                followStatus == 1
+                            ? (isDarkMode ? Colors.white : Colors.black)
+                            : Colors.transparent,
+                        width: 1,
+                      ),
+                      color: followersList[index].isFollow == 1 ||
+                              followStatus == 1
+                          ? Colors.transparent
+                          : (isDarkMode ? Colors.white : Colors.black),
+                    ),
+                    child: isFollowLoading
+                        ? const Center(
+                            child: SizedBox(
+                                height: 10,
+                                width: 10,
+                                child: CircularProgressIndicator(
+                                  color: Colors.grey,
+                                )))
+                        : Text(
+                            followersList[index].isFollow == 1 ||
+                                    followStatus == 1
+                                ? AppLocalizations.of(context)!.unfollow
+                                : AppLocalizations.of(context)!.follow,
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: followersList[index].isFollow == 1 ||
+                                      followStatus == 1
+                                  ? (isDarkMode ? Colors.white : Colors.black)
+                                  : (isDarkMode ? Colors.black : Colors.white),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                );
+              }),
         ],
       ),
     );

@@ -5,9 +5,13 @@ import 'package:provider/provider.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/text_constants.dart';
 import '../../model/slider_model.dart';
+import '../../model/success_models/post_list_success_model.dart';
 
 class ReelsListScreen extends StatefulWidget {
-  const ReelsListScreen({super.key});
+  final List<PostData>? postList;
+  final int? index;
+
+  const ReelsListScreen({super.key, this.postList, this.index});
 
   @override
   State<ReelsListScreen> createState() => _ReelsListScreenState();
@@ -15,11 +19,6 @@ class ReelsListScreen extends StatefulWidget {
 
 class _ReelsListScreenState extends State<ReelsListScreen> {
   final controller = SwiperController();
-  List<SliderModel> sliderModelList = [
-    SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
-    SliderModel(vocals, 'assets/images/video2.mp4', '', '@abcd@123'),
-    SliderModel(dance, 'assets/images/video3.mp4', '', '@abcd@123'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +32,10 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
                 controller: controller,
                 itemBuilder: (BuildContext context, int index) {
                   return ReelsWidget(
-                    model: sliderModelList[index],
+                    model: widget.postList![index],
                   );
                 },
-                itemCount: sliderModelList.length,
+                itemCount: widget.postList!.length,
                 scrollDirection: Axis.vertical,
               ),
               Align(

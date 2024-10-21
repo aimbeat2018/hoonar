@@ -1,17 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
-import 'package:hoonar/model/slider_model.dart';
+import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/slide_right_route.dart';
+import '../../custom/snackbar_util.dart';
+import '../../model/request_model/list_common_request_model.dart';
+import '../../model/success_models/post_list_success_model.dart';
+import '../../providers/user_provider.dart';
 
 class ReelsWidget extends StatefulWidget {
-  final SliderModel model;
+  final PostData model;
 
   const ReelsWidget({super.key, required this.model});
 
@@ -24,7 +30,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   bool _isPaused = false;
-  bool isFollow = false;
+  bool isFollow = false, isFollowLoading = false;
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
 
@@ -37,7 +43,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
   Future initializePlayer() async {
     // _videoPlayerController =
     //     VideoPlayerController.networkUrl(Uri.parse(widget.model.video));
-    _videoPlayerController = VideoPlayerController.asset(widget.model.video);
+    _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.model.postVideo ?? ''));
     await Future.wait([_videoPlayerController.initialize()]);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -45,6 +52,24 @@ class _ReelsWidgetState extends State<ReelsWidget>
       showControls: false,
       looping: true,
     );
+    setState(() {});
+  }
+
+  Future<void> followUnFollowUser(BuildContext context) async {
+    ListCommonRequestModel requestModel = ListCommonRequestModel(
+      toUserId: widget.model.userId,
+    );
+
+    isFollowLoading = true;
+    final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+    await authProvider.followUnfollowUser(requestModel);
+
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    }
+
+    isFollowLoading = false;
     setState(() {});
   }
 
@@ -57,6 +82,18 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
+    String initials =
+        widget.model.fullName != null || widget.model.fullName != ""
+            ? widget.model.fullName!
+                .trim()
+                .split(' ')
+                .map((e) => e[0])
+                .take(2)
+                .join()
+                .toUpperCase()
+            : '';
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
@@ -117,75 +154,155 @@ class _ReelsWidgetState extends State<ReelsWidget>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              children: [
-                                const CircleAvatar(
-                                  radius: 20.0, // size of the avatar
-                                  backgroundImage: NetworkImage(
-                                      'https://www.stylecraze.com/wp-content/uploads/2020/09/Beautiful-Women-In-The-World.jpg'), // or AssetImage('assets/avatar.png')
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        widget.model.userName,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            isFollow = !isFollow;
-                                          });
-                                        },
-                                        child: Container(
-                                          margin:
-                                              const EdgeInsets.only(left: 10),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 5),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              border: Border.all(
-                                                  color: isFollow
-                                                      ? Colors.white
-                                                      : Colors.transparent,
-                                                  width: 1),
-                                              color: isFollow
-                                                  ? Colors.transparent
-                                                  : Colors.white),
-                                          child: Text(
-                                            isFollow
-                                                ? AppLocalizations.of(context)!
-                                                    .unfollow
-                                                : AppLocalizations.of(context)!
-                                                    .follow,
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              color: isFollow
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  SlideRightRoute(
+                                      page: ProfileScreen(
+                                    from: 'profile',
+                                    userId: widget.model.userId.toString(),
+                                  )),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: myLoading.isDark
+                                        ? Colors.grey.shade700
+                                        : Colors.grey.shade200,
+                                    child: ClipOval(
+                                      child: widget.model.userProfile != ""
+                                          ? CachedNetworkImage(
+                                              imageUrl:
+                                                  widget.model.userProfile!,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget: (context, url,
+                                                      error) =>
+                                                  buildInitialsAvatar(initials,
+                                                      fontSize: 14),
+                                              fit: BoxFit.cover,
+                                              width: 20,
+                                              // Match the size of the CircleAvatar
+                                              height: 20,
+                                            )
+                                          : buildInitialsAvatar(initials,
+                                              fontSize: 14),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          widget.model.userName ?? "",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        ValueListenableBuilder<int?>(
+                                            valueListenable: userProvider
+                                                .followStatusNotifier,
+                                            builder:
+                                                (context, followStatus, child) {
+                                              return InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    followUnFollowUser(context);
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 10),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius
+                                                          .circular(15),
+                                                      border: Border.all(
+                                                          color: widget.model
+                                                                          .followOrNot ==
+                                                                      1 ||
+                                                                  followStatus ==
+                                                                      1
+                                                              ? (myLoading
+                                                                      .isDark
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black)
+                                                              : Colors
+                                                                  .transparent,
+                                                          width: 1),
+                                                      color: widget.model
+                                                                      .followOrNot ==
+                                                                  1 ||
+                                                              followStatus == 1
+                                                          ? Colors.transparent
+                                                          : (myLoading.isDark
+                                                              ? Colors.white
+                                                              : Colors.black)),
+                                                  child: isFollowLoading
+                                                      ? const Center(
+                                                          child:
+                                                              CircularProgressIndicator())
+                                                      : Text(
+                                                          widget.model.followOrNot ==
+                                                                      1 ||
+                                                                  followStatus ==
+                                                                      1
+                                                              ? AppLocalizations
+                                                                      .of(
+                                                                          context)!
+                                                                  .unfollow
+                                                              : AppLocalizations
+                                                                      .of(context)!
+                                                                  .follow,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 12,
+                                                            color: widget.model
+                                                                            .followOrNot ==
+                                                                        1 ||
+                                                                    followStatus ==
+                                                                        1
+                                                                ? (myLoading
+                                                                        .isDark
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .black)
+                                                                : (myLoading
+                                                                        .isDark
+                                                                    ? Colors
+                                                                        .black
+                                                                    : Colors
+                                                                        .white),
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                ),
+                                              );
+                                            }),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                             const SizedBox(
                               height: 5,
                             ),
                             Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                              widget.model.postDescription ?? '',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: Colors.white,
@@ -199,7 +316,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        padding: const EdgeInsets.only(
+                            top: 10.0, bottom: 10.0, right: 8),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -217,8 +335,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                         child: Image.asset(
                                           // 'assets/images/vote_not_given.png',
                                           'assets/images/vote_given.png',
-                                          width: 35,
-                                          height: 35,
+                                          width: 30,
+                                          height: 30,
                                         ),
                                       )
                                     : Dismissible(
@@ -232,8 +350,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                         child: Image.asset(
                                           'assets/images/vote_not_given.png',
                                           // 'assets/images/vote_given.png',
-                                          width: 35,
-                                          height: 35,
+                                          width: 30,
+                                          height: 30,
                                         ),
                                       ),
                                 const SizedBox(
@@ -250,39 +368,35 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               ],
                             ),
                             const SizedBox(
-                              height: 30,
+                              height: 15,
                             ),
                             Column(
                               children: [
-                                isDismissed[1]
+                                widget.model.videoLikesOrNot == 0
                                     ? Dismissible(
                                         key: const Key('2'),
                                         onDismissed: (direction) {
                                           setState(() {
-                                            // Mark the item as dismissed
                                             isDismissed[1] = false;
                                           });
                                         },
                                         child: Image.asset(
-                                          // 'assets/images/like.png',
                                           'assets/images/unlike.png',
-                                          width: 30,
-                                          height: 30,
+                                          width: 25,
+                                          height: 25,
                                         ),
                                       )
                                     : Dismissible(
                                         key: const Key('3'),
                                         onDismissed: (direction) {
                                           setState(() {
-                                            // Mark the item as dismissed
                                             isDismissed[1] = true;
                                           });
                                         },
                                         child: Image.asset(
                                           'assets/images/like.png',
-                                          // 'assets/images/unlike.png',
-                                          width: 30,
-                                          height: 30,
+                                          width: 25,
+                                          height: 25,
                                         ),
                                       ),
                                 const SizedBox(
@@ -299,18 +413,19 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               ],
                             ),
                             const SizedBox(
-                              height: 30,
+                              height: 15,
                             ),
                             InkWell(
                               onTap: () {
-                                _openCommentBottomSheet(context,myLoading.isDark);
+                                _openCommentBottomSheet(
+                                    context, myLoading.isDark);
                               },
                               child: Column(
                                 children: [
                                   Image.asset(
                                     'assets/images/comment.png',
-                                    width: 28,
-                                    height: 28,
+                                    width: 25,
+                                    height: 25,
                                   ),
                                   const SizedBox(
                                     height: 3,
@@ -327,14 +442,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               ),
                             ),
                             const SizedBox(
-                              height: 30,
+                              height: 15,
                             ),
                             Column(
                               children: [
                                 Image.asset(
                                   'assets/images/share.png',
-                                  width: 28,
-                                  height: 28,
+                                  width: 25,
+                                  height: 25,
                                 ),
                                 const SizedBox(
                                   height: 3,

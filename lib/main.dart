@@ -26,9 +26,7 @@ String selectedLanguage = byDefaultLanguage;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setupServiceLocator(); // Setup get_it
-  // MobileAds.instance.initialize();
-  // await Firebase.initializeApp();
+  setupServiceLocator();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
     apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
@@ -40,7 +38,6 @@ Future<void> main() async {
 
   await FlutterDownloader.initialize(ignoreSsl: true);
   await sessionManager.initPref();
-  // await FlutterBranchSdk.init(useTestKey: true, enableLogging: true, disableTracking: false);
   selectedLanguage =
       sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
   runApp(const MyApp());
@@ -49,7 +46,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -68,17 +64,11 @@ class MyApp extends StatelessWidget {
           );
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            // builder: (context, child) {
-            //   return ScrollConfiguration(
-            //     behavior: MyBehavior(),
-            //     child: child!,
-            //   );
-            // },
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
-              AppLocalizations.delegate, // Your localization delegate
+              AppLocalizations.delegate,
             ],
             supportedLocales: supportedLocales,
             locale: Locale(myLoading.languageCode),
@@ -97,13 +87,5 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-
-    /*  return MaterialApp(
-      title: 'Hoonar',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(scaffoldBackgroundColor: bkgColor),
-      home: const MainScreen(),
-      // home: DummyScreen(),
-    );*/
   }
 }

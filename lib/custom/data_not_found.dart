@@ -10,8 +10,8 @@ class DataNotFound extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, MyLoading myLoading, child) => Container(
-        height: double.infinity,
-        width: double.infinity,
+        height: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.height,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

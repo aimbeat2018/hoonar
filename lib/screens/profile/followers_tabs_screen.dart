@@ -184,17 +184,22 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                                 );
                               })
                           : currentTab == 2
-                              ? Text(
-                                  '124 ${AppLocalizations.of(context)!.following}',
-                                  textAlign: TextAlign.end,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
+                              ? ValueListenableBuilder<String?>(
+                                  valueListenable:
+                                      userProvider.followingCountNotifier,
+                                  builder: (context, followingCount, child) {
+                                    return Text(
+                                      '$followingCount ${AppLocalizations.of(context)!.following}',
+                                      textAlign: TextAlign.end,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    );
+                                  })
                               : SizedBox(),
                     )),
                 Expanded(

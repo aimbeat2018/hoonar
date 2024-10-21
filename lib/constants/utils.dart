@@ -12,8 +12,11 @@ const String getProfile = 'User/getProfile';
 const String updateProfile = 'User/updateProfile';
 const String logout = 'User/Logout';
 const String getCategoryData = 'User/getPostCategoryList';
-const String getFollowerList = 'Post/getFollowerList';
-const String getFollowingList = 'Post/getFollowingList';
+const String getFollowerListUrl = 'Post/getFollowerList';
+const String getFollowingListUrl = 'Post/getFollowingList';
+const String followUnfollow = 'Post/followUnfollowPost';
+const String getPostList = 'Post/getPostListByCategory';
+const String getHomePostList = 'Post/getPostList';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

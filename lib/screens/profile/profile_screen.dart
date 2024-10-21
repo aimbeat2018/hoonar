@@ -29,8 +29,9 @@ import '../auth_screen/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String from;
+  final String? userId;
 
-  const ProfileScreen({super.key, required this.from});
+  const ProfileScreen({super.key, required this.from, this.userId});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -60,8 +61,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> getUserProfile(BuildContext context) async {
+    String userId = "";
     sessionManager.initPref().then((onValue) async {
-      String userId = sessionManager.getString(SessionManager.userId)!;
+      if (widget.from == 'main') {
+        userId = sessionManager.getString(SessionManager.userId)!;
+      } else {
+        userId = widget.userId ?? '';
+      }
       CommonRequestModel requestModel = CommonRequestModel(userId: userId);
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);

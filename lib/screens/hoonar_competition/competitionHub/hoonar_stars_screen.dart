@@ -62,11 +62,11 @@ class _HoonarStarsScreenState extends State<HoonarStarsScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Column(children: [
-                SizedBox(
-                    height: screenHeight * 0.58,
-                    child: SliderPageView(
-                      sliderModelList: sliderModelList,
-                    )),
+                // SizedBox(
+                //     height: screenHeight * 0.58,
+                //     child: SliderPageView(
+                //       sliderModelList: sliderModelList,
+                //     )),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 45.0),
                   child: InputDecorator(
