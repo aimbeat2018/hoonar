@@ -40,7 +40,8 @@ dependencies:
   provider: ^6.1.2
   fluttermoji: ^1.0.2
   crop_your_image: ^1.1.0
-  camera: ^0.11.0+2
+  camera: ^0.11.0
+#  camera: ^0.11.0+2
   photo_manager: ^3.5.0
   get_it: ^8.0.0
   connectivity_plus: ^6.0.5
@@ -54,6 +55,7 @@ dependencies:
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
   ve_sdk_flutter: ^0.6.0
+
 
 dev_dependencies:
   flutter_test:

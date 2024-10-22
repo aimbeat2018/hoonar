@@ -1,6 +1,16 @@
 ext {
     flutterFFmpegPackage = "full-gpl"
 }
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.4'  // Use latest stable version
+    }
+}
+
 allprojects {
     repositories {
         google()
