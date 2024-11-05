@@ -76,10 +76,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                               : Colors.grey.shade700
                         ]),
                   )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .then(delay: 200.ms) // baseline=800ms
-                      .slide(),
+
                 ),
                 AnimatedList(
                   initialItemCount: dummyDataList.length,

@@ -72,11 +72,7 @@ class _AppContentScreenState extends State<AppContentScreen> {
                                 ? greyTextColor8
                                 : Colors.grey.shade700
                           ]),
-                    )
-                        .animate()
-                        .fadeIn(duration: 600.ms)
-                        .then(delay: 200.ms) // baseline=800ms
-                        .slide(),
+                    ),
                   ),
                   const SizedBox(
                     height: 35,

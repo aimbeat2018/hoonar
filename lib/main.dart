@@ -1,9 +1,10 @@
+import 'package:face_camera/face_camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hoonar/dummy_screen.dart';
 import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
@@ -11,11 +12,10 @@ import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
-import 'package:hoonar/screens/splash_screen/splash_screens.dart';
 import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'constants/const_res.dart';
 import 'constants/key_res.dart';
 import 'constants/my_loading/my_loading.dart';
@@ -27,6 +27,7 @@ String selectedLanguage = byDefaultLanguage;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
+  await FaceCamera.initialize(); //Add this
   await Firebase.initializeApp(
       options: const FirebaseOptions(
     apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
@@ -81,8 +82,8 @@ class MyApp extends StatelessWidget {
               'CameraScreen': (context) => CustomCameraScreen(),
               'EditProfileScreen': (context) => EditProfileScreen()
             },
-            home: SplashScreens(),
-            // home: DummyScreen(),
+            // home: SplashScreens(),
+            home: MainScreen(),
           );
         },
       ),

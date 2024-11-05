@@ -73,7 +73,7 @@ class _FollowersScreenState extends State<FollowersScreen>
       } else if (authProvider.getFollowersListModel!.status == "200") {
         followersList.clear();
         followersList.addAll(authProvider.getFollowersListModel!.data!);
-      } else if (authProvider.getFollowingListModel!.message ==
+      } else if (authProvider.getFollowersListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
           Navigator.pushAndRemoveUntil(

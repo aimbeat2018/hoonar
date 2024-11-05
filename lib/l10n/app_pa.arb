@@ -210,6 +210,7 @@
   "youMustBeAtLeast": "ਤੁਹਾਡੀ ਉਮਰ ਘੱਟੋ ਘੱਟ 15 ਸਾਲ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ!",
   "userName": "ਵਰਤੋਂਕਾਰ ਨਾਮ",
   "enterUserName": "ਵਰਤੋਂਕਾਰ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
-  "noDataFound": "ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ"
+  "noDataFound": "ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ",
+  "saveAsDraft": "ਡਰਾਫਟ ਵਜੋਂ ਸਾਂਭੋ"
 
 }

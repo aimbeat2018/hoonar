@@ -17,7 +17,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
 import '../../../model/success_models/home_post_success_model.dart';
+import '../../../providers/user_provider.dart';
 
 class SliderPageView extends StatefulWidget {
   final List<PostsListData> sliderModelList;
@@ -39,6 +42,8 @@ class _SliderPageViewState extends State<SliderPageView>
   SwiperController controllerS = SwiperController();
   List<Widget> children = [];
   bool _isPaused = false;
+  bool isLoading = false;
+  bool isFollow = false, isFollowLoading = false;
 
   @override
   void initState() {
@@ -59,6 +64,11 @@ class _SliderPageViewState extends State<SliderPageView>
   }
 
   setChildrenDataWidget() async {
+    setState(() {
+      isLoading = true;
+    });
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     for (var data in widget.sliderModelList) {
       late VideoPlayerController _videoPlayerController;
       ChewieController? _chewieController;
@@ -200,6 +210,71 @@ class _SliderPageViewState extends State<SliderPageView>
                                   ),
                                   const SizedBox(width: 5),
                                   Flexible(
+                                    child: ValueListenableBuilder<int?>(
+                                        valueListenable:
+                                            userProvider.followStatusNotifier,
+                                        builder:
+                                            (context, followStatus, child) {
+                                          return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                followUnFollowUser(
+                                                    context, data.userId!);
+                                              });
+                                            },
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 3),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                      color: data.followOrNot ==
+                                                                  1 ||
+                                                              followStatus == 1
+                                                          ? Colors.white
+                                                          : Colors.transparent,
+                                                      width: 1),
+                                                  color:
+                                                      data.followOrNot == 1 ||
+                                                              followStatus == 1
+                                                          ? Colors.transparent
+                                                          : Colors.white),
+                                              child: isFollowLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Text(
+                                                      data.followOrNot == 1 ||
+                                                              followStatus == 1
+                                                          ? AppLocalizations.of(
+                                                                  context)!
+                                                              .unfollow
+                                                          : AppLocalizations.of(
+                                                                  context)!
+                                                              .follow,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 8,
+                                                        color: data.followOrNot ==
+                                                                    1 ||
+                                                                followStatus ==
+                                                                    1
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                            ),
+                                          );
+                                        }),
+                                  ),
+                                  /*     Flexible(
                                     child: Container(
                                       margin: const EdgeInsets.only(left: 5),
                                       padding: const EdgeInsets.symmetric(
@@ -219,7 +294,7 @@ class _SliderPageViewState extends State<SliderPageView>
                                             .ellipsis, // Ensure text truncation
                                       ),
                                     ),
-                                  ),
+                                  ),*/
                                 ],
                               ),
                             ),
@@ -244,6 +319,7 @@ class _SliderPageViewState extends State<SliderPageView>
     double length = children.length / 2;
     activePage = children.length - length.round();
     previousPage = activePage - length.round();
+    isLoading = false;
     setState(() {});
   }
 
@@ -262,45 +338,67 @@ class _SliderPageViewState extends State<SliderPageView>
     setState(() {});
   }*/
 
+  Future<void> followUnFollowUser(BuildContext context, int toUserId) async {
+    ListCommonRequestModel requestModel = ListCommonRequestModel(
+      toUserId: toUserId,
+    );
+
+    isFollowLoading = true;
+    final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+    await authProvider.followUnfollowUser(requestModel);
+
+    if (authProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    }
+
+    isFollowLoading = false;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return SizedBox(
-        height: screenHeight,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onHorizontalDragEnd: ((details) {
-                if (details.velocity.pixelsPerSecond.dx > 0) {
-                  _leftSwipe();
-                } else {
-                  _rightSwipe();
-                }
-              }),
+      return isLoading
+          ? Center(
               child: SizedBox(
-                width: double.maxFinite,
-                height: 400,
-                child: Stack(
-                  children: children.isNotEmpty ? stackItems() : [],
-                ),
+                  height: 30, width: 30, child: CircularProgressIndicator()))
+          : SizedBox(
+              height: screenHeight,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onHorizontalDragEnd: ((details) {
+                      if (details.velocity.pixelsPerSecond.dx > 0) {
+                        _leftSwipe();
+                      } else {
+                        _rightSwipe();
+                      }
+                    }),
+                    child: SizedBox(
+                      width: double.maxFinite,
+                      height: 400,
+                      child: Stack(
+                        children: children.isNotEmpty ? stackItems() : [],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if (children.length > 1)
+                    CarouselSlider(
+                      position: activePage,
+                      amount: children.length,
+                      isDarkMode: myLoading.isDark,
+                    )
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            if (children.length > 1)
-              CarouselSlider(
-                position: activePage,
-                amount: children.length,
-                isDarkMode: myLoading.isDark,
-              )
-          ],
-        ),
-      );
+            );
     });
   }
 

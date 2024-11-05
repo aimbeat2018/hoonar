@@ -54,29 +54,24 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                     ),
                   ),
                   Center(
-                    child: GradientText(
-                      AppLocalizations.of(context)!.documents,
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        color: myLoading.isDark ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            myLoading.isDark ? Colors.white : Colors.black,
-                            myLoading.isDark ? Colors.white : Colors.black,
-                            myLoading.isDark
-                                ? greyTextColor8
-                                : Colors.grey.shade700
-                          ]),
-                    )
-                        .animate()
-                        .fadeIn(duration: 600.ms)
-                        .then(delay: 200.ms) // baseline=800ms
-                        .slide(),
-                  ),
+                      child: GradientText(
+                    AppLocalizations.of(context)!.documents,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      color: myLoading.isDark ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.topRight,
+                        colors: [
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          myLoading.isDark
+                              ? greyTextColor8
+                              : Colors.grey.shade700
+                        ]),
+                  )),
                   SizedBox(
                     height: 30,
                   ),

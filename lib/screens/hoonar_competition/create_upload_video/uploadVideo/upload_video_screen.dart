@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
@@ -8,7 +10,11 @@ import '../../../../constants/my_loading/my_loading.dart';
 import '../../../../constants/slide_right_route.dart';
 
 class UploadVideoScreen extends StatefulWidget {
-  const UploadVideoScreen({super.key});
+  final List<String>? videoUrl;
+  final String videoThumbnail;
+
+  const UploadVideoScreen(
+      {super.key, this.videoUrl, required this.videoThumbnail});
 
   @override
   State<UploadVideoScreen> createState() => _UploadVideoScreenState();
@@ -64,14 +70,13 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                       // width: double.infinity,
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       height: screenHeight * 0.50,
-                      width: screenWidth * 0.8,
+                      width: screenWidth * 0.75,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage(
-                                'assets/images/image1.png',
-                              ))),
+                              image: FileImage(File(widget.videoThumbnail
+                                  .replaceAll('file://', ''))))),
                     ),
 
                     // Edit Icon Overlay
@@ -87,7 +92,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade100.withOpacity(0.3),
+                            color: Colors.grey.shade800.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           padding: const EdgeInsets.symmetric(
@@ -95,14 +100,14 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.edit, color: Colors.white, size: 16),
+                              Icon(Icons.edit, color: Colors.white, size: 12),
                               SizedBox(width: 5),
                               Flexible(
                                 child: Text(
                                   AppLocalizations.of(context)!.edit,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                     color: myLoading.isDark
                                         ? Colors.white
                                         : Colors.black,
@@ -206,33 +211,82 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
                 SizedBox(height: 30),
 
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
-                    margin: const EdgeInsets.only(top: 15, bottom: 5),
-                    decoration: ShapeDecoration(
-                      color: buttonBlueColor1,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 40),
+                            margin: const EdgeInsets.only(top: 15, bottom: 5),
+                            decoration: ShapeDecoration(
+                              color: myLoading.isDark
+                                  ? Colors.white
+                                  : Colors.black,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  strokeAlign: BorderSide.strokeAlignOutside,
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.saveAsDraft,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.upload,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                      SizedBox(
+                        width: 15,
                       ),
-                    ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 40),
+                            margin: const EdgeInsets.only(top: 15, bottom: 5),
+                            decoration: ShapeDecoration(
+                              color: buttonBlueColor1,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                  strokeAlign: BorderSide.strokeAlignOutside,
+                                  color: Colors.black,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.upload,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

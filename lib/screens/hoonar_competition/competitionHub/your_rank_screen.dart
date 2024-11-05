@@ -73,10 +73,7 @@ class _YourRankScreenState extends State<YourRankScreen> {
                               : Colors.grey.shade700
                         ]),
                   )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .then(delay: 200.ms) // baseline=800ms
-                      .slide(),
+
                 ),
                 Column(
                   children: [

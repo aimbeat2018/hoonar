@@ -17,6 +17,11 @@ const String getFollowingListUrl = 'Post/getFollowingList';
 const String followUnfollow = 'Post/followUnfollowPost';
 const String getPostList = 'Post/getPostListByCategory';
 const String getHomePostList = 'Post/getPostList';
+const String likeUnlike = 'Post/LikeUnlikePost';
+const String addVoteUrl = 'Post/addVotes';
+const String addCommentUrl = 'Post/addComment';
+const String getCommentUrl = 'Post/getCommentByPostId';
+const String deleteCommentUrl = 'Post/deleteComment';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

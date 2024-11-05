@@ -211,5 +211,7 @@
   "youMustBeAtLeast": "آپ کی عمر کم از کم 15 سال ہونی چاہیے!",
   "userName": "صارف کا نام",
   "enterUserName": "صارف کا نام درج کریں",
-  "noDataFound": "کوئی ڈیٹا نہیں ملا"
+  "noDataFound": "کوئی ڈیٹا نہیں ملا",
+  "saveAsDraft": "ڈرافٹ کے طور پر محفوظ کریں"
+
 }

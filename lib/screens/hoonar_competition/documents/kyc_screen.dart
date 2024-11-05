@@ -1,12 +1,18 @@
+import 'dart:io';
+
+import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/screens/hoonar_competition/documents/scan_face_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../create_upload_video/uploadVideo/upload_video_screen.dart';
 
 class KycScreen extends StatefulWidget {
   const KycScreen({super.key});
@@ -16,6 +22,8 @@ class KycScreen extends StatefulWidget {
 }
 
 class _KycScreenState extends State<KycScreen> {
+  bool isButtonClick = false;
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
@@ -55,29 +63,24 @@ class _KycScreenState extends State<KycScreen> {
                     ),
                   ),
                   Center(
-                    child: GradientText(
-                      AppLocalizations.of(context)!.kyc,
-                      style: GoogleFonts.poppins(
-                        fontSize: 20,
-                        color: myLoading.isDark ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            myLoading.isDark ? Colors.white : Colors.black,
-                            myLoading.isDark ? Colors.white : Colors.black,
-                            myLoading.isDark
-                                ? greyTextColor8
-                                : Colors.grey.shade700
-                          ]),
-                    )
-                        .animate()
-                        .fadeIn(duration: 600.ms)
-                        .then(delay: 200.ms) // baseline=800ms
-                        .slide(),
-                  ),
+                      child: GradientText(
+                    AppLocalizations.of(context)!.kyc,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      color: myLoading.isDark ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.topRight,
+                        colors: [
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          myLoading.isDark ? Colors.white : Colors.black,
+                          myLoading.isDark
+                              ? greyTextColor8
+                              : Colors.grey.shade700
+                        ]),
+                  )),
                   SizedBox(
                     height: 30,
                   ),
@@ -122,25 +125,33 @@ class _KycScreenState extends State<KycScreen> {
                             ),
                           ],
                         )),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white),
-                          child: Text(
-                            AppLocalizations.of(context)!.clickHere,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(page: ScanFaceScreen()),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 3),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white),
+                            child: Text(
+                              AppLocalizations.of(context)!.clickHere,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         )
                       ],
                     ),
-                  ),
+                  )
                 ],
               ),
             ),

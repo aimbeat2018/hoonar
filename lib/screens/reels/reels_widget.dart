@@ -10,11 +10,14 @@ import 'package:video_player/video_player.dart';
 
 import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/session_manager.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
 import '../../model/success_models/post_list_success_model.dart';
+import '../../providers/home_provider.dart';
 import '../../providers/user_provider.dart';
+import '../auth_screen/login_screen.dart';
 
 class ReelsWidget extends StatefulWidget {
   final PostData model;
@@ -34,15 +37,60 @@ class _ReelsWidgetState extends State<ReelsWidget>
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
 
+  SessionManager sessionManager = SessionManager();
+
+  int modelLikeStatus = 0;
+
   @override
   void initState() {
     super.initState();
     initializePlayer();
+    sessionManager.initPref();
+    setState(() {
+      if (widget.model.videoLikesOrNot == 0) {
+        isDismissed[1] = false;
+      } else {
+        isDismissed[1] = true;
+      }
+    });
+  }
+
+  Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(postId: postId);
+
+      await homeProvider.likeUnlikeVideo(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.likeUnlikeVideoModel?.status == '200') {
+          if (homeProvider.likeUnlikeVideoModel?.message ==
+              'Post Unlike Successful') {
+            setState(() {
+              isDismissed[1] = false;
+            });
+          } else {
+            setState(() {
+              isDismissed[1] = true;
+            });
+          }
+        } else if (homeProvider.likeUnlikeVideoModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.likeUnlikeVideoModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
   }
 
   Future initializePlayer() async {
-    // _videoPlayerController =
-    //     VideoPlayerController.networkUrl(Uri.parse(widget.model.video));
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(widget.model.postVideo ?? ''));
     await Future.wait([_videoPlayerController.initialize()]);
@@ -84,17 +132,18 @@ class _ReelsWidgetState extends State<ReelsWidget>
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
 
-    String initials =
-        widget.model.fullName != null || widget.model.fullName != ""
-            ? widget.model.fullName!
-                .trim()
-                .split(' ')
-                .map((e) => e[0])
-                .take(2)
-                .join()
-                .toUpperCase()
-            : '';
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
+      String initials =
+          widget.model.fullName != null || widget.model.fullName != ""
+              ? widget.model.fullName!
+                  .trim()
+                  .split(' ')
+                  .map((e) => e[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
+              : '';
+
       return Scaffold(
         backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
         body: Stack(
@@ -372,13 +421,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             Column(
                               children: [
-                                widget.model.videoLikesOrNot == 0
+                                !isDismissed[1]
                                     ? Dismissible(
                                         key: const Key('2'),
                                         onDismissed: (direction) {
-                                          setState(() {
-                                            isDismissed[1] = false;
-                                          });
+                                          likeUnlikeVideo(
+                                              context, widget.model.postId!);
                                         },
                                         child: Image.asset(
                                           'assets/images/unlike.png',
@@ -389,9 +437,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     : Dismissible(
                                         key: const Key('3'),
                                         onDismissed: (direction) {
-                                          setState(() {
-                                            isDismissed[1] = true;
-                                          });
+                                          likeUnlikeVideo(
+                                              context, widget.model.postId!);
                                         },
                                         child: Image.asset(
                                           'assets/images/like.png',

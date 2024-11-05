@@ -212,5 +212,6 @@
   "youMustBeAtLeast": "You must be at least 15 years old!",
   "userName": "Username",
   "enterUserName": "Enter username",
-  "noDataFound": "No Data Found"
+  "noDataFound": "No Data Found",
+  "saveAsDraft": "Save as Draft"
 }

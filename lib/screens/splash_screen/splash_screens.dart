@@ -56,7 +56,7 @@ class _SplashScreensState extends State<SplashScreens>
       );
     } else {
       Navigator.pushAndRemoveUntil(context,
-          SlideRightRoute(page: MainScreen(fromIndex: 0)), (route) => false);
+          SlideRightRoute(page: const MainScreen(fromIndex: 0)), (route) => false);
     }
   }
 

@@ -1,7 +1,6 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
     id "kotlin-parcelize"
 }
@@ -10,8 +9,8 @@ configurations.configureEach {
     resolutionStrategy {
         eachDependency {
             if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
-                useVersion("1.9.23")
-//                useVersion("1.7.1")
+//                useVersion("1.9.23")
+                useVersion("1.8.22")
             }
         }
     }
@@ -23,23 +22,20 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '17'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
-//
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
 //    kotlinOptions {
 //        jvmTarget = JavaVersion.VERSION_1_8
 //    }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.hoonar.hoonar"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -55,7 +51,6 @@ android {
         pickFirst '**/libbanuba-ve-yuv.so'
 
         jniLibs {
-            // ! USE INSTEAD OF REMOVED android.bundle.enableUncompressedNativeLibs=false
             useLegacyPackaging = true
         }
     }
@@ -74,7 +69,21 @@ android {
         }
     }
 
+    rootProject.buildscript {
+        ext.kotlin_version = '1.8.22'
+        repositories {
+            google()
+            mavenCentral()
+        }
+
+        dependencies {
+            classpath 'com.android.tools.build:gradle:8.1.2'
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        }
+    }
+
 }
+
 
 flutter {
     source = "../.."

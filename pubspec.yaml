@@ -15,8 +15,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  hoonar_camera:
-    path: "CameraPlugin/camera"
+  #  hoonar_camera:
+  #      path: "CameraPlugin/camera"
 
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
@@ -35,13 +35,13 @@ dependencies:
   intl: ^0.19.0
   image_picker: ^1.1.2
   flutter_downloader: ^1.11.8
-  ffmpeg_kit_flutter_full: ^6.0.3
+  #  ffmpeg_kit_flutter_full: ^6.0.3
   shared_preferences: ^2.3.2
   provider: ^6.1.2
   fluttermoji: ^1.0.2
   crop_your_image: ^1.1.0
-  camera: ^0.11.0
-#  camera: ^0.11.0+2
+  #  camera: ^0.11.0
+  camera: ^0.11.0+2
   photo_manager: ^3.5.0
   get_it: ^8.0.0
   connectivity_plus: ^6.0.5
@@ -54,9 +54,9 @@ dependencies:
   device_info_plus: ^11.0.0
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
-  ve_sdk_flutter: ^0.6.0
-
-
+  ve_sdk_flutter: ^0.7.0
+  #  banuba_sdk: ^3.0.3
+  face_camera: ^0.1.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -116,6 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+
+
   @override
   void dispose() {
     controller.dispose();
@@ -174,8 +176,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 10,
                 ),
                 homeProvider.isHomeLoading ||
-                        homeProvider.homePostSuccessModel == null
-                    ? CircularProgressIndicator()
+                        homeProvider.homePostSuccessModel == null ||
+                        homeProvider.homePostSuccessModel!.data == null
+                    ? CategoryShimmer()
                     : Column(
                         children: [
                           CS.CarouselSlider.builder(

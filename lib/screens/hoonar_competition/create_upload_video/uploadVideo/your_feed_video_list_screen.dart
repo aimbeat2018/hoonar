@@ -61,7 +61,7 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  SlideRightRoute(page: UploadVideoScreen()),
+                  SlideRightRoute(page: UploadVideoScreen(videoThumbnail: "",videoUrl: [],)),
                 );
               },
               child: Image.asset(

@@ -60,10 +60,7 @@ class _ChangeLanguageScreenState extends State<ChangeLanguageScreen> {
                           greyTextColor8
                         ]),
                   )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .then(delay: 200.ms) // baseline=800ms
-                      .slide(),
+
                 ),
                 ListView.separated(
                   itemCount: languages.length,

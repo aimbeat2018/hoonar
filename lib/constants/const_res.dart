@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ConstRes {
-  static final String hoonarCamera = 'hoonar_camera';
-  static final bool isDialog = false;
+  static const String hoonarCamera = 'bubbly_camera';
+  static const bool isDialog = false;
 
   static final String camera = '';
 }

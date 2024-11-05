@@ -224,7 +224,7 @@ internal class CameraXView(
 
             cameraProvider.unbindAll()
 
-            /*   camera = cameraProvider.bindToLifecycle(
+              /* camera = cameraProvider.bindToLifecycle(
                    object : LifecycleOwner {
                        override val lifecycle: Lifecycle
                            get() = object : Lifecycle() {
@@ -256,7 +256,7 @@ internal class CameraXView(
                 }, cameraSelector, useCaseGroup
             )
 
-            /* camera = cameraProvider.bindToLifecycle(
+             /*camera = cameraProvider.bindToLifecycle(
                  object : LifecycleOwner {
                      private val lifecycleRegistry = LifecycleRegistry(this)
 
@@ -271,8 +271,7 @@ internal class CameraXView(
                  },
                  cameraSelector,
                  useCaseGroup
-             )
- */
+             )*/
 
             viewFinder.setOnTouchListener { _, motionEvent ->
                 val meteringPoint = viewFinder.meteringPointFactory

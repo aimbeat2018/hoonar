@@ -72,10 +72,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 : Colors.grey.shade700
                           ]),
                     )
-                        .animate()
-                        .fadeIn(duration: 600.ms)
-                        .then(delay: 200.ms) // baseline=800ms
-                        .slide(),
+
                   ),
                   SizedBox(
                     height: 20,

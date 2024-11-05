@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
-import 'package:hoonar/screens/camera/camera_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/select_category_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
+
 import 'package:ve_sdk_flutter/export_result.dart';
 import 'package:ve_sdk_flutter/features_config.dart';
 import 'package:ve_sdk_flutter/ve_sdk_flutter.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
+import '../hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
+// import '../camera/camera_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final int? fromIndex;
@@ -31,17 +33,19 @@ class _MainScreenState extends State<MainScreen> {
   final _veSdkFlutterPlugin = VeSdkFlutter();
   String _errorMessage = '';
   final _licenseToken =
-      "Qk5CIA8cIG9l0liMc9aaiRTbxMqNbof5zR3dxShH5hTud8qJxK+1qn/cD7aFr0ay1qgORlDan0EjbRchlrCPvhdIqC31k9KwpZw5UP0e0EMU7HYSQdHUFiYqZseAFy6JI+rI4iWCm1w6kiQ45iiCXY3MfltFJXggCUaUI2GinVk2RvVIl/gcyt0AFVu5IbVvV86SYCYIJM/IwqrNZQoEBf/ZepgYVNzjg6wJR5wyiHwTjsffp0q9RUnVYm9H4/yu8cUPxGe5Fx9Q9arjvX9EUfVwCjWnUdzqjEHNY72YmfUh8NTlDn4E/Hl+H5TNcfmvMxIYi75jU6jjlGM8/zlVXUuK2xiRx0q1KkjDVUfJhWEDSWBd1em9Ugk6LtC8lH2aeX+DWiZc7gnn3ZhY0Ktwi++NB89sJ9YxipVf++Xqx9efI2FrCFTrZhn9Yt3R/za3TwKw2U9dhlRfhCsHoFndKPDgvZxkTlYUWFoR/+4nFyBuSIScGQpq2pLX+wMVkOESW1QT/r/qA8hma3871/jCIynPvVjf5NxCnQR6QaUDvuWcC9IMXma3+cR1Mg60phnYh5ZAmfuW8wcMNiagnzpti26ibCk2YROSCaXHJPxrJ6exApuoacUMYyWys7gas/SzetDdRNn9jFhfNRM64Y659YA5";
+      "Qk5CIB92NbTLDkLauz8nj8BFLW78AUUKhBlysKBq4wht6dQXkwDwcqHZPqsiiXpj8wdw3TT/uCOH2l8xKvAhxFPfj2JtImGqoWfFhzRgWPVo8QioCJ5DkF1S7EzQf2+QJIBdI00zhPhuRO9SkkN82RH87e7F2jHrWz+atQ3Az4/fzaWZaIqVvetNDI8AeUBzsflnlmzXlh/YbVCqAS0HyBmb4oxGqlMfWVyv9zW8sEDJuVB01uhtwzITtplCGKT9Gq0mznZXoIYbxS74JkWhI6676WGqwks8PwqVEsqf43AQXj1Ud/1EBUe27CHNKu7RwG7HG3alX84B+2l90AkeB98ti57RzyvyChOfMKUFKXt98zokLcrsAGck/f8Vr5OPAvgoCclorMWPxA0dAxKhXGaA9JNPHzSXIFpgsTKUJy08S1k/eFoHmilPUNcyYyZJ3GREkIL9ZhUxK/VPJT1dojE8w+795wE9KRA8p5BpDC+g4oNtx+b5w5dADQT/af3V5/Y5CL4ncBZCNHTwFcm4PxDPKQ56n+HuGPMAXOGk8FwIeUaEpzshDVJQmK5uItzjEtDj4UpuYVF+U1DkAkZmxZKnVEnUecsAlB+463AF+4p9X9k/3pB5EJ84vJ6pIUTX6ZPFw7Wn74/s8ulSLrD0to76";
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        selectedIndex = widget.fromIndex!;
-        getBody();
+    if (widget.fromIndex != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          selectedIndex = widget.fromIndex!;
+          getBody();
+        });
       });
-    });
+    }
 
     screen1 = const HomeScreen();
     screen2 = const SearchScreen();
@@ -224,7 +228,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  void openCameraScreen() {
+/*  void openCameraScreen() {
     Navigator.push(
       context,
       SlideRightRoute(
@@ -234,15 +238,14 @@ class _MainScreenState extends State<MainScreen> {
         soundUrl: "ghs",
       )),
     );
-  }
+  }*/
 
   Future<void> _startVideoEditorInCameraMode() async {
     // Specify your Config params in the builder below
 
     final config = FeaturesConfigBuilder()
-        // .setAiCaptions(...)
         .setAudioBrowser(AudioBrowser.fromSource(AudioBrowserSource.local))
-        // ...
+        .setDraftsConfig(DraftsConfig.fromOption(DraftsOption.disabled))
         .build();
 
     // Export data example
@@ -282,6 +285,15 @@ class _MainScreenState extends State<MainScreen> {
 
     // Meta file where you can find short data used in exported video
     debugPrint('Exported meta file = ${result.metaFilePath}');
+
+    Navigator.push(
+      context,
+      SlideRightRoute(
+          page: UploadVideoScreen(
+        videoThumbnail: result.previewFilePath!,
+        videoUrl: result.videoSources,
+      )),
+    );
   }
 
   void _handlePlatformException(PlatformException exception) {

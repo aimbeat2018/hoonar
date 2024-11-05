@@ -28,7 +28,7 @@ class CupertinoCustomDialog extends StatelessWidget {
       content: Text(message,
           style: GoogleFonts.poppins(fontWeight: FontWeight.normal)),
       actions: [
-      /*  CupertinoDialogAction(
+        /*  CupertinoDialogAction(
           onPressed: onCancel ?? () => Navigator.of(context).pop(),
           child: Text(cancelButtonText,
               style: GoogleFonts.poppins(fontWeight: FontWeight.normal)),
