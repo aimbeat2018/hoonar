@@ -1,24 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart' as CS;
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/constants/utils.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
-import 'package:hoonar/model/slider_model.dart';
+import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/judges_choice_screen.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+
 import '../../constants/color_constants.dart';
+import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
 import '../../custom/snackbar_util.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../../shimmerLoaders/category_shimmer.dart';
 import '../auth_screen/login_screen.dart';
 
@@ -30,17 +33,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<SliderModel> sliderModelList = [
-    SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
-    SliderModel(vocals, 'assets/images/video2.mp4', '', '@abcd@123'),
-    SliderModel(dance, 'assets/images/video3.mp4', '', '@abcd@123'),
-  ];
-  List<String> typeList = [
-    'raps', //1
-    'vocals', //2
-    'dance', //3
-    'dance', //3
-  ];
   int _currentIndex = 0;
   final CS.CarouselSliderController _carouselController =
       CS.CarouselSliderController();
@@ -49,6 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
   List<OtherListModel> otherList = [];
   SessionManager sessionManager = SessionManager();
+  bool isLoading = false;
+  HomeOtherData? homeOtherData = HomeOtherData(
+      judgesChoicePostList: [], myFavPostList: [], forYouPostList: []);
 
   @override
   void initState() {
@@ -86,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
       getHomePost(context);
+      getHomePageOtherPost(context);
     });
   }
 
@@ -116,7 +112,40 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
+  Future<void> getHomePageOtherPost(BuildContext context) async {
+    setState(() {
+      isLoading = true;
+    });
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(limit: paginationLimit);
+
+      await homeProvider.getHomeOtherPostList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.homePageOtherDataModel?.status == 200) {
+          setState(() {
+            homeOtherData = homeProvider.homePageOtherDataModel?.data!;
+          });
+        } else if (homeProvider.homePageOtherDataModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.homePageOtherDataModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -217,14 +246,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                             topLeft: Radius.circular(7.96),
                                             topRight: Radius.circular(7.96),
                                           ),
-                                          border: Border(
-                                            top: BorderSide(
-                                              width: 1.5,
-                                              color: myLoading.isDark
-                                                  ? Colors.white
-                                                  : Colors.grey,
-                                            ),
-                                          ),
+                                          // border: Border(
+                                          //   top: BorderSide(
+                                          //     width: 1.5,
+                                          //     color: myLoading.isDark
+                                          //         ? Colors.white
+                                          //         : Colors.grey,
+                                          //   ),
+                                          // ),
                                         )
                                       : BoxDecoration(
                                           borderRadius:
@@ -330,14 +359,48 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                ListView.builder(
+                Column(
+                  children: [
+                    if (homeOtherData!.judgesChoicePostList!.isNotEmpty)
+                      Column(
+                        children: [
+                          otherListWidget(
+                              AppLocalizations.of(context)!.judgesChoice,
+                              homeOtherData!.judgesChoicePostList ?? [],
+                              myLoading.isDark),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    if (homeOtherData!.myFavPostList!.isNotEmpty)
+                      Column(
+                        children: [
+                          otherListWidget(
+                              AppLocalizations.of(context)!.favrite,
+                              homeOtherData!.myFavPostList ?? [],
+                              myLoading.isDark),
+                        ],
+                      ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    if (homeOtherData!.forYouPostList!.isNotEmpty)
+                      otherListWidget(
+                          AppLocalizations.of(context)!.foryours,
+                          homeOtherData!.forYouPostList ?? [],
+                          myLoading.isDark),
+                  ],
+                ),
+
+                /*ListView.builder(
                   itemCount: otherList.length,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
                     return otherListWidget(otherList[index], myLoading.isDark);
                   },
-                ),
+                ),*/
                 const SizedBox(
                   height: 50,
                 )
@@ -349,7 +412,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget otherListWidget(OtherListModel model, bool isDarkMode) {
+  Widget otherListWidget(
+      String title, List<PostsListData> postData, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 0),
       child: Column(
@@ -365,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
               sizedBoxW5,
               Expanded(
                 child: Text(
-                  model.titleName!,
+                  title,
                   textAlign: TextAlign.start,
                   style: GoogleFonts.poppins(
                     fontSize: 14,
@@ -396,17 +460,33 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.28,
             child: ListView.builder(
-              itemCount: model.imagesList!.length,
+              itemCount: postData.length,
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int index) {
+                String initials = postData[index].fullName != null ||
+                        postData[index].fullName != ""
+                    ? postData[index]
+                        .fullName!
+                        .trim()
+                        .split(' ')
+                        .map((e) => e[0])
+                        .take(2)
+                        .join()
+                        .toUpperCase()
+                    : '';
+
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: InkWell(
                     onTap: () {
                       Navigator.push(
                         context,
-                        SlideRightRoute(page: const ReelsListScreen()),
+                        SlideRightRoute(
+                            page: ReelsListScreen(
+                          postList: postData,
+                          index: index,
+                        )),
                       );
                     },
                     child: Container(
@@ -426,7 +506,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             // height: 23.06,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(model.imagesList![index]),
+                                image: NetworkImage(postData[index].postImage!),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -453,39 +533,45 @@ class _HomeScreenState extends State<HomeScreen> {
                           Positioned(
                             bottom: 12,
                             left: 5,
+                            right: 5,
                             child: Row(
                               children: [
-                                Container(
-                                  width: 14.78,
-                                  height: 14.78,
-                                  decoration: const ShapeDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/user_profile.png'),
-                                      fit: BoxFit.fill,
-                                    ),
-                                    shape: OvalBorder(
-                                      side: BorderSide(
-                                        width: 0.49,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Color(0x99000000),
-                                        blurRadius: 3.70,
-                                        offset: Offset(0, 0.99),
-                                      )
-                                    ],
+                                CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor: isDarkMode
+                                      ? Colors.grey.shade700
+                                      : Colors.grey.shade200,
+                                  child: ClipOval(
+                                    child: postData[index].userProfile != ""
+                                        ? CachedNetworkImage(
+                                            imageUrl:
+                                                postData[index].userProfile!,
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(),
+                                            errorWidget: (context, url,
+                                                    error) =>
+                                                buildInitialsAvatar(initials,
+                                                    fontSize: 8),
+                                            fit: BoxFit.cover,
+                                            width: 20,
+                                            // Match the size of the CircleAvatar
+                                            height: 20,
+                                          )
+                                        : buildInitialsAvatar(initials,
+                                            fontSize: 8),
                                   ),
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  'abcd@123',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                                Expanded(
+                                  child: Text(
+                                    postData[index].userName ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ],

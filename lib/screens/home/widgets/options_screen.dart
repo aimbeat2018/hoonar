@@ -35,7 +35,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
     });
   }
 
-  Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
+  /* Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
@@ -68,7 +68,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
         }
       }
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -81,60 +81,50 @@ class _OptionsScreenState extends State<OptionsScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              GestureDetector(
-                onTap: () {
-                  print('vote tap');
-                },
-                child: Column(
-                  children: [
-                    Image.asset(
-                      'assets/images/vote_not_given.png',
-                      // 'assets/images/vote_given.png',
-                      height: 20,
-                      width: 20,
+              Column(
+                children: [
+                  Image.asset(
+                    'assets/images/vote_not_given.png',
+                    // 'assets/images/vote_given.png',
+                    height: 20,
+                    width: 20,
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.votes,
+                    style: GoogleFonts.poppins(
+                      fontSize: 8,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.votes,
-                      style: GoogleFonts.poppins(
-                        fontSize: 8,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 15,
               ),
-              GestureDetector(
-                onTap: () {
-                  likeUnlikeVideo(context, widget.model!.postId!);
-                },
-                child: Column(
-                  children: [
-                    Image.asset(
-                      modelLikeStatus == 0
-                          ? 'assets/images/unlike.png'
-                          : 'assets/images/like.png',
-                      scale: 7,
+              Column(
+                children: [
+                  Image.asset(
+                    modelLikeStatus == 0
+                        ? 'assets/images/unlike.png'
+                        : 'assets/images/like.png',
+                    scale: 7,
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.likes,
+                    style: GoogleFonts.poppins(
+                      fontSize: 8,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
-                    SizedBox(
-                      height: 3,
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.likes,
-                      style: GoogleFonts.poppins(
-                        fontSize: 8,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 15,

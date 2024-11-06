@@ -1,8 +1,15 @@
 import 'dart:convert';
 
+import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/category_list_success_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
+import 'package:hoonar/model/success_models/hash_tag_list_model.dart';
+import 'package:hoonar/model/success_models/hash_tag_list_model.dart';
+import 'package:hoonar/model/success_models/hash_tag_list_model.dart';
+import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
+import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
+import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
@@ -45,6 +52,16 @@ class HomePageService {
     );
   }
 
+  Future<HomePageOtherDataModel> getHomePageOtherData(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<HomePageOtherDataModel>(
+      '$baseUrl$getHomePagePostList',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => HomePageOtherDataModel.fromJson(data),
+    );
+  }
+
   Future<FollowUnfollowSuccessModel> likeUnlikeVideo(
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
@@ -72,6 +89,25 @@ class HomePageService {
       method: 'POST',
       data: requestModel.toJson(),
       fromJson: (data) => VideoCommentListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> addPost(
+      AddPostRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$addPostUrl',
+      method: 'POST',
+      data: requestModel.toFormData(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<HashTagListModel> getHashTagList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<HashTagListModel>(
+      '$baseUrl$getHashTagListUrl',
+      data: requestModel.toJson(),
+      fromJson: (data) => HashTagListModel.fromJson(data),
     );
   }
 }

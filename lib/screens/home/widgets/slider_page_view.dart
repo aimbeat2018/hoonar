@@ -11,9 +11,11 @@ import 'package:hoonar/screens/customSlider/enums.dart';
 import 'package:hoonar/screens/customSlider/models.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
+import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
@@ -43,7 +45,8 @@ class _SliderPageViewState extends State<SliderPageView>
   List<Widget> children = [];
   bool _isPaused = false;
   bool isLoading = false;
-  bool isFollow = false, isFollowLoading = false;
+  bool isFollow = false,
+      isFollowLoading = false;
 
   @override
   void initState() {
@@ -84,17 +87,17 @@ class _SliderPageViewState extends State<SliderPageView>
         videoPlayerController: _videoPlayerController,
         autoPlay: false,
         showControls: false,
-        looping: true,
+        looping: false,
       );
 
       String initials = data.fullName != null || data.fullName != ""
           ? data.fullName!
-              .trim()
-              .split(' ')
-              .map((e) => e[0])
-              .take(2)
-              .join()
-              .toUpperCase()
+          .trim()
+          .split(' ')
+          .map((e) => e[0])
+          .take(2)
+          .join()
+          .toUpperCase()
           : '';
 
       children.add(Container(
@@ -107,52 +110,67 @@ class _SliderPageViewState extends State<SliderPageView>
             // Display the video when it's initialized
             // _chewieController != null &&
             _chewieController.videoPlayerController.value.isInitialized
-                ? GestureDetector(
-                    onTap: () {
-                      if (_videoPlayerController.value.isPlaying) {
-                        _videoPlayerController.pause();
-                        setState(() {
-                          _isPaused = !_isPaused;
-                        });
-                      } else {
-                        _videoPlayerController.play();
-                        setState(() {
-                          _isPaused = !_isPaused;
-                        });
-                      }
-                    },
-                    onDoubleTap: () {
-                      _videoPlayerController.pause();
-                      setState(() {
-                        _isPaused = !_isPaused;
-                      });
-                      Navigator.push(
-                        context,
-                        SlideRightRoute(page: CategoryWiseVideosListScreen()),
-                      );
-                    },
-                    // Use Chewie player to play the video
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: 250,
-                        // Set the desired width
-                        height: 250 / _videoPlayerController.value.aspectRatio,
-                        // Calculate height based on aspect ratio
-                        child: Chewie(
-                          controller: _chewieController,
-                        ),
-                      ),
+                ? VisibilityDetector(
+              key: Key(data.postVideo!),
+              onVisibilityChanged: (VisibilityInfo info) {
+                if (info.visibleFraction > 0.5) {
+                  _videoPlayerController.play();
+                  _videoPlayerController.setVolume(0.0);
+                } else {
+                  _videoPlayerController.pause();
+                }
+              },
+              child: GestureDetector(
+                onTap: () {
+                  /*  if (_videoPlayerController.value.isPlaying) {
+                          _videoPlayerController.pause();
+                          setState(() {
+                            _isPaused = !_isPaused;
+                          });
+                        } else {
+                          _videoPlayerController.play();
+                          setState(() {
+                            _isPaused = !_isPaused;
+                          });
+                        }*/
+                  _videoPlayerController.pause();
+                  setState(() {
+                    _isPaused = !_isPaused;
+                  });
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(
+                        page: ReelsListScreen(
+                          postList: widget.sliderModelList,
+                          index: widget.sliderModelList.indexOf(data),
+                        )),
+                  );
+                },
+
+                // Use Chewie player to play the video
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: 250,
+                    // Set the desired width
+                    height:
+                    250 / _videoPlayerController.value.aspectRatio,
+                    // Calculate height based on aspect ratio
+                    child: Chewie(
+                      controller: _chewieController,
                     ),
-                  )
-                : const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 10),
-                      Text('Loading...')
-                    ],
                   ),
+                ),
+              ),
+            )
+                : const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 10),
+                Text('Loading...')
+              ],
+            ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
@@ -177,18 +195,18 @@ class _SliderPageViewState extends State<SliderPageView>
                               child: ClipOval(
                                 child: data.userProfile != ""
                                     ? CachedNetworkImage(
-                                        imageUrl: data.userProfile!,
-                                        placeholder: (context, url) =>
-                                            const CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            buildInitialsAvatar(initials,
-                                                fontSize: 10),
-                                        fit: BoxFit.cover,
-                                        width: 20,
-                                        height: 20,
-                                      )
+                                  imageUrl: data.userProfile!,
+                                  placeholder: (context, url) =>
+                                  const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      buildInitialsAvatar(initials,
+                                          fontSize: 10),
+                                  fit: BoxFit.cover,
+                                  width: 20,
+                                  height: 20,
+                                )
                                     : buildInitialsAvatar(initials,
-                                        fontSize: 10),
+                                    fontSize: 10),
                               ),
                             ),
                             const SizedBox(width: 5),
@@ -212,64 +230,51 @@ class _SliderPageViewState extends State<SliderPageView>
                                   Flexible(
                                     child: ValueListenableBuilder<int?>(
                                         valueListenable:
-                                            userProvider.followStatusNotifier,
+                                        userProvider.followStatusNotifier,
                                         builder:
                                             (context, followStatus, child) {
-                                          return InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                followUnFollowUser(
-                                                    context, data.userId!);
-                                              });
-                                            },
-                                            child: Container(
-                                              margin: const EdgeInsets.only(
-                                                  left: 5),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 3),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  border: Border.all(
-                                                      color: data.followOrNot ==
-                                                                  1 ||
-                                                              followStatus == 1
-                                                          ? Colors.white
-                                                          : Colors.transparent,
-                                                      width: 1),
-                                                  color:
-                                                      data.followOrNot == 1 ||
-                                                              followStatus == 1
-                                                          ? Colors.transparent
-                                                          : Colors.white),
-                                              child: isFollowLoading
-                                                  ? const Center(
-                                                      child:
-                                                          CircularProgressIndicator())
-                                                  : Text(
-                                                      data.followOrNot == 1 ||
-                                                              followStatus == 1
-                                                          ? AppLocalizations.of(
-                                                                  context)!
-                                                              .unfollow
-                                                          : AppLocalizations.of(
-                                                                  context)!
-                                                              .follow,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                        fontSize: 8,
-                                                        color: data.followOrNot ==
-                                                                    1 ||
-                                                                followStatus ==
-                                                                    1
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
+                                          return Container(
+                                            margin:
+                                            const EdgeInsets.only(left: 5),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 3),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(15),
+                                                border: Border.all(
+                                                    color: data.followOrNot ==
+                                                        1 ||
+                                                        followStatus == 1
+                                                        ? Colors.white
+                                                        : Colors.transparent,
+                                                    width: 1),
+                                                color: data.followOrNot == 1 ||
+                                                    followStatus == 1
+                                                    ? Colors.transparent
+                                                    : Colors.white),
+                                            child: isFollowLoading
+                                                ? const Center(
+                                                child:
+                                                CircularProgressIndicator())
+                                                : Text(
+                                              data.followOrNot == 1 ||
+                                                  followStatus == 1
+                                                  ? AppLocalizations.of(
+                                                  context)!
+                                                  .unfollow
+                                                  : AppLocalizations.of(
+                                                  context)!
+                                                  .follow,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 8,
+                                                color: data.followOrNot ==
+                                                    1 ||
+                                                    followStatus == 1
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight:
+                                                FontWeight.w600,
+                                              ),
                                             ),
                                           );
                                         }),
@@ -338,67 +343,52 @@ class _SliderPageViewState extends State<SliderPageView>
     setState(() {});
   }*/
 
-  Future<void> followUnFollowUser(BuildContext context, int toUserId) async {
-    ListCommonRequestModel requestModel = ListCommonRequestModel(
-      toUserId: toUserId,
-    );
-
-    isFollowLoading = true;
-    final authProvider = Provider.of<UserProvider>(context, listen: false);
-
-    await authProvider.followUnfollowUser(requestModel);
-
-    if (authProvider.errorMessage != null) {
-      SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-    }
-
-    isFollowLoading = false;
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return isLoading
           ? Center(
-              child: SizedBox(
-                  height: 30, width: 30, child: CircularProgressIndicator()))
+          child: SizedBox(
+              height: 30, width: 30, child: CircularProgressIndicator()))
           : SizedBox(
-              height: screenHeight,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onHorizontalDragEnd: ((details) {
-                      if (details.velocity.pixelsPerSecond.dx > 0) {
-                        _leftSwipe();
-                      } else {
-                        _rightSwipe();
-                      }
-                    }),
-                    child: SizedBox(
-                      width: double.maxFinite,
-                      height: 400,
-                      child: Stack(
-                        children: children.isNotEmpty ? stackItems() : [],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  if (children.length > 1)
-                    CarouselSlider(
-                      position: activePage,
-                      amount: children.length,
-                      isDarkMode: myLoading.isDark,
-                    )
-                ],
+        height: screenHeight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onHorizontalDragEnd: ((details) {
+                if (details.velocity.pixelsPerSecond.dx > 0) {
+                  _leftSwipe();
+                } else {
+                  _rightSwipe();
+                }
+              }),
+              child: SizedBox(
+                width: double.maxFinite,
+                height: 400,
+                child: Stack(
+                  children: children.isNotEmpty ? stackItems() : [],
+                ),
               ),
-            );
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            if (children.length > 1)
+              CarouselSlider(
+                position: activePage,
+                amount: children.length,
+                isDarkMode: myLoading.isDark,
+              )
+          ],
+        ),
+      );
     });
   }
 
@@ -414,7 +404,7 @@ class _SliderPageViewState extends State<SliderPageView>
         .toList();
 
     CarouselData currentPage =
-        CarouselData(children[activePage], PagePos.current);
+    CarouselData(children[activePage], PagePos.current);
 
     if (afterActive.isNotEmpty) {
       afterActive.last.setCurrent(PagePos.after);
@@ -433,7 +423,10 @@ class _SliderPageViewState extends State<SliderPageView>
     return currentItemList.map((item) {
       return CarouselItem(
           bigItemWidth: 250,
-          bigItemHeight: MediaQuery.of(context).size.height,
+          bigItemHeight: MediaQuery
+              .of(context)
+              .size
+              .height,
           smallItemWidth: 250,
           smallItemHeight: 300,
           animation: 1 - controller.value,

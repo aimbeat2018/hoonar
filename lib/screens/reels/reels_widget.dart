@@ -14,13 +14,14 @@ import '../../constants/session_manager.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../../model/success_models/post_list_success_model.dart';
 import '../../providers/home_provider.dart';
 import '../../providers/user_provider.dart';
 import '../auth_screen/login_screen.dart';
 
 class ReelsWidget extends StatefulWidget {
-  final PostData model;
+  final PostsListData model;
 
   const ReelsWidget({super.key, required this.model});
 
@@ -246,101 +247,110 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                   ),
                                   Expanded(
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Text(
-                                          widget.model.userName ?? "",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
+                                        Expanded(
+                                          flex: 1,
+                                          child: Text(
+                                            widget.model.userName ?? "",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
-                                        ValueListenableBuilder<int?>(
-                                            valueListenable: userProvider
-                                                .followStatusNotifier,
-                                            builder:
-                                                (context, followStatus, child) {
-                                              return InkWell(
-                                                onTap: () {
-                                                  setState(() {
-                                                    followUnFollowUser(context);
-                                                  });
-                                                },
-                                                child: Container(
-                                                  margin: const EdgeInsets.only(
-                                                      left: 10),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 5),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius
-                                                          .circular(15),
-                                                      border: Border.all(
-                                                          color: widget.model
-                                                                          .followOrNot ==
-                                                                      1 ||
-                                                                  followStatus ==
-                                                                      1
-                                                              ? (myLoading
-                                                                      .isDark
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black)
-                                                              : Colors
-                                                                  .transparent,
-                                                          width: 1),
-                                                      color: widget.model
-                                                                      .followOrNot ==
-                                                                  1 ||
-                                                              followStatus == 1
-                                                          ? Colors.transparent
-                                                          : (myLoading.isDark
-                                                              ? Colors.white
-                                                              : Colors.black)),
-                                                  child: isFollowLoading
-                                                      ? const Center(
-                                                          child:
-                                                              CircularProgressIndicator())
-                                                      : Text(
-                                                          widget.model.followOrNot ==
-                                                                      1 ||
-                                                                  followStatus ==
-                                                                      1
-                                                              ? AppLocalizations
-                                                                      .of(
-                                                                          context)!
-                                                                  .unfollow
-                                                              : AppLocalizations
-                                                                      .of(context)!
-                                                                  .follow,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            fontSize: 12,
-                                                            color: widget.model
-                                                                            .followOrNot ==
+                                        Flexible(
+                                          child: ValueListenableBuilder<int?>(
+                                              valueListenable: userProvider
+                                                  .followStatusNotifier,
+                                              builder: (context, followStatus,
+                                                  child) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      followUnFollowUser(
+                                                          context);
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 5),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                15),
+                                                        border: Border.all(
+                                                            color: widget.model.followOrNot ==
                                                                         1 ||
                                                                     followStatus ==
                                                                         1
-                                                                ? (myLoading
-                                                                        .isDark
+                                                                ? (myLoading.isDark
                                                                     ? Colors
                                                                         .white
                                                                     : Colors
                                                                         .black)
-                                                                : (myLoading
-                                                                        .isDark
-                                                                    ? Colors
-                                                                        .black
-                                                                    : Colors
-                                                                        .white),
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                                : Colors
+                                                                    .transparent,
+                                                            width: 1),
+                                                        color: widget.model
+                                                                        .followOrNot ==
+                                                                    1 ||
+                                                                followStatus ==
+                                                                    1
+                                                            ? Colors.transparent
+                                                            : (myLoading.isDark
+                                                                ? Colors.white
+                                                                : Colors.black)),
+                                                    child: isFollowLoading
+                                                        ? const Center(
+                                                            child:
+                                                                CircularProgressIndicator())
+                                                        : Text(
+                                                            widget.model.followOrNot ==
+                                                                        1 ||
+                                                                    followStatus ==
+                                                                        1
+                                                                ? AppLocalizations.of(
+                                                                        context)!
+                                                                    .unfollow
+                                                                : AppLocalizations.of(
+                                                                        context)!
+                                                                    .follow,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 12,
+                                                              color: widget.model
+                                                                              .followOrNot ==
+                                                                          1 ||
+                                                                      followStatus ==
+                                                                          1
+                                                                  ? (myLoading.isDark
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black)
+                                                                  : (myLoading.isDark
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors
+                                                                          .white),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
                                                           ),
-                                                        ),
-                                                ),
-                                              );
-                                            }),
+                                                  ),
+                                                );
+                                              }),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -352,6 +362,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             Text(
                               widget.model.postDescription ?? '',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            Text(
+                              widget.model.postHashTag ?? '',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: Colors.white,

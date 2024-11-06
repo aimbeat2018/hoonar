@@ -1,7 +1,9 @@
+import 'home_post_success_model.dart';
+
 class PostListSuccessModel {
   String? status;
   String? message;
-  List<PostData>? data;
+  List<PostsListData>? data;
 
   PostListSuccessModel({this.status, this.message, this.data});
 
@@ -9,9 +11,9 @@ class PostListSuccessModel {
     status = json['status'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <PostData>[];
+      data = <PostsListData>[];
       json['data'].forEach((v) {
-        data!.add(new PostData.fromJson(v));
+        data!.add(new PostsListData.fromJson(v));
       });
     }
   }
@@ -27,7 +29,7 @@ class PostListSuccessModel {
   }
 }
 
-class PostData {
+/*class PostData {
   int? postId;
   int? userId;
   String? fullName;
@@ -162,4 +164,4 @@ class PostData {
     data['can_save'] = canSave;
     return data;
   }
-}
+}*/

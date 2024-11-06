@@ -63,6 +63,7 @@ class _DraftVideoListScreenState extends State<DraftVideoListScreen> {
                   SlideRightRoute(
                       page: UploadVideoScreen(
                     videoThumbnail: "",
+                    from: "",
                     videoUrl: [],
                   )),
                 );

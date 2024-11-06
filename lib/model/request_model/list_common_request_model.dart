@@ -5,6 +5,7 @@ class ListCommonRequestModel {
   int? categoryId;
   int? toUserId;
   int? postId;
+  String? search;
 
   ListCommonRequestModel(
       {this.userId,
@@ -12,6 +13,7 @@ class ListCommonRequestModel {
       this.limit,
       this.categoryId,
       this.toUserId,
+      this.search,
       this.postId});
 
   ListCommonRequestModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class ListCommonRequestModel {
     categoryId = json['category_id'];
     toUserId = json['to_user_id'];
     postId = json['post_id'];
+    search = json['search'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class ListCommonRequestModel {
     data['category_id'] = categoryId;
     data['to_user_id'] = toUserId;
     data['post_id'] = postId;
+    data['search'] = search;
     return data;
   }
 }

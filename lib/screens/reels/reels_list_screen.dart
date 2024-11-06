@@ -5,10 +5,11 @@ import 'package:provider/provider.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/text_constants.dart';
 import '../../model/slider_model.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../../model/success_models/post_list_success_model.dart';
 
 class ReelsListScreen extends StatefulWidget {
-  final List<PostData>? postList;
+  final List<PostsListData>? postList;
   final int? index;
 
   const ReelsListScreen({super.key, this.postList, this.index});
@@ -19,6 +20,15 @@ class ReelsListScreen extends StatefulWidget {
 
 class _ReelsListScreenState extends State<ReelsListScreen> {
   final controller = SwiperController();
+  int? currentIndex;
+  bool hasSwiped = false; // Flag to track if the user has swiped
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentIndex = widget.index;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +41,21 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
               Swiper(
                 controller: controller,
                 itemBuilder: (BuildContext context, int index) {
+                  int displayIndex = hasSwiped ? index : currentIndex!;
+
                   return ReelsWidget(
-                    model: widget.postList![index],
+                    model: widget.postList![displayIndex],
                   );
                 },
                 itemCount: widget.postList!.length,
                 scrollDirection: Axis.vertical,
+                onIndexChanged: (index) {
+                  setState(() {
+                    hasSwiped = true;
+                    currentIndex =
+                        index;
+                  });
+                },
               ),
               Align(
                 alignment: Alignment.topLeft,

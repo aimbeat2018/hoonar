@@ -57,6 +57,7 @@ dependencies:
   ve_sdk_flutter: ^0.7.0
   #  banuba_sdk: ^3.0.3
   face_camera: ^0.1.4
+  visibility_detector: ^0.4.0+2
 dev_dependencies:
   flutter_test:
     sdk: flutter

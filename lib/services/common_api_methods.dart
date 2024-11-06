@@ -18,11 +18,12 @@ class CommonApiMethods {
   }
 
   // Common options
-  Options _dioOptions(String method, {String? bearerToken}) {
+  Options _dioOptions(String method,
+      {String? bearerToken, String contentType = 'application/json'}) {
     return Options(
       method: method,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': contentType,
         'unique-key': headerUniqueKey,
         if (bearerToken != null) 'Authorization': bearerToken,
       },
@@ -44,7 +45,6 @@ class CommonApiMethods {
     }
   }
 
-  // Generic request handler
   Future<T> sendRequest<T>(
     String url, {
     dynamic data,
@@ -55,11 +55,45 @@ class CommonApiMethods {
     try {
       final response = await dio.request(
         url,
-        data: data != null ? jsonEncode(data) : null,
+        data: data,
         options: _dioOptions(
           method,
           bearerToken: sessionManager.getString(SessionManager.accessToken) ??
               accessToken,
+          contentType: 'application/json',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return fromJson(response.data);
+      } else {
+        throw 'Unexpected error: ${response.statusCode}';
+      }
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw 'Something went wrong. Please try again.';
+    }
+  }
+
+  Future<T> sendMultipartRequest<T>(
+    String url, {
+    required Future<FormData> data, // Make sure this is a Future<FormData>
+    String method = 'POST',
+    String? accessToken,
+    required T Function(dynamic) fromJson,
+  }) async {
+    try {
+      final formData = await data; // Await here to get the FormData
+
+      final response = await dio.request(
+        url,
+        data: formData, // Now passing actual FormData, not a Future<FormData>
+        options: _dioOptions(
+          method,
+          bearerToken: sessionManager.getString(SessionManager.accessToken) ??
+              accessToken,
+          contentType: 'multipart/form-data',
         ),
       );
 

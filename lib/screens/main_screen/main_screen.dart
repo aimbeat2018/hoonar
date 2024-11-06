@@ -277,14 +277,14 @@ class _MainScreenState extends State<MainScreen> {
       return;
     }
 
-    // The list of exported video file paths
+    /*   // The list of exported video file paths
     debugPrint('Exported video files = ${result.videoSources}');
 
     // Preview as a image file taken by the user. Null - when preview screen is disabled.
     debugPrint('Exported preview file = ${result.previewFilePath}');
 
     // Meta file where you can find short data used in exported video
-    debugPrint('Exported meta file = ${result.metaFilePath}');
+    debugPrint('Exported meta file = ${result.metaFilePath}');*/
 
     Navigator.push(
       context,
@@ -292,6 +292,7 @@ class _MainScreenState extends State<MainScreen> {
           page: UploadVideoScreen(
         videoThumbnail: result.previewFilePath!,
         videoUrl: result.videoSources,
+        from: "normal",
       )),
     );
   }

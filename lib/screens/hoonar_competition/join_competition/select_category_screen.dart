@@ -5,7 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
+import '../../../custom/snackbar_util.dart';
 import '../../../model/star_category_model.dart';
+import '../../../providers/home_provider.dart';
+import '../../auth_screen/login_screen.dart';
 
 class SelectCategoryScreen extends StatefulWidget {
   const SelectCategoryScreen({super.key});
@@ -34,6 +37,30 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getCategoryList(context);
+    });
+  }
+
+  Future<void> getCategoryList(BuildContext context) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    await homeProvider.getCategoryList();
+
+    if (homeProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+    } else {
+      if (homeProvider.categoryListSuccessModel?.status == '200') {
+      } else if (homeProvider.categoryListSuccessModel?.message ==
+          'Unauthorized Access!') {
+        SnackbarUtil.showSnackBar(
+            context, homeProvider.categoryListSuccessModel?.message! ?? '');
+        Navigator.pushAndRemoveUntil(
+            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+      }
+    }
+
+    setState(() {});
   }
 
   @override
