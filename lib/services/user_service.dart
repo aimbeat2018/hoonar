@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:hoonar/constants/utils.dart';
 import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
@@ -11,8 +10,6 @@ import 'package:hoonar/model/request_model/update_profile_request_model.dart';
 import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
-import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
-import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/get_followers_list_model.dart';
 import 'package:hoonar/model/success_models/logout_success_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
@@ -22,6 +19,7 @@ import 'package:hoonar/services/common_api_methods.dart';
 
 import '../constants/session_manager.dart';
 import '../model/success_models/signup_success_model.dart';
+import '../model/success_models/user_wise_vote_list_model.dart';
 
 class UserService {
   final CommonApiMethods apiMethods = CommonApiMethods();
@@ -185,6 +183,13 @@ class UserService {
       data: requestModel?.toJson(),
       method: 'POST',
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<UserWiseVoteListModel> getVotes() async {
+    return apiMethods.sendRequest<UserWiseVoteListModel>(
+      '$baseUrl$getUsersVotes',
+      fromJson: (data) => UserWiseVoteListModel.fromJson(data),
     );
   }
 }

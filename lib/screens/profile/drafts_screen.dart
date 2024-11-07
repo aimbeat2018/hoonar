@@ -1,28 +1,23 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../constants/common_widgets.dart';
 import '../../constants/slide_right_route.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../reels/reels_list_screen.dart';
 
 class DraftsScreen extends StatefulWidget {
   final ScrollController controller;
+  final List<PostsListData> draftList;
 
-  const DraftsScreen({super.key, required this.controller});
+  const DraftsScreen(
+      {super.key, required this.controller, required this.draftList});
 
   @override
   State<DraftsScreen> createState() => _DraftsScreenState();
 }
 
 class _DraftsScreenState extends State<DraftsScreen> {
-  final List<String> imageUrls = [
-    'assets/images/image1.png',
-    'assets/images/image2.png',
-    'assets/images/image3.png',
-    'assets/images/image4.png',
-    'assets/images/image5.png',
-    'assets/images/image6.png',
-    'assets/images/image7.png',
-  ];
-
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -44,19 +39,34 @@ class _DraftsScreenState extends State<DraftsScreen> {
             (context, index) {
               return InkWell(
                 onTap: () {
-                  // SliderModel(raps, 'assets/images/video1.mp4', '', '@abcd@123'),
                   Navigator.push(
                     context,
-                    SlideRightRoute(page: ReelsListScreen()),
+                    SlideRightRoute(
+                        page: ReelsListScreen(
+                      postList: widget.draftList,
+                      index: index,
+                    )),
                   );
                 },
-                child: Image.asset(
-                  imageUrls[index],
+                child: CachedNetworkImage(
+                  imageUrl: widget.draftList[index].postImage ?? '',
+
+                  placeholder: (context, url) => Center(
+                    child: SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: const CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) =>
+                      buildInitialsAvatar('No Image', fontSize: 12),
                   fit: BoxFit.cover,
+                  width: 80,
+                  // Match the size of the CircleAvatar
+                  height: 80,
                 ),
               );
             },
-            childCount: imageUrls.length,
+            childCount: widget.draftList.length,
           ),
         ),
         // Other slivers...

@@ -18,6 +18,7 @@ import 'package:hoonar/screens/profile/menuOptionsScreens/app_content_screen.dar
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/help_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/manage_devices_screen.dart';
+import 'package:hoonar/shimmerLoaders/grid_shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -76,16 +77,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-      } /*else {
-        if (authProvider.profileSuccessModel?.status == '200') {
+      } else {
+        /*if (authProvider.profileSuccessModel?.status == '200') {
         } else if (authProvider.profileSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, authProvider.profileSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
               context, SlideRightRoute(page: LoginScreen()), (route) => false);
-        }
-      }*/
+        }*/
+      }
     });
     setState(() {});
   }
@@ -259,14 +260,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           );
                                         },
                                       ),
-                                      Positioned(
-                                        right: 5,
-                                        child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 8.0),
-                                            child: menuItemsWidget(
-                                                myLoading.isDark)),
-                                      )
+                                      widget.from == 'main'
+                                          ? Positioned(
+                                              right: 5,
+                                              child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8.0),
+                                                  child: menuItemsWidget(
+                                                      myLoading.isDark)),
+                                            )
+                                          : SizedBox()
                                     ],
                                   ),
                                   if (profile.data?.bio != "")
@@ -462,22 +466,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height,
-                      child: TabBarView(
-                        children: [
-                          FeedScreen(
-                            controller: controller,
-                          ),
-                          HoonarStarScreen(
-                            controller: controller,
-                          ),
-                          DraftsScreen(
-                            controller: controller,
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: ValueListenableBuilder<ProfileSuccessModel?>(
+                        valueListenable: authProvider.profileNotifier,
+                        builder: (context, profile, child) {
+                          if (profile == null) {
+                            return GridShimmer();
+                          } else if (profile.message ==
+                              'Unauthorized Access!') {
+                            Future.microtask(() {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  SlideRightRoute(page: LoginScreen()),
+                                  (route) => false);
+                            });
+                          }
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            child: TabBarView(
+                              children: [
+                                FeedScreen(
+                                  controller: controller,
+                                  feedsList: profile.data!.posts ?? [],
+                                ),
+                                HoonarStarScreen(
+                                  controller: controller,
+                                ),
+                                DraftsScreen(
+                                  controller: controller,
+                                  draftList: profile.data!.drafts ?? [],
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                   ),
                 )
               ],

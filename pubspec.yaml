@@ -58,6 +58,7 @@ dependencies:
   #  banuba_sdk: ^3.0.3
   face_camera: ^0.1.4
   visibility_detector: ^0.4.0+2
+  swipe_to: ^1.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

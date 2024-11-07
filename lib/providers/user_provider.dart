@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
+import 'package:hoonar/model/success_models/user_wise_vote_list_model.dart';
 import 'package:hoonar/services/user_service.dart';
 
 import '../model/request_model/list_common_request_model.dart';
@@ -13,15 +14,21 @@ class UserProvider extends ChangeNotifier {
   ValueNotifier<String?> followersCountNotifier = ValueNotifier("0");
 
   ValueNotifier<GetFollowersListModel?> followingNotifier = ValueNotifier(null);
+  ValueNotifier<UserWiseVoteListModel?> userWiseVotesNotifier =
+      ValueNotifier(null);
   ValueNotifier<String?> followingCountNotifier = ValueNotifier("0");
   ValueNotifier<int?> followStatusNotifier = ValueNotifier(0);
 
   bool _isLoading = false;
   String? _errorMessage;
   List<FollowersData>? _followersList;
+  List<UserWiseVoteList>? _userWiseVoteList;
   GetFollowersListModel? _getFollowersListModel;
+  UserWiseVoteListModel? _userWiseVoteListModel;
 
   List<FollowersData>? get followersList => _followersList;
+
+  List<UserWiseVoteList>? get userWiseVoteList => _userWiseVoteList;
 
   GetFollowersListModel? get getFollowersListModel => _getFollowersListModel;
 
@@ -31,6 +38,8 @@ class UserProvider extends ChangeNotifier {
   List<FollowersData>? get followingList => _followingList;
 
   GetFollowersListModel? get getFollowingListModel => _getFollowingListModel;
+
+  UserWiseVoteListModel? get userWiseVoteListModel => _userWiseVoteListModel;
 
   bool get isLoading => _isLoading;
 
@@ -95,6 +104,24 @@ class UserProvider extends ChangeNotifier {
       FollowUnfollowSuccessModel successModel =
           await _userService.followUnfollowUser(requestModel: requestModel);
       followStatusNotifier.value = successModel.followStatus ?? 0;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getVotes() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      UserWiseVoteListModel successModel = await _userService.getVotes();
+      _userWiseVoteListModel = successModel;
+      _userWiseVoteList = successModel.data;
+      userWiseVotesNotifier.value = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

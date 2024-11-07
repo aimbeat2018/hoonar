@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
+import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
 import '../../../model/star_category_model.dart';
+import '../../../model/success_models/level_list_model.dart';
+import '../../auth_screen/login_screen.dart';
 
 class SelectContestLevel extends StatefulWidget {
-  const SelectContestLevel({super.key});
+  final int? categoryId;
+  final String? categoryName;
+
+  const SelectContestLevel(
+      {super.key, required this.categoryId, required this.categoryName});
 
   @override
   State<SelectContestLevel> createState() => _SelectContestLevelState();
@@ -23,21 +33,35 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      zoneLevelsList = [
-        StarCategoryModel('', AppLocalizations.of(context)!.zone_leve, '1'),
-        StarCategoryModel('', AppLocalizations.of(context)!.divisionLevel, '0'),
-        StarCategoryModel('', AppLocalizations.of(context)!.districtLevel, '0'),
-        StarCategoryModel('', AppLocalizations.of(context)!.stateLevel, '0'),
-        StarCategoryModel('', AppLocalizations.of(context)!.regionLevel, '0'),
-        StarCategoryModel('', AppLocalizations.of(context)!.stateLevel, '0'),
-        StarCategoryModel('', AppLocalizations.of(context)!.nationalLevel, '0'),
-      ];
-      setState(() {});
+      getLevelList(context);
     });
+  }
+
+  Future<void> getLevelList(BuildContext context) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    await contestProvider.getLevelList();
+
+    if (contestProvider.errorMessage != null) {
+      SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+    } else {
+      if (contestProvider.levelListModel?.status == '200') {
+      } else if (contestProvider.levelListModel?.message ==
+          'Unauthorized Access!') {
+        SnackbarUtil.showSnackBar(
+            context, contestProvider.levelListModel?.message! ?? '');
+        Navigator.pushAndRemoveUntil(
+            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+      }
+    }
+
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -94,97 +118,120 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                   const SizedBox(
                     height: 10,
                   ),
-                  ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: zoneLevelsList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: InkWell(
-                          onTap: () {
-                            showPaymentPopUp(context, myLoading.isDark, index);
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(myLoading.isDark
-                                    ? 'assets/dark_mode_icons/level_back_dark.png'
-                                    : 'assets/light_mode_icons/level_back_light.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Padding(
+                  contestProvider.isLevelLoading ||
+                          contestProvider.levelListModel == null
+                      ? LevelShimmer()
+                      : contestProvider.levelListModel!.data == null ||
+                              contestProvider.levelListModel!.data!.isEmpty
+                          ? DataNotFound()
+                          : ListView.builder(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 25.0, vertical: 10),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      zoneLevelsList[index].name!,
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
+                                  vertical: 10, horizontal: 10),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  contestProvider.levelListModel!.data!.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 5),
+                                  child: InkWell(
+                                    onTap: () {
+                                      showPaymentPopUp(
+                                          context,
+                                          myLoading.isDark,
+                                          index,
+                                          contestProvider
+                                              .levelListModel!.data![index]);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(myLoading.isDark
+                                              ? 'assets/dark_mode_icons/level_back_dark.png'
+                                              : 'assets/light_mode_icons/level_back_light.png'),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 25.0, vertical: 10),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                contestProvider.levelListModel!
+                                                    .data![index].levelName!,
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 15,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                color: /*zoneLevelsList[index]
+                                                            .darkModeImage ==
+                                                        '1'
+                                                    ? (myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black)
+                                                    :*/
+                                                    myLoading.isDark
+                                                        ? Colors.grey.shade900
+                                                        : Colors.grey.shade700,
+                                                // Background color
+                                                shape: BoxShape.circle,
+                                                // Makes the container circular
+                                                border: Border.all(
+                                                    color: /* zoneLevelsList[index]
+                                                                .darkModeImage ==
+                                                            '1'
+                                                        ? Colors.transparent
+                                                        :*/
+                                                        (myLoading.isDark
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                                    width:
+                                                        1), // Optional border
+                                              ),
+                                              child: Icon(
+                                                /* zoneLevelsList[index]
+                                                            .darkModeImage ==
+                                                        '1'
+                                                    ? Icons.lock_open
+                                                    :*/
+                                                Icons.lock_outline,
+                                                color: /* zoneLevelsList[index]
+                                                            .darkModeImage ==
+                                                        '1'
+                                                    ? (myLoading.isDark
+                                                        ? Colors.black
+                                                        : Colors.white)
+                                                    : */
+                                                    (myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black),
+                                                size: 22,
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          zoneLevelsList[index].darkModeImage ==
-                                                  '1'
-                                              ? (myLoading.isDark
-                                                  ? Colors.white
-                                                  : Colors.black)
-                                              : myLoading.isDark
-                                                  ? Colors.grey.shade900
-                                                  : Colors.grey.shade700,
-                                      // Background color
-                                      shape: BoxShape.circle,
-                                      // Makes the container circular
-                                      border: Border.all(
-                                          color: zoneLevelsList[index]
-                                                      .darkModeImage ==
-                                                  '1'
-                                              ? Colors.transparent
-                                              : (myLoading.isDark
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                          width: 1), // Optional border
-                                    ),
-                                    child: Icon(
-                                      zoneLevelsList[index].darkModeImage == '1'
-                                          ? Icons.lock_open
-                                          : Icons.lock_outline,
-                                      color:
-                                          zoneLevelsList[index].darkModeImage ==
-                                                  '1'
-                                              ? (myLoading.isDark
-                                                  ? Colors.black
-                                                  : Colors.white)
-                                              : (myLoading.isDark
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                      size: 22,
-                                    ),
-                                  )
-                                ],
-                              ),
+                                );
+                              },
                             ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
                 ],
               ),
             ),
@@ -194,7 +241,8 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     });
   }
 
-  showPaymentPopUp(BuildContext context, bool isDarkMode, int index) {
+  showPaymentPopUp(
+      BuildContext context, bool isDarkMode, int index, LevelListData model) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -213,7 +261,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GradientText(
-                AppLocalizations.of(context)!.zone_leve,
+                model.levelName ?? '',
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   color: isDarkMode ? Colors.black : Colors.white,
@@ -239,7 +287,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 child: Text(
-                  'Lorem ipsum odor amet, consectetuer adipiscing elit. Laoreet molestie convallis magna per aliquet conubia suspendisse. Egestas dignissim ridiculus fusce vulputate eros.',
+                  model.description ?? '',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
@@ -258,7 +306,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25.0),
                       child: Text(
-                        '₹ 599/-',
+                        '₹ ${model.fees}/-',
                         textAlign: TextAlign.start,
                         style: GoogleFonts.poppins(
                           fontSize: 18,
@@ -271,14 +319,14 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                   Expanded(
                       child: InkWell(
                     onTap: () {
-                      setState(() {
+                      /*setState(() {
                         if (zoneLevelsList[index].darkModeImage == "1") {
                           zoneLevelsList[index].darkModeImage = "0";
                         } else {
                           zoneLevelsList[index].darkModeImage = "1";
                         }
                       });
-
+*/
                       Navigator.push(
                         context,
                         SlideRightRoute(page: ContestJoinSuccessScreen()),

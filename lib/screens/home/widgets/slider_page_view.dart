@@ -2,25 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
-import 'package:hoonar/model/slider_model.dart';
 import 'package:hoonar/screens/customSlider/carousel_item.dart';
 import 'package:hoonar/screens/customSlider/carousel_slider.dart';
 import 'package:hoonar/screens/customSlider/enums.dart';
 import 'package:hoonar/screens/customSlider/models.dart';
-import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
-import '../../../custom/snackbar_util.dart';
-import '../../../model/request_model/list_common_request_model.dart';
 import '../../../model/success_models/home_post_success_model.dart';
 import '../../../providers/user_provider.dart';
 
@@ -45,8 +41,7 @@ class _SliderPageViewState extends State<SliderPageView>
   List<Widget> children = [];
   bool _isPaused = false;
   bool isLoading = false;
-  bool isFollow = false,
-      isFollowLoading = false;
+  bool isFollow = false, isFollowLoading = false;
 
   @override
   void initState() {
@@ -92,12 +87,12 @@ class _SliderPageViewState extends State<SliderPageView>
 
       String initials = data.fullName != null || data.fullName != ""
           ? data.fullName!
-          .trim()
-          .split(' ')
-          .map((e) => e[0])
-          .take(2)
-          .join()
-          .toUpperCase()
+              .trim()
+              .split(' ')
+              .map((e) => e[0])
+              .take(2)
+              .join()
+              .toUpperCase()
           : '';
 
       children.add(Container(
@@ -111,18 +106,18 @@ class _SliderPageViewState extends State<SliderPageView>
             // _chewieController != null &&
             _chewieController.videoPlayerController.value.isInitialized
                 ? VisibilityDetector(
-              key: Key(data.postVideo!),
-              onVisibilityChanged: (VisibilityInfo info) {
-                if (info.visibleFraction > 0.5) {
-                  _videoPlayerController.play();
-                  _videoPlayerController.setVolume(0.0);
-                } else {
-                  _videoPlayerController.pause();
-                }
-              },
-              child: GestureDetector(
-                onTap: () {
-                  /*  if (_videoPlayerController.value.isPlaying) {
+                    key: Key(data.postVideo!),
+                    onVisibilityChanged: (VisibilityInfo info) {
+                      if (info.visibleFraction > 0.5) {
+                        _videoPlayerController.play();
+                        _videoPlayerController.setVolume(0.0);
+                      } else {
+                        _videoPlayerController.pause();
+                      }
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        /*  if (_videoPlayerController.value.isPlaying) {
                           _videoPlayerController.pause();
                           setState(() {
                             _isPaused = !_isPaused;
@@ -133,44 +128,44 @@ class _SliderPageViewState extends State<SliderPageView>
                             _isPaused = !_isPaused;
                           });
                         }*/
-                  _videoPlayerController.pause();
-                  setState(() {
-                    _isPaused = !_isPaused;
-                  });
-                  Navigator.push(
-                    context,
-                    SlideRightRoute(
-                        page: ReelsListScreen(
-                          postList: widget.sliderModelList,
-                          index: widget.sliderModelList.indexOf(data),
-                        )),
-                  );
-                },
+                        _videoPlayerController.pause();
+                        setState(() {
+                          _isPaused = !_isPaused;
+                        });
+                        Navigator.push(
+                          context,
+                          SlideRightRoute(
+                              page: ReelsListScreen(
+                            postList: widget.sliderModelList,
+                            index: widget.sliderModelList.indexOf(data),
+                          )),
+                        );
+                      },
 
-                // Use Chewie player to play the video
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: 250,
-                    // Set the desired width
-                    height:
-                    250 / _videoPlayerController.value.aspectRatio,
-                    // Calculate height based on aspect ratio
-                    child: Chewie(
-                      controller: _chewieController,
+                      // Use Chewie player to play the video
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: SizedBox(
+                          width: 250,
+                          // Set the desired width
+                          height:
+                              250 / _videoPlayerController.value.aspectRatio,
+                          // Calculate height based on aspect ratio
+                          child: Chewie(
+                            controller: _chewieController,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            )
+                  )
                 : const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 10),
-                Text('Loading...')
-              ],
-            ),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10),
+                      Text('Loading...')
+                    ],
+                  ),
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
@@ -195,18 +190,18 @@ class _SliderPageViewState extends State<SliderPageView>
                               child: ClipOval(
                                 child: data.userProfile != ""
                                     ? CachedNetworkImage(
-                                  imageUrl: data.userProfile!,
-                                  placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      buildInitialsAvatar(initials,
-                                          fontSize: 10),
-                                  fit: BoxFit.cover,
-                                  width: 20,
-                                  height: 20,
-                                )
+                                        imageUrl: data.userProfile!,
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            buildInitialsAvatar(initials,
+                                                fontSize: 10),
+                                        fit: BoxFit.cover,
+                                        width: 20,
+                                        height: 20,
+                                      )
                                     : buildInitialsAvatar(initials,
-                                    fontSize: 10),
+                                        fontSize: 10),
                               ),
                             ),
                             const SizedBox(width: 5),
@@ -230,52 +225,52 @@ class _SliderPageViewState extends State<SliderPageView>
                                   Flexible(
                                     child: ValueListenableBuilder<int?>(
                                         valueListenable:
-                                        userProvider.followStatusNotifier,
+                                            userProvider.followStatusNotifier,
                                         builder:
                                             (context, followStatus, child) {
                                           return Container(
                                             margin:
-                                            const EdgeInsets.only(left: 5),
+                                                const EdgeInsets.only(left: 5),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 3),
                                             decoration: BoxDecoration(
                                                 borderRadius:
-                                                BorderRadius.circular(15),
+                                                    BorderRadius.circular(15),
                                                 border: Border.all(
                                                     color: data.followOrNot ==
-                                                        1 ||
-                                                        followStatus == 1
+                                                                1 ||
+                                                            followStatus == 1
                                                         ? Colors.white
                                                         : Colors.transparent,
                                                     width: 1),
                                                 color: data.followOrNot == 1 ||
-                                                    followStatus == 1
+                                                        followStatus == 1
                                                     ? Colors.transparent
                                                     : Colors.white),
                                             child: isFollowLoading
                                                 ? const Center(
-                                                child:
-                                                CircularProgressIndicator())
+                                                    child:
+                                                        CircularProgressIndicator())
                                                 : Text(
-                                              data.followOrNot == 1 ||
-                                                  followStatus == 1
-                                                  ? AppLocalizations.of(
-                                                  context)!
-                                                  .unfollow
-                                                  : AppLocalizations.of(
-                                                  context)!
-                                                  .follow,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 8,
-                                                color: data.followOrNot ==
-                                                    1 ||
-                                                    followStatus == 1
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight:
-                                                FontWeight.w600,
-                                              ),
-                                            ),
+                                                    data.followOrNot == 1 ||
+                                                            followStatus == 1
+                                                        ? AppLocalizations.of(
+                                                                context)!
+                                                            .unfollow
+                                                        : AppLocalizations.of(
+                                                                context)!
+                                                            .follow,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 8,
+                                                      color: data.followOrNot ==
+                                                                  1 ||
+                                                              followStatus == 1
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
                                           );
                                         }),
                                   ),
@@ -311,6 +306,9 @@ class _SliderPageViewState extends State<SliderPageView>
                       // Wrap OptionsScreen to handle any overflow
                       child: OptionsScreen(model: data),
                     ),
+                    SizedBox(
+                      width: 5,
+                    )
                   ],
                 ),
               ),
@@ -321,11 +319,14 @@ class _SliderPageViewState extends State<SliderPageView>
     }
 
     // set the active page
-    double length = children.length / 2;
-    activePage = children.length - length.round();
-    previousPage = activePage - length.round();
-    isLoading = false;
-    setState(() {});
+    if (mounted) {
+      setState(() {
+        double length = children.length / 2;
+        activePage = children.length - length.round();
+        previousPage = activePage - length.round();
+        isLoading = false;
+      });
+    }
   }
 
   // @override
@@ -345,50 +346,47 @@ class _SliderPageViewState extends State<SliderPageView>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return isLoading
           ? Center(
-          child: SizedBox(
-              height: 30, width: 30, child: CircularProgressIndicator()))
-          : SizedBox(
-        height: screenHeight,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onHorizontalDragEnd: ((details) {
-                if (details.velocity.pixelsPerSecond.dx > 0) {
-                  _leftSwipe();
-                } else {
-                  _rightSwipe();
-                }
-              }),
               child: SizedBox(
-                width: double.maxFinite,
-                height: 400,
-                child: Stack(
-                  children: children.isNotEmpty ? stackItems() : [],
-                ),
+                  height: 30, width: 30, child: CircularProgressIndicator()))
+          : SizedBox(
+              height: screenHeight,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onHorizontalDragEnd: ((details) {
+                      if (details.velocity.pixelsPerSecond.dx > 0) {
+                        _leftSwipe();
+                      } else {
+                        _rightSwipe();
+                      }
+                    }),
+                    child: SizedBox(
+                      width: double.maxFinite,
+                      height: 400,
+                      child: Stack(
+                        children: children.isNotEmpty ? stackItems() : [],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if (children.length > 1)
+                    CarouselSlider(
+                      position: activePage,
+                      amount: children.length,
+                      isDarkMode: myLoading.isDark,
+                    )
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            if (children.length > 1)
-              CarouselSlider(
-                position: activePage,
-                amount: children.length,
-                isDarkMode: myLoading.isDark,
-              )
-          ],
-        ),
-      );
+            );
     });
   }
 
@@ -404,7 +402,7 @@ class _SliderPageViewState extends State<SliderPageView>
         .toList();
 
     CarouselData currentPage =
-    CarouselData(children[activePage], PagePos.current);
+        CarouselData(children[activePage], PagePos.current);
 
     if (afterActive.isNotEmpty) {
       afterActive.last.setCurrent(PagePos.after);
@@ -423,10 +421,7 @@ class _SliderPageViewState extends State<SliderPageView>
     return currentItemList.map((item) {
       return CarouselItem(
           bigItemWidth: 250,
-          bigItemHeight: MediaQuery
-              .of(context)
-              .size
-              .height,
+          bigItemHeight: MediaQuery.of(context).size.height,
           smallItemWidth: 250,
           smallItemHeight: 300,
           animation: 1 - controller.value,

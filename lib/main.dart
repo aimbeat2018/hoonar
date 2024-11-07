@@ -6,6 +6,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hoonar/providers/auth_provider.dart';
+import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => ContestProvider()),
       ],
       child: Consumer<MyLoading>(
         builder: (context, MyLoading myLoading, child) {

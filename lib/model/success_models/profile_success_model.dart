@@ -1,3 +1,5 @@
+import 'package:hoonar/model/success_models/home_post_success_model.dart';
+
 class ProfileSuccessModel {
   String? status;
   String? message;
@@ -8,7 +10,7 @@ class ProfileSuccessModel {
   ProfileSuccessModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +56,8 @@ class Data {
   String? profileCategoryName;
   int? isFollowing;
   int? blockOrNot;
+  List<PostsListData>? posts;
+  List<PostsListData>? drafts;
 
   Data(
       {this.userId,
@@ -86,7 +90,9 @@ class Data {
       this.myPostLikes,
       this.profileCategoryName,
       this.isFollowing,
-      this.blockOrNot});
+      this.blockOrNot,
+      this.posts,
+      this.drafts});
 
   Data.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -120,6 +126,18 @@ class Data {
     profileCategoryName = json['profile_category_name'];
     isFollowing = json['is_following'];
     blockOrNot = json['block_or_not'];
+    if (json['posts'] != null) {
+      posts = <PostsListData>[];
+      json['posts'].forEach((v) {
+        posts!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['drafts'] != null) {
+      drafts = <PostsListData>[];
+      json['drafts'].forEach((v) {
+        drafts!.add(PostsListData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -155,6 +173,12 @@ class Data {
     data['profile_category_name'] = profileCategoryName;
     data['is_following'] = isFollowing;
     data['block_or_not'] = blockOrNot;
+    if (posts != null) {
+      data['posts'] = posts!.map((v) => v.toJson()).toList();
+    }
+    if (drafts != null) {
+      data['drafts'] = drafts!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }

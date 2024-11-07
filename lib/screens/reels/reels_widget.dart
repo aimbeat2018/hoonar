@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:swipe_to/swipe_to.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../constants/common_widgets.dart';
@@ -80,6 +82,34 @@ class _ReelsWidgetState extends State<ReelsWidget>
               isDismissed[1] = true;
             });
           }
+        } else if (homeProvider.likeUnlikeVideoModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.likeUnlikeVideoModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
+  Future<void> addVote(BuildContext context, int postId) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(postId: postId);
+
+      await homeProvider.addVote(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.likeUnlikeVideoModel?.status == '200') {
+          setState(() {
+            isDismissed[0] = true;
+          });
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
@@ -390,37 +420,29 @@ class _ReelsWidgetState extends State<ReelsWidget>
                           children: [
                             Column(
                               children: [
-                                isDismissed[0]
-                                    ? Dismissible(
-                                        key: const Key('1'),
-                                        onDismissed: (direction) {
-                                          setState(() {
-                                            // Mark the item as dismissed
-                                            isDismissed[0] = false;
-                                          });
-                                        },
-                                        child: Image.asset(
-                                          // 'assets/images/vote_not_given.png',
-                                          'assets/images/vote_given.png',
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                      )
-                                    : Dismissible(
-                                        key: const Key('0'),
-                                        onDismissed: (direction) {
-                                          setState(() {
-                                            // Mark the item as dismissed
-                                            isDismissed[0] = true;
-                                          });
-                                        },
-                                        child: Image.asset(
-                                          'assets/images/vote_not_given.png',
-                                          // 'assets/images/vote_given.png',
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                      ),
+                                SwipeTo(
+                                  onRightSwipe: (details) {
+                                    if (widget.model.hasVoted == 0) {
+                                      addVote(context, widget.model.postId!);
+                                    }
+                                  },
+                                  iconSize: 5,
+                                  iconOnRightSwipe:
+                                      CupertinoIcons.arrow_2_circlepath,
+                                  onLeftSwipe: (details) {
+                                    if (widget.model.hasVoted == 0) {
+                                      addVote(context, widget.model.postId!);
+                                    }
+                                  },
+                                  iconOnLeftSwipe:
+                                      CupertinoIcons.arrow_2_circlepath,
+                                  child: Image.asset(
+                                      widget.model.hasVoted == 0
+                                          ? 'assets/images/vote_not_given.png'
+                                          : 'assets/images/vote_given.png',
+                                      width: 33,
+                                      height: 33),
+                                ),
                                 const SizedBox(
                                   height: 5,
                                 ),

@@ -32,8 +32,8 @@ class CategoryShimmer extends StatelessWidget {
 
   Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5),
-      width: 100,
+      margin: EdgeInsets.symmetric(horizontal: 15),
+      width: 40,
       height: 20,
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,

@@ -31,13 +31,15 @@ class CategoryListData {
   int? categoryId;
   String? categoryName;
   String? imageUrl;
+  String? darkImageUrl;
 
-  CategoryListData({this.categoryId, this.categoryName, this.imageUrl});
+  CategoryListData({this.categoryId, this.categoryName, this.imageUrl, this.darkImageUrl});
 
   CategoryListData.fromJson(Map<String, dynamic> json) {
     categoryId = json['category_id'];
     categoryName = json['category_name'];
     imageUrl = json['image_url'];
+    darkImageUrl = json['dark_image_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +47,7 @@ class CategoryListData {
     data['category_id'] = categoryId;
     data['category_name'] = categoryName;
     data['image_url'] = imageUrl;
+    data['dark_image_url'] = darkImageUrl;
     return data;
   }
 }

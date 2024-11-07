@@ -79,6 +79,7 @@ class _MainScreenState extends State<MainScreen> {
       return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: myLoading.isDark ? Colors.transparent : Colors.white,
           body: getBody(),
           floatingActionButton: SizedBox(

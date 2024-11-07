@@ -85,7 +85,7 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                         vertical: 50.0, horizontal: 20),
                     child: Center(
                       child: Image.asset(
-                        'assets/images/camera_click.png',
+                        'assets/images/capture.gif',
                         // Replace with your URL
                         fit: BoxFit.cover,
                       ),

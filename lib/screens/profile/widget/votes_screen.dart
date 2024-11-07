@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hoonar/shimmerLoaders/vote_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/success_models/user_wise_vote_list_model.dart';
+import '../../../providers/user_provider.dart';
+import '../../../shimmerLoaders/following_list_shimmer.dart';
+import '../../auth_screen/login_screen.dart';
 
 class VotesScreen extends StatefulWidget {
   const VotesScreen({super.key});
@@ -14,12 +23,49 @@ class VotesScreen extends StatefulWidget {
 }
 
 class _VotesScreenState extends State<VotesScreen> {
-  bool isFollow = false;
+  SessionManager sessionManager = SessionManager();
+  List<UserWiseVoteList> voteList = [];
+  bool isLoading = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getVotesList(context);
+    });
+  }
+
+  Future<void> getVotesList(BuildContext context) async {
+    sessionManager.initPref().then((onValue) async {
+      String userId = sessionManager.getString(SessionManager.userId)!;
+      /* ListCommonRequestModel requestModel = ListCommonRequestModel(
+          userId: int.parse(userId),
+          start: followingList.length == 10 ? followingList.length : 0,
+          limit: paginationLimit);*/
+
+      isLoading = true;
+      setState(() {});
+      final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+      await authProvider.getVotes();
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else if (authProvider.userWiseVoteListModel!.status == "200") {
+        voteList.clear();
+        voteList.addAll(authProvider.userWiseVoteListModel!.data!);
+      } else if (authProvider.userWiseVoteListModel!.message ==
+          'Unauthorized Access!') {
+        Future.microtask(() {
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        });
+      }
+
+      isLoading = false;
+      setState(() {});
+    });
   }
 
   @override
@@ -27,13 +73,18 @@ class _VotesScreenState extends State<VotesScreen> {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
-        body: AnimatedList(
-          initialItemCount: 10,
-          itemBuilder: (context, index, animation) {
-            return buildItem(
-                animation, index, myLoading.isDark); // Build each list item
-          },
-        ),
+        body: isLoading == true
+            ? VoteListShimmer()
+            : voteList.isEmpty
+                ? DataNotFound()
+                : AnimatedList(
+                    initialItemCount: voteList.length,
+                    // controller: _scrollController,
+                    itemBuilder: (context, index, animation) {
+                      return buildItem(animation, index,
+                          myLoading.isDark); // Build each list item
+                    },
+                  ),
       );
     });
   }
@@ -60,7 +111,7 @@ class _VotesScreenState extends State<VotesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Zone Level',
+                  voteList[index].levelName ?? '',
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     color: isDarkMode ? Colors.white : Colors.black,
@@ -68,7 +119,7 @@ class _VotesScreenState extends State<VotesScreen> {
                   ),
                 ),
                 Text(
-                  'dance',
+                  voteList[index].categoryName ?? '',
                   style: GoogleFonts.poppins(
                     color: const Color(0xFF939393),
                     fontSize: 11,
@@ -87,7 +138,7 @@ class _VotesScreenState extends State<VotesScreen> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: '1234',
+                  text: voteList[index].voteCount!.toString() ?? '',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: isDarkMode ? Colors.white : Colors.black,

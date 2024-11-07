@@ -71,12 +71,6 @@ class PostsListData {
   String? postHashTag;
   String? postVideo;
   String? postImage;
-  int? soundId;
-  String? soundTitle;
-  String? duration;
-  String? singer;
-  String? soundImage;
-  String? sound;
   String? profileCategoryId;
   String? profileCategoryName;
   int? postLikesCount;
@@ -89,37 +83,36 @@ class PostsListData {
   int? canComment;
   int? canDuet;
   int? canSave;
+  int? canVote;
+  int? hasVoted;
 
-  PostsListData(
-      {this.postId,
-      this.userId,
-      this.fullName,
-      this.userName,
-      this.userProfile,
-      this.isVerify,
-      this.isTrending,
-      this.postDescription,
-      this.postHashTag,
-      this.postVideo,
-      this.postImage,
-      this.soundId,
-      this.soundTitle,
-      this.duration,
-      this.singer,
-      this.soundImage,
-      this.sound,
-      this.profileCategoryId,
-      this.profileCategoryName,
-      this.postLikesCount,
-      this.postCommentsCount,
-      this.postViewCount,
-      this.createdDate,
-      this.videoLikesOrNot,
-      this.followOrNot,
-      this.isBookmark,
-      this.canComment,
-      this.canDuet,
-      this.canSave});
+  PostsListData({
+    this.postId,
+    this.userId,
+    this.fullName,
+    this.userName,
+    this.userProfile,
+    this.isVerify,
+    this.isTrending,
+    this.postDescription,
+    this.postHashTag,
+    this.postVideo,
+    this.postImage,
+    this.profileCategoryId,
+    this.profileCategoryName,
+    this.postLikesCount,
+    this.postCommentsCount,
+    this.postViewCount,
+    this.createdDate,
+    this.videoLikesOrNot,
+    this.followOrNot,
+    this.isBookmark,
+    this.canComment,
+    this.canDuet,
+    this.canSave,
+    this.canVote,
+    this.hasVoted,
+  });
 
   PostsListData.fromJson(Map<String, dynamic> json) {
     postId = json['post_id'];
@@ -133,12 +126,6 @@ class PostsListData {
     postHashTag = json['post_hash_tag'];
     postVideo = json['post_video'];
     postImage = json['post_image'];
-    soundId = json['sound_id'];
-    soundTitle = json['sound_title'];
-    duration = json['duration'];
-    singer = json['singer'];
-    soundImage = json['sound_image'];
-    sound = json['sound'];
     profileCategoryId = json['profile_category_id'];
     profileCategoryName = json['profile_category_name'];
     postLikesCount = json['post_likes_count'];
@@ -151,6 +138,8 @@ class PostsListData {
     canComment = json['can_comment'];
     canDuet = json['can_duet'];
     canSave = json['can_save'];
+    canVote = json['can_vote'];
+    hasVoted = json['has_voted'];
   }
 
   Map<String, dynamic> toJson() {
@@ -166,12 +155,6 @@ class PostsListData {
     data['post_hash_tag'] = postHashTag;
     data['post_video'] = postVideo;
     data['post_image'] = postImage;
-    data['sound_id'] = soundId;
-    data['sound_title'] = soundTitle;
-    data['duration'] = duration;
-    data['singer'] = singer;
-    data['sound_image'] = soundImage;
-    data['sound'] = sound;
     data['profile_category_id'] = profileCategoryId;
     data['profile_category_name'] = profileCategoryName;
     data['post_likes_count'] = postLikesCount;
@@ -184,6 +167,8 @@ class PostsListData {
     data['can_comment'] = canComment;
     data['can_duet'] = canDuet;
     data['can_save'] = canSave;
+    data['can_vote'] = canVote;
+    data['has_voted'] = hasVoted;
     return data;
   }
 }

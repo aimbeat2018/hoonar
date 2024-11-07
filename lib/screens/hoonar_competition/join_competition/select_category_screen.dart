@@ -1,13 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/select_contest_level.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
+import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
 import '../../../model/star_category_model.dart';
 import '../../../providers/home_provider.dart';
+import '../../../shimmerLoaders/contest_category_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
 class SelectCategoryScreen extends StatefulWidget {
@@ -18,21 +22,6 @@ class SelectCategoryScreen extends StatefulWidget {
 }
 
 class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
-  List<StarCategoryModel> starCategoryModelList = [
-    StarCategoryModel('assets/dark_mode_icons/dance.png', 'Dance',
-        'assets/light_mode_icons/dance_light.png'),
-    StarCategoryModel('assets/dark_mode_icons/vocals.png', 'Vocals',
-        'assets/light_mode_icons/vocals_light.png'),
-    StarCategoryModel('assets/dark_mode_icons/raps.png', 'raps',
-        'assets/light_mode_icons/raps_light.png'),
-    StarCategoryModel('assets/dark_mode_icons/poetry.png', 'Poetry',
-        'assets/light_mode_icons/poetry_light.png'),
-    StarCategoryModel('assets/dark_mode_icons/modelling.png', 'Modeling',
-        'assets/light_mode_icons/modelling_light.png'),
-    StarCategoryModel('assets/dark_mode_icons/show_skills.png', 'Smart Skills',
-        'assets/light_mode_icons/show_skills_light.png'),
-  ];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -69,6 +58,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
 
     // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 2 : 3;
+    final homeProvider = Provider.of<HomeProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
@@ -118,64 +108,107 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                   SizedBox(
                     height: 30,
                   ),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 10,
-                      childAspectRatio:
-                          0.9, // Adjust according to image dimensions
-                    ),
-                    itemCount: starCategoryModelList.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            SlideRightRoute(page: SelectContestLevel()),
-                          );
-                        },
-                        child: Card(
-                          elevation: 5,
-                          shadowColor: myLoading.isDark
-                              ? const Color(0xFF3F3F3F)
-                              : Color(0x253F3F3F),
-                          color: myLoading.isDark
-                              ? const Color(0xFF3F3F3F)
-                              : Color(0x253F3F3F),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                myLoading.isDark
-                                    ? starCategoryModelList[index]
-                                        .lightModeImage!
-                                    : starCategoryModelList[index]
-                                        .darkModeImage!,
-                                height: 120,
-                                width: 150,
+                  homeProvider.isCategoryLoading ||
+                          homeProvider.categoryListSuccessModel == null
+                      ? ContestCategoryShimmer()
+                      : homeProvider.categoryListSuccessModel!.data == null ||
+                              homeProvider
+                                  .categoryListSuccessModel!.data!.isEmpty
+                          ? DataNotFound()
+                          : GridView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: crossAxisCount,
+                                crossAxisSpacing: 15,
+                                mainAxisSpacing: 10,
+                                childAspectRatio:
+                                    0.9, // Adjust according to image dimensions
                               ),
-                              Text(
-                                starCategoryModelList[index].name!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                              itemCount: homeProvider
+                                  .categoryListSuccessModel!.data!.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      SlideRightRoute(
+                                          page: SelectContestLevel(
+                                        categoryId: homeProvider
+                                            .categoryListSuccessModel!
+                                            .data![index]
+                                            .categoryId,
+                                        categoryName: homeProvider
+                                                .categoryListSuccessModel!
+                                                .data![index]
+                                                .categoryName ??
+                                            '',
+                                      )),
+                                    );
+                                  },
+                                  child: Card(
+                                    elevation: 5,
+                                    shadowColor: myLoading.isDark
+                                        ? const Color(0xFF3F3F3F)
+                                        : Color(0x253F3F3F),
+                                    color: myLoading.isDark
+                                        ? const Color(0xFF3F3F3F)
+                                        : Color(0x253F3F3F),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: myLoading.isDark
+                                              ? homeProvider
+                                                  .categoryListSuccessModel!
+                                                  .data![index]
+                                                  .imageUrl!
+                                              : homeProvider
+                                                  .categoryListSuccessModel!
+                                                  .data![index]
+                                                  .darkImageUrl!,
+                                          placeholder: (context, url) => Center(
+                                            child: SizedBox(
+                                                height: 15,
+                                                width: 15,
+                                                child:
+                                                    const CircularProgressIndicator()),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              buildInitialsAvatar('No Image',
+                                                  fontSize: 12),
+                                          fit: BoxFit.cover,
+                                          height: 120,
+                                          width: 150,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Text(
+                                          homeProvider.categoryListSuccessModel!
+                                              .data![index].categoryName!,
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                 ],
               ),
             ),

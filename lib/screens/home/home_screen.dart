@@ -11,9 +11,11 @@ import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
-import 'package:hoonar/screens/home/judges_choice_screen.dart';
+import 'package:hoonar/screens/home/view_all_screen.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
+import 'package:hoonar/shimmerLoaders/home_slider_shimmers.dart';
+import 'package:hoonar/shimmerLoaders/list_horizontal_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/color_constants.dart';
@@ -22,7 +24,6 @@ import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/success_models/home_post_success_model.dart';
-import '../../shimmerLoaders/category_shimmer.dart';
 import '../auth_screen/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -51,35 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     sessionManager.initPref();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        otherList = [
-          OtherListModel(AppLocalizations.of(context)!.judgesChoice, [
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-          ]),
-          OtherListModel(AppLocalizations.of(context)!.favrite, [
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-          ]),
-          OtherListModel(AppLocalizations.of(context)!.foryours, [
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-            'assets/images/judgesCh.png',
-            'assets/images/foryours.png',
-          ])
-        ];
-      });
-
       getHomePost(context);
       getHomePageOtherPost(context);
     });
@@ -129,9 +101,11 @@ class _HomeScreenState extends State<HomeScreen> {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else {
         if (homeProvider.homePageOtherDataModel?.status == 200) {
-          setState(() {
-            homeOtherData = homeProvider.homePageOtherDataModel?.data!;
-          });
+          if (mounted) {
+            setState(() {
+              homeOtherData = homeProvider.homePageOtherDataModel?.data!;
+            });
+          }
         } else if (homeProvider.homePageOtherDataModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
@@ -207,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 homeProvider.isHomeLoading ||
                         homeProvider.homePostSuccessModel == null ||
                         homeProvider.homePostSuccessModel!.data == null
-                    ? CategoryShimmer()
+                    ? HomeSliderShimmers()
                     : Column(
                         children: [
                           CS.CarouselSlider.builder(
@@ -232,8 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 10),
                                   decoration: _currentIndex == index
-                                      ? BoxDecoration(
-                                          gradient: const LinearGradient(
+                                      ? const BoxDecoration(
+                                          gradient: LinearGradient(
                                             begin: Alignment(0.00, 1.00),
                                             end: Alignment(0, -1),
                                             colors: [
@@ -242,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Color(0xFF636363)
                                             ],
                                           ),
-                                          borderRadius: const BorderRadius.only(
+                                          borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(7.96),
                                             topRight: Radius.circular(7.96),
                                           ),
@@ -359,39 +333,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                Column(
-                  children: [
-                    if (homeOtherData!.judgesChoicePostList!.isNotEmpty)
-                      Column(
+                homeProvider.isOtherHomeLoading
+                    ? const ListHorizontalShimmer()
+                    : Column(
                         children: [
-                          otherListWidget(
-                              AppLocalizations.of(context)!.judgesChoice,
-                              homeOtherData!.judgesChoicePostList ?? [],
-                              myLoading.isDark),
+                          if (homeOtherData!.judgesChoicePostList!.isNotEmpty)
+                            Column(
+                              children: [
+                                otherListWidget(
+                                    AppLocalizations.of(context)!.judgesChoice,
+                                    homeOtherData!.judgesChoicePostList ?? [],
+                                    myLoading.isDark),
+                              ],
+                            ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.myFavPostList!.isNotEmpty)
+                            Column(
+                              children: [
+                                otherListWidget(
+                                    AppLocalizations.of(context)!.favrite,
+                                    homeOtherData!.myFavPostList ?? [],
+                                    myLoading.isDark),
+                              ],
+                            ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.forYouPostList!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!.foryours,
+                                homeOtherData!.forYouPostList ?? [],
+                                myLoading.isDark),
                         ],
                       ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    if (homeOtherData!.myFavPostList!.isNotEmpty)
-                      Column(
-                        children: [
-                          otherListWidget(
-                              AppLocalizations.of(context)!.favrite,
-                              homeOtherData!.myFavPostList ?? [],
-                              myLoading.isDark),
-                        ],
-                      ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    if (homeOtherData!.forYouPostList!.isNotEmpty)
-                      otherListWidget(
-                          AppLocalizations.of(context)!.foryours,
-                          homeOtherData!.forYouPostList ?? [],
-                          myLoading.isDark),
-                  ],
-                ),
 
                 /*ListView.builder(
                   itemCount: otherList.length,
@@ -440,10 +416,31 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    SlideRightRoute(page: const JudgesChoiceScreen()),
-                  );
+                  if (title == AppLocalizations.of(context)!.judgesChoice) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'judges_choice',
+                      )),
+                    );
+                  } else if (title == AppLocalizations.of(context)!.favrite) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'my_fav',
+                      )),
+                    );
+                  } else if (title == AppLocalizations.of(context)!.foryours) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'for_yours',
+                      )),
+                    );
+                  }
                 },
                 child: Text(
                   AppLocalizations.of(context)!.viewAll,
