@@ -24,6 +24,7 @@ const String addVoteUrl = 'Post/addVotes';
 const String addCommentUrl = 'Post/addComment';
 const String getCommentUrl = 'Post/getCommentByPostId';
 const String deleteCommentUrl = 'Post/deleteComment';
+const String likeUnlikeCommentUrl = 'Post/likeUnlikeComment';
 const String addPostUrl = 'Post/addPost';
 const String getHashTagListUrl = 'Post/getHashtagList';
 const String getHomePageViewAllPostUrl = 'Post/getHomePageViewAllPost';

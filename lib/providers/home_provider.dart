@@ -19,6 +19,9 @@ import '../model/success_models/home_page_other_view_all_model.dart';
 class HomeProvider extends ChangeNotifier {
   final HomePageService _homePageService = GetIt.I<HomePageService>();
 
+  ValueNotifier<VideoCommentListModel?> commentListNotifier =
+      ValueNotifier(null);
+
   bool _isCategoryLoading = false;
   bool _isPostLoading = false;
   bool _isHomeLoading = false;
@@ -33,6 +36,7 @@ class HomeProvider extends ChangeNotifier {
   PostListSuccessModel? _postListSuccessModel;
   HomePostSuccessModel? _homePostSuccessModel;
   FollowUnfollowSuccessModel? _likeUnlikeModel;
+  FollowUnfollowSuccessModel? _deleteCommentModel;
   FollowUnfollowSuccessModel? _addPostModel;
   VideoCommentListModel? _videoCommentListModel;
   HashTagListModel? _hashTagListModel;
@@ -71,6 +75,8 @@ class HomeProvider extends ChangeNotifier {
   HomePostSuccessModel? get homePostSuccessModel => _homePostSuccessModel;
 
   FollowUnfollowSuccessModel? get likeUnlikeVideoModel => _likeUnlikeModel;
+
+  FollowUnfollowSuccessModel? get deleteCommentModel => _deleteCommentModel;
 
   FollowUnfollowSuccessModel? get addPostModel => _addPostModel;
 
@@ -197,6 +203,7 @@ class HomeProvider extends ChangeNotifier {
       VideoCommentListModel successModel =
           await _homePageService.getCommentList(requestModel, accessToken);
       _videoCommentListModel = successModel;
+      commentListNotifier.value = _videoCommentListModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -327,6 +334,65 @@ class HomeProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       // _isSearchLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addComment(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isSearchLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.addComments(requestModel, accessToken);
+      _addPostModel = successModel;
+      if (successModel.status == '200') {
+        getCommentList(requestModel, accessToken);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSearchLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> likeUnlikeComment(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.likeUnlikeComment(requestModel, accessToken);
+      _likeUnlikeModel = successModel;
+      if (successModel.status == '200') {
+        getCommentList(requestModel, accessToken);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteComment(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.deleteComment(requestModel, accessToken);
+      _deleteCommentModel = successModel;
+      if (successModel.status == '200') {
+        getCommentList(requestModel, accessToken);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
       notifyListeners();
     }
   }

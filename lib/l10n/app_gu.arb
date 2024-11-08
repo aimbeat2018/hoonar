@@ -212,6 +212,9 @@
   "userName": "વપરાશકર્તાનું નામ",
   "enterUserName": "વપરાશકર્તાનું નામ દાખલ કરો",
   "noDataFound": "ડેટા મળ્યો નથી",
-  "saveAsDraft": "મસોદા તરીકે સંગ્રહ કરો"
+  "saveAsDraft": "મસોદા તરીકે સંગ્રહ કરો",
+  "deleteComment": "કામેન્ટ કાઢી નાખો",
+  "areYouSureYouWantToDeleteComment": "શું તમે આ ટિપ્પણી કાઢી નાખવા માંગો છો?",
+  "delete": "કાઢી નાખો"
 
 }

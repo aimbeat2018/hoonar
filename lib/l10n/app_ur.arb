@@ -212,6 +212,9 @@
   "userName": "صارف کا نام",
   "enterUserName": "صارف کا نام درج کریں",
   "noDataFound": "کوئی ڈیٹا نہیں ملا",
-  "saveAsDraft": "ڈرافٹ کے طور پر محفوظ کریں"
+  "saveAsDraft": "ڈرافٹ کے طور پر محفوظ کریں",
+  "deleteComment": "تبصرہ حذف کریں",
+  "areYouSureYouWantToDeleteComment": "کیا آپ واقعی یہ تبصرہ حذف کرنا چاہتے ہیں؟",
+  "delete": "حذف کریں"
 
 }

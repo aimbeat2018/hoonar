@@ -504,8 +504,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             InkWell(
                               onTap: () {
-                                _openCommentBottomSheet(
-                                    context, myLoading.isDark);
+                                _openCommentBottomSheet(context,
+                                    myLoading.isDark, widget.model.postId!);
                               },
                               child: Column(
                                 children: [
@@ -565,7 +565,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
     });
   }
 
-  void _openCommentBottomSheet(BuildContext context, bool isDarkMode) {
+  void _openCommentBottomSheet(
+      BuildContext context, bool isDarkMode, int postId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -583,6 +584,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
             child: SafeArea(
               child: VideoCommentScreen(
                 key: _bottomSheetKey,
+                postId: postId,
               ),
             ));
       },

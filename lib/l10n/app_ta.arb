@@ -212,5 +212,9 @@
   "userName": "பயனர் பெயர்",
   "enterUserName": "பயனர் பெயரை உள்ளிடவும்",
   "noDataFound": "தகவல் கிடைக்கவில்லை",
-  "saveAsDraft": "வரைவில் சேமிக்கவும்"
+  "saveAsDraft": "வரைவில் சேமிக்கவும்",
+  "deleteComment": "கருத்தை நீக்கவும்",
+  "areYouSureYouWantToDeleteComment": "இந்தக் கருத்தை நீக்க விரும்புகிறீர்களா?",
+  "delete": "நீக்கவும்"
+
 }

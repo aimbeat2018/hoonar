@@ -59,6 +59,7 @@ dependencies:
   face_camera: ^0.1.4
   visibility_detector: ^0.4.0+2
   swipe_to: ^1.0.6
+  timeago: ^3.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

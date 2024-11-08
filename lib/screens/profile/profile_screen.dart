@@ -490,6 +490,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 HoonarStarScreen(
                                   controller: controller,
+                                  hoonarStarList:
+                                      profile.data!.hoonarStar ?? [],
                                 ),
                                 DraftsScreen(
                                   controller: controller,

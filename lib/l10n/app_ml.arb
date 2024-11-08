@@ -212,6 +212,10 @@
   "userName": "ഉപയോക്തൃ നാമം",
   "enterUserName": "ഉപയോക്തൃ നാമം നൽകുക",
   "noDataFound": "ഡാറ്റ ലഭിച്ചില്ല",
-  "saveAsDraft": "ഡ്രാഫ്റ്റ് ആയി സംരക്ഷിക്കുക"
+  "saveAsDraft": "ഡ്രാഫ്റ്റ് ആയി സംരക്ഷിക്കുക",
+  "deleteComment": "കുറിപ്പ് മായ്ക്കുക",
+  "areYouSureYouWantToDeleteComment": "ഈ കുറിപ്പ് മായ്ച്ചുകളയാൻ താങ്കൾക്ക് ഉറപ്പാണോ?",
+  "delete": "മായ്ക്കുക"
+
 
 }

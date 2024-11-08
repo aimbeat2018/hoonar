@@ -170,4 +170,34 @@ class HomePageService {
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
+
+  Future<FollowUnfollowSuccessModel> addComments(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$addCommentUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> likeUnlikeComment(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$likeUnlikeCommentUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> deleteComment(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$deleteCommentUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
 }

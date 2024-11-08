@@ -212,6 +212,11 @@
   "userName": "वापरकर्त्याचे नाव",
   "enterUserName": "वापरकर्त्याचे नाव प्रविष्ट करा",
   "noDataFound": "माहिती मिळाली नाही",
-  "saveAsDraft": "मसुद्यात जतन करा"
+  "saveAsDraft": "मसुद्यात जतन करा",
+  "deleteComment": "टिप्पणी हटवा",
+  "areYouSureYouWantToDeleteComment": "आपण नक्की ही टिप्पणी हटवू इच्छिता?",
+  "delete": "हटवा"
+
+
 
 }

@@ -58,6 +58,7 @@ class Data {
   int? blockOrNot;
   List<PostsListData>? posts;
   List<PostsListData>? drafts;
+  List<PostsListData>? hoonarStar;
 
   Data(
       {this.userId,
@@ -92,6 +93,7 @@ class Data {
       this.isFollowing,
       this.blockOrNot,
       this.posts,
+      this.hoonarStar,
       this.drafts});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -138,6 +140,12 @@ class Data {
         drafts!.add(PostsListData.fromJson(v));
       });
     }
+    if (json['hoonar_star'] != null) {
+      hoonarStar = <PostsListData>[];
+      json['hoonar_star'].forEach((v) {
+        hoonarStar!.add(PostsListData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -178,6 +186,9 @@ class Data {
     }
     if (drafts != null) {
       data['drafts'] = drafts!.map((v) => v.toJson()).toList();
+    }
+    if (hoonarStar != null) {
+      data['hoonar_star'] = hoonarStar!.map((v) => v.toJson()).toList();
     }
     return data;
   }

@@ -212,5 +212,9 @@
   "userName": "उपयोगकर्ता नाम",
   "enterUserName": "उपयोगकर्ता नाम दर्ज करें",
   "noDataFound": "कोई डेटा नहीं मिला",
-  "saveAsDraft": "ड्राफ़्ट के रूप में सहेजें"
+  "saveAsDraft": "ड्राफ़्ट के रूप में सहेजें",
+  "deleteComment": "टिप्पणी हटाएं",
+  "areYouSureYouWantToDeleteComment": "क्या आप वाकई इस टिप्पणी को हटाना चाहते हैं?",
+  "delete": "हटाएं"
+
 }

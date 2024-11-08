@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
 import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
@@ -27,6 +29,7 @@ class SelectContestLevel extends StatefulWidget {
 
 class _SelectContestLevelState extends State<SelectContestLevel> {
   List<StarCategoryModel> zoneLevelsList = [];
+  SessionManager sessionManager = SessionManager();
 
   @override
   void initState() {
@@ -41,22 +44,26 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
-    await contestProvider.getLevelList();
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(categoryId: widget.categoryId);
 
-    if (contestProvider.errorMessage != null) {
-      SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
-    } else {
-      if (contestProvider.levelListModel?.status == '200') {
-      } else if (contestProvider.levelListModel?.message ==
-          'Unauthorized Access!') {
-        SnackbarUtil.showSnackBar(
-            context, contestProvider.levelListModel?.message! ?? '');
-        Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+      await contestProvider.getLevelList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.levelListModel?.status == '200') {
+        } else if (contestProvider.levelListModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.levelListModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        }
       }
-    }
-
-    setState(() {});
+    });
   }
 
   @override
@@ -179,46 +186,50 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                             Container(
                                               padding: const EdgeInsets.all(8),
                                               decoration: BoxDecoration(
-                                                color: /*zoneLevelsList[index]
-                                                            .darkModeImage ==
-                                                        '1'
+                                                color: contestProvider
+                                                            .levelListModel!
+                                                            .data![index]
+                                                            .isUnlocked ==
+                                                        1
                                                     ? (myLoading.isDark
                                                         ? Colors.white
                                                         : Colors.black)
-                                                    :*/
-                                                    myLoading.isDark
+                                                    : myLoading.isDark
                                                         ? Colors.grey.shade900
                                                         : Colors.grey.shade700,
                                                 // Background color
                                                 shape: BoxShape.circle,
                                                 // Makes the container circular
                                                 border: Border.all(
-                                                    color: /* zoneLevelsList[index]
-                                                                .darkModeImage ==
-                                                            '1'
+                                                    color: contestProvider
+                                                                .levelListModel!
+                                                                .data![index]
+                                                                .isUnlocked ==
+                                                            1
                                                         ? Colors.transparent
-                                                        :*/
-                                                        (myLoading.isDark
+                                                        : (myLoading.isDark
                                                             ? Colors.white
                                                             : Colors.black),
                                                     width:
                                                         1), // Optional border
                                               ),
                                               child: Icon(
-                                                /* zoneLevelsList[index]
-                                                            .darkModeImage ==
-                                                        '1'
+                                                contestProvider
+                                                            .levelListModel!
+                                                            .data![index]
+                                                            .isUnlocked ==
+                                                        1
                                                     ? Icons.lock_open
-                                                    :*/
-                                                Icons.lock_outline,
-                                                color: /* zoneLevelsList[index]
-                                                            .darkModeImage ==
-                                                        '1'
+                                                    : Icons.lock_outline,
+                                                color: contestProvider
+                                                            .levelListModel!
+                                                            .data![index]
+                                                            .isUnlocked ==
+                                                        1
                                                     ? (myLoading.isDark
                                                         ? Colors.black
                                                         : Colors.white)
-                                                    : */
-                                                    (myLoading.isDark
+                                                    : (myLoading.isDark
                                                         ? Colors.white
                                                         : Colors.black),
                                                 size: 22,

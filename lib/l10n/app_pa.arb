@@ -211,6 +211,9 @@
   "userName": "ਵਰਤੋਂਕਾਰ ਨਾਮ",
   "enterUserName": "ਵਰਤੋਂਕਾਰ ਦਾ ਨਾਮ ਦਰਜ ਕਰੋ",
   "noDataFound": "ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ",
-  "saveAsDraft": "ਡਰਾਫਟ ਵਜੋਂ ਸਾਂਭੋ"
+  "saveAsDraft": "ਡਰਾਫਟ ਵਜੋਂ ਸਾਂਭੋ",
+  "deleteComment": "ਟਿੱਪਣੀ ਮਿਟਾਓ",
+  "areYouSureYouWantToDeleteComment": "ਕੀ ਤੁਸੀਂ ਇਹ ਟਿੱਪਣੀ ਮਿਟਾਉਣ ਚਾਹੁੰਦੇ ਹੋ?",
+  "delete": "ਮਿਟਾਓ"
 
 }

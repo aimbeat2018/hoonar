@@ -212,5 +212,9 @@
   "userName": "ব্যবহারকারীর নাম",
   "enterUserName": "ব্যবহারকারীর নাম লিখুন",
   "noDataFound": "কোনও ডেটা পাওয়া যায়নি",
-  "saveAsDraft": "ড্রাফ্ট হিসাবে সংরক্ষণ করুন"
+  "saveAsDraft": "ড্রাফ্ট হিসাবে সংরক্ষণ করুন",
+  "deleteComment": "মন্তব্য মুছে দিন",
+  "areYouSureYouWantToDeleteComment": "আপনি কি নিশ্চিতভাবে এই মন্তব্যটি মুছে ফেলতে চান?",
+  "delete": "মুছে ফেলুন"
+
 }

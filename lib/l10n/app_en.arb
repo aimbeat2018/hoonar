@@ -213,5 +213,8 @@
   "userName": "Username",
   "enterUserName": "Enter username",
   "noDataFound": "No Data Found",
-  "saveAsDraft": "Save as Draft"
+  "saveAsDraft": "Save as Draft",
+  "deleteComment": "Delete Comment",
+  "areYouSureYouWantToDeleteComment": "Are you sure you want to this Delete Comment",
+  "delete": "Delete"
 }

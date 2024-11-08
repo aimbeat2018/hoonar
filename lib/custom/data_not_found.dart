@@ -9,14 +9,14 @@ class DataNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, MyLoading myLoading, child) => Container(
+      builder: (context, MyLoading myLoading, child) => SizedBox(
         height: MediaQuery.of(context).size.width,
         width: MediaQuery.of(context).size.height,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-             /* Container(
+              /* Container(
                 height: 55,
                 child: Image(
                   image: AssetImage(

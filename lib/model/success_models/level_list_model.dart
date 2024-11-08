@@ -34,6 +34,7 @@ class LevelListData {
   int? fees;
   String? createdAt;
   String? updatedAt;
+  int? isUnlocked;
 
   LevelListData(
       {this.levelId,
@@ -41,6 +42,7 @@ class LevelListData {
       this.description,
       this.fees,
       this.createdAt,
+      this.isUnlocked,
       this.updatedAt});
 
   LevelListData.fromJson(Map<String, dynamic> json) {
@@ -50,6 +52,7 @@ class LevelListData {
     fees = json['fees'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    isUnlocked = json['is_unlocked'];
   }
 
   Map<String, dynamic> toJson() {
@@ -60,6 +63,7 @@ class LevelListData {
     data['fees'] = fees;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
+    data['is_unlocked'] = isUnlocked;
     return data;
   }
 }

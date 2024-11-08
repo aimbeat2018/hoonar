@@ -52,3 +52,5 @@ class LoaderDialog extends StatelessWidget {
     );
   }
 }
+
+

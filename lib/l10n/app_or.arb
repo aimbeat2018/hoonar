@@ -212,5 +212,9 @@
   "userName": "ବ୍ୟବହାରକାରୀ ନାମ",
   "enterUserName": "ବ୍ୟବହାରକାରୀ ନାମ ପ୍ରବେଶ କରାନ୍ତୁ",
   "noDataFound": "ଡାଟା ମିଳିଲା ନାହିଁ",
-  "saveAsDraft": "ମସଦାର ଭାବରେ ସଂରକ୍ଷଣ କରନ୍ତୁ"
+  "saveAsDraft": "ମସଦାର ଭାବରେ ସଂରକ୍ଷଣ କରନ୍ତୁ",
+  "deleteComment": "ଟିପ୍ପଣୀ କାଢନ୍ତୁ",
+  "areYouSureYouWantToDeleteComment": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଟିପ୍ପଣୀ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?",
+  "delete": "କାଢନ୍ତୁ"
+
 }

@@ -212,6 +212,10 @@
   "userName": "ಬಳಕೆದಾರ ಹೆಸರು",
   "enterUserName": "ಬಳಕೆದಾರ ಹೆಸರನ್ನು ನಮೂದಿಸಿ",
   "noDataFound": "ಡೇಟಾ ಕಂಡುಬಂದಿಲ್ಲ",
-  "saveAsDraft": "ಕರಡೆಯಲ್ಲಿ ಉಳಿಸಿ"
+  "saveAsDraft": "ಕರಡೆಯಲ್ಲಿ ಉಳಿಸಿ",
+  "deleteComment": "ಕಾಮೆಂಟ್ ಅಳಿಸಿ",
+  "areYouSureYouWantToDeleteComment": "ನೀವು ಈ ಕಾಮೆಂಟ್ ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
+  "delete": "ಅಳಿಸಿ"
+
 
 }
