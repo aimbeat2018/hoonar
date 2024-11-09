@@ -215,7 +215,9 @@
   "saveAsDraft": "मसुद्यात जतन करा",
   "deleteComment": "टिप्पणी हटवा",
   "areYouSureYouWantToDeleteComment": "आपण नक्की ही टिप्पणी हटवू इच्छिता?",
-  "delete": "हटवा"
+  "delete": "हटवा",
+  "removeDevice": "डिव्हाइस काढा",
+  "areYouSureYouWantToRemoveDevice": "आपण नक्की हे डिव्हाइस काढू इच्छिता?"
 
 
 

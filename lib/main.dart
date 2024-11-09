@@ -8,11 +8,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
+import 'package:hoonar/providers/setting_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
+import 'package:hoonar/screens/splash_screen/splash_screens.dart';
 import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => ContestProvider()),
+        ChangeNotifierProvider(create: (_) => SettingProvider()),
       ],
       child: Consumer<MyLoading>(
         builder: (context, MyLoading myLoading, child) {
@@ -84,8 +87,8 @@ class MyApp extends StatelessWidget {
               'CameraScreen': (context) => CustomCameraScreen(),
               'EditProfileScreen': (context) => EditProfileScreen()
             },
-            // home: SplashScreens(),
-            home: MainScreen(),
+            home: SplashScreens(),
+            // home: MainScreen(),
           );
         },
       ),

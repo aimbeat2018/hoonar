@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/constants/utils.dart';
+import 'package:hoonar/custom/data_not_found.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
@@ -273,16 +274,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(
                             height: 20,
                           ),
-                          SizedBox(
-                              height: screenHeight * 0.58,
-                              child: SliderPageView(
-                                sliderModelList: homeProvider
-                                        .homePostSuccessModel!
-                                        .data![_currentIndex]
-                                        .posts ??
-                                    [],
-                                isDarkMode: myLoading.isDark,
-                              )),
+                          homeProvider.homePostSuccessModel!
+                                      .data![_currentIndex].posts ==
+                                  null
+                              ? DataNotFound()
+                              : homeProvider.homePostSuccessModel!
+                                      .data![_currentIndex].posts!.isEmpty
+                                  ? DataNotFound()
+                                  : SizedBox(
+                                      height: screenHeight * 0.58,
+                                      child: SliderPageView(
+                                        sliderModelList: homeProvider
+                                                .homePostSuccessModel!
+                                                .data![_currentIndex]
+                                                .posts ??
+                                            [],
+                                        isDarkMode: myLoading.isDark,
+                                      )),
                         ],
                       ),
                 Center(

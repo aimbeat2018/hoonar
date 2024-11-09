@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/providers/setting_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
-import '../../../constants/text_constants.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
+import '../../../shimmerLoaders/page_content_shimmer.dart';
+import '../../auth_screen/login_screen.dart';
 
 class AppContentScreen extends StatefulWidget {
   final String? from;
@@ -23,8 +28,46 @@ class AppContentScreen extends StatefulWidget {
 class _AppContentScreenState extends State<AppContentScreen> {
   ScrollController scrollController = ScrollController();
 
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getPageContent(context);
+    });
+  }
+
+  Future<void> getPageContent(BuildContext context) async {
+    final contestProvider =
+        Provider.of<SettingProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(pageType: widget.from);
+
+      await contestProvider.getPageContent(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.pageContentModel?.status == '200') {
+        } else if (contestProvider.pageContentModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.pageContentModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final settingProvider = Provider.of<SettingProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         body: Container(
@@ -54,9 +97,11 @@ class _AppContentScreenState extends State<AppContentScreen> {
                   ),
                   Center(
                     child: GradientText(
-                      widget.from == 'terms'
+                      widget.from == 'termsofuse'
                           ? AppLocalizations.of(context)!.termsConditions
-                          : AppLocalizations.of(context)!.privacyPolicy,
+                          : widget.from == 'privacy'
+                              ? AppLocalizations.of(context)!.privacyPolicy
+                              : '',
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         color: myLoading.isDark ? Colors.black : Colors.white,
@@ -77,14 +122,18 @@ class _AppContentScreenState extends State<AppContentScreen> {
                   const SizedBox(
                     height: 35,
                   ),
-                  Html(
-                      data:
-                          '<b>Lorem ipsum dolor sit amet, consectetur adipiscing elit</b><tr></tr> sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."',
-                      style: {
-                        "body": Style(
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black),
-                      })
+                  settingProvider.isPageLoading ||
+                          settingProvider.pageContentModel == null ||
+                          settingProvider.pageContentModel!.data == null
+                      ? PageContentShimmer()
+                      : Html(
+                          data: settingProvider.pageContentModel!.data!.content,
+                          style: {
+                              "body": Style(
+                                  color: myLoading.isDark
+                                      ? Colors.pink
+                                      : Colors.black),
+                            })
                 ],
               ),
             ),

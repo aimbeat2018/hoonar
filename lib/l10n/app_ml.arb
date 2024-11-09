@@ -215,7 +215,9 @@
   "saveAsDraft": "ഡ്രാഫ്റ്റ് ആയി സംരക്ഷിക്കുക",
   "deleteComment": "കുറിപ്പ് മായ്ക്കുക",
   "areYouSureYouWantToDeleteComment": "ഈ കുറിപ്പ് മായ്ച്ചുകളയാൻ താങ്കൾക്ക് ഉറപ്പാണോ?",
-  "delete": "മായ്ക്കുക"
+  "delete": "മായ്ക്കുക",
+  "removeDevice": "ഉപകരണം നീക്കംചെയ്യുക",
+  "areYouSureYouWantToRemoveDevice": "ഈ ഉപകരണം നീക്കംചെയ്യാൻ താങ്കൾക്ക് ഉറപ്പാണോ?"
 
 
 }

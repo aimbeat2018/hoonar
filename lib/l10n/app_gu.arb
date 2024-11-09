@@ -215,6 +215,7 @@
   "saveAsDraft": "મસોદા તરીકે સંગ્રહ કરો",
   "deleteComment": "કામેન્ટ કાઢી નાખો",
   "areYouSureYouWantToDeleteComment": "શું તમે આ ટિપ્પણી કાઢી નાખવા માંગો છો?",
-  "delete": "કાઢી નાખો"
-
+  "delete": "કાઢી નાખો",
+  "removeDevice": "ડિવાઇસ દૂર કરો",
+  "areYouSureYouWantToRemoveDevice": "શું તમે આ ડિવાઇસ દૂર કરવા માંગો છો?"
 }

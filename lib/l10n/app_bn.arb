@@ -215,6 +215,8 @@
   "saveAsDraft": "ড্রাফ্ট হিসাবে সংরক্ষণ করুন",
   "deleteComment": "মন্তব্য মুছে দিন",
   "areYouSureYouWantToDeleteComment": "আপনি কি নিশ্চিতভাবে এই মন্তব্যটি মুছে ফেলতে চান?",
-  "delete": "মুছে ফেলুন"
+  "delete": "মুছে ফেলুন",
+  "removeDevice": "ডিভাইস সরান",
+  "areYouSureYouWantToRemoveDevice": "আপনি কি নিশ্চিতভাবে এই ডিভাইসটি সরাতে চান?"
 
 }

@@ -33,6 +33,11 @@ const String searchUserUrl = 'User/searchUsers';
 const String storeSearchHistoryUrl = 'User/storeSearchHistory';
 const String userSearchHistoryUrl = 'User/userSearchHistory';
 const String removeUserSearchHistoryUrl = 'User/removeUserSearchHistory';
+const String pageContentUrl = 'User/getPageContent';
+const String userDevicesUrl = 'User/getUserDevices';
+const String removeDeviceUrl = 'User/logoutDevice';
+const String helpIssuesUrl = 'User/getHelpIssues';
+const String storeHelpRequestUrl = 'User/storeHelpRequest';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

@@ -215,6 +215,7 @@
   "saveAsDraft": "ڈرافٹ کے طور پر محفوظ کریں",
   "deleteComment": "تبصرہ حذف کریں",
   "areYouSureYouWantToDeleteComment": "کیا آپ واقعی یہ تبصرہ حذف کرنا چاہتے ہیں؟",
-  "delete": "حذف کریں"
-
+  "delete": "حذف کریں",
+  "removeDevice": "آلہ ہٹائیں",
+  "areYouSureYouWantToRemoveDevice": "کیا آپ واقعی اس آلے کو ہٹانا چاہتے ہیں؟"
 }

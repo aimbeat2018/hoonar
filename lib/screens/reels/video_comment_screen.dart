@@ -32,20 +32,6 @@ class VideoCommentScreen extends StatefulWidget {
 
 class VideoCommentScreenState extends State<VideoCommentScreen>
     with SingleTickerProviderStateMixin {
-  List<Comment> commentList = [
-    Comment(
-      username: 'user1',
-      commentText: 'Amazing photo!',
-      time: '2h',
-      replies: [Reply(username: 'user2', replyText: 'Thanks!', time: '1h')],
-    ),
-    Comment(
-      username: 'user3',
-      commentText: 'Love this!',
-      time: '4h',
-      replies: [],
-    ),
-  ];
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _replyController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
@@ -82,11 +68,11 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
   }
 
   void _addReply(int commentIndex, String replyText) {
-    setState(() {
+   /* setState(() {
       commentList[commentIndex].replies.add(Reply(
           username: 'CurrentUser', replyText: replyText, time: 'Just now'));
       _selectedCommentIndex = null; // Reset reply input focus
-    });
+    });*/
     _replyController.clear();
   }
 

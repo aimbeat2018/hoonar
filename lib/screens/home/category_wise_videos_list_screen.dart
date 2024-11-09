@@ -31,6 +31,7 @@ class _CategoryWiseVideosListScreenState
   int selectedCategoryId = -1;
   List<String> categories = [];
   bool _isVisible = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -174,6 +175,9 @@ class _CategoryWiseVideosListScreenState
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     homeProvider.isPostLoading ||
                             homeProvider.postListSuccessModel == null
                         ? GridShimmer()
@@ -241,67 +245,85 @@ class _CategoryWiseVideosListScreenState
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
-                    width: _isVisible
-                        ? homeProvider.isCategoryLoading
-                            ? 5 * 60
-                            : homeProvider
-                                    .categoryListSuccessModel!.data!.length *
-                                60
-                        : 0,
-                    // Animate width
+                    // width: _isVisible
+                    //     ? homeProvider.isCategoryLoading
+                    //         ? 5 * 60
+                    //         : homeProvider
+                    //                 .categoryListSuccessModel!.data!.length *
+                    //             60
+                    //     : 0,
                     height: _isVisible
                         ? homeProvider.isCategoryLoading
                             ? 5 * 50
-                            : homeProvider
-                                    .categoryListSuccessModel!.data!.length *
-                                50
+                            : (homeProvider.categoryListSuccessModel!.data!
+                                        .length *
+                                    40)
+                                .clamp(200, 400)
+                                .toDouble() // Convert to double
                         : 0,
-                    // Animate height
                     child: Card(
                       color: Colors.white,
                       child: homeProvider.isCategoryLoading
                           ? CategoryShimmer()
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 10),
-                              shrinkWrap: true,
-                              itemCount: homeProvider
-                                  .categoryListSuccessModel!.data!.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedCategory = homeProvider
-                                              .categoryListSuccessModel!
-                                              .data![index]
-                                              .categoryName ??
-                                          '';
-                                      selectedCategoryId = homeProvider
-                                              .categoryListSuccessModel!
-                                              .data![index]
-                                              .categoryId ??
-                                          -1;
+                          : Column(
+                              children: [
+                                Expanded(
+                                  // Ensures ListView has space to scroll within AnimatedContainer
+                                  child: Scrollbar(
+                                    controller: scrollController,
+                                    thumbVisibility: true,
+                                    thickness: 2.5,
+                                    radius: const Radius.circular(10),
+                                    child: ListView.builder(
+                                      controller: scrollController,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 10),
+                                      physics: BouncingScrollPhysics(),
+                                      itemCount: homeProvider
+                                          .categoryListSuccessModel!
+                                          .data!
+                                          .length,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedCategory = homeProvider
+                                                      .categoryListSuccessModel!
+                                                      .data![index]
+                                                      .categoryName ??
+                                                  '';
+                                              selectedCategoryId = homeProvider
+                                                      .categoryListSuccessModel!
+                                                      .data![index]
+                                                      .categoryId ??
+                                                  -1;
 
-                                      getPostByCategory(context);
-                                    });
-                                    _toggleAnimation();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      homeProvider.categoryListSuccessModel!
-                                              .data![index].categoryName ??
-                                          '',
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 17,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                              getPostByCategory(context);
+                                            });
+                                            _toggleAnimation();
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              homeProvider
+                                                      .categoryListSuccessModel!
+                                                      .data![index]
+                                                      .categoryName ??
+                                                  '',
+                                              textAlign: TextAlign.start,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 17,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
                     ),
                   ),

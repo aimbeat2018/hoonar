@@ -19,7 +19,7 @@ class SignInRequestModel {
     password = json['password'];
     deviceName = json['device_name'];
     deviceType = json['device_type'];
-    deviceToken = json['device_token'];
+    deviceToken = json['fcm_token'];
     deviceOs = json['device_os'];
   }
 
@@ -29,7 +29,7 @@ class SignInRequestModel {
     data['password'] = password;
     data['device_name'] = deviceName;
     data['device_type'] = deviceType;
-    data['device_token'] = deviceToken;
+    data['fcm_token'] = deviceToken;
     data['device_os'] = deviceOs;
     return data;
   }

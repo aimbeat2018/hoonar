@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
+import 'package:hoonar/model/request_model/add_help_request_model.dart';
+import 'package:hoonar/model/success_models/help_issues_list_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
-import '../../../constants/text_constants.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../providers/setting_provider.dart';
+import '../../auth_screen/login_screen.dart';
+import 'help_issues_screen.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({super.key});
@@ -24,6 +32,9 @@ class _HelpScreenState extends State<HelpScreen> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController selectIssueController = TextEditingController();
   TextEditingController messageController = TextEditingController();
+  int issueId = -1;
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  SessionManager sessionManager = SessionManager();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +61,7 @@ class _HelpScreenState extends State<HelpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildAppbar(context, false),
+                  buildAppbar(context, myLoading.isDark),
                   const SizedBox(
                     height: 10,
                   ),
@@ -78,6 +89,7 @@ class _HelpScreenState extends State<HelpScreen> {
                     height: 35,
                   ),
                   Form(
+                    key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -97,17 +109,19 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(1),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  width: 1,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
+                            validator: (v) {
+                              if (v!.trim().isEmpty) {
+                                return AppLocalizations.of(context)!.helpName;
+                              }
+                              /* else if (v.length != 10) {
+                                  return AppLocalizations.of(context)!
+                                      .enterValidPhoneNumber;
+                                }*/
+                              return null;
+                            },
                             maxLines: 1,
                             controller: nameController,
                             cursorColor:
@@ -119,7 +133,20 @@ class _HelpScreenState extends State<HelpScreen> {
                               fontSize: 14,
                             ),
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              border: GradientOutlineInputBorder(
+                                width: 1,
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    greyTextColor4
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
                               hintText: AppLocalizations.of(context)!.helpName,
                               hintStyle: GoogleFonts.poppins(
                                 color: hintGreyColor,
@@ -149,18 +176,21 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(1),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  width: 1,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
+                            validator: (v) {
+                              if (v!.trim().isEmpty) {
+                                return AppLocalizations.of(context)!.helpEmail;
+                              }
+                              /* else if (v.length != 10) {
+                                  return AppLocalizations.of(context)!
+                                      .enterValidPhoneNumber;
+                                }*/
+                              return null;
+                            },
                             maxLines: 1,
+                            controller: emailController,
                             cursorColor:
                                 myLoading.isDark ? Colors.white : Colors.black,
                             style: GoogleFonts.poppins(
@@ -170,7 +200,20 @@ class _HelpScreenState extends State<HelpScreen> {
                               fontSize: 14,
                             ),
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              border: GradientOutlineInputBorder(
+                                width: 1,
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    greyTextColor4
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
                               hintText: AppLocalizations.of(context)!.helpEmail,
                               hintStyle: GoogleFonts.poppins(
                                 color: hintGreyColor,
@@ -200,18 +243,21 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(1),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  width: 1,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
+                            validator: (v) {
+                              if (v!.trim().isEmpty) {
+                                return AppLocalizations.of(context)!
+                                    .enterPhoneNumberError;
+                              } else if (v.length != 10) {
+                                return AppLocalizations.of(context)!
+                                    .enterValidPhoneNumber;
+                              }
+                              return null;
+                            },
                             maxLines: 1,
+                            controller: phoneController,
                             cursorColor:
                                 myLoading.isDark ? Colors.white : Colors.black,
                             style: GoogleFonts.poppins(
@@ -221,7 +267,20 @@ class _HelpScreenState extends State<HelpScreen> {
                               fontSize: 14,
                             ),
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              border: GradientOutlineInputBorder(
+                                width: 1,
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    greyTextColor4
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
                               hintText: AppLocalizations.of(context)!.helpPhone,
                               hintStyle: GoogleFonts.poppins(
                                 color: hintGreyColor,
@@ -255,19 +314,26 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(1),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  width: 1,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
+                            validator: (v) {
+                              if (v!.trim().isEmpty) {
+                                return AppLocalizations.of(context)!
+                                    .helpSelectIssue;
+                              }
+                              /* else if (v.length != 10) {
+                                  return AppLocalizations.of(context)!
+                                      .enterValidPhoneNumber;
+                                }*/
+                              return null;
+                            },
                             maxLines: 1,
                             readOnly: true,
+                            controller: selectIssueController,
+                            onTap: () {
+                              _showIssueBottomSheet(context, myLoading.isDark);
+                            },
                             cursorColor:
                                 myLoading.isDark ? Colors.white : Colors.black,
                             style: GoogleFonts.poppins(
@@ -277,7 +343,20 @@ class _HelpScreenState extends State<HelpScreen> {
                               fontSize: 14,
                             ),
                             decoration: InputDecoration(
-                                border: InputBorder.none,
+                                border: GradientOutlineInputBorder(
+                                  width: 1,
+                                  borderRadius: BorderRadius.circular(8),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      greyTextColor4
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ),
+                                ),
                                 hintText: AppLocalizations.of(context)!
                                     .helpSelectIssue,
                                 hintStyle: GoogleFonts.poppins(
@@ -313,18 +392,22 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 5,
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(1),
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                  width: 1,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: TextFormField(
+                            validator: (v) {
+                              if (v!.trim().isEmpty) {
+                                return AppLocalizations.of(context)!
+                                    .helpMessage;
+                              }
+                              /* else if (v.length != 10) {
+                                  return AppLocalizations.of(context)!
+                                      .enterValidPhoneNumber;
+                                }*/
+                              return null;
+                            },
                             maxLines: 5,
+                            controller: messageController,
                             cursorColor:
                                 myLoading.isDark ? Colors.white : Colors.black,
                             style: GoogleFonts.poppins(
@@ -334,7 +417,20 @@ class _HelpScreenState extends State<HelpScreen> {
                               fontSize: 14,
                             ),
                             decoration: InputDecoration(
-                              border: InputBorder.none,
+                              border: GradientOutlineInputBorder(
+                                width: 1,
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    greyTextColor4
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
                               hintText:
                                   AppLocalizations.of(context)!.helpMessage,
                               hintStyle: GoogleFonts.poppins(
@@ -351,40 +447,47 @@ class _HelpScreenState extends State<HelpScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            margin: const EdgeInsets.only(
-                                top: 15, left: 60, right: 60, bottom: 5),
-                            decoration: ShapeDecoration(
-                              color: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                  strokeAlign: BorderSide.strokeAlignOutside,
-                                  color: Colors.black,
+                        Provider.of<SettingProvider>(context)
+                                .isAddHelpRequestLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : InkWell(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    addHelpRequest(context);
+                                  }
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  margin: const EdgeInsets.only(
+                                      top: 15, left: 60, right: 60, bottom: 5),
+                                  decoration: ShapeDecoration(
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                        strokeAlign:
+                                            BorderSide.strokeAlignOutside,
+                                        color: Colors.black,
+                                      ),
+                                      borderRadius: BorderRadius.circular(80),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.send,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(80),
                               ),
-                            ),
-                            child: Text(
-                              AppLocalizations.of(context)!.send,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
                         SizedBox(
                           height: 30,
                         ),
@@ -490,6 +593,67 @@ class _HelpScreenState extends State<HelpScreen> {
           ),
         ),
       );
+    });
+  }
+
+  void _showIssueBottomSheet(BuildContext context, bool isDarkMode) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey.shade900 : Colors.white,
+              // Adjust as per your theme
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: HelpIssuesScreen(
+                isDarkMode: isDarkMode,
+              ),
+            ));
+      },
+    ).then((value) {
+      if (value != null) {
+        HelpIssuesListData model = value;
+        selectIssueController.text = model.issueName ?? '';
+        issueId = model.issueId ?? -1;
+        setState(() {});
+      }
+    });
+  }
+
+  Future<void> addHelpRequest(BuildContext context) async {
+    final contestProvider =
+        Provider.of<SettingProvider>(context, listen: false);
+    sessionManager.initPref().then((onValue) async {
+      AddHelpRequestModel requestModel = AddHelpRequestModel(
+          name: nameController.text,
+          phone: phoneController.text,
+          email: emailController.text,
+          issueId: issueId,
+          message: messageController.text);
+
+      await contestProvider.addHelpRequest(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.addHelpRequestModel?.status == '200') {
+          Navigator.pop(context);
+        } else if (contestProvider.addHelpRequestModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.addHelpRequestModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        }
+      }
     });
   }
 }

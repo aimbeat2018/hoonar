@@ -586,7 +586,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context,
                 SlideRightRoute(
                     page: const AppContentScreen(
-                  from: 'terms',
+                  from: 'termsofuse',
                 )));
           },
         ),

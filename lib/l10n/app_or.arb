@@ -215,6 +215,8 @@
   "saveAsDraft": "ମସଦାର ଭାବରେ ସଂରକ୍ଷଣ କରନ୍ତୁ",
   "deleteComment": "ଟିପ୍ପଣୀ କାଢନ୍ତୁ",
   "areYouSureYouWantToDeleteComment": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଟିପ୍ପଣୀ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?",
-  "delete": "କାଢନ୍ତୁ"
+  "delete": "କାଢନ୍ତୁ",
+  "removeDevice": "ଡିଭାଇସ କାଢନ୍ତୁ",
+  "areYouSureYouWantToRemoveDevice": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଡିଭାଇସ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?"
 
 }

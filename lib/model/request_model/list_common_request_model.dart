@@ -11,6 +11,8 @@ class ListCommonRequestModel {
   String? searchId;
   String? comment;
   String? commentId;
+  String? deviceId;
+  String? pageType;  // privacy,termsofuse,about_us,contact_us
 
   ListCommonRequestModel({
     this.userId,
@@ -25,6 +27,8 @@ class ListCommonRequestModel {
     this.searchId,
     this.comment,
     this.commentId,
+    this.deviceId,
+    this.pageType,
   });
 
   ListCommonRequestModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +44,8 @@ class ListCommonRequestModel {
     searchId = json['search_id'];
     comment = json['comment'];
     commentId = json['comments_id'];
+    pageType = json['page_type'];
+    deviceId = json['device_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +62,8 @@ class ListCommonRequestModel {
     data['search_id'] = searchId;
     data['comment'] = comment;
     data['comments_id'] = commentId;
+    data['page_type'] = pageType;
+    data['device_id'] = deviceId;
     return data;
   }
 }

@@ -215,6 +215,8 @@
   "saveAsDraft": "ड्राफ़्ट के रूप में सहेजें",
   "deleteComment": "टिप्पणी हटाएं",
   "areYouSureYouWantToDeleteComment": "क्या आप वाकई इस टिप्पणी को हटाना चाहते हैं?",
-  "delete": "हटाएं"
+  "delete": "हटाएं",
+  "removeDevice": "डिवाइस हटाएं",
+  "areYouSureYouWantToRemoveDevice": "क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?"
 
 }

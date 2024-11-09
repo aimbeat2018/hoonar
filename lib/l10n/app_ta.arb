@@ -215,6 +215,8 @@
   "saveAsDraft": "வரைவில் சேமிக்கவும்",
   "deleteComment": "கருத்தை நீக்கவும்",
   "areYouSureYouWantToDeleteComment": "இந்தக் கருத்தை நீக்க விரும்புகிறீர்களா?",
-  "delete": "நீக்கவும்"
+  "delete": "நீக்கவும்",
+  "removeDevice": "சாதனத்தை அகற்று",
+  "areYouSureYouWantToRemoveDevice": "இந்த சாதனத்தை அகற்ற விரும்புகிறீர்களா?"
 
 }

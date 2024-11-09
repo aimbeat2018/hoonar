@@ -216,5 +216,7 @@
   "saveAsDraft": "Save as Draft",
   "deleteComment": "Delete Comment",
   "areYouSureYouWantToDeleteComment": "Are you sure you want to this Delete Comment",
-  "delete": "Delete"
+  "delete": "Delete",
+  "removeDevice": "Remove Device",
+  "areYouSureYouWantToRemoveDevice": "Are you sure you want to remove this device"
 }
