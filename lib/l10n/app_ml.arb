@@ -217,7 +217,12 @@
   "areYouSureYouWantToDeleteComment": "ഈ കുറിപ്പ് മായ്ച്ചുകളയാൻ താങ്കൾക്ക് ഉറപ്പാണോ?",
   "delete": "മായ്ക്കുക",
   "removeDevice": "ഉപകരണം നീക്കംചെയ്യുക",
-  "areYouSureYouWantToRemoveDevice": "ഈ ഉപകരണം നീക്കംചെയ്യാൻ താങ്കൾക്ക് ഉറപ്പാണോ?"
+  "areYouSureYouWantToRemoveDevice": "ഈ ഉപകരണം നീക്കംചെയ്യാൻ താങ്കൾക്ക് ഉറപ്പാണോ?",
+  "trendingNow": "ഇപ്പോൾ ട്രെൻഡിങ്ങ്",
+  "hoonarHighlights": "ഹൂണർ ഹൈലൈറ്റുകൾ",
+  "featuredTalents": "പ്രമുഖ പ്രതിഭകൾ",
+  "hoonarStar": "ഹൂണർ സ്റ്റാർ",
+  "hoonarStarOfTheMonth": "മാസത്തിലെ ഹൂണർ സ്റ്റാർ"
 
 
 }

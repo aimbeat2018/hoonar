@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/providers/contest_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../shimmerLoaders/page_content_shimmer.dart';
+import '../../auth_screen/login_screen.dart';
 
 class GuidelineScreen extends StatefulWidget {
   const GuidelineScreen({super.key});
@@ -16,8 +22,48 @@ class GuidelineScreen extends StatefulWidget {
 }
 
 class _GuidelineScreenState extends State<GuidelineScreen> {
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getGuidelines(context);
+    });
+  }
+
+  Future<void> getGuidelines(BuildContext context) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      /*     ListCommonRequestModel requestModel =
+          ListCommonRequestModel(pageType: widget.from);*/
+
+      await contestProvider.getGuidelines(
+          /*requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? ''*/
+          );
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.guidelinesModel?.status == '200') {
+        } else if (contestProvider.guidelinesModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.guidelinesModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(
+              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -58,40 +104,39 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                       ),
                     ),
                     Center(
-                      child: GradientText(
-                        AppLocalizations.of(context)!.guidelines,
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: myLoading.isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.topRight,
-                            colors: [
-                              myLoading.isDark ? Colors.white : Colors.black,
-                              myLoading.isDark ? Colors.white : Colors.black,
-                              myLoading.isDark
-                                  ? greyTextColor8
-                                  : Colors.grey.shade700
-                            ]),
-                      )
-
-                    ),
+                        child: GradientText(
+                      AppLocalizations.of(context)!.guidelines,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark
+                                ? greyTextColor8
+                                : Colors.grey.shade700
+                          ]),
+                    )),
                     SizedBox(
                       height: 15,
                     ),
-                    Html(
-                      data: """
-  <h1>Hoonar</h1>
-  <p>Hoonar Guidelines</p>
-  """,
-                      style: {
-                        "body": Style(
-                          color: myLoading.isDark ? Colors.white : Colors.black,
-                        ),
-                      },
-                    )
+                    contestProvider.isGuidelinesLoading ||
+                            contestProvider.guidelinesModel == null ||
+                            contestProvider.guidelinesModel!.data == null
+                        ? PageContentShimmer()
+                        : Html(
+                            data: contestProvider.guidelinesModel!.data ?? '',
+                            style: {
+                                "body": Style(
+                                    color: myLoading.isDark
+                                        ? Colors.pink
+                                        : Colors.black),
+                              })
                   ],
                 ),
               ),

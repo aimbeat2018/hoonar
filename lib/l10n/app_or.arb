@@ -217,6 +217,11 @@
   "areYouSureYouWantToDeleteComment": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଟିପ୍ପଣୀ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?",
   "delete": "କାଢନ୍ତୁ",
   "removeDevice": "ଡିଭାଇସ କାଢନ୍ତୁ",
-  "areYouSureYouWantToRemoveDevice": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଡିଭାଇସ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?"
+  "areYouSureYouWantToRemoveDevice": "ଆପଣ ନିଶ୍ଚିତ ଏହି ଡିଭାଇସ କାଢିବାକୁ ଚାହାଁନ୍ତି କି?",
+  "trendingNow": "ଏବେ ଟ୍ରେଣ୍ଡିଂ",
+  "hoonarHighlights": "ହୁନାର ହାଇଲାଇଟସ୍",
+  "featuredTalents": "ବିଶେଷ ପ୍ରତିଭାମାନ",
+  "hoonarStar": "ହୁନାର ସ୍ଟାର",
+  "hoonarStarOfTheMonth": "ମାସର ହୁନାର ସ୍ଟାର"
 
 }

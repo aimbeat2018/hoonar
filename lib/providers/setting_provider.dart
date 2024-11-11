@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hoonar/model/request_model/add_help_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
+import 'package:hoonar/model/success_models/contact_details_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/help_issues_list_model.dart';
@@ -20,6 +21,7 @@ class SettingProvider extends ChangeNotifier {
   String? _errorMessage;
 
   PageContentModel? _pageContentModel;
+  ContactDetailsModel? _contactDetailsModel;
   DevicesListModel? _devicesListModel;
   FollowUnfollowSuccessModel? _removeDeviceModel;
   FollowUnfollowSuccessModel? _addHelpRequest;
@@ -36,6 +38,8 @@ class SettingProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   PageContentModel? get pageContentModel => _pageContentModel;
+
+  ContactDetailsModel? get contactDetailsModel => _contactDetailsModel;
 
   DevicesListModel? get devicesListModel => _devicesListModel;
 
@@ -55,6 +59,23 @@ class SettingProvider extends ChangeNotifier {
       PageContentModel successModel =
           await _settingService.getPageContent(requestModel, accessToken);
       _pageContentModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isPageLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getContactDetails(String accessToken) async {
+    _isPageLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      ContactDetailsModel successModel =
+          await _settingService.getContactDetails(accessToken);
+      _contactDetailsModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

@@ -6,7 +6,7 @@ import 'package:gradient_borders/input_borders/gradient_outline_input_border.dar
 import 'package:hoonar/model/request_model/add_help_request_model.dart';
 import 'package:hoonar/model/success_models/help_issues_list_model.dart';
 import 'package:provider/provider.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
@@ -35,6 +35,47 @@ class _HelpScreenState extends State<HelpScreen> {
   int issueId = -1;
   final GlobalKey<FormState> _formKey = GlobalKey();
   SessionManager sessionManager = SessionManager();
+  String mobileNumber = "", emailId = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getContactData(context);
+    });
+  }
+
+  Future<void> getContactData(BuildContext context) async {
+    final settingProvider =
+        Provider.of<SettingProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      await settingProvider.getContactDetails(
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (settingProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, settingProvider.errorMessage ?? '');
+      } else {
+        if (settingProvider.contactDetailsModel?.status == '200') {
+          if (settingProvider.contactDetailsModel != null) {
+            if (settingProvider.contactDetailsModel!.data != null) {
+              mobileNumber =
+                  settingProvider.contactDetailsModel!.data!.helpContact ?? '';
+              emailId =
+                  settingProvider.contactDetailsModel!.data!.helpMail ?? '';
+            }
+          }
+        } else if (settingProvider.contactDetailsModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, settingProvider.contactDetailsModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -496,89 +537,106 @@ class _HelpScreenState extends State<HelpScreen> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: ShapeDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment(1.00, 0.00),
-                                    end: Alignment(-1, 0),
-                                    colors: [
-                                      Color(0xFF9D9D9D),
-                                      Color(0xFF5A5A5A)
+                                  child: InkWell(
+                                onTap: () {
+                                  if (mobileNumber != "") {
+                                    openDialPad(mobileNumber);
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: ShapeDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(1.00, 0.00),
+                                      end: Alignment(-1, 0),
+                                      colors: [
+                                        Color(0xFF9D9D9D),
+                                        Color(0xFF5A5A5A)
+                                      ],
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7.13),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/phone.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .helpCallUs
+                                            .toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(7.13),
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/phone.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .helpCallUs
-                                          .toUpperCase(),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               )),
                               Expanded(
-                                  child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                margin: EdgeInsets.symmetric(horizontal: 20),
-                                decoration: ShapeDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment(1.00, 0.00),
-                                    end: Alignment(-1, 0),
-                                    colors: [
-                                      Color(0xFF9D9D9D),
-                                      Color(0xFF5A5A5A)
+                                  child: InkWell(
+                                onTap: () {
+                                  if (emailId != "") {
+                                    sendEmail(emailId,
+                                        subject: "Feedback/Help Request");
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  margin: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: ShapeDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(1.00, 0.00),
+                                      end: Alignment(-1, 0),
+                                      colors: [
+                                        Color(0xFF9D9D9D),
+                                        Color(0xFF5A5A5A)
+                                      ],
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(7.13),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/mail.png',
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .helpMailUs
+                                            .toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(7.13),
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/mail.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .helpMailUs
-                                          .toUpperCase(),
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
                                 ),
                               ))
                             ],
@@ -594,6 +652,31 @@ class _HelpScreenState extends State<HelpScreen> {
         ),
       );
     });
+  }
+
+  Future<void> openDialPad(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri, mode: LaunchMode.externalApplication);
+    } else {
+      print('Could not launch $phoneUri');
+    }
+  }
+
+  Future<void> sendEmail(String email, {String? subject, String? body}) async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      queryParameters: {
+        'subject': subject ?? '',
+        'body': body ?? '',
+      },
+    );
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    } else {
+      print('Could not launch $emailUri');
+    }
   }
 
   void _showIssueBottomSheet(BuildContext context, bool isDarkMode) {

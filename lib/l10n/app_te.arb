@@ -217,6 +217,11 @@
   "areYouSureYouWantToDeleteComment": "మీరు నిజంగా ఈ వ్యాఖ్యను తొలగించాలనుకుంటున్నారా?",
   "delete": "తొలగించు",
   "removeDevice": "పరికరాన్ని తీసివేయండి",
-  "areYouSureYouWantToRemoveDevice": "మీరు నిజంగా ఈ పరికరాన్ని తొలగించాలనుకుంటున్నారా?"
+  "areYouSureYouWantToRemoveDevice": "మీరు నిజంగా ఈ పరికరాన్ని తొలగించాలనుకుంటున్నారా?",
+  "trendingNow": "ఇప్పుడు ట్రెండింగ్",
+  "hoonarHighlights": "హూనార్ ముఖ్యాంశాలు",
+  "featuredTalents": "ప్రధాన ప్రతిభలు",
+  "hoonarStar": "హూనార్ స్టార్",
+  "hoonarStarOfTheMonth": "మాస హూనార్ స్టార్"
 
 }

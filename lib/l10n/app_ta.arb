@@ -217,6 +217,11 @@
   "areYouSureYouWantToDeleteComment": "இந்தக் கருத்தை நீக்க விரும்புகிறீர்களா?",
   "delete": "நீக்கவும்",
   "removeDevice": "சாதனத்தை அகற்று",
-  "areYouSureYouWantToRemoveDevice": "இந்த சாதனத்தை அகற்ற விரும்புகிறீர்களா?"
+  "areYouSureYouWantToRemoveDevice": "இந்த சாதனத்தை அகற்ற விரும்புகிறீர்களா?",
+  "trendingNow": "இப்போது பிரபலமானது",
+  "hoonarHighlights": "ஹூனார் ஹைலைட்ஸ்",
+  "featuredTalents": "சிறப்பு திறமைகள்",
+  "hoonarStar": "ஹூனார் நட்சத்திரம்",
+  "hoonarStarOfTheMonth": "மாதத்தின் ஹூனார் நட்சத்திரம்"
 
 }

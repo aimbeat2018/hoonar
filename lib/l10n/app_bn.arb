@@ -217,6 +217,11 @@
   "areYouSureYouWantToDeleteComment": "আপনি কি নিশ্চিতভাবে এই মন্তব্যটি মুছে ফেলতে চান?",
   "delete": "মুছে ফেলুন",
   "removeDevice": "ডিভাইস সরান",
-  "areYouSureYouWantToRemoveDevice": "আপনি কি নিশ্চিতভাবে এই ডিভাইসটি সরাতে চান?"
+  "areYouSureYouWantToRemoveDevice": "আপনি কি নিশ্চিতভাবে এই ডিভাইসটি সরাতে চান?",
+  "trendingNow": "এখন ট্রেন্ডিং",
+  "hoonarHighlights": "হুনার হাইলাইটস",
+  "featuredTalents": "বৈশিষ্ট্যযুক্ত প্রতিভা",
+  "hoonarStar": "হুনার স্টার",
+  "hoonarStarOfTheMonth": "মাসের হুনার স্টার"
 
 }

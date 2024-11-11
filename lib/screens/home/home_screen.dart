@@ -374,6 +374,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                 AppLocalizations.of(context)!.foryours,
                                 homeOtherData!.forYouPostList ?? [],
                                 myLoading.isDark),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.trendingNowPostList!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!.trendingNow,
+                                homeOtherData!.trendingNowPostList ?? [],
+                                myLoading.isDark),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!
+                              .hoonarHighlightsPostList!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!.hoonarHighlights,
+                                homeOtherData!.hoonarHighlightsPostList ?? [],
+                                myLoading.isDark),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.featuredTalentPostList!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!.featuredTalents,
+                                homeOtherData!.featuredTalentPostList ?? [],
+                                myLoading.isDark),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.hoonarStarsPostList!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!.hoonarStar,
+                                homeOtherData!.hoonarStarsPostList ?? [],
+                                myLoading.isDark),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (homeOtherData!.hoonarStarOfMonths!.isNotEmpty)
+                            otherListWidget(
+                                AppLocalizations.of(context)!
+                                    .hoonarStarOfTheMonth,
+                                homeOtherData!.hoonarStarOfMonths ?? [],
+                                myLoading.isDark),
                         ],
                       ),
 
@@ -446,6 +488,51 @@ class _HomeScreenState extends State<HomeScreen> {
                       SlideRightRoute(
                           page: const ViewAllScreen(
                         type: 'for_yours',
+                      )),
+                    );
+                  } else if (title ==
+                      AppLocalizations.of(context)!.trendingNow) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'trending_now',
+                      )),
+                    );
+                  } else if (title ==
+                      AppLocalizations.of(context)!.hoonarHighlights) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'hoonar_highlights',
+                      )),
+                    );
+                  } else if (title ==
+                      AppLocalizations.of(context)!.featuredTalents) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'featured_talent',
+                      )),
+                    );
+                  } else if (title ==
+                      AppLocalizations.of(context)!.hoonarStar) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'hoonar_stars',
+                      )),
+                    );
+                  } else if (title ==
+                      AppLocalizations.of(context)!.hoonarStarOfTheMonth) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'hoonar_star_of_months',
                       )),
                     );
                   }

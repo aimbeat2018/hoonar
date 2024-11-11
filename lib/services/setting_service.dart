@@ -1,5 +1,8 @@
 import 'package:hoonar/model/request_model/add_help_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
+import 'package:hoonar/model/success_models/contact_details_model.dart';
+import 'package:hoonar/model/success_models/contact_details_model.dart';
+import 'package:hoonar/model/success_models/contact_details_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
@@ -26,6 +29,14 @@ class SettingService {
       accessToken: accessToken,
       data: requestModel.toJson(),
       fromJson: (data) => PageContentModel.fromJson(data),
+    );
+  }
+
+  Future<ContactDetailsModel> getContactDetails(String accessToken) async {
+    return apiMethods.sendRequest<ContactDetailsModel>(
+      '$baseUrl$contactDetailsUrl',
+      accessToken: accessToken,
+      fromJson: (data) => ContactDetailsModel.fromJson(data),
     );
   }
 

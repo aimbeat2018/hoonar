@@ -217,6 +217,11 @@
   "areYouSureYouWantToDeleteComment": "क्या आप वाकई इस टिप्पणी को हटाना चाहते हैं?",
   "delete": "हटाएं",
   "removeDevice": "डिवाइस हटाएं",
-  "areYouSureYouWantToRemoveDevice": "क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?"
+  "areYouSureYouWantToRemoveDevice": "क्या आप वाकई इस डिवाइस को हटाना चाहते हैं?",
+  "trendingNow": "अभी ट्रेंड कर रहा है",
+  "hoonarHighlights": "हूनर हाइलाइट्स",
+  "featuredTalents": "विशेष प्रतिभाएँ",
+  "hoonarStar": "हूनर स्टार",
+  "hoonarStarOfTheMonth": "महीने का हुनर स्टार"
 
 }

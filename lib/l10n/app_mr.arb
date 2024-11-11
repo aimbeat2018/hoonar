@@ -217,7 +217,12 @@
   "areYouSureYouWantToDeleteComment": "आपण नक्की ही टिप्पणी हटवू इच्छिता?",
   "delete": "हटवा",
   "removeDevice": "डिव्हाइस काढा",
-  "areYouSureYouWantToRemoveDevice": "आपण नक्की हे डिव्हाइस काढू इच्छिता?"
+  "areYouSureYouWantToRemoveDevice": "आपण नक्की हे डिव्हाइस काढू इच्छिता?",
+  "trendingNow": "आता ट्रेंडिंग आहे",
+  "hoonarHighlights": "हूनर हायलाइट्स",
+  "featuredTalents": "विशेष प्रतिभा",
+  "hoonarStar": "हूनर स्टार",
+  "hoonarStarOfTheMonth": "महिन्याचा हूनर स्टार"
 
 
 

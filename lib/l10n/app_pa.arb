@@ -216,6 +216,11 @@
   "areYouSureYouWantToDeleteComment": "ਕੀ ਤੁਸੀਂ ਇਹ ਟਿੱਪਣੀ ਮਿਟਾਉਣ ਚਾਹੁੰਦੇ ਹੋ?",
   "delete": "ਮਿਟਾਓ",
   "removeDevice": "ਡਿਵਾਈਸ ਹਟਾਓ",
-  "areYouSureYouWantToRemoveDevice": "ਕੀ ਤੁਸੀਂ ਇਹ ਡਿਵਾਈਸ ਹਟਾਉਣ ਚਾਹੁੰਦੇ ਹੋ?"
+  "areYouSureYouWantToRemoveDevice": "ਕੀ ਤੁਸੀਂ ਇਹ ਡਿਵਾਈਸ ਹਟਾਉਣ ਚਾਹੁੰਦੇ ਹੋ?",
+  "trendingNow": "ਹੌਣ ਟ੍ਰੈਂਡ ਕਰ ਰਿਹਾ ਹੈ",
+  "hoonarHighlights": "ਹੂਨਰ ਹਾਈਲਾਈਟਸ",
+  "featuredTalents": "ਪ੍ਰਮੁੱਖ ਪ੍ਰਤਿਭਾਵਾਂ",
+  "hoonarStar": "ਹੂਨਰ ਸਟਾਰ",
+  "hoonarStarOfTheMonth": "ਮਹੀਨੇ ਦਾ ਹੂਨਰ ਸਟਾਰ"
 
 }

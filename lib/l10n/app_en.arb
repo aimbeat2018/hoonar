@@ -218,5 +218,10 @@
   "areYouSureYouWantToDeleteComment": "Are you sure you want to this Delete Comment",
   "delete": "Delete",
   "removeDevice": "Remove Device",
-  "areYouSureYouWantToRemoveDevice": "Are you sure you want to remove this device"
+  "areYouSureYouWantToRemoveDevice": "Are you sure you want to remove this device",
+  "trendingNow": "Trending now",
+  "hoonarHighlights": "Hoonar highlights",
+  "featuredTalents": "Featured talents",
+  "hoonarStar": "Hoonar star",
+  "hoonarStarOfTheMonth": "Hoonar star of the month"
 }

@@ -28,8 +28,14 @@ class HomeOtherData {
   List<PostsListData>? myFavPostList;
   List<PostsListData>? judgesChoicePostList;
   List<PostsListData>? forYouPostList;
+  List<PostsListData>? trendingNowPostList;
+  List<PostsListData>? hoonarHighlightsPostList;
+  List<PostsListData>? featuredTalentPostList;
+  List<PostsListData>? hoonarStarsPostList;
+  List<PostsListData>? hoonarStarOfMonths;
 
-  HomeOtherData({this.myFavPostList, this.judgesChoicePostList, this.forYouPostList});
+  HomeOtherData(
+      {this.myFavPostList, this.judgesChoicePostList, this.forYouPostList});
 
   HomeOtherData.fromJson(Map<String, dynamic> json) {
     if (json['my_fav_post_list'] != null) {
@@ -50,6 +56,36 @@ class HomeOtherData {
         forYouPostList!.add(PostsListData.fromJson(v));
       });
     }
+    if (json['trending_now_post_list'] != null) {
+      trendingNowPostList = <PostsListData>[];
+      json['trending_now_post_list'].forEach((v) {
+        trendingNowPostList!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['hoonar_highlights_post_list'] != null) {
+      hoonarHighlightsPostList = <PostsListData>[];
+      json['hoonar_highlights_post_list'].forEach((v) {
+        hoonarHighlightsPostList!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['featured_talent_post_list'] != null) {
+      featuredTalentPostList = <PostsListData>[];
+      json['featured_talent_post_list'].forEach((v) {
+        featuredTalentPostList!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['hoonar_stars_post_list'] != null) {
+      hoonarStarsPostList = <PostsListData>[];
+      json['hoonar_stars_post_list'].forEach((v) {
+        hoonarStarsPostList!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['hoonar_star_of_months'] != null) {
+      hoonarStarOfMonths = <PostsListData>[];
+      json['hoonar_star_of_months'].forEach((v) {
+        hoonarStarOfMonths!.add(PostsListData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +100,26 @@ class HomeOtherData {
     if (forYouPostList != null) {
       data['for_you_post_list'] =
           forYouPostList!.map((v) => v.toJson()).toList();
+    }
+    if (trendingNowPostList != null) {
+      data['trending_now_post_list'] =
+          trendingNowPostList!.map((v) => v.toJson()).toList();
+    }
+    if (hoonarHighlightsPostList != null) {
+      data['hoonar_highlights_post_list'] =
+          hoonarHighlightsPostList!.map((v) => v.toJson()).toList();
+    }
+    if (featuredTalentPostList != null) {
+      data['featured_talent_post_list'] =
+          featuredTalentPostList!.map((v) => v.toJson()).toList();
+    }
+    if (hoonarStarsPostList != null) {
+      data['hoonar_stars_post_list'] =
+          hoonarStarsPostList!.map((v) => v.toJson()).toList();
+    }
+    if (hoonarStarOfMonths != null) {
+      data['hoonar_star_of_months'] =
+          hoonarStarOfMonths!.map((v) => v.toJson()).toList();
     }
     return data;
   }

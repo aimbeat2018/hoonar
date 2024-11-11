@@ -34,10 +34,13 @@ const String storeSearchHistoryUrl = 'User/storeSearchHistory';
 const String userSearchHistoryUrl = 'User/userSearchHistory';
 const String removeUserSearchHistoryUrl = 'User/removeUserSearchHistory';
 const String pageContentUrl = 'User/getPageContent';
+const String contactDetailsUrl = 'User/getContactDetails';
 const String userDevicesUrl = 'User/getUserDevices';
 const String removeDeviceUrl = 'User/logoutDevice';
 const String helpIssuesUrl = 'User/getHelpIssues';
 const String storeHelpRequestUrl = 'User/storeHelpRequest';
+const String storePaymentUrl = 'User/storePayment';
+const String getGuidelinesUrl = 'User/getGuidelines';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
