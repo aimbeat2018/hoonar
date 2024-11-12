@@ -7,6 +7,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../constants/my_loading/my_loading.dart';
 import '../../../../constants/theme.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
+import '../../../providers/contest_provider.dart';
+import '../../../shimmerLoaders/news_event_list_shimmer.dart';
+import '../../auth_screen/login_screen.dart';
 
 class UpcomingEventsScreen extends StatefulWidget {
   const UpcomingEventsScreen({super.key});
@@ -16,8 +24,47 @@ class UpcomingEventsScreen extends StatefulWidget {
 }
 
 class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getNewsEvent(context);
+    });
+  }
+
+  Future<void> getNewsEvent(BuildContext context) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(/*date: _selectedDate*/);
+
+      await contestProvider.getUpcomingNewsEventList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.newsEventSuccessModel?.status == '200') {
+        } else if (contestProvider.newsEventSuccessModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.newsEventSuccessModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -58,89 +105,110 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                       ),
                     ),
                     Center(
-                      child: GradientText(
-                        AppLocalizations.of(context)!.upcomingEvents,
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          color: myLoading.isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.topRight,
-                            colors: [
-                              myLoading.isDark ? Colors.white : Colors.black,
-                              myLoading.isDark ? Colors.white : Colors.black,
-                              myLoading.isDark
-                                  ? greyTextColor8
-                                  : Colors.grey.shade700
-                            ]),
-                      )
-
-                    ),
+                        child: GradientText(
+                      AppLocalizations.of(context)!.upcomingEvents,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark ? Colors.white : Colors.black,
+                            myLoading.isDark
+                                ? greyTextColor8
+                                : Colors.grey.shade700
+                          ]),
+                    )),
                     SizedBox(
                       height: 15,
                     ),
-                    ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 15),
-                      shrinkWrap: true,
-                      itemCount: 5,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10.0, bottom: 10, right: 10, left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .headline
-                                      .toUpperCase(),
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    color: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                                Text(
-                                  '${AppLocalizations.of(context)!.today}, 09:00 PM',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    color: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    contestProvider.isNewsLoading ||
+                            contestProvider.newsEventSuccessModel == null
+                        ? const NewsEventListShimmer()
+                        : contestProvider.newsEventSuccessModel!.data == null ||
+                                contestProvider
+                                    .newsEventSuccessModel!.data!.isEmpty
+                            ? DataNotFound()
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 15),
+                                shrinkWrap: true,
+                                itemCount: contestProvider
+                                    .newsEventSuccessModel!.data!.length,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: EdgeInsets.symmetric(vertical: 10),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color: myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            width: 1)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10.0,
+                                          bottom: 10,
+                                          right: 10,
+                                          left: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            contestProvider
+                                                    .newsEventSuccessModel!
+                                                    .data![index]
+                                                    .title ??
+                                                ''.toUpperCase(),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            contestProvider
+                                                    .newsEventSuccessModel!
+                                                    .data![index]
+                                                    .description ??
+                                                '',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                          Text(
+                                            /* '${AppLocalizations.of(context)!.today}, 09:00 PM',*/
+                                            contestProvider
+                                                    .newsEventSuccessModel!
+                                                    .data![index]
+                                                    .createdAt ??
+                                                '',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                   ],
                 ),
               ),

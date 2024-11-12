@@ -7,6 +7,7 @@ import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
 import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
+import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/services/contest_service.dart';
@@ -22,6 +23,7 @@ class ContestProvider extends ChangeNotifier {
   bool _isLeaderboardLoading = false;
   bool _isUserRankLoading = false;
   bool _isHoonarStarLoading = false;
+  bool _isNewsLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
@@ -30,6 +32,7 @@ class ContestProvider extends ChangeNotifier {
   LeaderboardListModel? _leaderboardListModel;
   UserRankSuccessModel? _userRankSuccessModel;
   HoonarStarSuccessModel? _hoonarStarSuccessModel;
+  NewsEventSuccessModel? _newsEventSuccessModel;
   List<LeaderboardListData> _leaderboardList = [];
   List<LeaderboardListData> _filteredLeaderboardList = [];
 
@@ -45,6 +48,8 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isHoonarStarLoading => _isHoonarStarLoading;
 
+  bool get isNewsLoading => _isNewsLoading;
+
   String? get errorMessage => _errorMessage;
 
   LevelListModel? get levelListModel => _levelListModel;
@@ -56,6 +61,8 @@ class ContestProvider extends ChangeNotifier {
   UserRankSuccessModel? get userRankSuccessModel => _userRankSuccessModel;
 
   HoonarStarSuccessModel? get hoonarStarSuccessModel => _hoonarStarSuccessModel;
+
+  NewsEventSuccessModel? get newsEventSuccessModel => _newsEventSuccessModel;
 
   StorePaymentSuccessModel? get storePaymentSuccessModel =>
       _storePaymentSuccessModel;
@@ -193,6 +200,42 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isHoonarStarLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getNewsEventList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isNewsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      NewsEventSuccessModel successModel =
+          await _contestService.getNewsEvent(requestModel, accessToken);
+      _newsEventSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isNewsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getUpcomingNewsEventList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isNewsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      NewsEventSuccessModel successModel =
+          await _contestService.getUpcomingNewsEvent(requestModel, accessToken);
+      _newsEventSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isNewsLoading = false;
       notifyListeners();
     }
   }

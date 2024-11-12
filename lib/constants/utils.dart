@@ -44,6 +44,8 @@ const String getGuidelinesUrl = 'User/getGuidelines';
 const String getHoonarLeaderboardUrl = 'Post/getHoonarLeaderboard';
 const String getUserRankUrl = 'Post/getUserRank';
 const String getHoonarStarUrl = 'Post/getHoonarStars';
+const String getNewsEventsListUrl = 'User/getNewsEventsList';
+const String getUpcomingEventsUrl = 'User/getUpcomingEvents';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

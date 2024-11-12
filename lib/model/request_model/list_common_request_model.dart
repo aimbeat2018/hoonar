@@ -12,6 +12,7 @@ class ListCommonRequestModel {
   String? comment;
   String? commentId;
   String? deviceId;
+  String? date;
   String? pageType;  // privacy,termsofuse,about_us,contact_us
 
   ListCommonRequestModel({
@@ -28,6 +29,7 @@ class ListCommonRequestModel {
     this.comment,
     this.commentId,
     this.deviceId,
+    this.date,
     this.pageType,
   });
 
@@ -46,6 +48,7 @@ class ListCommonRequestModel {
     commentId = json['comments_id'];
     pageType = json['page_type'];
     deviceId = json['device_id'];
+    date = json['date'];
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +67,7 @@ class ListCommonRequestModel {
     data['comments_id'] = commentId;
     data['page_type'] = pageType;
     data['device_id'] = deviceId;
+    data['date'] = date;
     return data;
   }
 }

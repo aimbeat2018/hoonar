@@ -31,7 +31,7 @@ class LevelListData {
   int? levelId;
   String? levelName;
   String? description;
-  int? fees;
+  String? fees;
   int? isUnlocked;
   int? uploadedCount;
   int? pendingCount;

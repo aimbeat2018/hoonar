@@ -2,15 +2,12 @@ import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
-import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
-import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
-import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
-import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
+import 'package:hoonar/model/success_models/news_event_success_model.dart';
+import 'package:hoonar/model/success_models/news_event_success_model.dart';
+import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
-import 'package:hoonar/model/success_models/user_rank_success_model.dart';
-import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 
 import '../constants/utils.dart';
@@ -24,6 +21,8 @@ class ContestService {
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<LevelListModel>(
       '$baseUrl$getLevelUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
       accessToken: accessToken,
       fromJson: (data) => LevelListModel.fromJson(data),
     );
@@ -80,6 +79,28 @@ class ContestService {
       data: requestModel.toJson(),
       accessToken: accessToken,
       fromJson: (data) => HoonarStarSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<NewsEventSuccessModel> getNewsEvent(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<NewsEventSuccessModel>(
+      '$baseUrl$getNewsEventsListUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => NewsEventSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<NewsEventSuccessModel> getUpcomingNewsEvent(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<NewsEventSuccessModel>(
+      '$baseUrl$getUpcomingEventsUrl',
+      /* method: 'POST',
+      data: requestModel.toJson(),*/
+      accessToken: accessToken,
+      fromJson: (data) => NewsEventSuccessModel.fromJson(data),
     );
   }
 }

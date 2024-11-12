@@ -345,77 +345,108 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? const ListHorizontalShimmer()
                     : Column(
                         children: [
-                          if (homeOtherData!.judgesChoicePostList!.isNotEmpty)
-                            Column(
-                              children: [
-                                otherListWidget(
-                                    AppLocalizations.of(context)!.judgesChoice,
-                                    homeOtherData!.judgesChoicePostList ?? [],
-                                    myLoading.isDark),
-                              ],
-                            ),
+                          homeOtherData!.judgesChoicePostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.judgesChoicePostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : Column(
+                                      children: [
+                                        otherListWidget(
+                                            AppLocalizations.of(context)!
+                                                .judgesChoice,
+                                            homeOtherData!
+                                                    .judgesChoicePostList ??
+                                                [],
+                                            myLoading.isDark),
+                                      ],
+                                    ),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.myFavPostList!.isNotEmpty)
-                            Column(
-                              children: [
-                                otherListWidget(
-                                    AppLocalizations.of(context)!.favrite,
-                                    homeOtherData!.myFavPostList ?? [],
-                                    myLoading.isDark),
-                              ],
-                            ),
+                          homeOtherData!.myFavPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.myFavPostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : Column(
+                                      children: [
+                                        otherListWidget(
+                                            AppLocalizations.of(context)!
+                                                .favrite,
+                                            homeOtherData!.myFavPostList ?? [],
+                                            myLoading.isDark),
+                                      ],
+                                    ),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.forYouPostList!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!.foryours,
-                                homeOtherData!.forYouPostList ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.forYouPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.forYouPostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : otherListWidget(
+                                      AppLocalizations.of(context)!.foryours,
+                                      homeOtherData!.forYouPostList ?? [],
+                                      myLoading.isDark),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.trendingNowPostList!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!.trendingNow,
-                                homeOtherData!.trendingNowPostList ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.trendingNowPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.trendingNowPostList!.isNotEmpty
+                                  ? otherListWidget(
+                                      AppLocalizations.of(context)!.trendingNow,
+                                      homeOtherData!.trendingNowPostList ?? [],
+                                      myLoading.isDark)
+                                  : const SizedBox.shrink(),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!
-                              .hoonarHighlightsPostList!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!.hoonarHighlights,
-                                homeOtherData!.hoonarHighlightsPostList ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.hoonarHighlightsPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.hoonarHighlightsPostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : otherListWidget(
+                                      AppLocalizations.of(context)!
+                                          .hoonarHighlights,
+                                      homeOtherData!.hoonarHighlightsPostList ??
+                                          [],
+                                      myLoading.isDark),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.featuredTalentPostList!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!.featuredTalents,
-                                homeOtherData!.featuredTalentPostList ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.featuredTalentPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.featuredTalentPostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : otherListWidget(
+                                      AppLocalizations.of(context)!
+                                          .featuredTalents,
+                                      homeOtherData!.featuredTalentPostList ??
+                                          [],
+                                      myLoading.isDark),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.hoonarStarsPostList!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!.hoonarStar,
-                                homeOtherData!.hoonarStarsPostList ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.hoonarStarsPostList == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.hoonarStarsPostList!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : otherListWidget(
+                                      AppLocalizations.of(context)!.hoonarStar,
+                                      homeOtherData!.hoonarStarsPostList ?? [],
+                                      myLoading.isDark),
                           const SizedBox(
                             height: 10,
                           ),
-                          if (homeOtherData!.hoonarStarOfMonths!.isNotEmpty)
-                            otherListWidget(
-                                AppLocalizations.of(context)!
-                                    .hoonarStarOfTheMonth,
-                                homeOtherData!.hoonarStarOfMonths ?? [],
-                                myLoading.isDark),
+                          homeOtherData!.hoonarStarOfMonths == null
+                              ? const SizedBox.shrink()
+                              : homeOtherData!.hoonarStarOfMonths!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : otherListWidget(
+                                      AppLocalizations.of(context)!
+                                          .hoonarStarOfTheMonth,
+                                      homeOtherData!.hoonarStarOfMonths ?? [],
+                                      myLoading.isDark),
                         ],
                       ),
 
