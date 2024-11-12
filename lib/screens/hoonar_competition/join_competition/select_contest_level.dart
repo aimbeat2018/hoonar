@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
+import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
 import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
@@ -15,6 +16,7 @@ import '../../../custom/snackbar_util.dart';
 import '../../../model/star_category_model.dart';
 import '../../../model/success_models/level_list_model.dart';
 import '../../auth_screen/login_screen.dart';
+import 'contest_join_options_screen.dart';
 
 class SelectContestLevel extends StatefulWidget {
   final int? categoryId;
@@ -28,7 +30,6 @@ class SelectContestLevel extends StatefulWidget {
 }
 
 class _SelectContestLevelState extends State<SelectContestLevel> {
-  List<StarCategoryModel> zoneLevelsList = [];
   SessionManager sessionManager = SessionManager();
 
   @override
@@ -59,8 +60,40 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, contestProvider.levelListModel?.message! ?? '');
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
+  Future<void> storePayment(
+      BuildContext context, StorePaymentRequestModel requestModel) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      await contestProvider.storePayment(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.storePaymentSuccessModel?.status == '200') {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            SlideRightRoute(
+                page: ContestJoinSuccessScreen(
+                    categoryId: widget.categoryId,
+                    levelId: requestModel.levelId.toString())),
+          );
+        } else if (contestProvider.storePaymentSuccessModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(context,
+              contestProvider.storePaymentSuccessModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -127,7 +160,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                   ),
                   contestProvider.isLevelLoading ||
                           contestProvider.levelListModel == null
-                      ? LevelShimmer()
+                      ? const LevelShimmer()
                       : contestProvider.levelListModel!.data == null ||
                               contestProvider.levelListModel!.data!.isEmpty
                           ? DataNotFound()
@@ -144,12 +177,28 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                       vertical: 8.0, horizontal: 5),
                                   child: InkWell(
                                     onTap: () {
-                                      showPaymentPopUp(
-                                          context,
-                                          myLoading.isDark,
-                                          index,
-                                          contestProvider
-                                              .levelListModel!.data![index]);
+                                      if (contestProvider.levelListModel!
+                                              .data![index].isUnlocked ==
+                                          1) {
+                                        Navigator.push(
+                                            context,
+                                            SlideRightRoute(
+                                                page: ContestJoinOptionsScreen(
+                                              levelId: contestProvider
+                                                  .levelListModel!
+                                                  .data![index]
+                                                  .levelId
+                                                  .toString(),
+                                              categoryId: widget.categoryId,
+                                            )));
+                                      } else {
+                                        showPaymentPopUp(
+                                            context,
+                                            myLoading.isDark,
+                                            index,
+                                            contestProvider
+                                                .levelListModel!.data![index]);
+                                      }
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -328,47 +377,60 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                     ),
                   ),
                   Expanded(
-                      child: InkWell(
-                    onTap: () {
-                      /*setState(() {
-                        if (zoneLevelsList[index].darkModeImage == "1") {
-                          zoneLevelsList[index].darkModeImage = "0";
-                        } else {
-                          zoneLevelsList[index].darkModeImage = "1";
-                        }
-                      });
-*/
-                      Navigator.push(
-                        context,
-                        SlideRightRoute(page: ContestJoinSuccessScreen()),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      margin: const EdgeInsets.only(right: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Colors.black,
-                            Color(0xFF313131),
-                            Color(0xFF636363)
-                          ],
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.payNow,
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ))
+                      child: Provider.of<ContestProvider>(context)
+                              .isStorePaymentLoading
+                          ? const Center(
+                              // Centering the progress indicator
+                              child: SizedBox(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                storePayment(
+                                    context,
+                                    StorePaymentRequestModel(
+                                        userId: int.parse(sessionManager
+                                            .getString(SessionManager.userId)!),
+                                        levelId: model.levelId,
+                                        categoryId: widget.categoryId,
+                                        amount: model.fees,
+                                        transactionId: '123',
+                                        // transactionId will change when payment gateway received
+                                        paymentStatus:
+                                            'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
+                              },
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                margin: const EdgeInsets.only(right: 20),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Colors.black,
+                                      Color(0xFF313131),
+                                      Color(0xFF636363)
+                                    ],
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.payNow,
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ))
                 ],
               ),
               const SizedBox(

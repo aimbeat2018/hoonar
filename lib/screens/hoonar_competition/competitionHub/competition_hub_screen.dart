@@ -7,7 +7,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/my_loading/my_loading.dart';
 
 class CompetitionHubScreen extends StatefulWidget {
-  const CompetitionHubScreen({super.key});
+  final int? categoryId;
+  final String? levelId;
+
+  const CompetitionHubScreen({super.key, this.categoryId, this.levelId});
 
   @override
   State<CompetitionHubScreen> createState() => _CompetitionHubScreenState();
@@ -126,8 +129,14 @@ class _CompetitionHubScreenState extends State<CompetitionHubScreen> {
                 ),
                 Expanded(
                   child: currentTab == 0
-                      ? HoonarStarsScreen()
-                      : LeaderBoardScreen(),
+                      ? HoonarStarsScreen(
+                    levelId: widget.levelId,
+                    categoryId: widget.categoryId,
+                  )
+                      : LeaderBoardScreen(
+                          levelId: widget.levelId,
+                          categoryId: widget.categoryId,
+                        ),
                 )
               ],
             ),

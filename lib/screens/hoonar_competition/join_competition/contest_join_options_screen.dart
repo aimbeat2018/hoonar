@@ -14,7 +14,10 @@ import '../newsEvents/news_and_events_screen.dart';
 import '../yourRewards/your_rewards_screen.dart';
 
 class ContestJoinOptionsScreen extends StatefulWidget {
-  const ContestJoinOptionsScreen({super.key});
+  final int? categoryId;
+  final String? levelId;
+
+  const ContestJoinOptionsScreen({super.key, this.categoryId, this.levelId});
 
   @override
   State<ContestJoinOptionsScreen> createState() =>
@@ -125,7 +128,11 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                           } else if (index == 1) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(page: CompetitionHubScreen()),
+                              SlideRightRoute(
+                                  page: CompetitionHubScreen(
+                                levelId: widget.levelId,
+                                categoryId: widget.categoryId,
+                              )),
                             );
                           } else if (index == 2) {
                             Navigator.push(

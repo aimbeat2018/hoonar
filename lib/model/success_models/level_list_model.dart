@@ -32,38 +32,38 @@ class LevelListData {
   String? levelName;
   String? description;
   int? fees;
-  String? createdAt;
-  String? updatedAt;
   int? isUnlocked;
+  int? uploadedCount;
+  int? pendingCount;
 
   LevelListData(
       {this.levelId,
       this.levelName,
       this.description,
       this.fees,
-      this.createdAt,
       this.isUnlocked,
-      this.updatedAt});
+      this.uploadedCount,
+      this.pendingCount});
 
   LevelListData.fromJson(Map<String, dynamic> json) {
     levelId = json['level_id'];
     levelName = json['level_name'];
     description = json['description'];
     fees = json['fees'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
     isUnlocked = json['is_unlocked'];
+    uploadedCount = json['uploaded_count'];
+    pendingCount = json['pending_count'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['level_id'] = levelId;
-    data['level_name'] = levelName;
-    data['description'] = description;
-    data['fees'] = fees;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['is_unlocked'] = isUnlocked;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['level_id'] = this.levelId;
+    data['level_name'] = this.levelName;
+    data['description'] = this.description;
+    data['fees'] = this.fees;
+    data['is_unlocked'] = this.isUnlocked;
+    data['uploaded_count'] = this.uploadedCount;
+    data['pending_count'] = this.pendingCount;
     return data;
   }
 }

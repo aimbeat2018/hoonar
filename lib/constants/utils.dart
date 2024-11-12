@@ -41,6 +41,9 @@ const String helpIssuesUrl = 'User/getHelpIssues';
 const String storeHelpRequestUrl = 'User/storeHelpRequest';
 const String storePaymentUrl = 'User/storePayment';
 const String getGuidelinesUrl = 'User/getGuidelines';
+const String getHoonarLeaderboardUrl = 'Post/getHoonarLeaderboard';
+const String getUserRankUrl = 'Post/getUserRank';
+const String getHoonarStarUrl = 'Post/getHoonarStars';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

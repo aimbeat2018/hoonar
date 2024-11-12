@@ -9,7 +9,10 @@ import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 
 class ContestJoinSuccessScreen extends StatefulWidget {
-  const ContestJoinSuccessScreen({super.key});
+  final int? categoryId;
+  final String? levelId;
+
+  const ContestJoinSuccessScreen({super.key, this.categoryId, this.levelId});
 
   @override
   State<ContestJoinSuccessScreen> createState() =>
@@ -93,9 +96,12 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                   ),
                   InkWell(
                     onTap: () => Navigator.push(
-                      context,
-                      SlideRightRoute(page: const ContestJoinOptionsScreen()),
-                    ),
+                        context,
+                        SlideRightRoute(
+                            page: ContestJoinOptionsScreen(
+                          levelId: widget.levelId,
+                          categoryId: widget.categoryId,
+                        ))),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       padding: const EdgeInsets.symmetric(vertical: 12),

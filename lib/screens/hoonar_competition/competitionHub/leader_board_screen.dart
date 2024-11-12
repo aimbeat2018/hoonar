@@ -1,35 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/screens/hoonar_competition/competitionHub/your_rank_screen.dart';
+import 'package:hoonar/shimmerLoaders/leaderboard_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
-import '../../../model/contestant.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../providers/contest_provider.dart';
+import '../../auth_screen/login_screen.dart';
 
 class LeaderBoardScreen extends StatefulWidget {
-  const LeaderBoardScreen({super.key});
+  final int? categoryId;
+  final String? levelId;
+
+  const LeaderBoardScreen({super.key, this.categoryId, this.levelId});
 
   @override
   State<LeaderBoardScreen> createState() => _LeaderBoardScreenState();
 }
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
-  final contestantList = [
-    Contestant("1", 'Prathamesh Santosh Gaikar', '123k'),
-    Contestant("2", 'Pallavi Suresh Joshi', '12.2k'),
-    Contestant("3", 'Pratik Santanu Mhatre', '10.1k'),
-    Contestant("4", 'Sejal Krishna Patil', '11.9k'),
-    Contestant("5", 'Sanjana Harishchandra Singh', '11.5k'),
-    Contestant("6", 'Manmohit S Singh', '11.3k'),
-    Contestant("7", 'Prathamesh Santosh Gaikar', '11k'),
-    Contestant("8", 'Payel Vishal Mondal', '9.7k'),
-  ];
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getLeaderboardList(context);
+    });
+  }
+
+  Future<void> getLeaderboardList(BuildContext context) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      StorePaymentRequestModel requestModel = StorePaymentRequestModel(
+          categoryId: widget.categoryId, levelId: int.parse(widget.levelId!));
+
+      await contestProvider.getLeaderboardList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.leaderboardListModel?.status == 200) {
+          contestProvider.setLeaderboardList(
+              contestProvider.leaderboardListModel?.data ?? []);
+        } else if (contestProvider.leaderboardListModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.leaderboardListModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -39,6 +77,9 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
+                  onChanged: (value) {
+                    contestProvider.filterLeaderboard(value);
+                  },
                   style: GoogleFonts.poppins(
                       color: myLoading.isDark ? Colors.white : Colors.black,
                       fontSize: 14),
@@ -67,7 +108,11 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    SlideRightRoute(page: YourRankScreen()),
+                    SlideRightRoute(
+                        page: YourRankScreen(
+                      levelId: widget.levelId,
+                      categoryId: widget.categoryId,
+                    )),
                   );
                 },
                 child: Hero(
@@ -144,67 +189,76 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                   ))
                 ],
               ),
-              ListView.builder(
-                itemCount: contestantList.length,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final contestant = contestantList[index];
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: (contestant.rank == 1 ||
-                                    contestant.rank == 2 ||
-                                    contestant.rank == 3)
-                                ? Image.asset(
-                                    contestant.rank == 1
-                                        ? 'assets/images/1st.png'
-                                        : contestant.rank == 2
-                                            ? 'assets/images/2nd.png'
-                                            : 'assets/images/3rd.png',
-                                    height: 20,
-                                    width: 20,
-                                  )
-                                : Text(
-                                    contestant.rank.toString(),
+              contestProvider.isLeaderboardLoading ||
+                      contestProvider.leaderboardListModel == null
+                  ? LeaderboardListShimmer()
+                  : contestProvider.filteredLeaderboardList.isEmpty
+                      ? DataNotFound()
+                      : ListView.builder(
+                          itemCount: /* contestProvider
+                              .leaderboardListModel!.data!.length*/
+                              contestProvider.filteredLeaderboardList.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final contestant =
+                                contestProvider.filteredLeaderboardList[index];
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: (contestant.rank == 1 ||
+                                              contestant.rank == 2 ||
+                                              contestant.rank == 3)
+                                          ? Image.asset(
+                                              contestant.rank == 1
+                                                  ? 'assets/images/1st.png'
+                                                  : contestant.rank == 2
+                                                      ? 'assets/images/2nd.png'
+                                                      : 'assets/images/3rd.png',
+                                              height: 20,
+                                              width: 20,
+                                            )
+                                          : Text(
+                                              contestant.rank.toString(),
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white70
+                                                      : Colors.grey.shade900,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            )),
+                                  Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        textAlign: TextAlign.center,
+                                        contestant.fullName ?? '',
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 13,
+                                            color: myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.normal),
+                                      )),
+                                  Expanded(
+                                      child: Text(
                                     textAlign: TextAlign.center,
+                                    contestant.totalVotes.toString(),
                                     style: GoogleFonts.poppins(
                                         fontSize: 13,
                                         color: myLoading.isDark
-                                            ? Colors.white70
-                                            : Colors.grey.shade900,
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontWeight: FontWeight.normal),
-                                  )),
-                        Expanded(
-                            flex: 3,
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              contestant.name,
-                              style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.normal),
-                            )),
-                        Expanded(
-                            child: Text(
-                          textAlign: TextAlign.center,
-                          contestant.votes,
-                          style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              fontWeight: FontWeight.normal),
-                        ))
-                      ],
-                    ),
-                  );
-                },
-              )
+                                  ))
+                                ],
+                              ),
+                            );
+                          },
+                        )
             ],
           ),
         ),
