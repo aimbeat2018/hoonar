@@ -222,6 +222,10 @@
   "hoonarHighlights": "હૂનર હાઇલાઇટ્સ",
   "featuredTalents": "પ્રમુખ પ્રતિભાઓ",
   "hoonarStar": "હૂનર સ્ટાર",
-  "hoonarStarOfTheMonth": "માસનો હૂનર સ્ટાર"
-
+  "hoonarStarOfTheMonth": "માસનો હૂનર સ્ટાર",
+  "capture": "કૅપ્ચર",
+  "faceNotRecognized": "ચહેરો મળ્યો નથી",
+  "male": "પુરુષ",
+  "female": "મહિલા",
+  "other": "અન્ય"
 }

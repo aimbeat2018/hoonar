@@ -222,7 +222,12 @@
   "hoonarHighlights": "ഹൂണർ ഹൈലൈറ്റുകൾ",
   "featuredTalents": "പ്രമുഖ പ്രതിഭകൾ",
   "hoonarStar": "ഹൂണർ സ്റ്റാർ",
-  "hoonarStarOfTheMonth": "മാസത്തിലെ ഹൂണർ സ്റ്റാർ"
+  "hoonarStarOfTheMonth": "മാസത്തിലെ ഹൂണർ സ്റ്റാർ",
+  "capture": "ക്യാപ്ചർ",
+  "faceNotRecognized": "മുഖം കണ്ടെത്തിയില്ല",
+  "male": "പുരുഷൻ",
+  "female": "സ്ത്രീ",
+  "other": "മറ്റ്"
 
 
 }

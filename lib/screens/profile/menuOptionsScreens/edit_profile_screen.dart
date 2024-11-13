@@ -215,9 +215,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                               buildInitialsAvatar(
                                                                   initials),
                                                           fit: BoxFit.cover,
-                                                          width: 80,
-                                                          // Match the size of the CircleAvatar
-                                                          height: 80,
+                                                          // width: 80,
+                                                          // // Match the size of the CircleAvatar
+                                                          // height: 80,
                                                         )
                                                       : buildInitialsAvatar(
                                                           initials),

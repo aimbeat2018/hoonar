@@ -5,7 +5,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
-import 'package:hoonar/screens/hoonar_competition/create_upload_video/editVideo/edit_video_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/my_loading/my_loading.dart';

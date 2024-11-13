@@ -222,7 +222,10 @@
   "hoonarHighlights": "ಹೂನರ್ ಹೈಲೈಟ್ಸ್",
   "featuredTalents": "ಪ್ರಮುಖ ಪ್ರತಿಭೆಗಳು",
   "hoonarStar": "ಹೂನರ್ ಸ್ಟಾರ್",
-  "hoonarStarOfTheMonth": "ತಿಂಗಳ ಹೂನರ್ ಸ್ಟಾರ್"
-
-
+  "hoonarStarOfTheMonth": "ತಿಂಗಳ ಹೂನರ್ ಸ್ಟಾರ್",
+  "capture": "ಕ್ಯಾಪ್ಚರ್",
+  "faceNotRecognized": "ಮುಖ ಪತ್ತೆಹಚ್ಚಲಾಯಿತು",
+  "male": "ಪುರುಷ",
+  "female": "ಮಹಿಳೆ",
+  "other": "ಇತರೆ"
 }

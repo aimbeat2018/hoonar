@@ -1,8 +1,4 @@
-import 'dart:io';
-
-import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/documents/scan_face_screen.dart';
@@ -12,7 +8,6 @@ import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
-import '../create_upload_video/uploadVideo/upload_video_screen.dart';
 
 class KycScreen extends StatefulWidget {
   const KycScreen({super.key});

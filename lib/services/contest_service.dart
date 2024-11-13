@@ -1,7 +1,11 @@
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
+import 'package:hoonar/model/request_model/upload_kyc_document_request_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
+import 'package:hoonar/model/success_models/kyc_status_model.dart';
+import 'package:hoonar/model/success_models/kyc_status_model.dart';
+import 'package:hoonar/model/success_models/kyc_status_model.dart';
 import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
@@ -11,6 +15,7 @@ import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 
 import '../constants/utils.dart';
+import '../model/success_models/follow_unfollow_success_model.dart';
 import 'common_api_methods.dart';
 
 class ContestService {
@@ -101,6 +106,26 @@ class ContestService {
       data: requestModel.toJson(),*/
       accessToken: accessToken,
       fromJson: (data) => NewsEventSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> uploadKycDocuments(
+      UploadKycDocumentRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$uploadKycDocumentUrl',
+      method: 'POST',
+      data: requestModel.toFormData(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<KycStatusModel> getKycStatus(
+      UploadKycDocumentRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendMultipartRequest<KycStatusModel>(
+      '$baseUrl$getKycStatusUrl',
+      method: 'POST',
+      data: requestModel.toFormData(),
+      fromJson: (data) => KycStatusModel.fromJson(data),
     );
   }
 }

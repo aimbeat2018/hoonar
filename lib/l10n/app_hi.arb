@@ -222,6 +222,10 @@
   "hoonarHighlights": "हूनर हाइलाइट्स",
   "featuredTalents": "विशेष प्रतिभाएँ",
   "hoonarStar": "हूनर स्टार",
-  "hoonarStarOfTheMonth": "महीने का हुनर स्टार"
-
+  "hoonarStarOfTheMonth": "महीने का हुनर स्टार",
+  "capture": "कैप्चर",
+  "faceNotRecognized": "चेहरा नहीं मिला",
+  "male": "पुरुष",
+  "female": "महिला",
+  "other": "अन्य"
 }

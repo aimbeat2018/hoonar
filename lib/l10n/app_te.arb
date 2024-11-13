@@ -222,6 +222,11 @@
   "hoonarHighlights": "హూనార్ ముఖ్యాంశాలు",
   "featuredTalents": "ప్రధాన ప్రతిభలు",
   "hoonarStar": "హూనార్ స్టార్",
-  "hoonarStarOfTheMonth": "మాస హూనార్ స్టార్"
+  "hoonarStarOfTheMonth": "మాస హూనార్ స్టార్",
+  "capture": "క్యాప్చర్",
+  "faceNotRecognized": "ముఖం కనుగొనబడలేదు",
+  "male": "పురుషుడు",
+  "female": "స్త్రీ",
+  "other": "ఇతర"
 
 }

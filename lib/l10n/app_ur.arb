@@ -222,6 +222,11 @@
   "hoonarHighlights": "ہونر جھلکیاں",
   "featuredTalents": "نمایاں صلاحیتیں",
   "hoonarStar": "ہونر اسٹار",
-  "hoonarStarOfTheMonth": "ماہ کا ہونر اسٹار"
+  "hoonarStarOfTheMonth": "ماہ کا ہونر اسٹار",
+  "capture": "کیپچر",
+  "faceNotRecognized": "چہرہ کا پتہ نہیں چلا",
+  "male": "مرد",
+  "female": "خاتون",
+  "other": "دیگر"
 
 }

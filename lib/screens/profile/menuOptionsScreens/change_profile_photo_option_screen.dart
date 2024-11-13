@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_gallery_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/profile_avatar/avatar_list_tab_screen.dart';
 
 import '../../../constants/slide_right_route.dart';
 
@@ -109,27 +110,36 @@ class _ChangeProfilePhotoOptionScreenState
                 ),
               )),
               Expanded(
-                  child: Column(
-                children: [
-                  Image.asset(
-                    widget.isDarkMode
-                        ? 'assets/light_mode_icons/avatar_light.png'
-                        : 'assets/dark_mode_icons/avatar_dark.png',
-                    height: 65,
-                    width: 65,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    AppLocalizations.of(context)!.avatar,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: widget.isDarkMode ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w500,
+                  child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(page: AvatarListTabScreen()),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Image.asset(
+                      widget.isDarkMode
+                          ? 'assets/light_mode_icons/avatar_light.png'
+                          : 'assets/dark_mode_icons/avatar_dark.png',
+                      height: 65,
+                      width: 65,
                     ),
-                  ),
-                ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.avatar,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        color: widget.isDarkMode ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ))
             ],
           ),

@@ -10,7 +10,6 @@ import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/setting_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
-import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';

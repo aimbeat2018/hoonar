@@ -126,8 +126,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         builder: (context, profile, child) {
                           if (profile == null) {
                             return const ProfileContentShimmer();
-                          } else if (profile.message ==
-                              'Unauthorized Access!') {
+                          }
+                          /*else if (profile.data != null) {
+                            return SizedBox();
+                          }*/
+                          else if (profile.message == 'Unauthorized Access!') {
                             Future.microtask(() {
                               Navigator.pushAndRemoveUntil(
                                   context,
@@ -219,9 +222,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                                   buildInitialsAvatar(
                                                                       initials),
                                                               fit: BoxFit.cover,
-                                                              width: 80,
-                                                              // Match the size of the CircleAvatar
-                                                              height: 80,
+                                                              // width: 80,
+                                                              // // Match the size of the CircleAvatar
+                                                              // height: 80,
                                                             )
                                                           : buildInitialsAvatar(
                                                               initials),
@@ -710,12 +713,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             CupertinoDialogAction(
-              child: Text(
-                AppLocalizations.of(context)!.logout,
-                style: GoogleFonts.poppins(
-                  color: Colors.red,
-                ),
-              ),
+              child: Provider.of<AuthProvider>(context, listen: false)
+                      .isLogoutLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.logout,
+                      style: GoogleFonts.poppins(
+                        color: Colors.red,
+                      ),
+                    ),
               onPressed: () async {
                 final authProvider =
                     Provider.of<AuthProvider>(context, listen: false);
@@ -729,11 +737,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 } else {
                   if (authProvider.logoutSuccessModel?.successCode == '200') {
                     Navigator.of(context).pop();
-                    sessionManager.clean();
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        SlideRightRoute(page: const LoginScreen()),
-                        (route) => false);
+                    sessionManager.clean().then((onValue) async {
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          SlideRightRoute(page: const LoginScreen()),
+                          (route) => false);
+                    });
                   } else if (authProvider.logoutSuccessModel?.responseMessage ==
                       'Unauthorized Access!') {
                     Navigator.of(context).pop();

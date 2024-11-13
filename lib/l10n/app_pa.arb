@@ -221,6 +221,11 @@
   "hoonarHighlights": "ਹੂਨਰ ਹਾਈਲਾਈਟਸ",
   "featuredTalents": "ਪ੍ਰਮੁੱਖ ਪ੍ਰਤਿਭਾਵਾਂ",
   "hoonarStar": "ਹੂਨਰ ਸਟਾਰ",
-  "hoonarStarOfTheMonth": "ਮਹੀਨੇ ਦਾ ਹੂਨਰ ਸਟਾਰ"
+  "hoonarStarOfTheMonth": "ਮਹੀਨੇ ਦਾ ਹੂਨਰ ਸਟਾਰ",
+  "capture": "ਕੈਪਚਰ",
+  "faceNotRecognized": "ਚਿਹਰਾ ਨਹੀਂ ਮਿਲਿਆ",
+  "male": "ਮਰਦ",
+  "female": "ਇਸਤਰੀ",
+  "other": "ਹੋਰ"
 
 }

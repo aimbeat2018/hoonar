@@ -222,6 +222,11 @@
   "hoonarHighlights": "হুনার হাইলাইটস",
   "featuredTalents": "বৈশিষ্ট্যযুক্ত প্রতিভা",
   "hoonarStar": "হুনার স্টার",
-  "hoonarStarOfTheMonth": "মাসের হুনার স্টার"
+  "hoonarStarOfTheMonth": "মাসের হুনার স্টার",
+  "capture": "ক্যাপচার",
+  "faceNotRecognized": "মুখ সনাক্ত করা যায়নি",
+  "male": "পুরুষ",
+  "female": "মহিলা",
+  "other": "অন্যান্য"
 
 }

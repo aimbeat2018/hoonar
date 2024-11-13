@@ -47,17 +47,23 @@ class _SplashScreensState extends State<SplashScreens>
   }
 
   initSession() async {
-    await sessionManager.initPref();
-    if (sessionManager.getUser() == null) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        SlideRightRoute(page: LoginScreen()),
-        (Route<dynamic> route) => false,
-      );
-    } else {
-      Navigator.pushAndRemoveUntil(context,
-          SlideRightRoute(page: const MainScreen(fromIndex: 0)), (route) => false);
-    }
+    await sessionManager.initPref().then((onValue) {
+      String accessToken =
+          sessionManager.getString(SessionManager.accessToken)!;
+      if (sessionManager.getString(SessionManager.accessToken) == null ||
+          accessToken == "") {
+        Navigator.pushAndRemoveUntil(
+          context,
+          SlideRightRoute(page: LoginScreen()),
+          (Route<dynamic> route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            SlideRightRoute(page: const MainScreen(fromIndex: 0)),
+            (route) => false);
+      }
+    });
   }
 
   @override

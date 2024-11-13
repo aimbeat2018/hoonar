@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
+import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
 import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
@@ -12,10 +13,16 @@ import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/services/contest_service.dart';
 
+import '../model/request_model/upload_kyc_document_request_model.dart';
+import '../model/success_models/kyc_status_model.dart';
+
 class ContestProvider extends ChangeNotifier {
   final ContestService _contestService = GetIt.I<ContestService>();
 
-  ValueNotifier<int> isUserUnlockedNotifier = ValueNotifier(0);
+  ValueNotifier<int> userKycStatusNotifier = ValueNotifier(0);
+  ValueNotifier<int> addressProofStatusNotifier = ValueNotifier(0);
+  ValueNotifier<int> idProofStatusNotifier = ValueNotifier(0);
+  ValueNotifier<int> faceStatusNotifier = ValueNotifier(0);
 
   bool _isLevelLoading = false;
   bool _isGuidelinesLoading = false;
@@ -24,6 +31,8 @@ class ContestProvider extends ChangeNotifier {
   bool _isUserRankLoading = false;
   bool _isHoonarStarLoading = false;
   bool _isNewsLoading = false;
+  bool _isDocumentLoading = false;
+  bool _isKycStatusLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
@@ -33,6 +42,9 @@ class ContestProvider extends ChangeNotifier {
   UserRankSuccessModel? _userRankSuccessModel;
   HoonarStarSuccessModel? _hoonarStarSuccessModel;
   NewsEventSuccessModel? _newsEventSuccessModel;
+  NewsEventSuccessModel? _upcomingNewsEventSuccessModel;
+  FollowUnfollowSuccessModel? _uploadDocumentSuccessModel;
+  KycStatusModel? _kycStatusModel;
   List<LeaderboardListData> _leaderboardList = [];
   List<LeaderboardListData> _filteredLeaderboardList = [];
 
@@ -50,6 +62,10 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isNewsLoading => _isNewsLoading;
 
+  bool get isDocumentLoading => _isDocumentLoading;
+
+  bool get isKycStatusLoading => _isKycStatusLoading;
+
   String? get errorMessage => _errorMessage;
 
   LevelListModel? get levelListModel => _levelListModel;
@@ -63,6 +79,14 @@ class ContestProvider extends ChangeNotifier {
   HoonarStarSuccessModel? get hoonarStarSuccessModel => _hoonarStarSuccessModel;
 
   NewsEventSuccessModel? get newsEventSuccessModel => _newsEventSuccessModel;
+
+  KycStatusModel? get kycStatusModel => _kycStatusModel;
+
+  NewsEventSuccessModel? get upcomingNewsEventSuccessModel =>
+      _upcomingNewsEventSuccessModel;
+
+  FollowUnfollowSuccessModel? get uploadDocumentSuccessModel =>
+      _uploadDocumentSuccessModel;
 
   StorePaymentSuccessModel? get storePaymentSuccessModel =>
       _storePaymentSuccessModel;
@@ -231,11 +255,53 @@ class ContestProvider extends ChangeNotifier {
     try {
       NewsEventSuccessModel successModel =
           await _contestService.getUpcomingNewsEvent(requestModel, accessToken);
-      _newsEventSuccessModel = successModel;
+      _upcomingNewsEventSuccessModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isNewsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> uploadKycDocuments(
+      UploadKycDocumentRequestModel requestModel, String accessToken) async {
+    _isDocumentLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _contestService.uploadKycDocuments(requestModel, accessToken);
+      _uploadDocumentSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isDocumentLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getKycStatus(
+      UploadKycDocumentRequestModel requestModel, String accessToken) async {
+    _isKycStatusLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      KycStatusModel successModel =
+          await _contestService.getKycStatus(requestModel, accessToken);
+      _kycStatusModel = successModel;
+      if (successModel.status == "200" && successModel.data != null) {
+        userKycStatusNotifier.value = successModel.data!.isVerified ?? 0;
+        addressProofStatusNotifier.value = successModel.data!.addressProof ?? 0;
+        idProofStatusNotifier.value = successModel.data!.iDProof ?? 0;
+        faceStatusNotifier.value = successModel.data!.face ?? 0;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isKycStatusLoading = false;
       notifyListeners();
     }
   }

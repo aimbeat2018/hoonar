@@ -53,10 +53,6 @@ class CommonApiMethods {
     required T Function(dynamic) fromJson,
   }) async {
     try {
-     /* final dataJSON = jsonEncode({
-        'category_id': data['category_id'],
-      });
-*/
       final response = await dio.request(
         url,
         data: data,

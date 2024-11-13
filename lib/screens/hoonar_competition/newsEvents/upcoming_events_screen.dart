@@ -50,11 +50,11 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
       if (contestProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
-        if (contestProvider.newsEventSuccessModel?.status == '200') {
-        } else if (contestProvider.newsEventSuccessModel?.message ==
+        if (contestProvider.upcomingNewsEventSuccessModel?.status == '200') {
+        } else if (contestProvider.upcomingNewsEventSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
-              context, contestProvider.newsEventSuccessModel?.message! ?? '');
+              context, contestProvider.upcomingNewsEventSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(context,
               SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
@@ -127,18 +127,18 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                       height: 15,
                     ),
                     contestProvider.isNewsLoading ||
-                            contestProvider.newsEventSuccessModel == null
+                            contestProvider.upcomingNewsEventSuccessModel == null
                         ? const NewsEventListShimmer()
-                        : contestProvider.newsEventSuccessModel!.data == null ||
+                        : contestProvider.upcomingNewsEventSuccessModel!.data == null ||
                                 contestProvider
-                                    .newsEventSuccessModel!.data!.isEmpty
+                                    .upcomingNewsEventSuccessModel!.data!.isEmpty
                             ? DataNotFound()
                             : ListView.builder(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 15),
                                 shrinkWrap: true,
                                 itemCount: contestProvider
-                                    .newsEventSuccessModel!.data!.length,
+                                    .upcomingNewsEventSuccessModel!.data!.length,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -162,7 +162,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                         children: [
                                           Text(
                                             contestProvider
-                                                    .newsEventSuccessModel!
+                                                    .upcomingNewsEventSuccessModel!
                                                     .data![index]
                                                     .title ??
                                                 ''.toUpperCase(),
@@ -176,7 +176,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                           ),
                                           Text(
                                             contestProvider
-                                                    .newsEventSuccessModel!
+                                                    .upcomingNewsEventSuccessModel!
                                                     .data![index]
                                                     .description ??
                                                 '',
@@ -191,7 +191,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                           Text(
                                             /* '${AppLocalizations.of(context)!.today}, 09:00 PM',*/
                                             contestProvider
-                                                    .newsEventSuccessModel!
+                                                    .upcomingNewsEventSuccessModel!
                                                     .data![index]
                                                     .createdAt ??
                                                 '',

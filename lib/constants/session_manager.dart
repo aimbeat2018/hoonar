@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:hoonar/main.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -129,12 +130,12 @@ class SessionManager {
   Future<void> clean() async {
     var value1 = sharedPreferences!.getString(userEmail) ?? '';
     var value2 = sharedPreferences!.getString(userPassword) ?? '';
-    var value3 = sharedPreferences!.getString(rememberMe) ?? '';
+    var value3 = sharedPreferences!.getBool(rememberMe) ?? false;
 
-    sharedPreferences!.clear();
+    await sharedPreferences!.clear();
 
     await sharedPreferences!.setString(userEmail, value1);
     await sharedPreferences!.setString(userPassword, value2);
-    await sharedPreferences!.setString(rememberMe, value3);
+    sessionManager.saveBoolean(SessionManager.rememberMe, value3);
   }
 }

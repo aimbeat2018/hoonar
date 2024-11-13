@@ -11,6 +11,7 @@ import 'package:hoonar/model/success_models/logout_success_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/services/user_service.dart';
+import '../model/success_models/follow_unfollow_success_model.dart';
 import '../model/success_models/send_otp_success_model.dart';
 import '../model/success_models/state_list_model.dart';
 
@@ -26,6 +27,8 @@ class AuthProvider extends ChangeNotifier {
   bool _isSendOtpLoading = false;
   bool _isProfileLoading = false;
   bool _isLogoutLoading = false;
+  bool _isUpdateAvatarLoading = false;
+  bool _isChangePasswordLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
@@ -36,6 +39,8 @@ class AuthProvider extends ChangeNotifier {
   SendOtpSuccessModel? _sendOtpSuccessModel;
   ProfileSuccessModel? _profileSuccessModel;
   LogoutSuccessModel? _logoutSuccessModel;
+  FollowUnfollowSuccessModel? _updateAvatarModel;
+  FollowUnfollowSuccessModel? _changePasswordModel;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -55,9 +60,15 @@ class AuthProvider extends ChangeNotifier {
 
   LogoutSuccessModel? get logoutSuccessModel => _logoutSuccessModel;
 
+  FollowUnfollowSuccessModel? get updateAvatarModel => _updateAvatarModel;
+
+  FollowUnfollowSuccessModel? get changePasswordModel => _changePasswordModel;
+
   bool get isStateLoading => _isStateLoading;
 
   bool get isCityLoading => _isCityLoading;
+
+  bool get isChangePasswordLoading => _isChangePasswordLoading;
 
   bool get isSignUpLoading => _isSignUpLoading;
 
@@ -68,6 +79,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isProfileLoading => _isProfileLoading;
 
   bool get isLogoutLoading => _isLogoutLoading;
+
+  bool get isUpdateAvatarLoading => _isUpdateAvatarLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -241,6 +254,24 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updatePassword(
+      CheckUserRequestModel requestModel, String accessToken) async {
+    _isChangePasswordLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel = await _userService
+          .updatePassword(requestModel: requestModel, accessToken: accessToken);
+      _changePasswordModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isChangePasswordLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getProfile(CommonRequestModel requestModel) async {
     _isProfileLoading = true;
     _errorMessage = null;
@@ -273,6 +304,28 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isProfileLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfileWithAvatar(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isUpdateAvatarLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _userService.updateProfileWithAvatar(
+              requestModel: requestModel, accessToken: accessToken);
+      _updateAvatarModel = successModel;
+      if (successModel.status == '200') {
+        getProfile(requestModel);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isUpdateAvatarLoading = false;
       notifyListeners();
     }
   }

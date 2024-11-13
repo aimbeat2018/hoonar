@@ -222,6 +222,11 @@
   "hoonarHighlights": "ହୁନାର ହାଇଲାଇଟସ୍",
   "featuredTalents": "ବିଶେଷ ପ୍ରତିଭାମାନ",
   "hoonarStar": "ହୁନାର ସ୍ଟାର",
-  "hoonarStarOfTheMonth": "ମାସର ହୁନାର ସ୍ଟାର"
+  "hoonarStarOfTheMonth": "ମାସର ହୁନାର ସ୍ଟାର",
+  "capture": "କ୍ୟାପଚର୍",
+  "faceNotRecognized": "ମୁହଁ ଚିହ୍ନଟ ହୋଇନାହିଁ",
+  "male": "ପୁରୁଷ",
+  "female": "ମହିଳା",
+  "other": "ଅନ୍ୟ"
 
 }

@@ -223,5 +223,10 @@
   "hoonarHighlights": "Hoonar highlights",
   "featuredTalents": "Featured talents",
   "hoonarStar": "Hoonar star",
-  "hoonarStarOfTheMonth": "Hoonar star of the month"
+  "hoonarStarOfTheMonth": "Hoonar star of the month",
+  "capture": "Capture",
+  "faceNotRecognized": "Face not detected",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other"
 }

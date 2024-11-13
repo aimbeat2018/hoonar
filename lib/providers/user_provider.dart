@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/model/success_models/avatar_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/user_wise_vote_list_model.dart';
 import 'package:hoonar/services/user_service.dart';
@@ -20,11 +22,14 @@ class UserProvider extends ChangeNotifier {
   ValueNotifier<int?> followStatusNotifier = ValueNotifier(0);
 
   bool _isLoading = false;
+  bool _isAvatarLoading = false;
+
   String? _errorMessage;
   List<FollowersData>? _followersList;
   List<UserWiseVoteList>? _userWiseVoteList;
   GetFollowersListModel? _getFollowersListModel;
   UserWiseVoteListModel? _userWiseVoteListModel;
+  AvatarListModel? _avatarListModel;
 
   List<FollowersData>? get followersList => _followersList;
 
@@ -41,7 +46,13 @@ class UserProvider extends ChangeNotifier {
 
   UserWiseVoteListModel? get userWiseVoteListModel => _userWiseVoteListModel;
 
+  AvatarListModel? get avatarListModel => _avatarListModel;
+
+
+
   bool get isLoading => _isLoading;
+
+  bool get isAvatarLoading => _isAvatarLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -126,6 +137,26 @@ class UserProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getAvatarList(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isAvatarLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      AvatarListModel successModel = await _userService.getAvatarList(
+          requestModel: requestModel, accessToken: accessToken);
+      _avatarListModel = successModel;
+      // _userWiseVoteList = successModel.data;
+      // userWiseVotesNotifier.value = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isAvatarLoading = false;
       notifyListeners();
     }
   }
