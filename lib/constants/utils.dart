@@ -51,6 +51,7 @@ const String uploadKycDocumentUrl = 'User/uploadDocuments';
 const String getKycStatusUrl = 'User/getKycStatus';
 const String getAvatarsByGenderUrl = 'User/getAvatarsByGender';
 const String updateProfileWithAvatarUrl = 'User/addAvatar';
+const String updateProfileImageUrl = 'User/updateProfileImage';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

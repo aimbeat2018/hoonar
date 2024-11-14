@@ -87,6 +87,7 @@ class HomePageService {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$addVoteUrl',
       method: 'POST',
+      accessToken: accessToken,
       data: requestModel.toJson(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );

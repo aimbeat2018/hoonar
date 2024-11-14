@@ -97,8 +97,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
-      ListCommonRequestModel requestModel =
-          ListCommonRequestModel(postId: postId);
+      ListCommonRequestModel requestModel = ListCommonRequestModel(
+          postId: postId,
+          userId: int.parse(sessionManager.getString(SessionManager.userId)!));
 
       await homeProvider.addVote(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -108,7 +109,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
       } else {
         if (homeProvider.likeUnlikeVideoModel?.status == '200') {
           setState(() {
-            isDismissed[0] = true;
+            widget.model.hasVoted = 1;
           });
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
             'Unauthorized Access!') {
@@ -418,44 +419,45 @@ class _ReelsWidgetState extends State<ReelsWidget>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Column(
-                              children: [
-                                SwipeTo(
-                                  onRightSwipe: (details) {
-                                    if (widget.model.hasVoted == 0) {
-                                      addVote(context, widget.model.postId!);
-                                    }
-                                  },
-                                  iconSize: 5,
-                                  iconOnRightSwipe:
-                                      CupertinoIcons.arrow_2_circlepath,
-                                  onLeftSwipe: (details) {
-                                    if (widget.model.hasVoted == 0) {
-                                      addVote(context, widget.model.postId!);
-                                    }
-                                  },
-                                  iconOnLeftSwipe:
-                                      CupertinoIcons.arrow_2_circlepath,
-                                  child: Image.asset(
-                                      widget.model.hasVoted == 0
-                                          ? 'assets/images/vote_not_given.png'
-                                          : 'assets/images/vote_given.png',
-                                      width: 33,
-                                      height: 33),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  AppLocalizations.of(context)!.votes,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                            if (widget.model.canVote == 1)
+                              Column(
+                                children: [
+                                  SwipeTo(
+                                    onRightSwipe: (details) {
+                                      if (widget.model.hasVoted == 0) {
+                                        addVote(context, widget.model.postId!);
+                                      }
+                                    },
+                                    iconSize: 5,
+                                    iconOnRightSwipe:
+                                        CupertinoIcons.arrow_2_circlepath,
+                                    onLeftSwipe: (details) {
+                                      if (widget.model.hasVoted == 0) {
+                                        addVote(context, widget.model.postId!);
+                                      }
+                                    },
+                                    iconOnLeftSwipe:
+                                        CupertinoIcons.arrow_2_circlepath,
+                                    child: Image.asset(
+                                        widget.model.hasVoted == 0
+                                            ? 'assets/images/vote_not_given.png'
+                                            : 'assets/images/vote_given.png',
+                                        width: 33,
+                                        height: 33),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.votes,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             const SizedBox(
                               height: 15,
                             ),

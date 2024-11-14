@@ -6,8 +6,13 @@ import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/upload_kyc_document_request_model.dart';
+import '../../../providers/contest_provider.dart';
+import '../../auth_screen/login_screen.dart';
 
 class KycScreen extends StatefulWidget {
   const KycScreen({super.key});
@@ -18,9 +23,47 @@ class KycScreen extends StatefulWidget {
 
 class _KycScreenState extends State<KycScreen> {
   bool isButtonClick = false;
+  SessionManager sessionManager = SessionManager();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getKycStatus(context, UploadKycDocumentRequestModel());
+    });
+  }
+
+  Future<void> getKycStatus(
+      BuildContext context, UploadKycDocumentRequestModel requestModel) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    try {
+      sessionManager.initPref().then((onValue) async {
+        await contestProvider.getKycStatus(requestModel,
+            sessionManager.getString(SessionManager.accessToken) ?? '');
+
+        if (contestProvider.errorMessage != null) {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.errorMessage ?? '');
+        } else if (contestProvider.kycStatusModel?.status == '200') {
+        } else if (contestProvider.kycStatusModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.kycStatusModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      });
+    } finally {}
+  }
 
   @override
   Widget build(BuildContext context) {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -120,30 +163,66 @@ class _KycScreenState extends State<KycScreen> {
                             ),
                           ],
                         )),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: ScanFaceScreen()),
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(top: 10),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 3),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: Colors.white),
-                            child: Text(
-                              AppLocalizations.of(context)!.clickHere,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        )
+                        ValueListenableBuilder<int?>(
+                            valueListenable: contestProvider.faceStatusNotifier,
+                            builder: (context, faceStatus, child) {
+                              return InkWell(
+                                onTap: faceStatus == 0
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          SlideRightRoute(
+                                              page: ScanFaceScreen()),
+                                        );
+                                      }
+                                    : null,
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 3),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: faceStatus == 0
+                                          ? Colors.white
+                                          : Colors.grey.shade400),
+                                  child: contestProvider.isDocumentLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.black,
+                                          ),
+                                        )
+                                      : Text(
+                                          AppLocalizations.of(context)!.upload,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: faceStatus == 0
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                ),
+                              );
+                            }),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     margin: EdgeInsets.only(top: 10),
+                        //     padding: EdgeInsets.symmetric(
+                        //         horizontal: 10, vertical: 3),
+                        //     decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(5),
+                        //         color: Colors.white),
+                        //     child: Text(
+                        //       AppLocalizations.of(context)!.clickHere,
+                        //       style: GoogleFonts.poppins(
+                        //         fontSize: 14,
+                        //         color: Colors.black,
+                        //         fontWeight: FontWeight.w600,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   )

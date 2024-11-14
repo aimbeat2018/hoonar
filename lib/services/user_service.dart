@@ -21,6 +21,7 @@ import 'package:hoonar/model/success_models/state_list_model.dart';
 import 'package:hoonar/services/common_api_methods.dart';
 
 import '../constants/session_manager.dart';
+import '../model/request_model/update_profile_image_request_model.dart';
 import '../model/success_models/signup_success_model.dart';
 import '../model/success_models/user_wise_vote_list_model.dart';
 
@@ -223,6 +224,16 @@ class UserService {
       '$baseUrl$updateProfileWithAvatarUrl',
       data: requestModel?.toJson(),
       method: 'POST',
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> updateProfileImage(
+      UpdateProfileImageRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$updateProfileImageUrl',
+      method: 'POST',
+      data: requestModel.toFormData(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }

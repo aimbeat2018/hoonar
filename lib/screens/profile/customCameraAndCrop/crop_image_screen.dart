@@ -4,6 +4,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/session_manager.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/model/request_model/update_profile_image_request_model.dart';
+import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +15,8 @@ import 'package:path_provider/path_provider.dart'; // For saving the file
 import 'package:path/path.dart'; // For path manipulations
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../auth_screen/login_screen.dart';
 import '../menuOptionsScreens/edit_profile_screen.dart';
 
 class CropImageScreen extends StatefulWidget {
@@ -27,20 +33,49 @@ class _CropImageScreenState extends State<CropImageScreen> {
   final _cropController = CropController();
   Uint8List? fileBytes;
   XFile? croppedXFile;
+  SessionManager sessionManager = SessionManager();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(widget.selectedImageFile !=null) {
+      if (widget.selectedImageFile != null) {
         covertFileToBytes();
-      }else{
+      } else {
         fileBytes = widget.fileBytes;
-        setState(() {
-
-        });
+        setState(() {});
       }
     });
+  }
+
+  Future<void> updateProfileImage(
+      BuildContext context, UpdateProfileImageRequestModel requestModel) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    try {
+      sessionManager.initPref().then((onValue) async {
+        await authProvider.updateProfileImage(
+            requestModel,
+            sessionManager.getString(SessionManager.accessToken) ?? '',
+            CommonRequestModel(
+                userId: sessionManager.getString(SessionManager.userId) ?? ''));
+
+        if (authProvider.errorMessage != null) {
+          SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+        } else if (authProvider.updateProfileImageModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.updateProfileImageModel?.message! ?? '');
+          navigateToEditProfile(croppedXFile!, context);
+          // Navigator.pop(context);
+        } else if (authProvider.updateProfileImageModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.updateProfileImageModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      });
+    } finally {}
   }
 
   Future<Uint8List> getFileAsBytes(File file) async {
@@ -84,6 +119,8 @@ class _CropImageScreenState extends State<CropImageScreen> {
   @override
   Widget build(BuildContext context) {
     // Show loading indicator until fileBytes is available
+    final authProvider = Provider.of<AuthProvider>(context);
+
     if (fileBytes == null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -125,7 +162,10 @@ class _CropImageScreenState extends State<CropImageScreen> {
 
                   // After saving the cropped image, navigate to the edit profile screen
                   if (croppedXFile != null) {
-                    navigateToEditProfile(croppedXFile!, context);
+                    updateProfileImage(
+                        context,
+                        UpdateProfileImageRequestModel(
+                            profileImage: File(croppedXFile!.path)));
                   }
                 },
               ),
@@ -134,35 +174,42 @@ class _CropImageScreenState extends State<CropImageScreen> {
             Expanded(
               flex: 2, // Less space for the button area
               child: Center(
-                child: InkWell(
-                  onTap: () {
-                    _cropController.crop();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 30),
-                    margin: const EdgeInsets.only(top: 15, bottom: 5),
-                    decoration: ShapeDecoration(
-                      color: myLoading.isDark ? Colors.white : Colors.black,
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          strokeAlign: BorderSide.strokeAlignOutside,
-                          color: Colors.black,
+                child: authProvider.isUpdateProfileImageLoading
+                    ? CircularProgressIndicator(
+                        color: myLoading.isDark ? Colors.white : Colors.black,
+                      )
+                    : InkWell(
+                        onTap: () {
+                          _cropController.crop();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 30),
+                          margin: const EdgeInsets.only(top: 15, bottom: 5),
+                          decoration: ShapeDecoration(
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                strokeAlign: BorderSide.strokeAlignOutside,
+                                color: Colors.black,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.save,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: myLoading.isDark
+                                  ? Colors.black
+                                  : Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.save,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: myLoading.isDark ? Colors.black : Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

@@ -4,6 +4,7 @@ import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/sign_in_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
+import 'package:hoonar/model/request_model/update_profile_image_request_model.dart';
 import 'package:hoonar/model/request_model/update_profile_request_model.dart';
 import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
@@ -28,6 +29,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isProfileLoading = false;
   bool _isLogoutLoading = false;
   bool _isUpdateAvatarLoading = false;
+  bool _isUpdateProfileImageLoading = false;
   bool _isChangePasswordLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
@@ -41,6 +43,7 @@ class AuthProvider extends ChangeNotifier {
   LogoutSuccessModel? _logoutSuccessModel;
   FollowUnfollowSuccessModel? _updateAvatarModel;
   FollowUnfollowSuccessModel? _changePasswordModel;
+  FollowUnfollowSuccessModel? _updateProfileImageModel;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -64,6 +67,9 @@ class AuthProvider extends ChangeNotifier {
 
   FollowUnfollowSuccessModel? get changePasswordModel => _changePasswordModel;
 
+  FollowUnfollowSuccessModel? get updateProfileImageModel =>
+      _updateProfileImageModel;
+
   bool get isStateLoading => _isStateLoading;
 
   bool get isCityLoading => _isCityLoading;
@@ -81,6 +87,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isLogoutLoading => _isLogoutLoading;
 
   bool get isUpdateAvatarLoading => _isUpdateAvatarLoading;
+
+  bool get isUpdateProfileImageLoading => _isUpdateProfileImageLoading;
 
   String? get errorMessage => _errorMessage;
 
@@ -343,6 +351,27 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isLogoutLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfileImage(
+      UpdateProfileImageRequestModel requestModel, String accessToken,CommonRequestModel profileRequest) async {
+    _isUpdateProfileImageLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _userService.updateProfileImage(requestModel, accessToken);
+      _updateProfileImageModel = successModel;
+      if (successModel.status == '200') {
+        getProfile(profileRequest);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isUpdateProfileImageLoading = false;
       notifyListeners();
     }
   }
