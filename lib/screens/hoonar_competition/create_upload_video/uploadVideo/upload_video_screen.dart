@@ -466,7 +466,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     ),
                   ],
                 ),
-                if (isLoading) ...[
+                /* if (isLoading) ...[
                   Opacity(
                     opacity: 0.5,
                     child:
@@ -477,7 +477,19 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                       color: Colors.white,
                     ),
                   ),
-                ],
+                ],*/
+                if (isLoading)
+                  Positioned.fill(
+                    top: 0,
+                    bottom: 0,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
+                      // semi-transparent background
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
