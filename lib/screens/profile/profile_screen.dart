@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
+import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/constants/session_manager.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
@@ -26,6 +27,8 @@ import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
+import '../../model/request_model/list_common_request_model.dart';
+import '../../providers/user_provider.dart';
 import '../auth_screen/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -51,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   ScrollController controller = ScrollController();
   SessionManager sessionManager = SessionManager();
+  bool isFollow = false, isFollowLoading = false;
 
   @override
   void initState() {
@@ -95,6 +99,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     super.dispose();
     controller.dispose();
+  }
+
+  Future<void> followUnFollowUser(BuildContext context) async {
+    String userId = "";
+
+    sessionManager.initPref().then((onValue) async {
+      if (widget.from == 'main') {
+        userId = sessionManager.getString(SessionManager.userId)!;
+      } else {
+        userId = widget.userId ?? '';
+      }
+      ListCommonRequestModel requestModel = ListCommonRequestModel(
+        toUserId: int.parse(userId),
+      );
+
+      setState(() {
+        isFollowLoading = true;
+      });
+      final authProvider = Provider.of<UserProvider>(context, listen: false);
+
+      await authProvider.followUnfollowUser(requestModel);
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      }
+
+      setState(() {
+        isFollowLoading = false;
+      });
+    });
   }
 
   @override
@@ -416,6 +450,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ))
                                     ],
                                   ),
+                                  const SizedBox(
+                                    height: 15,
+                                  ),
+                                  ValueListenableBuilder<int?>(
+                                      valueListenable:
+                                          Provider.of<UserProvider>(context)
+                                              .followStatusNotifier,
+                                      builder: (context, followStatus, child) {
+                                        return isFollowLoading
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator())
+                                            : InkWell(
+                                                onTap: () {
+                                                  followUnFollowUser(context);
+                                                },
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 8),
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 15.0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    gradient:
+                                                        const LinearGradient(
+                                                      colors: [
+                                                        Colors.white,
+                                                        greyTextColor8
+                                                      ],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment
+                                                          .bottomCenter,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    profile.data!.isFollowing ==
+                                                                1 ||
+                                                            followStatus == 1
+                                                        ? AppLocalizations.of(
+                                                                context)!
+                                                            .unfollow
+                                                        : AppLocalizations.of(
+                                                                context)!
+                                                            .follow,
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                      }),
                                 ],
                               ),
                               const SizedBox(

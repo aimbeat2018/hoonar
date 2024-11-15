@@ -12,6 +12,7 @@ const String updatePasswordUrl = 'User/updatePassword';
 const String getProfile = 'User/getProfile';
 const String updateProfile = 'User/updateProfile';
 const String logout = 'User/Logout';
+const String deleteMyAccount = 'User/deleteMyAccount';
 const String getCategoryData = 'User/getPostCategoryList';
 const String getFollowerListUrl = 'Post/getFollowerList';
 const String getFollowingListUrl = 'Post/getFollowingList';
@@ -52,6 +53,9 @@ const String getKycStatusUrl = 'User/getKycStatus';
 const String getAvatarsByGenderUrl = 'User/getAvatarsByGender';
 const String updateProfileWithAvatarUrl = 'User/addAvatar';
 const String updateProfileImageUrl = 'User/updateProfileImage';
+const String getUserRewards = 'User/getUserRewards';
+const String claimRewardUrl = 'User/claimReward';
+const String getUserWalletTransactions = 'User/getUserWalletTransactions';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

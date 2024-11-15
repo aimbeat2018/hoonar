@@ -168,6 +168,15 @@ class UserService {
     );
   }
 
+  Future<FollowUnfollowSuccessModel> deleteAccount(String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$deleteMyAccount',
+      method: 'POST',
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
   Future<GetFollowersListModel> getFollowersList({
     ListCommonRequestModel? requestModel,
   }) async {

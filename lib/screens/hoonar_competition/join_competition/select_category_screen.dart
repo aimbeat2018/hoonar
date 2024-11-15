@@ -1,15 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/select_contest_level.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
-import '../../../model/star_category_model.dart';
 import '../../../providers/home_provider.dart';
 import '../../../shimmerLoaders/contest_category_shimmer.dart';
 import '../../auth_screen/login_screen.dart';

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,6 +25,7 @@ import 'package:provider/provider.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
+import '../profile/menuOptionsScreens/app_content_screen.dart';
 import 'create_password_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -54,6 +56,7 @@ class _SignupScreenState extends State<SignupScreen> {
     // TODO: implement dispose
     super.dispose();
     _debounce?.cancel();
+    scrollController.dispose();
   }
 
   void _onEmailTextChanged() {
@@ -947,14 +950,23 @@ class _SignupScreenState extends State<SignupScreen> {
                                           ),
                                         ),
                                         TextSpan(
-                                          text: AppLocalizations.of(context)!
-                                              .privacyPolicy,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: const Color(0xFFFFCDB3),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
+                                            text: AppLocalizations.of(context)!
+                                                .privacyPolicy,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: const Color(0xFFFFCDB3),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () {
+                                                Navigator.push(
+                                                    context,
+                                                    SlideRightRoute(
+                                                        page:
+                                                            const AppContentScreen(
+                                                      from: 'privacy',
+                                                    )));
+                                              }),
                                       ],
                                     ),
                                   ),

@@ -1,3 +1,4 @@
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/request_model/upload_kyc_document_request_model.dart';
@@ -11,8 +12,14 @@ import 'package:hoonar/model/success_models/level_list_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
+import 'package:hoonar/model/success_models/reward_list_model.dart';
+import 'package:hoonar/model/success_models/reward_list_model.dart';
+import 'package:hoonar/model/success_models/reward_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
+import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
+import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
+import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 
 import '../constants/utils.dart';
 import '../model/success_models/follow_unfollow_success_model.dart';
@@ -106,6 +113,39 @@ class ContestService {
       data: requestModel.toJson(),*/
       accessToken: accessToken,
       fromJson: (data) => NewsEventSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<RewardListModel> getRewardsList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<RewardListModel>(
+      '$baseUrl$getUserRewards',
+      /* method: 'POST',
+      data: requestModel.toJson(),*/
+      accessToken: accessToken,
+      fromJson: (data) => RewardListModel.fromJson(data),
+    );
+  }
+
+  Future<WalletTransactionListModel> getWalletTransaction(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<WalletTransactionListModel>(
+      '$baseUrl$getUserWalletTransactions',
+      /* method: 'POST',
+      data: requestModel.toJson(),*/
+      accessToken: accessToken,
+      fromJson: (data) => WalletTransactionListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> claimRewards(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$claimRewardUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
 

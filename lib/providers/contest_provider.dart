@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
@@ -9,8 +10,10 @@ import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
 import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
+import 'package:hoonar/model/success_models/reward_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
+import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/services/contest_service.dart';
 
 import '../model/request_model/upload_kyc_document_request_model.dart';
@@ -33,6 +36,9 @@ class ContestProvider extends ChangeNotifier {
   bool _isNewsLoading = false;
   bool _isDocumentLoading = false;
   bool _isKycStatusLoading = false;
+  bool _isRewardsLoading = false;
+  bool _isWalletTransactionLoading = false;
+  bool _isClaimRewardsLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
@@ -44,7 +50,10 @@ class ContestProvider extends ChangeNotifier {
   NewsEventSuccessModel? _newsEventSuccessModel;
   NewsEventSuccessModel? _upcomingNewsEventSuccessModel;
   FollowUnfollowSuccessModel? _uploadDocumentSuccessModel;
+  FollowUnfollowSuccessModel? _claimRewardsModel;
   KycStatusModel? _kycStatusModel;
+  RewardListModel? _rewardListModel;
+  WalletTransactionListModel? _walletTransactionListModel;
   List<LeaderboardListData> _leaderboardList = [];
   List<LeaderboardListData> _filteredLeaderboardList = [];
 
@@ -60,7 +69,13 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isHoonarStarLoading => _isHoonarStarLoading;
 
+  bool get isWalletTransactionLoading => _isWalletTransactionLoading;
+
   bool get isNewsLoading => _isNewsLoading;
+
+  bool get isRewardsLoading => _isRewardsLoading;
+
+  bool get isClaimRewardsLoading => _isClaimRewardsLoading;
 
   bool get isDocumentLoading => _isDocumentLoading;
 
@@ -69,6 +84,9 @@ class ContestProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   LevelListModel? get levelListModel => _levelListModel;
+
+  WalletTransactionListModel? get walletTransactionListModel =>
+      _walletTransactionListModel;
 
   GuidelinesModel? get guidelinesModel => _guidelinesModel;
 
@@ -82,11 +100,15 @@ class ContestProvider extends ChangeNotifier {
 
   KycStatusModel? get kycStatusModel => _kycStatusModel;
 
+  RewardListModel? get rewardListModel => _rewardListModel;
+
   NewsEventSuccessModel? get upcomingNewsEventSuccessModel =>
       _upcomingNewsEventSuccessModel;
 
   FollowUnfollowSuccessModel? get uploadDocumentSuccessModel =>
       _uploadDocumentSuccessModel;
+
+  FollowUnfollowSuccessModel? get claimRewardsModel => _claimRewardsModel;
 
   StorePaymentSuccessModel? get storePaymentSuccessModel =>
       _storePaymentSuccessModel;
@@ -302,6 +324,60 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isKycStatusLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getRewardsList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isRewardsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      RewardListModel successModel =
+          await _contestService.getRewardsList(requestModel, accessToken);
+      _rewardListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isRewardsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> claimRewards(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isClaimRewardsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _contestService.claimRewards(requestModel, accessToken);
+      _claimRewardsModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isClaimRewardsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getWalletTransaction(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isWalletTransactionLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      WalletTransactionListModel successModel =
+          await _contestService.getWalletTransaction(requestModel, accessToken);
+      _walletTransactionListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isWalletTransactionLoading = false;
       notifyListeners();
     }
   }

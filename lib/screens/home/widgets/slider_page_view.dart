@@ -174,131 +174,139 @@ class _SliderPageViewState extends State<SliderPageView>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0.0, horizontal: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: 15,
-                              backgroundColor: widget.isDarkMode
-                                  ? Colors.grey.shade700
-                                  : Colors.grey.shade200,
-                              child: ClipOval(
-                                child: data.userProfile != ""
-                                    ? CachedNetworkImage(
-                                        imageUrl: data.userProfile!,
-                                        placeholder: (context, url) =>
-                                            const CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            buildInitialsAvatar(initials,
-                                                fontSize: 10),
-                                        fit: BoxFit.cover,
-                                        width: 20,
-                                        height: 20,
-                                      )
-                                    : buildInitialsAvatar(initials,
-                                        fontSize: 10),
+                    Expanded(
+                      flex: 3,
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundColor: widget.isDarkMode
+                                    ? Colors.grey.shade700
+                                    : Colors.grey.shade200,
+                                child: ClipOval(
+                                  child: data.userProfile != ""
+                                      ? CachedNetworkImage(
+                                          imageUrl: data.userProfile!,
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              buildInitialsAvatar(initials,
+                                                  fontSize: 10),
+                                          fit: BoxFit.cover,
+                                          width: 20,
+                                          height: 20,
+                                        )
+                                      : buildInitialsAvatar(initials,
+                                          fontSize: 10),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 5),
-                            Flexible(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      data.userName ?? '',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 10,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow
-                                          .ellipsis, // Ensure text truncation
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Flexible(
-                                    child: ValueListenableBuilder<int?>(
-                                        valueListenable:
-                                            userProvider.followStatusNotifier,
-                                        builder:
-                                            (context, followStatus, child) {
-                                          return Container(
-                                            margin:
-                                                const EdgeInsets.only(left: 5),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 3),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                border: Border.all(
-                                                    color: data.followOrNot ==
-                                                                1 ||
-                                                            followStatus == 1
-                                                        ? Colors.white
-                                                        : Colors.transparent,
-                                                    width: 1),
-                                                color: data.followOrNot == 1 ||
-                                                        followStatus == 1
-                                                    ? Colors.transparent
-                                                    : Colors.white),
-                                            child: isFollowLoading
-                                                ? const Center(
-                                                    child:
-                                                        CircularProgressIndicator())
-                                                : Text(
-                                                    data.followOrNot == 1 ||
-                                                            followStatus == 1
-                                                        ? AppLocalizations.of(
-                                                                context)!
-                                                            .unfollow
-                                                        : AppLocalizations.of(
-                                                                context)!
-                                                            .follow,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 8,
-                                                      color: data.followOrNot ==
-                                                                  1 ||
-                                                              followStatus == 1
-                                                          ? Colors.white
-                                                          : Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                          );
-                                        }),
-                                  ),
-                                  /*     Flexible(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(left: 5),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 3),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.white),
+                              const SizedBox(width: 5),
+                              Flexible(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
                                       child: Text(
-                                        AppLocalizations.of(context)!.follow,
+                                        data.userName ?? '',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 8,
-                                          color: Colors.black,
+                                          fontSize: 10,
+                                          color: Colors.white,
                                           fontWeight: FontWeight.w600,
                                         ),
                                         overflow: TextOverflow
                                             .ellipsis, // Ensure text truncation
                                       ),
                                     ),
-                                  ),*/
-                                ],
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: ValueListenableBuilder<int?>(
+                                          valueListenable:
+                                              userProvider.followStatusNotifier,
+                                          builder:
+                                              (context, followStatus, child) {
+                                            return Container(
+                                              margin: const EdgeInsets.only(
+                                                  left: 5),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 3),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  border: Border.all(
+                                                      color: data.followOrNot ==
+                                                                  1 ||
+                                                              followStatus == 1
+                                                          ? Colors.white
+                                                          : Colors.transparent,
+                                                      width: 1),
+                                                  color:
+                                                      data.followOrNot == 1 ||
+                                                              followStatus == 1
+                                                          ? Colors.transparent
+                                                          : Colors.white),
+                                              child: isFollowLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Text(
+                                                      data.followOrNot == 1 ||
+                                                              followStatus == 1
+                                                          ? AppLocalizations.of(
+                                                                  context)!
+                                                              .unfollow
+                                                          : AppLocalizations.of(
+                                                                  context)!
+                                                              .follow,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 8,
+                                                        color: data.followOrNot ==
+                                                                    1 ||
+                                                                followStatus ==
+                                                                    1
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                            );
+                                          }),
+                                    ),
+                                    /*     Flexible(
+                                      child: Container(
+                                        margin: const EdgeInsets.only(left: 5),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 3),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.white),
+                                        child: Text(
+                                          AppLocalizations.of(context)!.follow,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 8,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow
+                                              .ellipsis, // Ensure text truncation
+                                        ),
+                                      ),
+                                    ),*/
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -31,6 +31,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isUpdateAvatarLoading = false;
   bool _isUpdateProfileImageLoading = false;
   bool _isChangePasswordLoading = false;
+  bool _isDeleteAccountLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
@@ -44,6 +45,7 @@ class AuthProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _updateAvatarModel;
   FollowUnfollowSuccessModel? _changePasswordModel;
   FollowUnfollowSuccessModel? _updateProfileImageModel;
+  FollowUnfollowSuccessModel? _deleteAccountModel;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -67,12 +69,16 @@ class AuthProvider extends ChangeNotifier {
 
   FollowUnfollowSuccessModel? get changePasswordModel => _changePasswordModel;
 
+  FollowUnfollowSuccessModel? get deleteAccountModel => _deleteAccountModel;
+
   FollowUnfollowSuccessModel? get updateProfileImageModel =>
       _updateProfileImageModel;
 
   bool get isStateLoading => _isStateLoading;
 
   bool get isCityLoading => _isCityLoading;
+
+  bool get isDeleteAccountLoading => _isDeleteAccountLoading;
 
   bool get isChangePasswordLoading => _isChangePasswordLoading;
 
@@ -355,8 +361,8 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProfileImage(
-      UpdateProfileImageRequestModel requestModel, String accessToken,CommonRequestModel profileRequest) async {
+  Future<void> updateProfileImage(UpdateProfileImageRequestModel requestModel,
+      String accessToken, CommonRequestModel profileRequest) async {
     _isUpdateProfileImageLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -372,6 +378,23 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isUpdateProfileImageLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteAccount(String accessToken) async {
+    _isDeleteAccountLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _userService.deleteAccount(accessToken);
+      _deleteAccountModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isDeleteAccountLoading = false;
       notifyListeners();
     }
   }
