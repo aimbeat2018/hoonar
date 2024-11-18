@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/screens/camera/trim_audio_screen.dart';
 import 'package:hoonar/shimmerLoaders/following_list_shimmer.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-
+import 'package:http/http.dart' as http;
 import '../../constants/color_constants.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
@@ -21,7 +25,9 @@ import '../hoonar_competition/yourRewards/add_bank_details_screen.dart';
 import '../hoonar_competition/yourRewards/wallet_screen.dart';
 
 class SelectSoundListScreen extends StatefulWidget {
-  const SelectSoundListScreen({super.key});
+  final String? duration;
+
+  const SelectSoundListScreen({super.key, this.duration});
 
   @override
   State<SelectSoundListScreen> createState() => _SelectSoundListScreenState();
@@ -261,13 +267,48 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     });
   }
 
+  Future<File> _downloadAudio(String url) async {
+    final response = await http.get(Uri.parse(url));
+    final directory = await getTemporaryDirectory();
+    final filePath = '${directory.path}/temp_audio.mp3';
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return file;
+  }
+
   Widget soundItem(SoundList model, int index, bool isDarkMode, int index1) {
     // int selectedSoundId = -1;
     // final AudioPlayer audioPlayer = AudioPlayer();
 
     return InkWell(
-      onTap: () {
-        Navigator.pop(context, model);
+      onTap: () async {
+        String duration1 = model.duration!; // 3 minutes and 2 seconds
+
+        Duration duration2 = Duration(
+            milliseconds: (double.parse(widget.duration!) * 1000).toInt());
+        // Duration duration2 =
+        //     Duration(seconds: int.parse()); // 15 seconds
+
+        // Convert "3:02" to Duration
+        List<String> parts = duration1.split(":");
+        int minutes = int.parse(parts[0]);
+        int seconds = int.parse(parts[1]);
+        Duration parsedDuration1 = Duration(minutes: minutes, seconds: seconds);
+
+        // Compare the durations
+        if (parsedDuration1 > duration2) {
+          File _localMusic = await _downloadAudio(model.sound ?? '');
+          Navigator.push(
+            context,
+            SlideRightRoute(
+                page: TrimAudioScreen(
+              audioFilePath: _localMusic.path,
+              // totalDuration: double.parse(model.duration!),
+            )),
+          );
+        } else {
+          Navigator.pop(context, model);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),

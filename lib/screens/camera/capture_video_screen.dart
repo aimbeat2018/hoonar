@@ -494,7 +494,9 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SelectSoundListScreen(),
+                                builder: (context) => SelectSoundListScreen(
+                                  duration: totalSeconds.toString(),
+                                ),
                               ),
                             ).then((result) async {
                               if (result != null) {

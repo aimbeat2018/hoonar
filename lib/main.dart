@@ -1,4 +1,4 @@
-import 'package:face_camera/face_camera.dart';
+// import 'package:face_camera/face_camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +29,7 @@ String selectedLanguage = byDefaultLanguage;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
-  await FaceCamera.initialize(); //Add this
+  // await FaceCamera.initialize(); //Add this
   await Firebase.initializeApp(
       options: const FirebaseOptions(
     apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
-import 'package:fijkplayer/fijkplayer.dart';
+// import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,7 +36,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
-  late FijkPlayer _fijkPlayer;
+  // late FijkPlayer _fijkPlayer;
   late Chewie _chewie;
   bool _isPaused = false;
   bool isFollow = false, isFollowLoading = false;
