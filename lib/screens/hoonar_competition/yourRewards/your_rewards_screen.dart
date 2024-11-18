@@ -1,14 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/session_manager.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
-import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/yourRewards/wallet_screen.dart';
-import 'package:hoonar/shimmerLoaders/category_shimmer.dart';
 import 'package:hoonar/shimmerLoaders/grid_shimmer.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +13,6 @@ import '../../../../constants/color_constants.dart';
 import '../../../../constants/my_loading/my_loading.dart';
 import '../../../../constants/slide_right_route.dart';
 import '../../../../constants/theme.dart';
-import '../../../../model/contestant.dart';
 import '../../../constants/common_widgets.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';

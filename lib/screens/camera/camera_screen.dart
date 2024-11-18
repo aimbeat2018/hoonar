@@ -212,8 +212,10 @@
 //                               } else {
 //                                 await HoonarCamera.stopRecording;
 //
-//                                 MethodChannel(ConstRes.hoonarCamera).setMethodCallHandler((payload) async {
-//                                   gotoPreviewScreen(payload.arguments.toString());
+//                                 MethodChannel(ConstRes.hoonarCamera)
+//                                     .setMethodCallHandler((payload) async {
+//                                   gotoPreviewScreen(
+//                                       payload.arguments.toString());
 //                                   return;
 //                                 });
 //                               }

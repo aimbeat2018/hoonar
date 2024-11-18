@@ -64,7 +64,7 @@ class _DraftVideoListScreenState extends State<DraftVideoListScreen> {
                       page: UploadVideoScreen(
                     videoThumbnail: "",
                     from: "",
-                    videoUrl: [],
+                    videoUrl: '',
                   )),
                 );
               },

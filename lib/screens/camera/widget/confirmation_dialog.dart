@@ -33,7 +33,7 @@ class ConfirmationDialog extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: isDarkMode! ? Colors.black : Colors.white,
+              color: isDarkMode! ? Colors.white : Colors.black,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -47,7 +47,7 @@ class ConfirmationDialog extends StatelessWidget {
                       child: Text(
                         title1,
                         style: GoogleFonts.poppins(
-                            color: isDarkMode! ? Colors.white : Colors.black,
+                            color: isDarkMode! ? Colors.black : Colors.white,
                             fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
@@ -60,7 +60,7 @@ class ConfirmationDialog extends StatelessWidget {
                       child: Text(
                         title2,
                         style: GoogleFonts.poppins(
-                          color: isDarkMode! ? Colors.white : Colors.black,
+                          color: isDarkMode! ? Colors.black : Colors.white,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -73,7 +73,7 @@ class ConfirmationDialog extends StatelessWidget {
                     border: Border(
                       top: BorderSide(
                           color: isDarkMode!
-                              ? Colors.white.withOpacity(0.8)
+                              ? Colors.black.withOpacity(0.8)
                               : Colors.grey,
                           width: 0.5),
                     ),
@@ -109,8 +109,8 @@ class ConfirmationDialog extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                   fontSize: 17,
                                   color: isDarkMode!
-                                      ? Colors.white
-                                      : Colors.black),
+                                      ? Colors.black
+                                      : Colors.white),
                             ),
                           ),
                         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
+import 'package:hoonar/screens/camera/capture_video_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/select_category_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
@@ -157,8 +158,8 @@ class _MainScreenState extends State<MainScreen> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          // openCameraScreen();
-                          _startVideoEditorInCameraMode();
+                          openCameraScreen();
+                          // _startVideoEditorInCameraMode();
                         },
                         child: Column(
                           children: [
@@ -229,17 +230,12 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-/*  void openCameraScreen() {
+  void openCameraScreen() {
     Navigator.push(
       context,
-      SlideRightRoute(
-          page: CameraScreen(
-        soundId: "1",
-        soundTitle: "hgh",
-        soundUrl: "ghs",
-      )),
+      SlideRightRoute(page: CaptureVideoScreen()),
     );
-  }*/
+  }
 
   Future<void> _startVideoEditorInCameraMode() async {
     // Specify your Config params in the builder below
@@ -292,7 +288,7 @@ class _MainScreenState extends State<MainScreen> {
       SlideRightRoute(
           page: UploadVideoScreen(
         videoThumbnail: result.previewFilePath!,
-        videoUrl: result.videoSources,
+        videoUrl: result.videoSources.first,
         from: "normal",
       )),
     );

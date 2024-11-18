@@ -86,7 +86,7 @@ class CommonApiMethods {
 
       final response = await dio.request(
         url,
-        data: formData, // Now passing actual FormData, not a Future<FormData>
+        data: formData,
         options: _dioOptions(
           method,
           bearerToken: sessionManager.getString(SessionManager.accessToken) ??

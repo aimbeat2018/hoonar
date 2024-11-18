@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
+import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/my_loading/my_loading.dart';
@@ -17,7 +18,7 @@ import '../../../../providers/home_provider.dart';
 import '../../../auth_screen/login_screen.dart';
 
 class UploadVideoScreen extends StatefulWidget {
-  final List<String>? videoUrl;
+  final String? videoUrl;
   final String videoThumbnail;
   final String from;
 
@@ -61,7 +62,13 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else if (homeProvider.addPostModel?.status == '200') {
-        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(
+            context,
+            SlideRightRoute(
+                page: const MainScreen(
+              fromIndex: 0,
+            )),
+            (route) => false);
       } else if (homeProvider.addPostModel?.message == 'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
             context, homeProvider.addPostModel?.message! ?? '');
@@ -373,7 +380,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                             hashTagController.text),
                                         postImagePath: widget.videoThumbnail
                                             .replaceAll('file://', ''),
-                                        postVideoPath: widget.videoUrl!.first);
+                                        postVideoPath: widget.videoUrl!);
                                 addPost(context, requestModel);
                               },
                               child: Container(
@@ -430,7 +437,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                             hashTagController.text),
                                         postImagePath: widget.videoThumbnail
                                             .replaceAll('file://', ''),
-                                        postVideoPath: widget.videoUrl!.first);
+                                        postVideoPath: widget.videoUrl!);
                                 addPost(context, requestModel);
                               },
                               child: Container(

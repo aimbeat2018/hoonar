@@ -15,6 +15,9 @@ import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
+import 'package:hoonar/model/success_models/sound_list_model.dart';
+import 'package:hoonar/model/success_models/sound_list_model.dart';
+import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
@@ -154,6 +157,7 @@ class ContestService {
     return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$uploadKycDocumentUrl',
       method: 'POST',
+      accessToken: accessToken,
       data: requestModel.toFormData(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
@@ -164,8 +168,31 @@ class ContestService {
     return apiMethods.sendMultipartRequest<KycStatusModel>(
       '$baseUrl$getKycStatusUrl',
       method: 'POST',
+      accessToken: accessToken,
       data: requestModel.toFormData(),
       fromJson: (data) => KycStatusModel.fromJson(data),
+    );
+  }
+
+  Future<SoundListModel> getSoundList(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<SoundListModel>(
+      '$baseUrl$getSoundListUrl',
+      // method: 'POST',
+      accessToken: accessToken,
+      data: requestModel.toJson(),
+      fromJson: (data) => SoundListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> savedUnSavedMusic(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$saveSoundUrl',
+      method: 'POST',
+      accessToken: accessToken,
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
 }

@@ -56,6 +56,8 @@ const String updateProfileImageUrl = 'User/updateProfileImage';
 const String getUserRewards = 'User/getUserRewards';
 const String claimRewardUrl = 'User/claimReward';
 const String getUserWalletTransactions = 'User/getUserWalletTransactions';
+const String getSoundListUrl = 'Post/getSoundList';
+const String saveSoundUrl = 'Post/saveSound';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
