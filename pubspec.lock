@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  audio_waveforms:
+    dependency: "direct main"
+    description:
+      name: audio_waveforms
+      sha256: "9fbd314cd4f67e8964df960548ea3b56f829716879527caafb8f3d76ee7e6bf0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   audioplayers:
     dependency: "direct main"
     description:
@@ -313,6 +321,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  easy_audio_trimmer:
+    dependency: "direct main"
+    description:
+      name: easy_audio_trimmer
+      sha256: caf3c044c72a365cf868f4298165c1a9d8b7341960d39cfcd917ffba12182493
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2+4"
   fake_async:
     dependency: transitive
     description:
@@ -478,6 +494,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.5"
+  flutter_audio_waveforms:
+    dependency: "direct main"
+    description:
+      name: flutter_audio_waveforms
+      sha256: "425dda9ee5ef9bb2ff2a2000b19ec595593b3baba6a1274da8d1d729846a144b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.1+8"
   flutter_cache_manager:
     dependency: transitive
     description:

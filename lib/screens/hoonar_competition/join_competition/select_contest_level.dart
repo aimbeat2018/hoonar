@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
@@ -6,14 +7,14 @@ import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
 import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
-import '../../../model/star_category_model.dart';
 import '../../../model/success_models/level_list_model.dart';
 import '../../auth_screen/login_screen.dart';
 import 'contest_join_options_screen.dart';
@@ -81,6 +82,13 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
       } else {
         if (contestProvider.storePaymentSuccessModel?.status == '200') {
           Navigator.of(context).pop();
+
+          if (mounted) {
+            setState(() {
+              KeyRes.selectedLevelId = requestModel.levelId!;
+            });
+          }
+
           Navigator.push(
             context,
             SlideRightRoute(
@@ -180,6 +188,13 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                       if (contestProvider.levelListModel!
                                               .data![index].isUnlocked ==
                                           1) {
+                                        if (mounted) {
+                                          setState(() {
+                                            KeyRes.selectedLevelId =
+                                                contestProvider.levelListModel!
+                                                    .data![index].levelId!;
+                                          });
+                                        }
                                         Navigator.push(
                                             context,
                                             SlideRightRoute(

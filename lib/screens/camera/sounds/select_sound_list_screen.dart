@@ -6,23 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
-import 'package:hoonar/screens/camera/trim_audio_screen.dart';
+import 'package:hoonar/screens/camera/sounds/trim_audio_screen.dart';
 import 'package:hoonar/shimmerLoaders/following_list_shimmer.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-import '../../constants/color_constants.dart';
-import '../../constants/my_loading/my_loading.dart';
-import '../../constants/session_manager.dart';
-import '../../constants/slide_right_route.dart';
-import '../../constants/theme.dart';
-import '../../custom/data_not_found.dart';
-import '../../custom/snackbar_util.dart';
-import '../../model/success_models/sound_list_model.dart';
-import '../../providers/contest_provider.dart';
-import '../auth_screen/login_screen.dart';
-import '../hoonar_competition/yourRewards/add_bank_details_screen.dart';
-import '../hoonar_competition/yourRewards/wallet_screen.dart';
+import '../../../constants/color_constants.dart';
+import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/session_manager.dart';
+import '../../../constants/slide_right_route.dart';
+import '../../../constants/theme.dart';
+import '../../../custom/data_not_found.dart';
+import '../../../custom/snackbar_util.dart';
+import '../../../model/success_models/sound_list_model.dart';
+import '../../../providers/contest_provider.dart';
+import '../../auth_screen/login_screen.dart';
+import '../../hoonar_competition/yourRewards/add_bank_details_screen.dart';
+import '../../hoonar_competition/yourRewards/wallet_screen.dart';
 
 class SelectSoundListScreen extends StatefulWidget {
   final String? duration;
@@ -125,30 +125,6 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     return true; // Allow back navigation
   }
 
-  /*final FlutterFFmpeg _flutterFFmpeg = FlutterFFmpeg();
-  String _trimmedAudioPath = '';
-
-  Future<void> trimAudio(String inputFilePath, double startTime, double duration) async {
-    // Create the output file path
-    final directory = await getTemporaryDirectory();
-    final outputFilePath =
-        '${directory.path}/${DateTime.now().millisecondsSinceEpoch}_trimmed.mp3';
-
-    // Build the FFmpeg command to trim the audio
-    final command = '-i $inputFilePath -ss $startTime -t $duration -acodec copy $outputFilePath';
-
-    // Execute the command
-    await _flutterFFmpeg.execute(command).then((returnCode) {
-      if (returnCode == 0) {
-        print('Audio trimmed successfully: $outputFilePath');
-        setState(() {
-          _trimmedAudioPath = outputFilePath; // Update the trimmed audio path
-        });
-      } else {
-        print('Error trimming audio');
-      }
-    });
-  }*/
   @override
   Widget build(BuildContext context) {
     final contestProvider = Provider.of<ContestProvider>(context);
@@ -185,9 +161,9 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                                 setState(() {
                                   isAudioPlaying = false;
                                 });
-
-                                Navigator.pop(context);
                               }
+
+                              Navigator.pop(context);
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(left: 13),
@@ -282,32 +258,27 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
 
     return InkWell(
       onTap: () async {
-        String duration1 = model.duration!; // 3 minutes and 2 seconds
+        if (widget.duration != '0') {
+          String duration1 = model.duration!;
 
-        Duration duration2 = Duration(
-            milliseconds: (double.parse(widget.duration!) * 1000).toInt());
-        // Duration duration2 =
-        //     Duration(seconds: int.parse()); // 15 seconds
+          Duration duration2 = Duration(
+              milliseconds: (double.parse(widget.duration!) * 1000).toInt());
 
-        // Convert "3:02" to Duration
-        List<String> parts = duration1.split(":");
-        int minutes = int.parse(parts[0]);
-        int seconds = int.parse(parts[1]);
-        Duration parsedDuration1 = Duration(minutes: minutes, seconds: seconds);
+          List<String> parts =
+              duration1.split(duration1.contains(":") ? ":" : ".");
+          int minutes = int.parse(parts[0]);
+          int seconds = int.parse(parts[1]);
+          Duration parsedDuration1 =
+              Duration(minutes: minutes, seconds: seconds);
 
-        // Compare the durations
-        if (parsedDuration1 > duration2) {
-          File _localMusic = await _downloadAudio(model.sound ?? '');
-          Navigator.push(
-            context,
-            SlideRightRoute(
-                page: TrimAudioScreen(
-              audioFilePath: _localMusic.path,
-              // totalDuration: double.parse(model.duration!),
-            )),
-          );
-        } else {
-          Navigator.pop(context, model);
+          if (parsedDuration1 > duration2) {
+            File _localMusic = await _downloadAudio(model.sound ?? '');
+
+            _openTrimBottomSheet(context, _localMusic.path,
+                double.parse(widget.duration!).toInt(), model);
+          } else {
+            Navigator.pop(context, model);
+          }
         }
       },
       child: Container(
@@ -488,7 +459,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
       ),
       position: PopupMenuPosition.under,
       itemBuilder: (context) => [
-        PopupMenuItem(
+        /*   PopupMenuItem(
           height: 0,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
           child: Align(
@@ -509,7 +480,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
               SlideRightRoute(page: const AddBankDetailsScreen()),
             );
           },
-        ),
+        ),*/
         PopupMenuItem(
           height: 0,
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
@@ -534,5 +505,30 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
         ),
       ],
     );
+  }
+
+  void _openTrimBottomSheet(BuildContext context, String audioFilePath,
+      int trimSecs, SoundList model) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return TrimAudioScreen(
+          audioFilePath: audioFilePath,
+          selectedDuration: trimSecs,
+          model: model,
+        );
+      },
+    ).then((onValue) {
+      if (onValue != null) {
+        if (mounted) {
+          setState(() {
+            model.trimAudioPath = onValue;
+          });
+        }
+        Navigator.pop(context, model);
+      }
+    });
   }
 }

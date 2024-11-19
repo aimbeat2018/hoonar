@@ -6,6 +6,7 @@ import 'package:hoonar/screens/hoonar_competition/join_competition/select_contes
 import 'package:provider/provider.dart';
 
 import '../../../constants/common_widgets.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
@@ -133,6 +134,14 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () {
+                                    if (mounted) {
+                                      setState(() {
+                                        KeyRes.selectedCategoryId = homeProvider
+                                            .categoryListSuccessModel!
+                                            .data![index]
+                                            .categoryId!;
+                                      });
+                                    }
                                     Navigator.push(
                                       context,
                                       SlideRightRoute(

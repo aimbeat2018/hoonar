@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
+import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/snackbar_util.dart';
 import '../../../../model/request_model/list_common_request_model.dart';
 import '../../../../model/success_models/hash_tag_list_model.dart';
+import '../../../../model/success_models/sound_list_model.dart';
 import '../../../../providers/home_provider.dart';
 import '../../../auth_screen/login_screen.dart';
 
@@ -21,12 +23,14 @@ class UploadVideoScreen extends StatefulWidget {
   final String? videoUrl;
   final String videoThumbnail;
   final String from;
+  final SoundList? selectedMusic;
 
   const UploadVideoScreen(
       {super.key,
       this.videoUrl,
       required this.videoThumbnail,
-      required this.from});
+      required this.from,
+      this.selectedMusic});
 
   @override
   State<UploadVideoScreen> createState() => _UploadVideoScreenState();
@@ -62,6 +66,13 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else if (homeProvider.addPostModel?.status == '200') {
+        if (mounted) {
+          setState(() {
+            KeyRes.selectedLevelId = -1;
+            KeyRes.selectedCategoryId = -1;
+          });
+        }
+
         Navigator.pushAndRemoveUntil(
             context,
             SlideRightRoute(
@@ -372,9 +383,13 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                         userId: int.parse(sessionManager
                                             .getString(SessionManager.userId)!),
                                         categoryId:
-                                            widget.from == "normal" ? "" : "",
-                                        levelId:
-                                            widget.from == "normal" ? "" : "",
+                                        KeyRes.selectedCategoryId == -1
+                                            ? ""
+                                            : KeyRes.selectedCategoryId
+                                            .toString(),
+                                        levelId: KeyRes.selectedLevelId == -1
+                                            ? ""
+                                            : KeyRes.selectedLevelId.toString(),
                                         postDescription: captionController.text,
                                         postHashTag: addCommaBeforeHashtags(
                                             hashTagController.text),
@@ -426,18 +441,27 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                 AddPostRequestModel requestModel =
                                     AddPostRequestModel(
                                         saveAsDraft: "0",
+
                                         userId: int.parse(sessionManager
                                             .getString(SessionManager.userId)!),
                                         categoryId:
-                                            widget.from == "normal" ? "" : "",
-                                        levelId:
-                                            widget.from == "normal" ? "" : "",
+                                            KeyRes.selectedCategoryId == -1
+                                                ? ""
+                                                : KeyRes.selectedCategoryId
+                                                    .toString(),
+                                        levelId: KeyRes.selectedLevelId == -1
+                                            ? ""
+                                            : KeyRes.selectedLevelId.toString(),
                                         postDescription: captionController.text,
                                         postHashTag: addCommaBeforeHashtags(
                                             hashTagController.text),
                                         postImagePath: widget.videoThumbnail
                                             .replaceAll('file://', ''),
                                         postVideoPath: widget.videoUrl!);
+
+                                /*if(widget.selectedMusic!=null){
+                                  requestModel.isOrignalSound =
+                                }*/
                                 addPost(context, requestModel);
                               },
                               child: Container(

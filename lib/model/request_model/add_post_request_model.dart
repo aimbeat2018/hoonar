@@ -7,8 +7,16 @@ class AddPostRequestModel {
   String? categoryId;
   String? levelId;
   String? saveAsDraft;
+  String?
+      isOrignalSound; //0-sound selected from list no trim pass sound id , 1 - sound trimmed,
+  String? soundTitle;
+  String? duration;
+  String? singer;
+  String? soundId;
   String? postVideoPath; // File path for video
   String? postImagePath; // File path for image
+  String? postSound; // File path for image
+  String? soundImage; // File path for image
 
   AddPostRequestModel({
     this.userId,
@@ -16,8 +24,15 @@ class AddPostRequestModel {
     this.postHashTag,
     this.postVideoPath,
     this.saveAsDraft,
+    this.isOrignalSound,
     this.postImagePath,
+    this.postSound,
     this.categoryId,
+    this.soundTitle,
+    this.duration,
+    this.singer,
+    this.soundId,
+    this.soundImage,
     this.levelId,
   });
 
@@ -29,7 +44,14 @@ class AddPostRequestModel {
     levelId = json['level_id'];
     postVideoPath = json['post_video'];
     postImagePath = json['post_image'];
+    postSound = json['post_sound'];
     saveAsDraft = json['save_as_draft'];
+    isOrignalSound = json['is_orignal_sound'];
+    soundTitle = json['sound_title'];
+    duration = json['duration'];
+    singer = json['singer'];
+    soundId = json['sound_id'];
+    soundImage = json['sound_image'];
   }
 
   Future<FormData> toFormData() async {
@@ -40,6 +62,11 @@ class AddPostRequestModel {
       'category_id': categoryId,
       'level_id': levelId,
       'save_as_draft': saveAsDraft,
+      'is_orignal_sound': isOrignalSound,
+      'sound_title': soundTitle,
+      'duration': duration,
+      'singer': singer,
+      'sound_id': soundId,
     };
 
     // If there is a video file path, add it to FormData as MultipartFile
@@ -55,6 +82,18 @@ class AddPostRequestModel {
       data['post_image'] = await MultipartFile.fromFile(
         postImagePath!,
         filename: postImagePath!.split('/').last,
+      );
+    } // If there is an image file path, add it to FormData as MultipartFile
+    if (postSound != null) {
+      data['post_sound'] = await MultipartFile.fromFile(
+        postSound!,
+        filename: postSound!.split('/').last,
+      );
+    }
+    if (soundImage != null) {
+      data['sound_image'] = await MultipartFile.fromFile(
+        soundImage!,
+        filename: soundImage!.split('/').last,
       );
     }
 

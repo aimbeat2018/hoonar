@@ -16,4 +16,7 @@ class KeyRes {
   static const String liveStreamCollected = 'liveStreamCollected';
   static const String liveStreamProfile = 'liveStreamProfile';
   static const String favouriteMusic = 'favouriteMusic';
+
+  static  int selectedCategoryId = -1;
+  static  int selectedLevelId = -1;
 }

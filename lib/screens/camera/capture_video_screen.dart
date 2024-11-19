@@ -9,18 +9,21 @@ import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
-import 'package:hoonar/screens/camera/select_sound_list_screen.dart';
+import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/camera/video_preview_screen.dart';
 import 'package:hoonar/screens/camera/widget/confirmation_dialog.dart';
 
 // import 'package:video_record_demo/musicLibrary/select_music_list_screen.dart';
 // import 'package:video_record_demo/sound_list_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/slide_right_route.dart';
+import '../profile/customCameraAndCrop/custom_gallery_screen.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
   const CaptureVideoScreen({super.key});
@@ -43,7 +46,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   bool isSelected60s = false;
   bool isMusicSelect = false;
   File? _videoFile;
-  double totalSeconds = 15;
+  double totalSeconds = 60;
   Timer? timer;
   double currentSecond = 0;
   double currentPercentage = 0;
@@ -114,7 +117,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   }
 
   Future<void> _startRecording() async {
-    playAudio(_selectedMusic!.sound ?? '');
+    if (_selectedMusic != null) {
+      playAudio(_localMusic == null
+          ? _selectedMusic!.sound ?? ''
+          : _localMusic!.path);
+    }
 
     final directory = await getTemporaryDirectory();
     final videoPath =
@@ -132,14 +139,16 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   }
 
   Future<void> _pauseRecording() async {
-    if (!_isRecording) return;
-    pauseAudio();
+    // if (!_isRecording) return;
+
     try {
       final file = await _controller.stopVideoRecording();
       _videoSegments.add(file.path); // Save segment
       setState(() {
         _isPaused = true;
       });
+
+      if (_selectedMusic != null) pauseAudio();
     } catch (e) {
       print('Error pausing recording: $e');
     }
@@ -147,9 +156,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
   Future<void> _resumeRecording() async {
     if (!_isPaused) return;
-    resumeAudio();
+
     try {
       await _startRecording(); // Start a new recording
+      if (_selectedMusic != null) resumeAudio();
     } catch (e) {
       print('Error resuming recording: $e');
     }
@@ -165,7 +175,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         _isRecording = false;
         _isPaused = false;
       });
-      stopAudio();
+      if (_selectedMusic != null) stopAudio();
 
       // Merge all video segments
       await _mergeVideoSegments(isDone);
@@ -201,6 +211,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         setState(() {
           _mergedVideoPath = outputFilePath;
         });
+
+        if (isDone) {
+          _goToPreviewScreen(File(_mergedVideoPath!));
+        }
       } else {
         print('Error merging video segments');
       }
@@ -239,6 +253,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         builder: (context) => VideoPreviewScreen(
           videoFile: mergedFile,
           selectedMusic: _selectedMusic,
+          duration: totalSeconds.toString(),
         ),
       ),
     );
@@ -280,15 +295,25 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   }
 
   //
-  // Future<void> _selectVideoFromGallery() async {
-  //   final pickedFile = await ImagePicker().pickVideo(source: ImageSource.gallery);
-  //   if (pickedFile != null) {
-  //     setState(() {
-  //       _videoFile = File(pickedFile.path);
-  //     });
-  //     print('Selected video: ${_videoFile!.path}');
-  //   }
-  // }
+  Future<void> _selectVideoFromGallery() async {
+    final pickedFile =
+        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _videoFile = File(pickedFile.path);
+      });
+      print('Selected video: ${_videoFile!.path}');
+
+      if (_selectedMusic == null) {
+        _goToPreviewScreen(_videoFile!);
+      } else {
+        setState(() {
+          _mergedVideoPath = _videoFile!.path;
+        });
+        _mergeAudioWithVideo();
+      }
+    }
+  }
 
   void initPermission() async {
     Map<Permission, PermissionStatus> statuses = await [
@@ -503,12 +528,18 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                 setState(() {
                                   _selectedMusic = result;
                                 });
-                                _localMusic = await _downloadAudio(
-                                    _selectedMusic!.sound!);
+                                if (_selectedMusic!.trimAudioPath == null) {
+                                  _localMusic = await _downloadAudio(
+                                      _selectedMusic!.sound!);
+                                } else {
+                                  _localMusic =
+                                      File(_selectedMusic!.trimAudioPath!);
+                                }
                               }
                             });
                           },
                           child: Container(
+                            width: MediaQuery.of(context).size.width / 2,
                             padding: const EdgeInsets.symmetric(
                                 vertical: 5, horizontal: 20),
                             decoration: BoxDecoration(
@@ -526,6 +557,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                     ),
                                   )
                                 : Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(4),
@@ -550,35 +582,37 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                       ),
                                       const SizedBox(width: 10),
                                       // Space between thumbnail and text
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            _selectedMusic!.soundTitle ??
-                                                'Unknown Title',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
+                                      Flexible(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              _selectedMusic!.soundTitle ??
+                                                  'Unknown Title',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            _selectedMusic!.singer ??
-                                                'Unknown Artist',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 10,
-                                              color: Colors.black54,
+                                            const SizedBox(height: 3),
+                                            Text(
+                                              _selectedMusic!.singer ??
+                                                  'Unknown Artist',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 10,
+                                                color: Colors.black54,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -588,7 +622,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                 ),
               ),
 
-            if (_isRecording || !_isPaused)
+            if (_isRecording || _isPaused)
               Positioned(
                 top: 50,
                 // left: 0,
@@ -599,12 +633,19 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                       _isRecording = false;
                       cancelTimer();
                     });
-                    if (_mergedVideoPath != null) {
-                      _mergeAudioWithVideo();
-                    } else {
-                      _stopRecording(true).then((onValue) {
+                    if (_selectedMusic != null) {
+                      if (_mergedVideoPath != null) {
                         _mergeAudioWithVideo();
-                      });
+                      } else {
+                        _stopRecording(true).then((onValue) {
+                          _mergeAudioWithVideo();
+                        });
+                      }
+                    } else {
+                      // if (_mergedVideoPath == null) {
+                      _mergeVideoSegments(true);
+                      // }
+                      // _goToPreviewScreen(File(_mergedVideoPath!));
                     }
                   },
                   child: Image.asset(
@@ -629,7 +670,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                         // Gallery Icon
                         !_isRecording
                             ? InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  print('data');
+                                  _selectVideoFromGallery();
+                                },
                                 child: Image.asset(
                                   'assets/images/reel_gallery.png',
                                   height: 30,
@@ -756,11 +800,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   isSelected15s = true;
                                   isSelected30s = false;
                                   isSelected60s = false;
-                                  totalSeconds = 15;
+                                  totalSeconds = 60;
                                   setState(() {});
                                 },
                                 isSelected: isSelected15s,
-                                title: '15 Sec',
+                                title: '60 Sec',
                               ),
                             ),
                             SizedBox(width: 15),
@@ -770,11 +814,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   isSelected30s = true;
                                   isSelected15s = false;
                                   isSelected60s = false;
-                                  totalSeconds = 30;
+                                  totalSeconds = 90;
                                   setState(() {});
                                 },
                                 isSelected: isSelected30s,
-                                title: '30 Sec',
+                                title: '90 Sec',
                               ),
                             ),
                             SizedBox(width: 15),
@@ -784,11 +828,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   isSelected30s = false;
                                   isSelected15s = false;
                                   isSelected60s = true;
-                                  totalSeconds = 60;
+                                  totalSeconds = 120;
                                   setState(() {});
                                 },
                                 isSelected: isSelected60s,
-                                title: '60 Sec',
+                                title: '120 Sec',
                               ),
                             ),
                           ],

@@ -76,6 +76,7 @@ class SoundList {
   int? isSaved;
   String? createdAt;
   String? updatedAt;
+  String? trimAudioPath;
 
   SoundList(
       {this.soundId,
@@ -89,6 +90,7 @@ class SoundList {
       this.isDeleted,
       this.createdAt,
       this.isSaved,
+      this.trimAudioPath,
       this.updatedAt});
 
   SoundList.fromJson(Map<String, dynamic> json) {

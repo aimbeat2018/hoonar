@@ -5,7 +5,7 @@ import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/screens/camera/select_sound_list_screen.dart';
+import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 
 // import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
@@ -292,9 +292,10 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
 class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
   final SoundList? selectedMusic;
+  final String? duration;
 
   const VideoPreviewScreen(
-      {Key? key, required this.videoFile, this.selectedMusic})
+      {Key? key, required this.videoFile, this.selectedMusic, this.duration})
       : super(key: key);
 
   @override
@@ -320,7 +321,6 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
     if (widget.selectedMusic != null) {
       _selectedMusic = widget.selectedMusic;
     }
-
   }
 
   void _initializeVideoController(File videoFile) {
@@ -441,95 +441,126 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
               top: 50,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SelectSoundListScreen(),
-                        ),
-                      ).then((result) async {
-                        if (result != null) {
-                          setState(() {
-                            _selectedMusic = result;
-                          });
-                          _localMusic =
-                              await _downloadAudio(_selectedMusic!.sound!);
-                        }
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(20),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Image.asset(
+                        'assets/images/back_image.png',
+                        height: 25,
+                        width: 25,
                       ),
-                      child: _selectedMusic == null
-                          ? Center(
-                              child: Text(
-                                'Add Sound',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SelectSoundListScreen(
+                                duration: widget.duration,
                               ),
-                            )
-                          : Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: CachedNetworkImage(
-                                    imageUrl: _selectedMusic!.soundImage ?? '',
-                                    width: 25,
-                                    // Thumbnail width
-                                    height: 25,
-                                    // Thumbnail height
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(
-                                            strokeWidth: 2),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(
-                                      Icons.music_note,
-                                      color: Colors.grey,
-                                      size: 30,
+                            ),
+                          ).then((result) async {
+                            if (result != null) {
+                              setState(() {
+                                _selectedMusic = result;
+                              });
+                              if (_selectedMusic!.trimAudioPath == null) {
+                                _localMusic = await _downloadAudio(
+                                    _selectedMusic!.sound!);
+                              } else {
+                                _localMusic =
+                                    File(_selectedMusic!.trimAudioPath!);
+                              }
+                              _mergeAudioWithVideo(_localMusic!);
+                            }
+                          });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 2,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade400.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: _selectedMusic == null
+                              ? Center(
+                                  child: Text(
+                                    'Add Sound',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                // Space between thumbnail and text
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
+                                )
+                              : Row(
                                   children: [
-                                    Text(
-                                      _selectedMusic!.soundTitle ??
-                                          'Unknown Title',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            _selectedMusic!.soundImage ?? '',
+                                        width: 25,
+                                        // Thumbnail width
+                                        height: 25,
+                                        // Thumbnail height
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            const CircularProgressIndicator(
+                                                strokeWidth: 2),
+                                        errorWidget: (context, url, error) =>
+                                            const Icon(
+                                          Icons.music_note,
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      _selectedMusic!.singer ??
-                                          'Unknown Artist',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 10,
-                                        color: Colors.black54,
+                                    const SizedBox(width: 10),
+                                    // Space between thumbnail and text
+                                    Flexible(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            _selectedMusic!.soundTitle ??
+                                                'Unknown Title',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 3),
+                                          Text(
+                                            _selectedMusic!.singer ??
+                                                'Unknown Artist',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 10,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                    )),
+                        )),
+                  ],
+                ),
               ),
             ),
             Positioned(
@@ -558,6 +589,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                               videoThumbnail: _thumbnailPath!,
                               videoUrl: _videoFile!.path,
                               from: "normal",
+                              selectedMusic: _selectedMusic,
                             )),
                           );
                         });

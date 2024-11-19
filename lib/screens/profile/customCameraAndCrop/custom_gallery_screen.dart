@@ -13,7 +13,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/slide_right_route.dart';
 
 class CustomGalleryScreen extends StatefulWidget {
-  const CustomGalleryScreen({super.key});
+  final String requestType;
+
+  const CustomGalleryScreen({super.key, required this.requestType});
 
   @override
   State<CustomGalleryScreen> createState() => _CustomGalleryScreenState();
@@ -46,7 +48,8 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
 
     // Fetch image folders from the user's gallery
     final List<AssetPathEntity> folders = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
+      type:
+          widget.requestType == 'image' ? RequestType.image : RequestType.video,
     );
 
     if (folders.isNotEmpty) {

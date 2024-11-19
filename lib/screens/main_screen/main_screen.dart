@@ -233,7 +233,7 @@ class _MainScreenState extends State<MainScreen> {
   void openCameraScreen() {
     Navigator.push(
       context,
-      SlideRightRoute(page: CaptureVideoScreen()),
+      SlideRightRoute(page: const CaptureVideoScreen()),
     );
   }
 

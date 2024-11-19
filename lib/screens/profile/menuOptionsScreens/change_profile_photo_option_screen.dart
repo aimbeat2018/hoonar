@@ -83,7 +83,7 @@ class _ChangeProfilePhotoOptionScreenState
                   Navigator.pop(context);
                   Navigator.push(
                     context,
-                    SlideRightRoute(page: const CustomGalleryScreen()),
+                    SlideRightRoute(page:  CustomGalleryScreen(requestType: 'image',)),
                   );
                 },
                 child: Column(
