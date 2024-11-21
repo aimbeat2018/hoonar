@@ -28,6 +28,7 @@ const String getCommentUrl = 'Post/getCommentByPostId';
 const String deleteCommentUrl = 'Post/deleteComment';
 const String likeUnlikeCommentUrl = 'Post/likeUnlikeComment';
 const String addPostUrl = 'Post/addPost';
+const String updatePostUrl = 'Post/updatePost';
 const String getHashTagListUrl = 'Post/getHashtagList';
 const String getHomePageViewAllPostUrl = 'Post/getHomePageViewAllPost';
 const String getLevelUrl = 'User/getLevelLists';
@@ -57,7 +58,9 @@ const String getUserRewards = 'User/getUserRewards';
 const String claimRewardUrl = 'User/claimReward';
 const String getUserWalletTransactions = 'User/getUserWalletTransactions';
 const String getSoundListUrl = 'Post/getSoundList';
+const String getUserSavedSoundsUrl = 'User/getUserSavedSounds';
 const String saveSoundUrl = 'Post/saveSound';
+const String getUserDraftFeedCategoryWiseUrl = 'User/getUserDraftsFeed';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

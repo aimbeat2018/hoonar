@@ -1,7 +1,7 @@
 class WalletTransactionListModel {
   String? status;
   String? message;
-  int? walletBalance;
+  String? walletBalance;
   List<WalletTransactionData>? data;
 
   WalletTransactionListModel(

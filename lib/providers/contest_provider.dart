@@ -18,6 +18,7 @@ import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/services/contest_service.dart';
 
 import '../model/request_model/upload_kyc_document_request_model.dart';
+import '../model/success_models/DraftFeedListModel.dart';
 import '../model/success_models/kyc_status_model.dart';
 
 class ContestProvider extends ChangeNotifier {
@@ -41,7 +42,9 @@ class ContestProvider extends ChangeNotifier {
   bool _isWalletTransactionLoading = false;
   bool _isClaimRewardsLoading = false;
   bool _isSoundLoading = false;
+  bool _isSavedSoundListLoading = false;
   bool _isSavedSoundLoading = false;
+  bool _isDraftFeedLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
@@ -58,6 +61,8 @@ class ContestProvider extends ChangeNotifier {
   KycStatusModel? _kycStatusModel;
   RewardListModel? _rewardListModel;
   SoundListModel? _soundListModel;
+  SoundListModel? _savedSoundListModel;
+  DraftFeedListModel? _draftFeedListModel;
   WalletTransactionListModel? _walletTransactionListModel;
   List<LeaderboardListData> _leaderboardList = [];
   List<LeaderboardListData> _filteredLeaderboardList = [];
@@ -75,6 +80,10 @@ class ContestProvider extends ChangeNotifier {
   bool get isHoonarStarLoading => _isHoonarStarLoading;
 
   bool get isSavedSoundLoading => _isSavedSoundLoading;
+
+  bool get isDraftFeedLoading => _isDraftFeedLoading;
+
+  bool get isSavedSoundListLoading => _isSavedSoundListLoading;
 
   bool get isWalletTransactionLoading => _isWalletTransactionLoading;
 
@@ -94,6 +103,8 @@ class ContestProvider extends ChangeNotifier {
 
   LevelListModel? get levelListModel => _levelListModel;
 
+  SoundListModel? get savedSoundListModel => _savedSoundListModel;
+
   WalletTransactionListModel? get walletTransactionListModel =>
       _walletTransactionListModel;
 
@@ -104,6 +115,8 @@ class ContestProvider extends ChangeNotifier {
   UserRankSuccessModel? get userRankSuccessModel => _userRankSuccessModel;
 
   HoonarStarSuccessModel? get hoonarStarSuccessModel => _hoonarStarSuccessModel;
+
+  DraftFeedListModel? get draftFeedListModel => _draftFeedListModel;
 
   NewsEventSuccessModel? get newsEventSuccessModel => _newsEventSuccessModel;
 
@@ -413,6 +426,24 @@ class ContestProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getSavedSoundList(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isSavedSoundListLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SoundListModel successModel =
+          await _contestService.getSavedSoundList(requestModel, accessToken);
+      _savedSoundListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSavedSoundListLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> saveSound(
       CommonRequestModel requestModel, String accessToken) async {
     _isSavedSoundLoading = true;
@@ -427,6 +458,24 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isSavedSoundLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getUserDraftFeedCategoryWise(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isDraftFeedLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      DraftFeedListModel successModel = await _contestService
+          .getUserDraftFeedCategoryWise(requestModel, accessToken);
+      _draftFeedListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isDraftFeedLoading = false;
       notifyListeners();
     }
   }

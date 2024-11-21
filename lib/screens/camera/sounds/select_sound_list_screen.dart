@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/screens/camera/sounds/local_video_selected_screen.dart';
 import 'package:hoonar/screens/camera/sounds/trim_audio_screen.dart';
 import 'package:hoonar/shimmerLoaders/following_list_shimmer.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,7 +22,6 @@ import '../../../custom/snackbar_util.dart';
 import '../../../model/success_models/sound_list_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../auth_screen/login_screen.dart';
-import '../../hoonar_competition/yourRewards/add_bank_details_screen.dart';
 import '../../hoonar_competition/yourRewards/wallet_screen.dart';
 
 class SelectSoundListScreen extends StatefulWidget {
@@ -499,7 +499,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
           onTap: () {
             Navigator.push(
               context,
-              SlideRightRoute(page: const WalletScreen()),
+              SlideRightRoute(page: LocalVideoSelectedScreen(duration: widget.duration,)),
             );
           },
         ),

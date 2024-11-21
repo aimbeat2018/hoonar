@@ -113,6 +113,16 @@ class HomePageService {
     );
   }
 
+  Future<FollowUnfollowSuccessModel> updatePost(
+      AddPostRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$updatePostUrl',
+      method: 'POST',
+      data: requestModel.toFormData(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
   Future<HashTagListModel> getHashTagList(
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<HashTagListModel>(

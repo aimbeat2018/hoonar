@@ -230,6 +230,25 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updatePost(
+      AddPostRequestModel requestModel, String accessToken) async {
+    _isAddPostLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+      await _homePageService.updatePost(requestModel, accessToken);
+      _addPostModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isAddPostLoading = false;
+      notifyListeners();
+    }
+  }
+
+
   Future<void> getHashTagList(
       ListCommonRequestModel requestModel, String accessToken) async {
     _isHashTagLoading = true;

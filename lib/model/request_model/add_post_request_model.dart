@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 class AddPostRequestModel {
   int? userId;
+  int? postId;
   String? postDescription;
   String? postHashTag;
   String? categoryId;
@@ -20,6 +21,7 @@ class AddPostRequestModel {
 
   AddPostRequestModel({
     this.userId,
+    this.postId,
     this.postDescription,
     this.postHashTag,
     this.postVideoPath,
@@ -38,6 +40,7 @@ class AddPostRequestModel {
 
   AddPostRequestModel.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
+    postId = json['post_id'];
     postDescription = json['post_description'];
     postHashTag = json['post_hash_tag'];
     categoryId = json['category_id'];
@@ -57,6 +60,7 @@ class AddPostRequestModel {
   Future<FormData> toFormData() async {
     Map<String, dynamic> data = {
       'user_id': userId,
+      'post_id': postId,
       'post_description': postDescription,
       'post_hash_tag': postHashTag,
       'category_id': categoryId,

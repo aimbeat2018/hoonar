@@ -2,6 +2,7 @@ import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/request_model/upload_kyc_document_request_model.dart';
+import 'package:hoonar/model/success_models/DraftFeedListModel.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
 import 'package:hoonar/model/success_models/kyc_status_model.dart';
@@ -185,6 +186,17 @@ class ContestService {
     );
   }
 
+  Future<SoundListModel> getSavedSoundList(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<SoundListModel>(
+      '$baseUrl$getUserSavedSoundsUrl',
+      // method: 'POST',
+      accessToken: accessToken,
+      data: requestModel.toJson(),
+      fromJson: (data) => SoundListModel.fromJson(data),
+    );
+  }
+
   Future<FollowUnfollowSuccessModel> savedUnSavedMusic(
       CommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
@@ -193,6 +205,17 @@ class ContestService {
       accessToken: accessToken,
       data: requestModel.toJson(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<DraftFeedListModel> getUserDraftFeedCategoryWise(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<DraftFeedListModel>(
+      '$baseUrl$getUserDraftFeedCategoryWiseUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => DraftFeedListModel.fromJson(data),
     );
   }
 }

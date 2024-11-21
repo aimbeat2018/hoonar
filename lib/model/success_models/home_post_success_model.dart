@@ -85,34 +85,45 @@ class PostsListData {
   int? canSave;
   int? canVote;
   int? hasVoted;
+  String? soundId;
+  String? soundTitle;
+  String? duration;
+  String? singer;
+  String? soundImage;
+  String? sound;
 
-  PostsListData({
-    this.postId,
-    this.userId,
-    this.fullName,
-    this.userName,
-    this.userProfile,
-    this.isVerify,
-    this.isTrending,
-    this.postDescription,
-    this.postHashTag,
-    this.postVideo,
-    this.postImage,
-    this.profileCategoryId,
-    this.profileCategoryName,
-    this.postLikesCount,
-    this.postCommentsCount,
-    this.postViewCount,
-    this.createdDate,
-    this.videoLikesOrNot,
-    this.followOrNot,
-    this.isBookmark,
-    this.canComment,
-    this.canDuet,
-    this.canSave,
-    this.canVote,
-    this.hasVoted,
-  });
+  PostsListData(
+      {this.postId,
+      this.userId,
+      this.fullName,
+      this.userName,
+      this.userProfile,
+      this.isVerify,
+      this.isTrending,
+      this.postDescription,
+      this.postHashTag,
+      this.postVideo,
+      this.postImage,
+      this.profileCategoryId,
+      this.profileCategoryName,
+      this.postLikesCount,
+      this.postCommentsCount,
+      this.postViewCount,
+      this.createdDate,
+      this.videoLikesOrNot,
+      this.followOrNot,
+      this.isBookmark,
+      this.canComment,
+      this.canDuet,
+      this.canSave,
+      this.canVote,
+      this.hasVoted,
+      this.soundId,
+      this.soundTitle,
+      this.duration,
+      this.singer,
+      this.soundImage,
+      this.sound});
 
   PostsListData.fromJson(Map<String, dynamic> json) {
     postId = json['post_id'];
@@ -140,6 +151,12 @@ class PostsListData {
     canSave = json['can_save'];
     canVote = json['can_vote'];
     hasVoted = json['has_voted'];
+    soundId = json['sound_id'];
+    soundTitle = json['sound_title'];
+    duration = json['duration'];
+    singer = json['singer'];
+    soundImage = json['sound_image'];
+    sound = json['sound'];
   }
 
   Map<String, dynamic> toJson() {
@@ -169,6 +186,12 @@ class PostsListData {
     data['can_save'] = canSave;
     data['can_vote'] = canVote;
     data['has_voted'] = hasVoted;
+    data['sound_id'] = soundId;
+    data['sound_title'] = soundTitle;
+    data['duration'] = duration;
+    data['singer'] = singer;
+    data['sound_image'] = soundImage;
+    data['sound'] = sound;
     return data;
   }
 }

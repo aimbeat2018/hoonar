@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/connectShare/connect_share_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_options_screen.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
@@ -12,6 +18,7 @@ import '../../../constants/theme.dart';
 import '../../../model/star_category_model.dart';
 import '../../camera/capture_video_screen.dart';
 import '../../camera/sounds/select_sound_list_screen.dart';
+import '../../camera/video_preview_screen.dart';
 
 class CreateUploadOptionsScreen extends StatefulWidget {
   const CreateUploadOptionsScreen({super.key});
@@ -23,10 +30,12 @@ class CreateUploadOptionsScreen extends StatefulWidget {
 
 class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
   List<StarCategoryModel> optionsList = [];
+  File? _videoFile;
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       optionsList = [
         StarCategoryModel(
@@ -55,7 +64,81 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             'assets/dark_mode_icons/connect_share_dark.png'),
       ];
       setState(() {});
+
+      showInfoDialog(context, true);
     });
+  }
+
+  void showInfoDialog(BuildContext context, bool isDarkMode) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.alert,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.instructions,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.okay,
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> getVideoDuration(File filePath) async {
+    final controller = VideoPlayerController.file(filePath); // For assets
+    // or use controller = VideoPlayerController.file(File(filePath)); for file path
+    await controller.initialize();
+    Duration duration = controller.value.duration;
+    print("Video Duration: $duration");
+    controller.dispose();
+
+    _goToPreviewScreen(filePath, duration.inSeconds.toString());
+  }
+
+  Future<void> _selectVideoFromGallery() async {
+    final pickedFile =
+        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _videoFile = File(pickedFile.path);
+      });
+      print('Selected video: ${_videoFile!.path}');
+
+      getVideoDuration(_videoFile!);
+    }
+  }
+
+  void _goToPreviewScreen(File mergedFile, String duration) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPreviewScreen(
+          videoFile: mergedFile,
+          selectedMusic: null,
+          duration: duration,
+        ),
+      ),
+    );
   }
 
   @override
@@ -140,10 +223,17 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );
+                          } else if (index == 1) {
+                            _selectVideoFromGallery();
                           } else if (index == 2) {
                             Navigator.push(
                               context,
                               SlideRightRoute(page: const CaptureVideoScreen()),
+                            );
+                          }else if (index == 3) {
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );
                           } else if (index == 4) {
                             Navigator.push(

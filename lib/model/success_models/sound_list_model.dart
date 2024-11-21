@@ -77,6 +77,7 @@ class SoundList {
   String? createdAt;
   String? updatedAt;
   String? trimAudioPath;
+  String? isLocalSong;
 
   SoundList(
       {this.soundId,
@@ -91,6 +92,7 @@ class SoundList {
       this.createdAt,
       this.isSaved,
       this.trimAudioPath,
+      this.isLocalSong = "1", // 1- song from api , 0- song from local
       this.updatedAt});
 
   SoundList.fromJson(Map<String, dynamic> json) {
