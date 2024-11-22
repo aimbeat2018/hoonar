@@ -18,7 +18,9 @@ import '../../../shimmerLoaders/following_list_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
 class FollowingScreen extends StatefulWidget {
-  const FollowingScreen({super.key});
+  final String? userId;
+
+  const FollowingScreen({super.key, this.userId});
 
   @override
   State<FollowingScreen> createState() => _FollowingScreenState();
@@ -56,9 +58,9 @@ class _FollowingScreenState extends State<FollowingScreen>
 
   Future<void> getFollowingList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
-      String userId = sessionManager.getString(SessionManager.userId)!;
+      // String userId = sessionManager.getString(SessionManager.userId)!;
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(userId),
+          userId: int.parse(widget.userId!),
           start: followingList.length == 10 ? followingList.length : 0,
           limit: paginationLimit);
 
@@ -70,9 +72,9 @@ class _FollowingScreenState extends State<FollowingScreen>
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-      } else if (authProvider.getFollowersListModel!.status == "200") {
+      } else if (authProvider.getFollowingListModel!.status == "200") {
         followingList.clear();
-        followingList.addAll(authProvider.getFollowersListModel!.data!);
+        followingList.addAll(authProvider.getFollowingListModel!.data!);
       } else if (authProvider.getFollowingListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
@@ -122,13 +124,40 @@ class _FollowingScreenState extends State<FollowingScreen>
             ? FollowingListShimmer()
             : followingList.isEmpty
                 ? DataNotFound()
-                : AnimatedList(
-                    initialItemCount: followingList.length,
-                    controller: _scrollController,
-                    itemBuilder: (context, index, animation) {
-                      return buildItem(animation, index, myLoading.isDark,
-                          userProvider); // Build each list item
-                    },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ValueListenableBuilder<String?>(
+                          valueListenable: userProvider.followingCountNotifier,
+                          builder: (context, followingCount, child) {
+                            return Text(
+                              '$followingCount ${AppLocalizations.of(context)!.following}',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          }),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      AnimatedList(
+                        shrinkWrap: true,
+                        initialItemCount: followingList.length,
+                        controller: _scrollController,
+                        itemBuilder: (context, index, animation) {
+                          return buildItem(animation, index, myLoading.isDark,
+                              userProvider); // Build each list item
+                        },
+                      ),
+                    ],
                   ),
       );
     });

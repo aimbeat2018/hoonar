@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -70,7 +71,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getKycStatus(context, UploadKycDocumentRequestModel());
+      getKycStatus(context, CommonRequestModel());
     });
   }
 
@@ -194,7 +195,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
   }
 
   Future<void> getKycStatus(
-      BuildContext context, UploadKycDocumentRequestModel requestModel) async {
+      BuildContext context, CommonRequestModel requestModel) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
@@ -614,7 +615,8 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                         .userKycStatusNotifier,
                                 builder: (context, userKycStatus, child) {
                                   return InkWell(
-                                    onTap: userKycStatus == 1
+                                    onTap: userKycStatus == 1 &&
+                                            widget.from != "normal"
                                         ? () {
                                             if (widget.from == 'feed') {
                                               AddPostRequestModel requestModel =
@@ -713,8 +715,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                       margin: const EdgeInsets.only(
                                           top: 15, bottom: 5),
                                       decoration: ShapeDecoration(
-                                        color: userKycStatus == 0 ||
-                                                userKycStatus == 2
+                                        color: (userKycStatus == 0 ||
+                                                    userKycStatus == 2) &&
+                                                widget.from != "normal"
                                             ? greyTextColor8
                                             : buttonBlueColor1,
                                         shape: RoundedRectangleBorder(

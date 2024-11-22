@@ -18,7 +18,9 @@ import '../../../shimmerLoaders/following_list_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
 class FollowersScreen extends StatefulWidget {
-  const FollowersScreen({super.key});
+  final String? userId;
+
+  const FollowersScreen({super.key, this.userId});
 
   @override
   State<FollowersScreen> createState() => _FollowersScreenState();
@@ -56,9 +58,9 @@ class _FollowersScreenState extends State<FollowersScreen>
 
   Future<void> getFollowerList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
-      String userId = sessionManager.getString(SessionManager.userId)!;
+      // String userId = sessionManager.getString(SessionManager.userId)!;
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(userId),
+          userId: int.parse(widget.userId!),
           start: followersList.length,
           limit: paginationLimit);
 
@@ -116,13 +118,40 @@ class _FollowersScreenState extends State<FollowersScreen>
             ? FollowingListShimmer()
             : followersList.isEmpty
                 ? DataNotFound()
-                : AnimatedList(
-                    initialItemCount: followersList.length,
-                    controller: _scrollController,
-                    itemBuilder: (context, index, animation) {
-                      return buildItem(animation, index, myLoading.isDark,
-                          userProvider); // Build each list item
-                    },
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ValueListenableBuilder<String?>(
+                          valueListenable: userProvider.followersCountNotifier,
+                          builder: (context, followersCount, child) {
+                            return Text(
+                              '$followersCount ${AppLocalizations.of(context)!.followers}',
+                              textAlign: TextAlign.end,
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            );
+                          }),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      AnimatedList(
+                        shrinkWrap: true,
+                        initialItemCount: followersList.length,
+                        controller: _scrollController,
+                        itemBuilder: (context, index, animation) {
+                          return buildItem(animation, index, myLoading.isDark,
+                              userProvider); // Build each list item
+                        },
+                      ),
+                    ],
                   ),
       );
     });

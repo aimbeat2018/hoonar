@@ -570,14 +570,15 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Image.asset(
-                      'assets/images/filter.png',
-                      height: 30,
-                      width: 30,
-                    ),
-                  ),
+                  Spacer(),
+                  // InkWell(
+                  //   onTap: () {},
+                  //   child: Image.asset(
+                  //     'assets/images/filter.png',
+                  //     height: 30,
+                  //     width: 30,
+                  //   ),
+                  // ),
                   InkWell(
                     onTap: () {
                       if (!_isMerging) {

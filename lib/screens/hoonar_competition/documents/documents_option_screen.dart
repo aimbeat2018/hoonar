@@ -11,6 +11,7 @@ import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/common_request_model.dart';
 import '../../../model/request_model/upload_kyc_document_request_model.dart';
 import '../../../model/star_category_model.dart';
 import '../../../providers/contest_provider.dart';
@@ -43,12 +44,12 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
       ];
       setState(() {});
 
-      getKycStatus(context, UploadKycDocumentRequestModel());
+      getKycStatus(context, CommonRequestModel());
     });
   }
 
   Future<void> getKycStatus(
-      BuildContext context, UploadKycDocumentRequestModel requestModel) async {
+      BuildContext context, CommonRequestModel requestModel) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 

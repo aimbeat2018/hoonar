@@ -6,6 +6,9 @@ import 'package:hoonar/model/success_models/contact_details_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
+import 'package:hoonar/model/success_models/faq_list_model.dart';
+import 'package:hoonar/model/success_models/faq_list_model.dart';
+import 'package:hoonar/model/success_models/faq_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
@@ -45,6 +48,14 @@ class SettingService {
       '$baseUrl$userDevicesUrl',
       accessToken: accessToken,
       fromJson: (data) => DevicesListModel.fromJson(data),
+    );
+  }
+
+  Future<FaqListModel> getFaqList(String accessToken) async {
+    return apiMethods.sendRequest<FaqListModel>(
+      '$baseUrl$getFaqUrl',
+      accessToken: accessToken,
+      fromJson: (data) => FaqListModel.fromJson(data),
     );
   }
 

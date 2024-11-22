@@ -331,7 +331,7 @@ class ContestProvider extends ChangeNotifier {
   }
 
   Future<void> getKycStatus(
-      UploadKycDocumentRequestModel requestModel, String accessToken) async {
+      CommonRequestModel requestModel, String accessToken) async {
     _isKycStatusLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -342,7 +342,8 @@ class ContestProvider extends ChangeNotifier {
       _kycStatusModel = successModel;
       if (successModel.status == "200" && successModel.data != null) {
         userKycStatusNotifier.value = successModel.data!.isVerified ?? 0;
-        addressProofStatusNotifier.value = successModel.data!.addressProof ?? 0;
+        addressProofStatusNotifier.value =
+            successModel.data!.addressProof! ?? 0;
         idProofStatusNotifier.value = successModel.data!.iDProof ?? 0;
         faceStatusNotifier.value = successModel.data!.face ?? 0;
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/screens/hoonar_competition/documents/scan_face_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -30,12 +31,12 @@ class _KycScreenState extends State<KycScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getKycStatus(context, UploadKycDocumentRequestModel());
+      getKycStatus(context, CommonRequestModel());
     });
   }
 
   Future<void> getKycStatus(
-      BuildContext context, UploadKycDocumentRequestModel requestModel) async {
+      BuildContext context, CommonRequestModel requestModel) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
@@ -167,7 +168,7 @@ class _KycScreenState extends State<KycScreen> {
                             valueListenable: contestProvider.faceStatusNotifier,
                             builder: (context, faceStatus, child) {
                               return InkWell(
-                                onTap: faceStatus == 0
+                                onTap: faceStatus == 3
                                     ? () {
                                         Navigator.push(
                                           context,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/shimmerLoaders/vote_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
@@ -10,13 +9,14 @@ import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
 import '../../../model/success_models/user_wise_vote_list_model.dart';
 import '../../../providers/user_provider.dart';
-import '../../../shimmerLoaders/following_list_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
 class VotesScreen extends StatefulWidget {
-  const VotesScreen({super.key});
+  final String? userId;
+  const VotesScreen({super.key, this.userId});
 
   @override
   State<VotesScreen> createState() => _VotesScreenState();
@@ -39,10 +39,10 @@ class _VotesScreenState extends State<VotesScreen> {
   Future<void> getVotesList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
       String userId = sessionManager.getString(SessionManager.userId)!;
-      /* ListCommonRequestModel requestModel = ListCommonRequestModel(
+       ListCommonRequestModel requestModel = ListCommonRequestModel(
           userId: int.parse(userId),
-          start: followingList.length == 10 ? followingList.length : 0,
-          limit: paginationLimit);*/
+        /*  start: followingList.length == 10 ? followingList.length : 0,
+          limit: paginationLimit*/);
 
       isLoading = true;
       setState(() {});

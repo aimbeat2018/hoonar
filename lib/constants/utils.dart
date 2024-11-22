@@ -61,6 +61,7 @@ const String getSoundListUrl = 'Post/getSoundList';
 const String getUserSavedSoundsUrl = 'User/getUserSavedSounds';
 const String saveSoundUrl = 'Post/saveSound';
 const String getUserDraftFeedCategoryWiseUrl = 'User/getUserDraftsFeed';
+const String getFaqUrl = 'User/getFaqs';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

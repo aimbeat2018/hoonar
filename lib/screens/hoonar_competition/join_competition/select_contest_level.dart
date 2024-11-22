@@ -186,8 +186,11 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                   child: InkWell(
                                     onTap: () {
                                       if (contestProvider.levelListModel!
-                                              .data![index].isUnlocked ==
-                                          1) {
+                                                  .data![index].isUnlocked ==
+                                              1 &&
+                                          contestProvider.levelListModel!
+                                                  .data![index].hasWon ==
+                                              0) {
                                         if (mounted) {
                                           setState(() {
                                             KeyRes.selectedLevelId =
@@ -413,7 +416,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                             .getString(SessionManager.userId)!),
                                         levelId: model.levelId,
                                         categoryId: widget.categoryId,
-                                        amount: model.fees,
+                                        amount: model.fees.toString(),
                                         transactionId: '123',
                                         // transactionId will change when payment gateway received
                                         paymentStatus:

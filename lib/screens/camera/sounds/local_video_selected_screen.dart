@@ -93,8 +93,8 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
           if (contestProvider.savedSoundModel?.message ==
               'Sound added to saved list') {
             setState(() {
-              contestProvider
-                  .savedSoundListModel!.data![index1].soundList!.removeAt(index2);
+              contestProvider.savedSoundListModel!.data![index1].soundList!
+                  .removeAt(index2);
             });
           }
         } else if (contestProvider.savedSoundModel?.message ==
@@ -207,7 +207,8 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
                               contestProvider.savedSoundListModel == null
                           ? FollowingListShimmer()
                           : contestProvider.savedSoundListModel!.data == null ||
-                                  contestProvider.savedSoundListModel!.data!.isEmpty
+                                  contestProvider
+                                      .savedSoundListModel!.data!.isEmpty
                               ? DataNotFound()
                               : AnimatedList(
                                   shrinkWrap: true,

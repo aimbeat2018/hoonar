@@ -4,6 +4,7 @@ import 'package:hoonar/model/request_model/add_help_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/contact_details_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
+import 'package:hoonar/model/success_models/faq_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/help_issues_list_model.dart';
 import 'package:hoonar/services/setting_service.dart';
@@ -16,6 +17,7 @@ class SettingProvider extends ChangeNotifier {
 
   bool _isPageLoading = false;
   bool _isDevicesLoading = false;
+  bool _isFaqLoading = false;
   bool _isRemoveDevicesLoading = false;
   bool _isAddHelpRequestLoading = false;
   String? _errorMessage;
@@ -26,10 +28,13 @@ class SettingProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _removeDeviceModel;
   FollowUnfollowSuccessModel? _addHelpRequest;
   HelpIssuesListModel? _helpIssuesListModel;
+  FaqListModel? _faqListModel;
 
   bool get isPageLoading => _isPageLoading;
 
   bool get isDevicesLoading => _isDevicesLoading;
+
+  bool get isFaqLoading => _isFaqLoading;
 
   bool get isRemoveDevicesLoading => _isRemoveDevicesLoading;
 
@@ -48,6 +53,8 @@ class SettingProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get addHelpRequestModel => _addHelpRequest;
 
   HelpIssuesListModel? get helpIssuesListModel => _helpIssuesListModel;
+
+  FaqListModel? get faqListModel => _faqListModel;
 
   Future<void> getPageContent(
       ListCommonRequestModel requestModel, String accessToken) async {
@@ -98,6 +105,22 @@ class SettingProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isDevicesLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getFaqs(String accessToken) async {
+    _isFaqLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FaqListModel successModel = await _settingService.getFaqList(accessToken);
+      _faqListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isFaqLoading = false;
       notifyListeners();
     }
   }

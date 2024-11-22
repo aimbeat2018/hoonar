@@ -167,6 +167,11 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
           SnackbarUtil.showSnackBar(context,
               contestProvider.uploadDocumentSuccessModel?.message! ?? '');
           Navigator.pop(context);
+        } else if (contestProvider.uploadDocumentSuccessModel?.status ==
+            '401') {
+          SnackbarUtil.showSnackBar(context,
+              contestProvider.uploadDocumentSuccessModel?.message! ?? '');
+
         } else if (contestProvider.uploadDocumentSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,

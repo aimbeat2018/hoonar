@@ -48,8 +48,6 @@ class UserProvider extends ChangeNotifier {
 
   AvatarListModel? get avatarListModel => _avatarListModel;
 
-
-
   bool get isLoading => _isLoading;
 
   bool get isAvatarLoading => _isAvatarLoading;
@@ -89,7 +87,7 @@ class UserProvider extends ChangeNotifier {
     try {
       GetFollowersListModel followersListModel =
           await _userService.getFollowingList(requestModel: requestModel);
-      _getFollowersListModel = followersListModel;
+      _getFollowingListModel = followersListModel;
       _followingList = followersListModel.data;
       followingNotifier.value = followersListModel;
       if (_followingList!.isNotEmpty) {
@@ -115,6 +113,7 @@ class UserProvider extends ChangeNotifier {
       FollowUnfollowSuccessModel successModel =
           await _userService.followUnfollowUser(requestModel: requestModel);
       followStatusNotifier.value = successModel.followStatus ?? 0;
+
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

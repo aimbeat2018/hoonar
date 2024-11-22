@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
-import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/constants/session_manager.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
@@ -55,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ScrollController controller = ScrollController();
   SessionManager sessionManager = SessionManager();
   bool isFollow = false, isFollowLoading = false;
+  String userId = "";
 
   @override
   void initState() {
@@ -66,13 +66,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> getUserProfile(BuildContext context) async {
-    String userId = "";
+
     sessionManager.initPref().then((onValue) async {
-      if (widget.from == 'main') {
-        userId = sessionManager.getString(SessionManager.userId)!;
-      } else {
-        userId = widget.userId ?? '';
-      }
+      setState(() {
+        if (widget.from == 'main') {
+          userId = sessionManager.getString(SessionManager.userId)!;
+        } else {
+          userId = widget.userId ?? '';
+        }
+      });
+
       CommonRequestModel requestModel = CommonRequestModel(userId: userId);
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -102,14 +105,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> followUnFollowUser(BuildContext context) async {
-    String userId = "";
-
     sessionManager.initPref().then((onValue) async {
-      if (widget.from == 'main') {
-        userId = sessionManager.getString(SessionManager.userId)!;
-      } else {
-        userId = widget.userId ?? '';
-      }
+      setState(() {
+        if (widget.from == 'main') {
+          userId = sessionManager.getString(SessionManager.userId)!;
+        } else {
+          userId = widget.userId ?? '';
+        }
+      });
       ListCommonRequestModel requestModel = ListCommonRequestModel(
         toUserId: int.parse(userId),
       );
@@ -158,7 +161,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ValueListenableBuilder<ProfileSuccessModel?>(
                         valueListenable: authProvider.profileNotifier,
                         builder: (context, profile, child) {
-                          if (profile == null) {
+                          if (profile == null ||
+                              authProvider.isProfileLoading) {
                             return const ProfileContentShimmer();
                           }
                           /*else if (profile.data != null) {
@@ -339,8 +343,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onTap: () => Navigator.push(
                                           context,
                                           SlideRightRoute(
-                                              page: const FollowersTabScreen(
+                                              page: FollowersTabScreen(
                                             currentTabFrom: 0,
+                                            userId: widget.userId,
                                           )),
                                         ),
                                         child: Column(
@@ -376,8 +381,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           onTap: () => Navigator.push(
                                             context,
                                             SlideRightRoute(
-                                                page: const FollowersTabScreen(
+                                                page: FollowersTabScreen(
                                               currentTabFrom: 1,
+                                              userId: userId,
                                             )),
                                           ),
                                           child: Container(
@@ -416,8 +422,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         onTap: () => Navigator.push(
                                           context,
                                           SlideRightRoute(
-                                              page: const FollowersTabScreen(
+                                              page: FollowersTabScreen(
                                             currentTabFrom: 2,
+                                            userId: userId,
                                           )),
                                         ),
                                         child: Column(
@@ -453,65 +460,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const SizedBox(
                                     height: 15,
                                   ),
-                                  ValueListenableBuilder<int?>(
-                                      valueListenable:
-                                          Provider.of<UserProvider>(context)
-                                              .followStatusNotifier,
-                                      builder: (context, followStatus, child) {
-                                        return isFollowLoading
-                                            ? const Center(
-                                                child:
-                                                    CircularProgressIndicator())
-                                            : InkWell(
-                                                onTap: () {
-                                                  followUnFollowUser(context);
-                                                },
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 8),
-                                                  margin: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 15.0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        Colors.white,
-                                                        greyTextColor8
-                                                      ],
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
+                                  if (widget.from != 'main')
+                                    ValueListenableBuilder<int?>(
+                                        valueListenable:
+                                            Provider.of<UserProvider>(context)
+                                                .followStatusNotifier,
+                                        builder:
+                                            (context, followStatus, child) {
+                                          return isFollowLoading
+                                              ? const Center(
+                                                  child:
+                                                      CircularProgressIndicator())
+                                              : InkWell(
+                                                  onTap: () {
+                                                    followUnFollowUser(context)
+                                                        .then((onValue) {
+                                                      setState(() {
+                                                        if (followStatus == 0) {
+                                                          profile.data!
+                                                              .followersCount = profile
+                                                                  .data!
+                                                                  .followersCount! +
+                                                              1;
+                                                        } else {
+                                                          profile.data!
+                                                              .followersCount = profile
+                                                                  .data!
+                                                                  .followersCount! -
+                                                              1;
+                                                        }
+                                                      });
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(vertical: 8),
+                                                    margin: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15.0),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      gradient:
+                                                          const LinearGradient(
+                                                        colors: [
+                                                          Colors.white,
+                                                          greyTextColor8
+                                                        ],
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      profile.data!.isFollowing ==
+                                                                  1 ||
+                                                              followStatus == 1
+                                                          ? AppLocalizations.of(
+                                                                  context)!
+                                                              .unfollow
+                                                          : AppLocalizations.of(
+                                                                  context)!
+                                                              .follow,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 14,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
                                                   ),
-                                                  child: Text(
-                                                    profile.data!.isFollowing ==
-                                                                1 ||
-                                                            followStatus == 1
-                                                        ? AppLocalizations.of(
-                                                                context)!
-                                                            .unfollow
-                                                        : AppLocalizations.of(
-                                                                context)!
-                                                            .follow,
-                                                    textAlign: TextAlign.center,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                      }),
+                                                );
+                                        }),
                                 ],
                               ),
                               const SizedBox(
@@ -568,7 +597,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: ValueListenableBuilder<ProfileSuccessModel?>(
                         valueListenable: authProvider.profileNotifier,
                         builder: (context, profile, child) {
-                          if (profile == null) {
+                          if (profile == null ||
+                              authProvider.isProfileLoading) {
                             return GridShimmer();
                           } else if (profile.message ==
                               'Unauthorized Access!') {

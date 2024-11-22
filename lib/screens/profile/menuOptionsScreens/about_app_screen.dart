@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/change_language_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/change_theme_screen.dart';
+import 'package:hoonar/screens/profile/menuOptionsScreens/faq_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
@@ -185,13 +186,12 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                     subtitle: AppLocalizations.of(context)!.copyrightSubTitle,
                   ),
                   _buildDivider(),
-                  _buildSection(
-                    context,
-                    myLoading.isDark,
-                    icon: 'assets/images/faq.png',
-                    title: AppLocalizations.of(context)!.faq,
-                    subtitle: AppLocalizations.of(context)!.faqSubTitle,
-                  ),
+                  _buildSection(context, myLoading.isDark,
+                      icon: 'assets/images/faq.png',
+                      title: AppLocalizations.of(context)!.faq,
+                      subtitle: AppLocalizations.of(context)!.faqSubTitle,
+                      onTap: () => Navigator.push(
+                          context, SlideRightRoute(page: const FaqScreen()))),
                   _buildDivider(),
                   _buildSection(
                     context,

@@ -165,12 +165,12 @@ class ContestService {
   }
 
   Future<KycStatusModel> getKycStatus(
-      UploadKycDocumentRequestModel requestModel, String accessToken) async {
-    return apiMethods.sendMultipartRequest<KycStatusModel>(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<KycStatusModel>(
       '$baseUrl$getKycStatusUrl',
       method: 'POST',
       accessToken: accessToken,
-      data: requestModel.toFormData(),
+      data: requestModel.toJson(),
       fromJson: (data) => KycStatusModel.fromJson(data),
     );
   }

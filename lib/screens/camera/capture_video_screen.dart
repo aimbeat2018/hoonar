@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -9,6 +10,7 @@ import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
+import 'package:hoonar/screens/camera/filters_screen.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/camera/video_preview_screen.dart';
 import 'package:hoonar/screens/camera/widget/confirmation_dialog.dart';
@@ -58,6 +60,14 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
   SoundList? _selectedMusic;
   File? _localMusic;
+  Map<String, dynamic> selectedFilter = {
+    "name": "Original",
+    "filter": const ColorFilter.mode(
+      Colors.transparent,
+      BlendMode.srcOver,
+    ),
+    "filterStr": ''
+  };
 
   @override
   void initState() {
@@ -246,7 +256,14 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     }
   }
 
-  void _goToPreviewScreen(File mergedFile) {
+  Future<void> _goToPreviewScreen(File mergedFile) async {
+    /* if (selectedFilter['name'] != 'Original') {
+      final tempDir = await getTemporaryDirectory();
+      final outputFilePath = '${tempDir.path}/merged_filter_video.mp4';
+
+      applyFilterToVideo(
+          mergedFile.path, outputFilePath, selectedFilter['filterStr']);
+    } else {*/
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -257,6 +274,61 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         ),
       ),
     );
+    // }
+  }
+
+  Future<void> applyFilterToVideo(
+      String inputPath, String outputPath, List<num> matrixValues) async {
+    final matrix = matrixValues;
+    final r1 = matrix[0];
+    final g1 = matrix[1];
+    final b1 = matrix[2];
+    final r2 = matrix[5];
+    final g2 = matrix[6];
+    final b2 = matrix[7];
+    final r3 = matrix[10];
+    final g3 = matrix[11];
+    final b3 = matrix[12];
+
+    // Format the colorbalance filter string
+
+    // final filter = 'colorbalance=r=$r1/$g1/$b1, g=$r2/$g2/$b2, b=$r3/$g3/$b3';
+    final filter = 'colorbalance=r=$r1:$g1:$b1, g=$r2:$g2:$b2, b=$r3:$g3:$b3';
+
+    // final command = '-i $inputPath -filter_complex "$filter" $outputPath';
+    final command = '-i $inputPath -vf "hue=s=0" -report $outputPath';
+
+    // FFmpeg command with a filter
+    // final command = '-i $inputPath -vf $filter -preset ultrafast $outputPath';
+
+    // final command = '-i $inputPath -vf "lut3d=size=33:r=\'0.393:0.769:0.189\':g=\'0.349:0.686:0.168\':b=\'0.272:0.534:0.131\'" -preset ultrafast $outputPath';
+    // final command =
+    //     '-i $inputPath -vf "colorbalance=r=0.393:0.769:0.189:0,0,0:0.349:0.686:0.168:0,0,0:0.272:0.534:0.131:0,0,0,1" -preset ultrafast $outputPath';
+
+    // final command =
+    //     '-i $inputPath -vf "colorbalance=r=0.393:g=0.769:b=0.189" -preset ultrafast $outputPath';
+    print(command);
+
+    await FFmpegKit.execute(command).then((session) async {
+      final returnCode = await session.getReturnCode();
+
+      if (ReturnCode.isSuccess(returnCode)) {
+        print("Filter applied successfully!");
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPreviewScreen(
+              videoFile: File(outputPath),
+              selectedMusic: _selectedMusic,
+              duration: totalSeconds.toString(),
+            ),
+          ),
+        );
+      } else {
+        print("Failed to apply filter: ${await session.getLogsAsString()}");
+      }
+    });
   }
 
   Future<void> _toggleFlash() async {
@@ -454,6 +526,29 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     return file;
   }
 
+  showConfirmationDialog(bool isDarkMode) {
+    showDialog(
+        context: context,
+        builder: (mContext) {
+          return ConfirmationDialog(
+            aspectRatio: 2,
+            title1: AppLocalizations.of(context)!.areYouSure,
+            title2: AppLocalizations.of(context)!.doYouReallyWantToGoBack,
+            positiveText: AppLocalizations.of(context)!.yes,
+            isDarkMode: isDarkMode,
+            onPositiveTap: () async {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          );
+        });
+  }
+
+  Future<bool> _onWillPop(bool isDarkMode) async {
+    showConfirmationDialog(isDarkMode);
+    return false; // Allow back navigation
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
@@ -464,387 +559,399 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     final scale = 1 / (_controller.value.aspectRatio * size.aspectRatio);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        body: Stack(
-          children: [
-            // Fullscreen camera preview
-            Transform.scale(
-              scale: scale,
-              child: Center(
-                child: CameraPreview(_controller),
+      return WillPopScope(
+        onWillPop: () => _onWillPop(myLoading.isDark),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              // Fullscreen camera preview
+              Transform.scale(
+                scale: scale,
+                child: Center(
+                  child: ColorFiltered(
+                      colorFilter: selectedFilter['filter'],
+                      child: CameraPreview(_controller)),
+                ),
               ),
-            ),
 
-            if (!_isRecording)
-              Positioned(
-                top: 50,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Row(
-                    children: [
-                      if (!_isRecording)
-                        InkWell(
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (mContext) {
-                                  return ConfirmationDialog(
-                                    aspectRatio: 2,
-                                    title1: AppLocalizations.of(context)!
-                                        .areYouSure,
-                                    title2: AppLocalizations.of(context)!
-                                        .doYouReallyWantToGoBack,
-                                    positiveText:
-                                        AppLocalizations.of(context)!.yes,
-                                    isDarkMode: myLoading.isDark,
-                                    onPositiveTap: () async {
-                                      Navigator.pop(context);
-                                      Navigator.pop(context);
-                                    },
-                                  );
-                                });
-                          },
-                          child: Image.asset(
-                            'assets/images/close.png',
-                            height: 33,
-                            width: 33,
-                          ),
-                        ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      InkWell(
-                          onTap: () {
-                            stopAudio();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SelectSoundListScreen(
-                                  duration: totalSeconds.toString(),
-                                ),
-                              ),
-                            ).then((result) async {
-                              if (result != null) {
-                                setState(() {
-                                  _selectedMusic = result;
-                                });
-                                if (_selectedMusic!.trimAudioPath == null) {
-                                  _localMusic = await _downloadAudio(
-                                      _selectedMusic!.sound!);
-                                } else {
-                                  _localMusic =
-                                      File(_selectedMusic!.trimAudioPath!);
-                                }
-                              }
-                            });
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 2,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade400.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(20),
+              if (!_isRecording)
+                Positioned(
+                  top: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Row(
+                      children: [
+                        if (!_isRecording)
+                          InkWell(
+                            onTap: () {
+                              showConfirmationDialog(myLoading.isDark);
+                            },
+                            child: Image.asset(
+                              'assets/images/close.png',
+                              height: 33,
+                              width: 33,
                             ),
-                            child: _selectedMusic == null
-                                ? Center(
-                                    child: Text(
-                                      'Add Sound',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.black,
+                          ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        InkWell(
+                            onTap: () {
+                              stopAudio();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectSoundListScreen(
+                                    duration: totalSeconds.toString(),
+                                  ),
+                                ),
+                              ).then((result) async {
+                                if (result != null) {
+                                  setState(() {
+                                    _selectedMusic = result;
+                                  });
+                                  if (_selectedMusic!.trimAudioPath == null) {
+                                    _localMusic = await _downloadAudio(
+                                        _selectedMusic!.sound!);
+                                  } else {
+                                    _localMusic =
+                                        File(_selectedMusic!.trimAudioPath!);
+                                  }
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width / 2,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade400.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: _selectedMusic == null
+                                  ? Center(
+                                      child: Text(
+                                        'Add Sound',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                  )
-                                : Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(4),
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              _selectedMusic!.soundImage ?? '',
-                                          width: 25,
-                                          // Thumbnail width
-                                          height: 25,
-                                          // Thumbnail height
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) =>
-                                              const CircularProgressIndicator(
-                                                  strokeWidth: 2),
-                                          errorWidget: (context, url, error) =>
-                                              const Icon(
-                                            Icons.music_note,
-                                            color: Colors.grey,
-                                            size: 30,
+                                    )
+                                  : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                _selectedMusic!.soundImage ??
+                                                    '',
+                                            width: 25,
+                                            // Thumbnail width
+                                            height: 25,
+                                            // Thumbnail height
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                const CircularProgressIndicator(
+                                                    strokeWidth: 2),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(
+                                              Icons.music_note,
+                                              color: Colors.grey,
+                                              size: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // Space between thumbnail and text
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              _selectedMusic!.soundTitle ??
-                                                  'Unknown Title',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
+                                        const SizedBox(width: 10),
+                                        // Space between thumbnail and text
+                                        Flexible(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                _selectedMusic!.soundTitle ??
+                                                    'Unknown Title',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 3),
-                                            Text(
-                                              _selectedMusic!.singer ??
-                                                  'Unknown Artist',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 10,
-                                                color: Colors.black54,
+                                              const SizedBox(height: 3),
+                                              Text(
+                                                _selectedMusic!.singer ??
+                                                    'Unknown Artist',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 10,
+                                                  color: Colors.black54,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+
+              if (_isRecording || _isPaused)
+                Positioned(
+                  top: 50,
+                  // left: 0,
+                  right: 20,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isRecording = false;
+                        cancelTimer();
+                      });
+                      if (_selectedMusic != null) {
+                        if (_mergedVideoPath != null) {
+                          _mergeAudioWithVideo();
+                        } else {
+                          _stopRecording(true).then((onValue) {
+                            _mergeAudioWithVideo();
+                          });
+                        }
+                      } else {
+                        // if (_mergedVideoPath == null) {
+                        _mergeVideoSegments(true);
+                        // }
+                        // _goToPreviewScreen(File(_mergedVideoPath!));
+                      }
+                    },
+                    child: Image.asset(
+                      'assets/images/video_done.png',
+                      height: 30,
+                      width: 30,
+                    ),
+                  ),
+                ),
+              // Bottom Icons
+              Positioned(
+                bottom: 20,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Gallery Icon
+                          !_isRecording
+                              ? InkWell(
+                                  onTap: () {
+                                    print('data');
+                                    _selectVideoFromGallery();
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/reel_gallery.png',
+                                    height: 30,
+                                    width: 30,
                                   ),
-                          )),
+                                )
+                              : SizedBox(),
+                          // Flash Icon
+                          InkWell(
+                            onTap: () => _toggleFlash,
+                            child: Image.asset(
+                              !_isFlashOn
+                                  ? 'assets/images/flash.png' //on
+                                  : 'assets/images/flash_off.png', //off
+                              height: 30,
+                              width: 30,
+                            ),
+                          ),
+
+                          InkWell(
+                            onTap: () async {
+                              _isRecording = !_isRecording;
+                              // isRecordingStaring = true;
+                              setState(() {});
+                              startProgress();
+                            },
+                            child: Container(
+                              height: 55,
+                              width: 55,
+                              decoration: BoxDecoration(
+                                  color: Colors.white60,
+                                  shape: BoxShape.circle),
+                              // padding: EdgeInsets.all(10.0),
+                              alignment: Alignment.center,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 55,
+                                    width: 55,
+                                    child: CircularProgressIndicator(
+                                        backgroundColor: Colors.white60,
+                                        strokeWidth: 20,
+                                        value: currentPercentage / 100,
+                                        color: Colors.orange),
+                                  ),
+                                  _isRecording
+                                      ? Container(
+                                          height: 55,
+                                          width: 55,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.pause,
+                                            color: Colors.blue,
+                                            size: 40,
+                                          ),
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: _isRecording
+                                                ? BoxShape.rectangle
+                                                : BoxShape.circle,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          /* // Record Button
+                            GestureDetector(
+                              onTap: _isRecording ? _stopRecording : _startRecording,
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _isRecording ? Colors.red : Colors.white,
+                                  border: Border.all(color: Colors.white, width: 4),
+                                ),
+                              ),
+                            ),*/
+
+                          !_isRecording
+                              ? InkWell(
+                                  onTap: () {
+                                    _switchCamera();
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/change_camera.png',
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                )
+                              : SizedBox(),
+                          /*
+                          !_isRecording
+                              ? InkWell(
+                                  onTap: () {
+                                    _openFilterOptionsSheet(
+                                        context, myLoading.isDark);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/filter.png',
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                )
+                              :*/
+                          SizedBox(),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      if (!_isRecording)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: timerTabs(
+                                  onTap: () {
+                                    isSelected15s = true;
+                                    isSelected30s = false;
+                                    isSelected60s = false;
+                                    totalSeconds = 60;
+                                    setState(() {});
+                                  },
+                                  isSelected: isSelected15s,
+                                  title: '60 Sec',
+                                ),
+                              ),
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: timerTabs(
+                                  onTap: () {
+                                    isSelected30s = true;
+                                    isSelected15s = false;
+                                    isSelected60s = false;
+                                    totalSeconds = 90;
+                                    setState(() {});
+                                  },
+                                  isSelected: isSelected30s,
+                                  title: '90 Sec',
+                                ),
+                              ),
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: timerTabs(
+                                  onTap: () {
+                                    isSelected30s = false;
+                                    isSelected15s = false;
+                                    isSelected60s = true;
+                                    totalSeconds = 120;
+                                    setState(() {});
+                                  },
+                                  isSelected: isSelected60s,
+                                  title: '120 Sec',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
               ),
-
-            if (_isRecording || _isPaused)
-              Positioned(
-                top: 50,
-                // left: 0,
-                right: 20,
-                child: InkWell(
-                  onTap: () {
-                    setState(() {
-                      _isRecording = false;
-                      cancelTimer();
-                    });
-                    if (_selectedMusic != null) {
-                      if (_mergedVideoPath != null) {
-                        _mergeAudioWithVideo();
-                      } else {
-                        _stopRecording(true).then((onValue) {
-                          _mergeAudioWithVideo();
-                        });
-                      }
-                    } else {
-                      // if (_mergedVideoPath == null) {
-                      _mergeVideoSegments(true);
-                      // }
-                      // _goToPreviewScreen(File(_mergedVideoPath!));
-                    }
-                  },
-                  child: Image.asset(
-                    'assets/images/video_done.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                ),
-              ),
-            // Bottom Icons
-            Positioned(
-              bottom: 20,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Gallery Icon
-                        !_isRecording
-                            ? InkWell(
-                                onTap: () {
-                                  print('data');
-                                  _selectVideoFromGallery();
-                                },
-                                child: Image.asset(
-                                  'assets/images/reel_gallery.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              )
-                            : SizedBox(),
-                        // Flash Icon
-                        InkWell(
-                          onTap: () => _toggleFlash,
-                          child: Image.asset(
-                            !_isFlashOn
-                                ? 'assets/images/flash.png' //on
-                                : 'assets/images/flash_off.png', //off
-                            height: 30,
-                            width: 30,
-                          ),
-                        ),
-
-                        InkWell(
-                          onTap: () async {
-                            _isRecording = !_isRecording;
-                            // isRecordingStaring = true;
-                            setState(() {});
-                            startProgress();
-                          },
-                          child: Container(
-                            height: 55,
-                            width: 55,
-                            decoration: BoxDecoration(
-                                color: Colors.white60, shape: BoxShape.circle),
-                            // padding: EdgeInsets.all(10.0),
-                            alignment: Alignment.center,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 55,
-                                  width: 55,
-                                  child: CircularProgressIndicator(
-                                      backgroundColor: Colors.white60,
-                                      strokeWidth: 20,
-                                      value: currentPercentage / 100,
-                                      color: Colors.orange),
-                                ),
-                                _isRecording
-                                    ? Container(
-                                        height: 55,
-                                        width: 55,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons.pause,
-                                          color: Colors.blue,
-                                          size: 40,
-                                        ),
-                                      )
-                                    : Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: _isRecording
-                                              ? BoxShape.rectangle
-                                              : BoxShape.circle,
-                                        ),
-                                      ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        /* // Record Button
-                          GestureDetector(
-                            onTap: _isRecording ? _stopRecording : _startRecording,
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _isRecording ? Colors.red : Colors.white,
-                                border: Border.all(color: Colors.white, width: 4),
-                              ),
-                            ),
-                          ),*/
-
-                        !_isRecording
-                            ? InkWell(
-                                onTap: () {
-                                  _switchCamera();
-                                },
-                                child: Image.asset(
-                                  'assets/images/change_camera.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              )
-                            : SizedBox(),
-
-                        !_isRecording
-                            ? InkWell(
-                                onTap: () {},
-                                child: Image.asset(
-                                  'assets/images/filter.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    if (!_isRecording)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: timerTabs(
-                                onTap: () {
-                                  isSelected15s = true;
-                                  isSelected30s = false;
-                                  isSelected60s = false;
-                                  totalSeconds = 60;
-                                  setState(() {});
-                                },
-                                isSelected: isSelected15s,
-                                title: '60 Sec',
-                              ),
-                            ),
-                            SizedBox(width: 15),
-                            Expanded(
-                              child: timerTabs(
-                                onTap: () {
-                                  isSelected30s = true;
-                                  isSelected15s = false;
-                                  isSelected60s = false;
-                                  totalSeconds = 90;
-                                  setState(() {});
-                                },
-                                isSelected: isSelected30s,
-                                title: '90 Sec',
-                              ),
-                            ),
-                            SizedBox(width: 15),
-                            Expanded(
-                              child: timerTabs(
-                                onTap: () {
-                                  isSelected30s = false;
-                                  isSelected15s = false;
-                                  isSelected60s = true;
-                                  totalSeconds = 120;
-                                  setState(() {});
-                                },
-                                isSelected: isSelected60s,
-                                title: '120 Sec',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
+    });
+  }
+
+  void _openFilterOptionsSheet(BuildContext context, bool isDarkMode) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return FiltersScreen();
+      },
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          selectedFilter = value;
+        });
+      }
     });
   }
 

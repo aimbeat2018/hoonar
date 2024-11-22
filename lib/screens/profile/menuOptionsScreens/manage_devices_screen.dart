@@ -15,7 +15,6 @@ import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
-import '../../../model/dummy_list_model.dart';
 import '../../../model/request_model/list_common_request_model.dart';
 import '../../../providers/setting_provider.dart';
 import '../../auth_screen/login_screen.dart';

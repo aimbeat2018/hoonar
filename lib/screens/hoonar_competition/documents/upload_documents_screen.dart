@@ -15,6 +15,7 @@ import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/common_request_model.dart';
 import '../../../model/request_model/upload_kyc_document_request_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../auth_screen/login_screen.dart';
@@ -36,7 +37,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getKycStatus(context, UploadKycDocumentRequestModel());
+      getKycStatus(context, CommonRequestModel());
     });
   }
 
@@ -255,7 +256,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   }
 
   Future<void> getKycStatus(
-      BuildContext context, UploadKycDocumentRequestModel requestModel) async {
+      BuildContext context, CommonRequestModel requestModel) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
