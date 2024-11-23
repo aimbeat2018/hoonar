@@ -234,5 +234,10 @@
   "areYouSureYouWantToDeleteAccountMsg": "यह क्रिया स्थायी है और इसे पूर्ववत नहीं किया जा सकता। आपका सारा डेटा मिटा दिया जाएगा।",
   "alert": "चेतावनी",
   "instructions": "वीडियो अपलोड करने से पहले दिशानिर्देश पढ़ें",
-  "okay": "ठीक है"
+  "okay": "ठीक है",
+  "congratulations_on_achievement": "आपकी उपलब्धि पर बधाई हो! आपने इस स्तर को सफलतापूर्वक जीत लिया है और {votes} वोटों की शानदार बढ़त बनाई है।\nबहुत अच्छा किया! आपका वर्तमान रैंक {rank} है।",
+  "withdraw_request": "निकासी अनुरोध",
+  "withdraw_request_list": "निकासी अनुरोध सूची",
+  "areYouSureYouWantToWithdraw": "क्या आप वाकई {amount} राशि निकालना चाहते हैं?",
+  "withdraw": "निकालें"
 }

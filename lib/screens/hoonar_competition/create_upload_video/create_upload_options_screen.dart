@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/connectShare/connect_share_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_options_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/video_share_options_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -230,7 +231,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                               context,
                               SlideRightRoute(page: const CaptureVideoScreen()),
                             );
-                          }else if (index == 3) {
+                          } else if (index == 3) {
                             Navigator.push(
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
@@ -247,7 +248,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                           } else if (index == 5) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(page: ConnectShareScreen()),
+                              SlideRightRoute(page: VideoShareOptionsScreen()),
                             );
                           }
                           // Navigator.push(

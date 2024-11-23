@@ -234,5 +234,10 @@
   "areYouSureYouWantToDeleteAccountMsg": "এই পদক্ষেপটি স্থায়ী এবং তা বাতিল করা যাবে না। আপনার সমস্ত তথ্য মুছে ফেলা হবে।",
   "alert": "অ্যালার্ট",
   "instructions": "ভিডিও আপলোড করার আগে নির্দেশিকা পড়ুন",
-  "okay": "ঠিক আছে"
+  "okay": "ঠিক আছে",
+  "congratulations_on_achievement": "আপনার অর্জনের জন্য অভিনন্দন! আপনি এই স্তরটি সফলভাবে জিতেছেন এবং {votes} ভোটের অসাধারণ লিড নিয়ে আছেন। খুব ভালো!\nআপনার বর্তমান র‍্যাঙ্ক {rank}।",
+  "withdraw_request": "উত্তোলন অনুরোধ",
+  "withdraw_request_list": "উত্তোলন অনুরোধ তালিকা",
+  "areYouSureYouWantToWithdraw": "আপনি কি নিশ্চিত যে আপনি {amount} টাকা তুলতে চান?",
+  "withdraw": "তোলা"
 }

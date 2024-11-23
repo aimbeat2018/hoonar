@@ -53,6 +53,22 @@
     <string>We need access to the microphone for recording video.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photos for the gallery</string>
-
+    <key>LSApplicationQueriesSchemes</key>
+        <array>
+            <string>fb</string>
+            <string>fb-messenger</string>
+            <string>instagram</string>
+            <string>line</string>
+            <string>linkedin</string>
+            <string>reddit</string>
+            <string>skype</string>
+            <string>slack</string>
+            <string>snapchat</string>
+            <string>tg</string>
+            <string>twitter</string>
+            <string>viber</string>
+            <string>weixin</string>
+            <string>whatsapp</string>
+        </array>
 </dict>
 </plist>

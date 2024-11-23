@@ -42,6 +42,8 @@ class _SliderPageViewState extends State<SliderPageView>
   bool _isPaused = false;
   bool isLoading = false;
   bool isFollow = false, isFollowLoading = false;
+  List<VideoPlayerController> videoControllers = [];
+  List<ChewieController> chewieControllers = [];
 
   @override
   void initState() {
@@ -67,23 +69,31 @@ class _SliderPageViewState extends State<SliderPageView>
     });
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
+    // for (var controller in videoControllers) {
+    //   await controller.dispose();
+    // }
+    // for (var chewieController in chewieControllers) {
+    //   chewieController.dispose();
+    // }
+    videoControllers.clear();
+    chewieControllers.clear();
+    children.clear();
+
     for (var data in widget.sliderModelList) {
-      late VideoPlayerController _videoPlayerController;
-      ChewieController? _chewieController;
-      // Initialize the VideoPlayerController with the video asset
-      _videoPlayerController =
+      final _videoPlayerController =
           VideoPlayerController.networkUrl(Uri.parse(data.postVideo!));
 
-      // Wait for the video to initialize
       await _videoPlayerController.initialize();
 
-      // Set the aspect ratio to fit the video player's aspect ratio
-      _chewieController = ChewieController(
+      videoControllers.add(_videoPlayerController); // Track the controller
+
+      final _chewieController = ChewieController(
         videoPlayerController: _videoPlayerController,
         autoPlay: false,
         showControls: false,
         looping: false,
       );
+      chewieControllers.add(_chewieController); // Track the Chewie controller
 
       String initials = data.fullName != null || data.fullName != ""
           ? data.fullName!
@@ -104,7 +114,7 @@ class _SliderPageViewState extends State<SliderPageView>
           children: [
             // Display the video when it's initialized
             // _chewieController != null &&
-            _chewieController.videoPlayerController.value.isInitialized
+            _videoPlayerController.value.isInitialized
                 ? VisibilityDetector(
                     key: Key(data.postVideo!),
                     onVisibilityChanged: (VisibilityInfo info) {
@@ -337,20 +347,18 @@ class _SliderPageViewState extends State<SliderPageView>
     }
   }
 
-  // @override
-  // void dispose() {
-  //   _videoPlayerController.dispose();
-  //   if (_chewieController != null) _chewieController!.dispose();
-  //   super.dispose();
-  // }
-
-  /* @override
-  void didUpdateWidget() {
-    super.didUpdateWidget(oldWidget);
-    activePage = children.length - 1;
-    previousPage = activePage - 1;
-    setState(() {});
-  }*/
+  @override
+  void dispose() {
+    for (final controller in videoControllers) {
+      controller.dispose();
+    }
+    for (final chewieController in chewieControllers) {
+      chewieController.dispose();
+    }
+    videoControllers.clear();
+    chewieControllers.clear();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

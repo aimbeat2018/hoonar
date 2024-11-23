@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hoonar/model/request_model/bank_detail_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
+import 'package:hoonar/model/success_models/bank_details_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
@@ -15,6 +17,7 @@ import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
+import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
 import 'package:hoonar/services/contest_service.dart';
 
 import '../model/request_model/upload_kyc_document_request_model.dart';
@@ -40,11 +43,15 @@ class ContestProvider extends ChangeNotifier {
   bool _isKycStatusLoading = false;
   bool _isRewardsLoading = false;
   bool _isWalletTransactionLoading = false;
+  bool _isWithdrawTransactionLoading = false;
+  bool _isAddWithdrawLoading = false;
   bool _isClaimRewardsLoading = false;
   bool _isSoundLoading = false;
   bool _isSavedSoundListLoading = false;
   bool _isSavedSoundLoading = false;
   bool _isDraftFeedLoading = false;
+  bool _isBankDetailsLoading = false;
+  bool _isAddBankDetailsLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
@@ -58,12 +65,16 @@ class ContestProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _uploadDocumentSuccessModel;
   FollowUnfollowSuccessModel? _claimRewardsModel;
   FollowUnfollowSuccessModel? _savedSoundModel;
+  FollowUnfollowSuccessModel? _addWithdrawRequestModel;
+  FollowUnfollowSuccessModel? _addBankRequestModel;
+  BankDetailsModel? _bankModel;
   KycStatusModel? _kycStatusModel;
   RewardListModel? _rewardListModel;
   SoundListModel? _soundListModel;
   SoundListModel? _savedSoundListModel;
   DraftFeedListModel? _draftFeedListModel;
   WalletTransactionListModel? _walletTransactionListModel;
+  WithdrawRequestListModel? _withdrawRequestListModel;
   List<LeaderboardListData> _leaderboardList = [];
   List<LeaderboardListData> _filteredLeaderboardList = [];
 
@@ -83,9 +94,15 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isDraftFeedLoading => _isDraftFeedLoading;
 
+  bool get isBankDetailsLoading => _isBankDetailsLoading;
+
   bool get isSavedSoundListLoading => _isSavedSoundListLoading;
 
   bool get isWalletTransactionLoading => _isWalletTransactionLoading;
+
+  bool get isWithdrawTransactionLoading => _isWithdrawTransactionLoading;
+
+  bool get isAddWithdrawLoading => _isAddWithdrawLoading;
 
   bool get isNewsLoading => _isNewsLoading;
 
@@ -109,6 +126,9 @@ class ContestProvider extends ChangeNotifier {
       _walletTransactionListModel;
 
   GuidelinesModel? get guidelinesModel => _guidelinesModel;
+
+  WithdrawRequestListModel? get withdrawRequestListModel =>
+      _withdrawRequestListModel;
 
   LeaderboardListModel? get leaderboardListModel => _leaderboardListModel;
 
@@ -135,6 +155,13 @@ class ContestProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get claimRewardsModel => _claimRewardsModel;
 
   FollowUnfollowSuccessModel? get savedSoundModel => _savedSoundModel;
+
+  FollowUnfollowSuccessModel? get addWithdrawRequestModel =>
+      _addWithdrawRequestModel;
+
+  FollowUnfollowSuccessModel? get addBankRequestModel => _addBankRequestModel;
+
+  BankDetailsModel? get bankModel => _bankModel;
 
   StorePaymentSuccessModel? get storePaymentSuccessModel =>
       _storePaymentSuccessModel;
@@ -409,6 +436,45 @@ class ContestProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getWithdrawRequestList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isWithdrawTransactionLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      WithdrawRequestListModel successModel =
+          await _contestService.getWithdrawRequest(requestModel, accessToken);
+      _withdrawRequestListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isWithdrawTransactionLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addWithdrawRequest(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isAddWithdrawLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _contestService.addWithdrawRequest(requestModel, accessToken);
+      _addWithdrawRequestModel = successModel;
+      if (successModel.status == '200') {
+        getWithdrawRequestList(ListCommonRequestModel(), accessToken);
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isAddWithdrawLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getSoundList(
       CommonRequestModel requestModel, String accessToken) async {
     _isSoundLoading = true;
@@ -477,6 +543,61 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isDraftFeedLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getBankDetails(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isBankDetailsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      BankDetailsModel successModel =
+          await _contestService.getBankDetails(requestModel, accessToken);
+      _bankModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isBankDetailsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addBankDetails(
+      BankDetailsRequestModel requestModel, String accessToken) async {
+    _isBankDetailsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _contestService.addBankDetails(requestModel, accessToken);
+      _addBankRequestModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _isBankDetailsLoading = false;
+    } finally {
+      _isBankDetailsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateBankDetails(
+      BankDetailsRequestModel requestModel, String accessToken) async {
+    _isBankDetailsLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _contestService.updateBankDetails(requestModel, accessToken);
+      _addBankRequestModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isBankDetailsLoading = false;
       notifyListeners();
     }
   }

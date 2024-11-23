@@ -79,6 +79,7 @@ dependencies:
   audio_waveforms: ^1.1.1
   flutter_audio_waveforms: ^1.2.1+8
   easy_audio_trimmer: ^1.0.2+4
+  custom_social_share: ^1.0.9
 
 dependency_overrides:
   intl: ^0.19.0

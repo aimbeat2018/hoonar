@@ -234,5 +234,10 @@
   "areYouSureYouWantToDeleteAccountMsg": "આ ક્રિયા ચિરંતન છે અને વળતરી કરી શકાતી નથી. તમારું તમામ ડેટા કાઢી નાખવામાં આવશે.",
   "alert": "ચેતવણી",
   "instructions": "વિડિયો અપલોડ કરવાનો પહેલા માર્ગદર્શિકાઓ વાંચો",
-  "okay": "ઠીક છે"
+  "okay": "ઠીક છે",
+  "congratulations_on_achievement": "તમારા કાર્ય માટે અભિનંદન! તમે {votes} વોટ્સની વિશિષ્ટ લીડ સાથે આ સ્તરે શ્રેષ્ઠ મોખરું મેળવ્યું છે. ખૂબ સારું કર્યું!\nતમારું વર્તમાન રેંક {rank} છે.",
+  "withdraw_request": "ઉપાડવાની વિનંતી",
+  "withdraw_request_list": "ઉપાડવાની વિનંતી સૂચિ",
+  "areYouSureYouWantToWithdraw": "શું તમે ખરેખર {amount} રકમ ઉપાડવા માગો છો?",
+  "withdraw": "ઉપાડો"
 }

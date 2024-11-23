@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:custom_social_share/custom_social_share.dart';
+
 // import 'package:fijkplayer/fijkplayer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,6 @@ import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
 import '../../model/success_models/home_post_success_model.dart';
-import '../../model/success_models/post_list_success_model.dart';
 import '../../providers/home_provider.dart';
 import '../../providers/user_provider.dart';
 import '../auth_screen/login_screen.dart';
@@ -36,6 +37,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
+
   // late FijkPlayer _fijkPlayer;
   late Chewie _chewie;
   bool _isPaused = false;
@@ -533,25 +535,31 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             const SizedBox(
                               height: 15,
                             ),
-                            Column(
-                              children: [
-                                Image.asset(
-                                  'assets/images/share.png',
-                                  width: 25,
-                                  height: 25,
-                                ),
-                                const SizedBox(
-                                  height: 3,
-                                ),
-                                Text(
-                                  AppLocalizations.of(context)!.share,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
+                            InkWell(
+                              onTap: () {
+                                CustomSocialShare()
+                                    .toAll(widget.model.postVideo ?? '');
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/share.png',
+                                    width: 25,
+                                    height: 25,
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.share,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

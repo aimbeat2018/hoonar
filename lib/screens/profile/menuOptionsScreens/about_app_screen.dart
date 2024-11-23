@@ -1,7 +1,11 @@
+import 'dart:io';
+
+import 'package:custom_social_share/custom_social_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/change_language_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/change_theme_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/faq_screen.dart';
@@ -26,10 +30,10 @@ class AboutAppScreen extends StatefulWidget {
 }
 
 class _AboutAppScreenState extends State<AboutAppScreen> {
-  bool enableNotification = false;
   late AuthProvider authProvider;
   SessionManager sessionManager = SessionManager();
   String appVersion = '';
+  bool enableNotification = false;
 
   @override
   void initState() {
@@ -72,6 +76,48 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
           SnackbarUtil.showSnackBar(
             context,
             authProvider.deleteAccountModel?.message! ?? '',
+          );
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            SlideRightRoute(page: const LoginScreen()),
+            (route) => false,
+          );
+        }
+      }
+    });
+  }
+
+  Future<void> enableDisableNotification(
+      BuildContext context, String notificationStatus) async {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      await authProvider.enableDisableNotification(
+          CommonRequestModel(
+              deviceToken: sessionManager
+                      .getString(SessionManager.accessToken)!
+                      .replaceAll('Bearer', '') ??
+                  '',
+              notificationStatus: notificationStatus),
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else {
+        if (authProvider.unableDisableNotification?.status == '200') {
+          setState(() {
+            if (notificationStatus == "0") {
+              enableNotification = false;
+            } else {
+              enableNotification = true;
+            }
+          });
+        } else if (authProvider.unableDisableNotification?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+            context,
+            authProvider.unableDisableNotification?.message! ?? '',
           );
           if (!mounted) return;
           Navigator.pushAndRemoveUntil(
@@ -138,7 +184,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                       title: AppLocalizations.of(context)!.notification,
                       subtitle:
                           AppLocalizations.of(context)!.notificationSubTitle,
-                      trailing: _buildCustomSwitch(false)),
+                      trailing: _buildCustomSwitch()),
                   _buildDivider(),
                   _buildSection(
                     context,
@@ -193,13 +239,17 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                       onTap: () => Navigator.push(
                           context, SlideRightRoute(page: const FaqScreen()))),
                   _buildDivider(),
-                  _buildSection(
-                    context,
-                    myLoading.isDark,
-                    icon: 'assets/images/share_app.png',
-                    title: AppLocalizations.of(context)!.share,
-                    subtitle: AppLocalizations.of(context)!.shareSubTitle,
-                  ),
+                  _buildSection(context, myLoading.isDark,
+                      icon: 'assets/images/share_app.png',
+                      title: AppLocalizations.of(context)!.share,
+                      subtitle: AppLocalizations.of(context)!.shareSubTitle,
+                      onTap: () {
+                    final message = Platform.isAndroid
+                        ? 'Check out this app on Google Play: https://play.google.com/store/apps/details?id=com.hoonar.hoonar'
+                        : 'Check out this app on the App Store: https://apps.apple.com/app/id1234567890';
+
+                    CustomSocialShare().toAll(message);
+                  }),
                   _buildDivider(),
                   _buildSection(context, myLoading.isDark,
                       icon: 'assets/images/delete_account.png',
@@ -289,17 +339,13 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
     );
   }
 
-  Widget _buildCustomSwitch(bool value) {
-    enableNotification = value;
+  Widget _buildCustomSwitch() {
     return InkWell(
       onTap: () {
         setState(() {
-          if (enableNotification) {
-            enableNotification = false;
-          } else {
-            enableNotification = true;
-          }
           // enableNotification = !enableNotification;
+
+          enableDisableNotification(context, enableNotification ? "0" : "1");
         });
       },
       child: Container(

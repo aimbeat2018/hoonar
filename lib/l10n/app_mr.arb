@@ -234,5 +234,10 @@
   "areYouSureYouWantToDeleteAccountMsg": "ही कृती शाश्वत आहे आणि ते उलटवता येणार नाही. तुमचे सर्व डेटा नष्ट केले जाईल.",
   "alert": "चेतावणी",
   "instructions": "व्हिडिओ अपलोड करण्यापूर्वी मार्गदर्शक तत्त्वे वाचा",
-  "okay": "ठीक आहे"
+  "okay": "ठीक आहे",
+  "congratulations_on_achievement": "तुमच्या यशासाठी अभिनंदन! तुम्ही या स्तरावर {votes} मतांची उत्कृष्ट आघाडी घेतली आहे. उत्तम केलं!\nतुमची सध्याची रँक {rank} आहे.",
+  "withdraw_request": "माघारी विनंती",
+  "withdraw_request_list": "माघारी विनंती यादी",
+  "areYouSureYouWantToWithdraw": "तुम्हाला खात्री आहे का की तुम्ही {amount} रक्कम काढू इच्छिता?",
+  "withdraw": "काढा"
 }

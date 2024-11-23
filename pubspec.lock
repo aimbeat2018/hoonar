@@ -281,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  custom_social_share:
+    dependency: "direct main"
+    description:
+      name: custom_social_share
+      sha256: ef5da222b24e411ff2e056a064248deac8b79cc9223fc2f206a611fff255a6f2
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.9"
   dbus:
     dependency: transitive
     description:

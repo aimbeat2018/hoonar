@@ -235,5 +235,10 @@
   "areYouSureYouWantToDeleteAccountMsg": "This action is permanent and cannot be undone. All your data will be erased.",
   "alert": "Alert",
   "instructions": "Read  guidelines before uploading the video",
-  "okay": "Okay"
+  "okay": "Okay",
+  "congratulations_on_achievement": "Congratulations on your achievement! You have successfully won this level with a remarkable lead of {votes} votes. Well done!\nYour current rank is {rank}.",
+  "withdraw_request": "Withdraw Request",
+  "withdraw_request_list": "Withdraw Request List",
+  "areYouSureYouWantToWithdraw": "Are you sure you want to withdraw amount {amount}",
+  "withdraw": "Withdraw"
 }

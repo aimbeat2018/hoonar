@@ -17,17 +17,15 @@ import '../../../../shimmerLoaders/grid_shimmer.dart';
 import '../../../auth_screen/login_screen.dart';
 import '../connectShare/connect_share_screen.dart';
 
-class YourFeedVideoListScreen extends StatefulWidget {
-  final String from;
-
-  const YourFeedVideoListScreen({super.key, required this.from});
+class HoonarStarVideoListScreen extends StatefulWidget {
+  const HoonarStarVideoListScreen({super.key});
 
   @override
-  State<YourFeedVideoListScreen> createState() =>
-      _YourFeedVideoListScreenState();
+  State<HoonarStarVideoListScreen> createState() =>
+      _HoonarStarVideoListScreenState();
 }
 
-class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
+class _HoonarStarVideoListScreenState extends State<HoonarStarVideoListScreen> {
   SessionManager sessionManager = SessionManager();
 
   @override
@@ -85,9 +83,10 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
                 contestProvider.draftFeedListModel == null
             ? GridShimmer()
             : contestProvider.draftFeedListModel!.data == null ||
-                    contestProvider.draftFeedListModel!.data!.yourFeed ==
+                    contestProvider.draftFeedListModel!.data!.hoonarStar ==
                         null ||
-                    contestProvider.draftFeedListModel!.data!.yourFeed!.isEmpty
+                    contestProvider
+                        .draftFeedListModel!.data!.hoonarStar!.isEmpty
                 ? DataNotFound()
                 : GridView.builder(
                     shrinkWrap: true,
@@ -100,83 +99,29 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
                           0.6, // Adjust according to image dimensions
                     ),
                     itemCount: contestProvider
-                        .draftFeedListModel!.data!.yourFeed!.length,
+                        .draftFeedListModel!.data!.hoonarStar!.length,
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          if (widget.from == 'share') {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: ConnectShareScreen(
-                                videoUrl: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postVideo ??
-                                    '',
-                                videoThumbnail: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postImage ??
-                                    '',
-                              )),
-                            );
-                          } else {
-                            SoundList soundListModel = SoundList(
-                                soundTitle: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].soundTitle ??
-                                    '',
-                                duration: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].duration ??
-                                    '',
-                                soundImage: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].soundImage ??
-                                    '',
-                                soundId: contestProvider.draftFeedListModel!
-                                            .data!.yourFeed![index].soundId !=
-                                        ""
-                                    ? int.parse(contestProvider.draftFeedListModel!.data!.yourFeed![index].soundId!)
-                                    : -1,
-                                sound: contestProvider.draftFeedListModel!.data!.yourFeed![index].sound ?? '');
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: UploadVideoScreen(
-                                videoThumbnail: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postImage ??
-                                    '',
-                                postId: contestProvider.draftFeedListModel!
-                                    .data!.yourFeed![index].postId,
-                                from: "feed",
-                                selectedMusic: contestProvider
-                                            .draftFeedListModel!
-                                            .data!
-                                            .yourFeed![index]
-                                            .soundTitle ==
-                                        ""
-                                    ? null
-                                    : soundListModel,
-                                videoUrl: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postVideo ??
-                                    '',
-                                caption: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postDescription ??
-                                    '',
-                                hashTag: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postHashTag ??
-                                    '',
-                              )),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            SlideRightRoute(
+                                page: ConnectShareScreen(
+                              videoUrl: contestProvider.draftFeedListModel!
+                                      .data!.hoonarStar![index].postVideo ??
+                                  '',
+                              videoThumbnail: contestProvider
+                                      .draftFeedListModel!
+                                      .data!
+                                      .hoonarStar![index]
+                                      .postImage ??
+                                  '',
+                            )),
+                          );
                         },
                         child: CachedNetworkImage(
                           imageUrl: contestProvider.draftFeedListModel!.data!
-                                  .yourFeed![index].postImage ??
+                                  .hoonarStar![index].postImage ??
                               '',
                           width: 50,
                           height: 50,

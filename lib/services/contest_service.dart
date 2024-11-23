@@ -1,8 +1,12 @@
+import 'package:hoonar/model/request_model/bank_detail_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/request_model/upload_kyc_document_request_model.dart';
 import 'package:hoonar/model/success_models/DraftFeedListModel.dart';
+import 'package:hoonar/model/success_models/bank_details_model.dart';
+import 'package:hoonar/model/success_models/bank_details_model.dart';
+import 'package:hoonar/model/success_models/bank_details_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
 import 'package:hoonar/model/success_models/hoonar_star_success_model.dart';
 import 'package:hoonar/model/success_models/kyc_status_model.dart';
@@ -24,6 +28,8 @@ import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
+import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
+import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
 
 import '../constants/utils.dart';
 import '../model/success_models/follow_unfollow_success_model.dart';
@@ -142,6 +148,28 @@ class ContestService {
     );
   }
 
+  Future<WithdrawRequestListModel> getWithdrawRequest(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<WithdrawRequestListModel>(
+      '$baseUrl$getUserWithdrawRequestsUrl',
+      /* method: 'POST',
+      data: requestModel.toJson(),*/
+      accessToken: accessToken,
+      fromJson: (data) => WithdrawRequestListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> addWithdrawRequest(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$addUserWithdrawRequestsUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
   Future<FollowUnfollowSuccessModel> claimRewards(
       CommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
@@ -216,6 +244,39 @@ class ContestService {
       data: requestModel.toJson(),
       accessToken: accessToken,
       fromJson: (data) => DraftFeedListModel.fromJson(data),
+    );
+  }
+
+  Future<BankDetailsModel> getBankDetails(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<BankDetailsModel>(
+      '$baseUrl$viewBankDetailsUrl',
+      /* method: 'POST',
+      data: requestModel.toJson(),*/
+      accessToken: accessToken,
+      fromJson: (data) => BankDetailsModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> addBankDetails(
+      BankDetailsRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$addBankDetailsUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> updateBankDetails(
+      BankDetailsRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$updateBankDetailsUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
 }

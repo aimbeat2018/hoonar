@@ -177,6 +177,17 @@ class UserService {
     );
   }
 
+  Future<FollowUnfollowSuccessModel> enableDisableNotification(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$enableDisableNotificationsUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
   Future<GetFollowersListModel> getFollowersList({
     ListCommonRequestModel? requestModel,
   }) async {

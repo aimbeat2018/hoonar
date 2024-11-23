@@ -32,6 +32,7 @@ const String updatePostUrl = 'Post/updatePost';
 const String getHashTagListUrl = 'Post/getHashtagList';
 const String getHomePageViewAllPostUrl = 'Post/getHomePageViewAllPost';
 const String getLevelUrl = 'User/getLevelLists';
+// const String getLevelNewUrl = 'User/getLevelLists_new';
 const String searchUserUrl = 'User/searchUsers';
 const String storeSearchHistoryUrl = 'User/storeSearchHistory';
 const String userSearchHistoryUrl = 'User/userSearchHistory';
@@ -62,7 +63,12 @@ const String getUserSavedSoundsUrl = 'User/getUserSavedSounds';
 const String saveSoundUrl = 'Post/saveSound';
 const String getUserDraftFeedCategoryWiseUrl = 'User/getUserDraftsFeed';
 const String getFaqUrl = 'User/getFaqs';
+const String enableDisableNotificationsUrl = 'User/enableDisableNotifications';
+const String getUserWithdrawRequestsUrl = 'User/getUserWithdrawRequests';
+const String addUserWithdrawRequestsUrl = 'User/requestWithdrawal';
+const String viewBankDetailsUrl = 'User/viewBankDetails';
+const String addBankDetailsUrl = 'User/addBankDetails';
+const String updateBankDetailsUrl = 'User/updateBankDetails';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
-

@@ -18,8 +18,8 @@ class LevelListModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = this.status;
-    data['message'] = this.message;
+    data['status'] = status;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -37,17 +37,24 @@ class LevelListData {
   int? isUnlocked;
   int? hasUploaded;
   int? hasWon;
+  int? isPreviousLevelWin;
+  int? rank;
+  int? voteScore;
 
-  LevelListData(
-      {this.levelId,
-      this.levelName,
-      this.description,
-      this.fees,
-      this.topRankCount,
-      this.winnerCount,
-      this.isUnlocked,
-      this.hasUploaded,
-      this.hasWon});
+  LevelListData({
+    this.levelId,
+    this.levelName,
+    this.description,
+    this.fees,
+    this.topRankCount,
+    this.winnerCount,
+    this.isUnlocked,
+    this.hasUploaded,
+    this.hasWon,
+    this.isPreviousLevelWin,
+    this.rank,
+    this.voteScore,
+  });
 
   LevelListData.fromJson(Map<String, dynamic> json) {
     levelId = json['level_id'];
@@ -59,19 +66,25 @@ class LevelListData {
     isUnlocked = json['is_unlocked'];
     hasUploaded = json['has_uploaded'];
     hasWon = json['has_won'];
+    isPreviousLevelWin = json['is_previous_level_win'];
+    rank = json['rank'];
+    voteScore = json['vote_score'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['level_id'] = this.levelId;
-    data['level_name'] = this.levelName;
-    data['description'] = this.description;
-    data['fees'] = this.fees;
-    data['top_rank_count'] = this.topRankCount;
-    data['winner_count'] = this.winnerCount;
-    data['is_unlocked'] = this.isUnlocked;
-    data['has_uploaded'] = this.hasUploaded;
-    data['has_won'] = this.hasWon;
+    data['level_id'] = levelId;
+    data['level_name'] = levelName;
+    data['description'] = description;
+    data['fees'] = fees;
+    data['top_rank_count'] = topRankCount;
+    data['winner_count'] = winnerCount;
+    data['is_unlocked'] = isUnlocked;
+    data['has_uploaded'] = hasUploaded;
+    data['has_won'] = hasWon;
+    data['is_previous_level_win'] = isPreviousLevelWin;
+    data['rank'] = rank;
+    data['vote_score'] = voteScore;
     return data;
   }
 }

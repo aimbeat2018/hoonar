@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
@@ -184,40 +186,72 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8.0, horizontal: 5),
                                   child: InkWell(
-                                    onTap: () {
-                                      if (contestProvider.levelListModel!
-                                                  .data![index].isUnlocked ==
-                                              1 &&
-                                          contestProvider.levelListModel!
-                                                  .data![index].hasWon ==
-                                              0) {
-                                        if (mounted) {
-                                          setState(() {
-                                            KeyRes.selectedLevelId =
+                                    onTap: contestProvider
+                                                .levelListModel!
+                                                .data![index]
+                                                .isPreviousLevelWin ==
+                                            0
+                                        ? null
+                                        : () {
+                                            if (contestProvider
+                                                        .levelListModel!
+                                                        .data![index]
+                                                        .isUnlocked ==
+                                                    1 &&
                                                 contestProvider.levelListModel!
-                                                    .data![index].levelId!;
-                                          });
-                                        }
-                                        Navigator.push(
-                                            context,
-                                            SlideRightRoute(
-                                                page: ContestJoinOptionsScreen(
-                                              levelId: contestProvider
-                                                  .levelListModel!
-                                                  .data![index]
-                                                  .levelId
-                                                  .toString(),
-                                              categoryId: widget.categoryId,
-                                            )));
-                                      } else {
-                                        showPaymentPopUp(
-                                            context,
-                                            myLoading.isDark,
-                                            index,
-                                            contestProvider
-                                                .levelListModel!.data![index]);
-                                      }
-                                    },
+                                                        .data![index].hasWon ==
+                                                    0) {
+                                              if (mounted) {
+                                                setState(() {
+                                                  KeyRes.selectedLevelId =
+                                                      contestProvider
+                                                          .levelListModel!
+                                                          .data![index]
+                                                          .levelId!;
+                                                });
+                                              }
+                                              Navigator.push(
+                                                  context,
+                                                  SlideRightRoute(
+                                                      page:
+                                                          ContestJoinOptionsScreen(
+                                                    levelId: contestProvider
+                                                        .levelListModel!
+                                                        .data![index]
+                                                        .levelId
+                                                        .toString(),
+                                                    categoryId:
+                                                        widget.categoryId,
+                                                  )));
+                                            } else if (contestProvider
+                                                        .levelListModel!
+                                                        .data![index]
+                                                        .isUnlocked ==
+                                                    1 &&
+                                                contestProvider.levelListModel!
+                                                        .data![index].hasWon ==
+                                                    1) {
+                                              showWonDialog(
+                                                  context,
+                                                  myLoading.isDark,
+                                                  contestProvider
+                                                      .levelListModel!
+                                                      .data![index]
+                                                      .voteScore!,
+                                                  contestProvider
+                                                      .levelListModel!
+                                                      .data![index]
+                                                      .rank!);
+                                            } else {
+                                              showPaymentPopUp(
+                                                  context,
+                                                  myLoading.isDark,
+                                                  index,
+                                                  contestProvider
+                                                      .levelListModel!
+                                                      .data![index]);
+                                            }
+                                          },
                                     child: Container(
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
@@ -243,9 +277,17 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                                 textAlign: TextAlign.start,
                                                 style: GoogleFonts.poppins(
                                                   fontSize: 15,
-                                                  color: myLoading.isDark
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                                  color: contestProvider
+                                                              .levelListModel!
+                                                              .data![index]
+                                                              .isPreviousLevelWin ==
+                                                          0
+                                                      ? (myLoading.isDark
+                                                          ? Colors.white24
+                                                          : Colors.black26)
+                                                      : (myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black),
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                               ),
@@ -271,12 +313,22 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                                     color: contestProvider
                                                                 .levelListModel!
                                                                 .data![index]
-                                                                .isUnlocked ==
-                                                            1
-                                                        ? Colors.transparent
-                                                        : (myLoading.isDark
-                                                            ? Colors.white
-                                                            : Colors.black),
+                                                                .isPreviousLevelWin ==
+                                                            0
+                                                        ? (myLoading.isDark
+                                                            ? Colors.white24
+                                                            : Colors.black26)
+                                                        : (contestProvider
+                                                                    .levelListModel!
+                                                                    .data![
+                                                                        index]
+                                                                    .isUnlocked ==
+                                                                1
+                                                            ? Colors.transparent
+                                                            : (myLoading.isDark
+                                                                ? Colors.white
+                                                                : Colors
+                                                                    .black)),
                                                     width:
                                                         1), // Optional border
                                               ),
@@ -291,14 +343,22 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                                 color: contestProvider
                                                             .levelListModel!
                                                             .data![index]
-                                                            .isUnlocked ==
-                                                        1
+                                                            .isPreviousLevelWin ==
+                                                        0
                                                     ? (myLoading.isDark
-                                                        ? Colors.black
-                                                        : Colors.white)
-                                                    : (myLoading.isDark
-                                                        ? Colors.white
-                                                        : Colors.black),
+                                                        ? Colors.white24
+                                                        : Colors.black26)
+                                                    : (contestProvider
+                                                                .levelListModel!
+                                                                .data![index]
+                                                                .isUnlocked ==
+                                                            1
+                                                        ? (myLoading.isDark
+                                                            ? Colors.black
+                                                            : Colors.white)
+                                                        : (myLoading.isDark
+                                                            ? Colors.white
+                                                            : Colors.black)),
                                                 size: 22,
                                               ),
                                             )
@@ -317,6 +377,44 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
         ),
       );
     });
+  }
+
+  void showWonDialog(
+      BuildContext context, bool isDarkMode, int vote, int rank) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          // title: Text(
+          //   AppLocalizations.of(context)!.logout,
+          //   style: GoogleFonts.poppins(
+          //     color: isDarkMode ? Colors.white : Colors.black,
+          //   ),
+          // ),
+          content: Text(
+            AppLocalizations.of(context)!
+                .congratulations_on_achievement(rank, vote),
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.okay,
+                style: GoogleFonts.poppins(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   showPaymentPopUp(

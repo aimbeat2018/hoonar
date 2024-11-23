@@ -234,5 +234,10 @@
         "areYouSureYouWantToDeleteAccountMsg": "یہ عمل مستقل ہے اور اس کو منسوخ نہیں کیا جا سکتا۔ آپ کا سارا ڈیٹا مٹا دیا جائے گا۔",
   "alert": "انتباہ",
   "instructions": "ویڈیو اپ لوڈ کرنے سے پہلے رہنمائی پڑھیں",
-  "okay": "ٹھیک ہے"
+  "okay": "ٹھیک ہے",
+  "congratulations_on_achievement": "آپ کی کامیابی پر مبارک ہو! آپ نے {votes} ووٹوں کی شاندار برتری کے ساتھ اس سطح کو کامیابی سے جیت لیا ہے۔ بہت اچھا! \nآپ کا موجودہ رینک {rank} ہے۔",
+  "withdraw_request": "نکالنے کی درخواست",
+  "withdraw_request_list": "نکالنے کی درخواست کی فہرست",
+  "areYouSureYouWantToWithdraw": "کیا آپ واقعی {amount} رقم نکالنا چاہتے ہیں؟",
+  "withdraw": "نکالیں"
 }

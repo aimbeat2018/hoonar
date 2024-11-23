@@ -1,5 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:custom_social_share/custom_social_share.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/custom/snackbar_util.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/color_constants.dart';
@@ -8,13 +12,35 @@ import '../../../../constants/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConnectShareScreen extends StatefulWidget {
-  const ConnectShareScreen({super.key});
+  final String videoUrl;
+  final String videoThumbnail;
+
+  const ConnectShareScreen(
+      {super.key, required this.videoUrl, required this.videoThumbnail});
 
   @override
   State<ConnectShareScreen> createState() => _ConnectShareScreenState();
 }
 
 class _ConnectShareScreenState extends State<ConnectShareScreen> {
+  final _share = CustomSocialShare();
+  var _onlyInstalled = false;
+  var _installedApps = <ShareWith>[];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _share.getInstalledAppsForShare().then((value) {
+        debugPrint("_MyAppState.build: $value");
+        _installedApps = value;
+        setState(() {});
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -57,7 +83,7 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.01), // Space from the top
 
-                Container(
+                /* Container(
                   // width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   height: screenHeight * 0.35,
@@ -66,12 +92,36 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: AssetImage(
-                            'assets/images/image1.png',
-                          ))),
+                          image: NetworkImage(widget.videoThumbnail))),
+                ),*/
+
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  height: screenHeight * 0.35,
+                  width: screenWidth * 0.7,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    // Ensures the child respects the border radius
+                    child: CachedNetworkImage(
+                      imageUrl: widget.videoThumbnail,
+                      fit: BoxFit.fill,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) => const Center(
+                        child: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
 
@@ -96,24 +146,25 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
 
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: myLoading.isDark
                         ? const Color(0x603F3F3F)
-                        : Color(0x153F3F3F),
+                        : const Color(0x153F3F3F),
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          'Video Link',
+                          widget.videoUrl,
                           textAlign: TextAlign.start,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
@@ -123,15 +174,23 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                           ),
                         ),
                       ),
-                      Icon(
-                        Icons.copy,
-                        color: myLoading.isDark ? Colors.white : Colors.black,
+                      SizedBox(
+                        width: 10,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          copyToClipboard(context);
+                        },
+                        child: Icon(
+                          Icons.copy,
+                          color: myLoading.isDark ? Colors.white : Colors.black,
+                        ),
                       )
                     ],
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
 
@@ -145,7 +204,7 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
 
@@ -156,7 +215,16 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                       children: [
                         Flexible(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _share
+                                  .to(ShareWith.instagram, widget.videoUrl)
+                                  .then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
                             child: Image.asset(
                               'assets/images/insta.png',
                               height: 60,
@@ -166,7 +234,16 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                         ),
                         Flexible(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _share
+                                  .to(ShareWith.whatsapp, widget.videoUrl)
+                                  .then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
                             child: Image.asset(
                               'assets/images/whatsapp.png',
                               height: 60,
@@ -176,7 +253,16 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                         ),
                         Flexible(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _share
+                                  .to(ShareWith.x, widget.videoUrl)
+                                  .then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
                             child: Image.asset(
                               'assets/images/twitter.png',
                               height: 60,
@@ -186,7 +272,7 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 25,
                     ),
                     Row(
@@ -194,17 +280,16 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                       children: [
                         Flexible(
                           child: InkWell(
-                            onTap: () {},
-                            child: Image.asset(
-                              'assets/images/copy.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _share
+                                  .to(ShareWith.facebook, widget.videoUrl)
+                                  .then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
                             child: Image.asset(
                               'assets/images/fb.png',
                               height: 60,
@@ -214,14 +299,40 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                         ),
                         Flexible(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _share
+                                  .to(ShareWith.snapchat, widget.videoUrl)
+                                  .then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
                             child: Image.asset(
                               'assets/images/snap.png',
                               height: 60,
                               width: 60,
                             ),
                           ),
-                        )
+                        ),
+                        Flexible(
+                          child: InkWell(
+                            onTap: () {
+                              _share.toAll(widget.videoUrl).then((value) {
+                                if (value == false) {
+                                  SnackbarUtil.showSnackBar(
+                                      context, 'App not installed');
+                                }
+                              });
+                            },
+                            child: Image.asset(
+                              'assets/images/more_share.png',
+                              height: 60,
+                              width: 60,
+                            ),
+                          ),
+                        ),
                       ],
                     )
                   ],
@@ -229,6 +340,18 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
               ],
             ),
           ),
+        ),
+      );
+    });
+  }
+
+  void shareToSpecificApp(BuildContext context, String appPackageName) {}
+
+  void copyToClipboard(BuildContext context) {
+    Clipboard.setData(ClipboardData(text: widget.videoUrl)).then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Link copied to clipboard!"),
         ),
       );
     });

@@ -46,6 +46,7 @@ class AuthProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _changePasswordModel;
   FollowUnfollowSuccessModel? _updateProfileImageModel;
   FollowUnfollowSuccessModel? _deleteAccountModel;
+  FollowUnfollowSuccessModel? _unableDisableNotification;
 
   List<StateListData>? get stateList => _stateList;
 
@@ -70,6 +71,9 @@ class AuthProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get changePasswordModel => _changePasswordModel;
 
   FollowUnfollowSuccessModel? get deleteAccountModel => _deleteAccountModel;
+
+  FollowUnfollowSuccessModel? get unableDisableNotification =>
+      _unableDisableNotification;
 
   FollowUnfollowSuccessModel? get updateProfileImageModel =>
       _updateProfileImageModel;
@@ -391,6 +395,23 @@ class AuthProvider extends ChangeNotifier {
       FollowUnfollowSuccessModel successModel =
           await _userService.deleteAccount(accessToken);
       _deleteAccountModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isDeleteAccountLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> enableDisableNotification(CommonRequestModel requestModel, String accessToken) async {
+    _isDeleteAccountLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _userService.enableDisableNotification(requestModel,accessToken);
+      _unableDisableNotification = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

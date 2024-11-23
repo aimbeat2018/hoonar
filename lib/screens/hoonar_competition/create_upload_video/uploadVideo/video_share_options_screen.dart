@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/draft_video_list_Screen.dart';
+import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/hoonar_star_video_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/your_feed_video_list_screen.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../constants/my_loading/my_loading.dart';
+import '../../../../constants/session_manager.dart';
+import '../../../../constants/slide_right_route.dart';
+import '../../../../custom/snackbar_util.dart';
+import '../../../../model/request_model/common_request_model.dart';
+import '../../../../providers/contest_provider.dart';
+import '../../../auth_screen/login_screen.dart';
 
-class UploadVideoOptionsScreen extends StatefulWidget {
-  const UploadVideoOptionsScreen({super.key});
+class VideoShareOptionsScreen extends StatefulWidget {
+  const VideoShareOptionsScreen({super.key});
 
   @override
-  State<UploadVideoOptionsScreen> createState() =>
-      _UploadVideoOptionsScreenState();
+  State<VideoShareOptionsScreen> createState() =>
+      _VideoShareOptionsScreenState();
 }
 
-class _UploadVideoOptionsScreenState extends State<UploadVideoOptionsScreen> {
+class _VideoShareOptionsScreenState extends State<VideoShareOptionsScreen> {
   int currentTab = 0;
 
   void changeTabPosition(int pos) {
@@ -70,7 +77,7 @@ class _UploadVideoOptionsScreenState extends State<UploadVideoOptionsScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 15.0),
                                 child: Text(
-                                  AppLocalizations.of(context)!.drafts,
+                                  AppLocalizations.of(context)!.hoonarStar,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
                                     fontSize: 15,
@@ -128,10 +135,8 @@ class _UploadVideoOptionsScreenState extends State<UploadVideoOptionsScreen> {
                 ),
                 Expanded(
                   child: currentTab == 0
-                      ? DraftVideoListScreen()
-                      : YourFeedVideoListScreen(
-                          from: 'upload',
-                        ),
+                      ? HoonarStarVideoListScreen()
+                      : YourFeedVideoListScreen(from: 'share',),
                 )
               ],
             ),

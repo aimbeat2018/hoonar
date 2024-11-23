@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
+import 'package:hoonar/screens/hoonar_competition/yourRewards/withdraw_request_list_screen.dart';
 import 'package:hoonar/shimmerLoaders/wallet_transaction_shimmer.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -51,6 +52,9 @@ class _WalletScreenState extends State<WalletScreen> {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
         if (contestProvider.walletTransactionListModel?.status == '200') {
+          setState(() {
+
+          });
         } else if (contestProvider.walletTransactionListModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -60,6 +64,7 @@ class _WalletScreenState extends State<WalletScreen> {
         }
       }
     });
+    setState(() {});
   }
 
   String formatTransactionDate(String transactionDate) {
@@ -80,6 +85,41 @@ class _WalletScreenState extends State<WalletScreen> {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
+        bottomNavigationBar: contestProvider
+                        .walletTransactionListModel!.walletBalance ==
+                    null ||
+                contestProvider.walletTransactionListModel!.walletBalance == "0"
+            ? SizedBox()
+            : InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(
+                        page: WithdrawRequestListScreen(
+                      totalAmount: contestProvider
+                              .walletTransactionListModel!.walletBalance ??
+                          '',
+                    )),
+                  );
+                },
+                child: Container(
+                  height: 40,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      color: myLoading.isDark ? Colors.white : Colors.black),
+                  child: Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.withdraw_request,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: myLoading.isDark ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
         body: Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
@@ -135,7 +175,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  contestProvider.isWalletTransactionLoading || contestProvider.walletTransactionListModel==null
+                  contestProvider.isWalletTransactionLoading ||
+                          contestProvider.walletTransactionListModel == null
                       ? const WalletTransactionShimmer()
                       : Column(
                           children: [

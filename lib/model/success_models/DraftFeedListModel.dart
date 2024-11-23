@@ -27,6 +27,7 @@ class DraftFeedListModel {
 class Data {
   List<PostsListData>? yourFeed;
   List<PostsListData>? drafts;
+  List<PostsListData>? hoonarStar;
 
   Data({this.yourFeed, this.drafts});
 
@@ -43,6 +44,12 @@ class Data {
         drafts!.add(PostsListData.fromJson(v));
       });
     }
+    if (json['hoonar_star'] != null) {
+      hoonarStar = <PostsListData>[];
+      json['hoonar_star'].forEach((v) {
+        hoonarStar!.add(PostsListData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +59,9 @@ class Data {
     }
     if (drafts != null) {
       data['drafts'] = drafts!.map((v) => v.toJson()).toList();
+    }
+    if (hoonarStar != null) {
+      data['hoonar_star'] = hoonarStar!.map((v) => v.toJson()).toList();
     }
     return data;
   }
