@@ -1,9 +1,13 @@
 // import 'package:face_camera/face_camera.dart';
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/providers/contest_provider.dart';
@@ -16,15 +20,22 @@ import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.da
 import 'package:hoonar/screens/splash_screen/splash_screens.dart';
 import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 import 'package:provider/provider.dart';
 
 import 'constants/const_res.dart';
 import 'constants/key_res.dart';
 import 'constants/my_loading/my_loading.dart';
 import 'constants/session_manager.dart';
+import 'notification/NotificationHelper.dart';
 
 SessionManager sessionManager = SessionManager();
 String selectedLanguage = byDefaultLanguage;
+
+final FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin =
+    (Platform.isAndroid || Platform.isIOS)
+        ? FlutterLocalNotificationsPlugin()
+        : null;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +54,26 @@ Future<void> main() async {
   await sessionManager.initPref();
   selectedLanguage =
       sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
+
+  NotificationPermissions.requestNotificationPermissions(
+      iosSettings:
+          const NotificationSettingsIos(sound: true, badge: true, alert: true));
+
+  try {
+    // if (!kIsWeb) {
+    final RemoteMessage? remoteMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (remoteMessage != null) {
+      // _orderID = remoteMessage.notification!.titleLocKey != null
+      //     ? int.parse(remoteMessage.notification!.titleLocKey!)
+      //     : null;
+    }
+    await NotificationHelper.initialize(flutterLocalNotificationsPlugin!);
+    FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
+    // }
+  } catch (e) {}
+
   runApp(const MyApp());
 }
 

@@ -1,23 +1,23 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
-
+import 'package:http/http.dart' as http;
 // import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
-import 'package:http/http.dart' as http;
+
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../model/success_models/sound_list_model.dart';
-import '../hoonar_competition/join_competition/select_category_screen.dart';
 
 /*class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
