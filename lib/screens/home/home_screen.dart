@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel =
-          ListCommonRequestModel(limit: paginationLimit);
+          ListCommonRequestModel(limit: /*paginationLimit*/3);
 
       await homeProvider.getHomePostList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
