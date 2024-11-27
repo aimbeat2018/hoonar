@@ -178,6 +178,7 @@ class _EditPreviewScreenState extends State<EditPreviewScreen> {
                   children: [
                     InkWell(
                       onTap: () {
+                        _videoController.pause();
                         Navigator.pop(context);
                       },
                       child: Image.asset(
@@ -315,13 +316,15 @@ class _EditPreviewScreenState extends State<EditPreviewScreen> {
                     onTap: () {
                       if (!_isMerging) {
                         _generateThumbnail().then((onValue) {
+                          _videoController.pause();
+
                           Navigator.push(
                             context,
                             SlideRightRoute(
                                 page: UploadVideoScreen(
                               videoThumbnail: _thumbnailPath!,
                               videoUrl: _videoFile!.path,
-                              from: "normal",
+                              from: "level",
                               selectedMusic: _selectedMusic,
                             )),
                           );

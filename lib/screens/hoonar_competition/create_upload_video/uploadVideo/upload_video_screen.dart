@@ -708,18 +708,83 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                               addPost(context, requestModel);
                                             }
                                           }
-                                        : null,
+                                        : widget.from == "normal"
+                                            ? () {
+                                                AddPostRequestModel requestModel = AddPostRequestModel(
+                                                    saveAsDraft: "0",
+                                                    userId: int.parse(
+                                                        sessionManager.getString(
+                                                            SessionManager
+                                                                .userId)!),
+                                                    categoryId: KeyRes.selectedCategoryId == -1
+                                                        ? ""
+                                                        : KeyRes
+                                                            .selectedCategoryId
+                                                            .toString(),
+                                                    levelId: KeyRes.selectedLevelId == -1
+                                                        ? ""
+                                                        : KeyRes.selectedLevelId
+                                                            .toString(),
+                                                    postDescription:
+                                                        captionController.text,
+                                                    postHashTag: addCommaBeforeHashtags(
+                                                        hashTagController.text),
+                                                    postImagePath: widget
+                                                        .videoThumbnail
+                                                        .replaceAll(
+                                                            'file://', ''),
+                                                    postVideoPath: widget.videoUrl!);
+
+                                                if (widget.selectedMusic !=
+                                                    null) {
+                                                  if (widget.selectedMusic!
+                                                              .isLocalSong !=
+                                                          null ||
+                                                      widget.selectedMusic!
+                                                              .isLocalSong ==
+                                                          "0") {
+                                                    requestModel
+                                                        .isOrignalSound = "1";
+                                                    requestModel.postSound =
+                                                        widget.selectedMusic!
+                                                            .trimAudioPath!;
+                                                    requestModel.soundImage =
+                                                        widget.selectedMusic!
+                                                            .soundImage!;
+                                                    requestModel.soundTitle =
+                                                        widget.selectedMusic!
+                                                            .soundTitle!;
+                                                    requestModel.duration =
+                                                        widget.selectedMusic!
+                                                            .duration!;
+                                                    requestModel.singer = widget
+                                                        .selectedMusic!.singer!;
+                                                  } else {
+                                                    requestModel
+                                                        .isOrignalSound = "0";
+                                                    // requestModel.postSound = widget.selectedMusic!.sound!;
+                                                    requestModel.soundId =
+                                                        widget.selectedMusic!
+                                                            .soundId!
+                                                            .toString();
+                                                  }
+                                                }
+
+                                                addPost(context, requestModel);
+                                              }
+                                            : null,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 40),
                                       margin: const EdgeInsets.only(
                                           top: 15, bottom: 5),
                                       decoration: ShapeDecoration(
-                                        color: (userKycStatus == 0 ||
-                                                    userKycStatus == 2) &&
+                                        color: userKycStatus == 1 &&
                                                 widget.from != "normal"
-                                            ? greyTextColor8
-                                            : buttonBlueColor1,
+                                            ? buttonBlueColor1
+                                            : widget.from == "normal"
+                                                ? buttonBlueColor1
+                                                : greyTextColor8,
                                         shape: RoundedRectangleBorder(
                                           side: const BorderSide(
                                             strokeAlign:

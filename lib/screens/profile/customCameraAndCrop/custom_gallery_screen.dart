@@ -26,15 +26,22 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
   AssetPathEntity? _selectedFolder;
   List<AssetEntity> _recentImages = [];
   bool _loading = true;
+  bool _isLoadingMore = false; // Track if more data is being loaded
   final CropController _cropController = CropController();
   Uint8List? fileBytes, croppedBytes;
   XFile? croppedXFile;
   XFile? selectedImageFile;
+  int _pageIndex = 0; // Initial page index for pagination
+  final int _pageSize = 80; // Number of items per page
+
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _fetchFoldersAndImages();
+
+    _scrollController.addListener(_onScroll);
   }
 
   Future<void> _fetchFoldersAndImages() async {
@@ -58,7 +65,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
         _folders = folders;
         _selectedFolder = folders[0];
       });
-      _fetchImagesFromFolder(folders[0]);
+      _fetchImagesFromFolder(folders[0], _pageIndex);
     }
 
     setState(() {
@@ -66,18 +73,33 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
     });
   }
 
-  Future<void> _fetchImagesFromFolder(AssetPathEntity folder) async {
+  Future<void> _fetchImagesFromFolder(
+      AssetPathEntity folder, int pageIndex) async {
+    if (_isLoadingMore) return; // Prevent multiple simultaneous requests
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    // Fetch the images for the current page
     final List<AssetEntity> images = await folder.getAssetListRange(
-      start: 0,
-      end: await folder.assetCountAsync, // Fetch all images
+      start: pageIndex * _pageSize,
+      end: (pageIndex + 1) * _pageSize,
     );
+
     if (images.isNotEmpty) {
+      // Fetch the thumbnail for the first image in the page for preview
       Uint8List? file = await images[0].thumbnailData;
+
       setState(() {
-        _recentImages = images;
+        _recentImages.addAll(images); // Add images to the existing list
         fileBytes = file;
       });
     }
+
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   void navigateToCrop(Uint8List croppedImage, BuildContext context) {
@@ -160,9 +182,8 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  if (fileBytes != null)
-                    Expanded(flex: 4, child: _buildCropImage(context)),
-                  // _buildCropImage(context),
+                  // if (fileBytes != null)
+                  //   Expanded(flex: 4, child: _buildCropImage(context)),
                   Expanded(
                     flex: 5,
                     child: Container(
@@ -172,7 +193,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
                               child: _buildImageGrid())
                           : const SizedBox.shrink(),
                     ),
-                  )
+                  ),
                 ],
               ),
       );
@@ -181,6 +202,8 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
 
   Widget _buildImageGrid() {
     return GridView.builder(
+      // controller: ScrollController()..addListener(_onScroll),
+      controller: _scrollController,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3, // 3 images per row
         crossAxisSpacing: 2,
@@ -189,7 +212,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
       itemCount: _recentImages.length,
       itemBuilder: (context, index) {
         return FutureBuilder<Uint8List?>(
-          future: _recentImages[index].thumbnailData, // Get thumbnail
+          future: _recentImages[index].originBytes, // Get thumbnail
           builder: (context, snapshot) {
             final bytes = snapshot.data;
             if (bytes == null) {
@@ -200,6 +223,15 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
                 setState(() {
                   fileBytes = bytes;
                 });
+
+                Navigator.push(
+                  context,
+                  SlideRightRoute(
+                    page: CropImageScreen(
+                      fileBytes: bytes,
+                    ),
+                  ),
+                );
               },
               child: Image.memory(bytes, fit: BoxFit.cover),
             );
@@ -207,6 +239,17 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
         );
       },
     );
+  }
+
+  void _onScroll() {
+    final scrollPosition = _scrollController.position;
+    if (scrollPosition.pixels == scrollPosition.maxScrollExtent) {
+      // Check if we should load more images when reaching the end of the list
+      if (_isLoadingMore == false) {
+        _pageIndex++;
+        _fetchImagesFromFolder(_selectedFolder!, _pageIndex);
+      }
+    }
   }
 
   Widget _buildCropImage(BuildContext context) {
@@ -218,7 +261,6 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
     return Crop(
       image: fileBytes!,
       controller: _cropController,
-      // aspectRatio: 1.0,
       withCircleUi: false,
       interactive: true,
       cornerDotBuilder: (size, edgeAlignment) => const SizedBox.shrink(),

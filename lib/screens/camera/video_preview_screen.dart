@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:http/http.dart' as http;
+
 // import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -293,10 +294,14 @@ class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
   final SoundList? selectedMusic;
   final String? duration;
+  final String from;
 
-  const VideoPreviewScreen(
-      {Key? key, required this.videoFile, this.selectedMusic, this.duration})
-      : super(key: key);
+  const VideoPreviewScreen({
+    Key? key,
+    required this.videoFile,
+    this.selectedMusic,
+    this.duration, required this.from,
+  }) : super(key: key);
 
   @override
   _VideoPreviewScreenState createState() => _VideoPreviewScreenState();
@@ -445,6 +450,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                   children: [
                     InkWell(
                       onTap: () {
+                        _videoController.pause();
                         Navigator.pop(context);
                       },
                       child: Image.asset(
@@ -583,13 +589,14 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                     onTap: () {
                       if (!_isMerging) {
                         _generateThumbnail().then((onValue) {
+                          _videoController.pause();
                           Navigator.push(
                             context,
                             SlideRightRoute(
                                 page: UploadVideoScreen(
                               videoThumbnail: _thumbnailPath!,
                               videoUrl: _videoFile!.path,
-                              from: "normal",
+                              from:widget.from,
                               selectedMusic: _selectedMusic,
                             )),
                           );

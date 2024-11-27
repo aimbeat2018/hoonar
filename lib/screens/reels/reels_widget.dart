@@ -48,7 +48,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   SessionManager sessionManager = SessionManager();
 
   int modelLikeStatus = 0;
-
+  PostsListData? model;
   @override
   void initState() {
     super.initState();

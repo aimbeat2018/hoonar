@@ -28,7 +28,8 @@ import '../../constants/slide_right_route.dart';
 import '../profile/customCameraAndCrop/custom_gallery_screen.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
-  const CaptureVideoScreen({super.key});
+  final String from;
+  const CaptureVideoScreen({super.key, required this.from});
 
   @override
   State<CaptureVideoScreen> createState() => _CaptureVideoScreenState();
@@ -271,6 +272,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
           videoFile: mergedFile,
           selectedMusic: _selectedMusic,
           duration: totalSeconds.toString(),
+          from: widget.from,
         ),
       ),
     );
@@ -322,6 +324,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
               videoFile: File(outputPath),
               selectedMusic: _selectedMusic,
               duration: totalSeconds.toString(),
+              from: widget.from,
             ),
           ),
         );

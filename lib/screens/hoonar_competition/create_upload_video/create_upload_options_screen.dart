@@ -137,6 +137,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
           videoFile: mergedFile,
           selectedMusic: null,
           duration: duration,
+          from: "level",
         ),
       ),
     );
@@ -229,7 +230,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                           } else if (index == 2) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(page: const CaptureVideoScreen()),
+                              SlideRightRoute(page: const CaptureVideoScreen(from: "level",)),
                             );
                           } else if (index == 3) {
                             Navigator.push(

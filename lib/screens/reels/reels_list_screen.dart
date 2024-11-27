@@ -2,11 +2,9 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:hoonar/screens/reels/reels_widget.dart';
 import 'package:provider/provider.dart';
+
 import '../../constants/my_loading/my_loading.dart';
-import '../../constants/text_constants.dart';
-import '../../model/slider_model.dart';
 import '../../model/success_models/home_post_success_model.dart';
-import '../../model/success_models/post_list_success_model.dart';
 
 class ReelsListScreen extends StatefulWidget {
   final List<PostsListData>? postList;
@@ -40,15 +38,20 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
             children: [
               Swiper(
                 controller: controller,
+                index: currentIndex,
                 itemBuilder: (BuildContext context, int index) {
-                  int displayIndex = hasSwiped ? index : currentIndex!;
+                  // if(currentIndex!=index+1) {
+                  //   currentIndex = /*hasSwiped ? index : */index;
+                  // }
 
                   return ReelsWidget(
-                    model: widget.postList![displayIndex],
+                    model: widget.postList![index],
+                    // index: currentIndex!,
                   );
                 },
                 itemCount: widget.postList!.length,
                 scrollDirection: Axis.vertical,
+                loop: false,
                 onIndexChanged: (index) {
                   setState(() {
                     hasSwiped = true;

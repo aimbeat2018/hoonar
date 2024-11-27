@@ -24,15 +24,15 @@ class OptionsScreen extends StatefulWidget {
 class _OptionsScreenState extends State<OptionsScreen> {
   SessionManager sessionManager = SessionManager();
 
-  int modelLikeStatus = 0;
+  // int modelLikeStatus = 0;
 
   @override
   void initState() {
     super.initState();
     sessionManager.initPref();
-    setState(() {
-      modelLikeStatus = widget.model!.videoLikesOrNot ?? 0;
-    });
+    // setState(() {
+    //   modelLikeStatus = widget.model!.videoLikesOrNot ?? 0;
+    // });
   }
 
   /* Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
@@ -108,9 +108,9 @@ class _OptionsScreenState extends State<OptionsScreen> {
               Column(
                 children: [
                   Image.asset(
-                    modelLikeStatus == 0
-                        ? 'assets/images/unlike.png'
-                        : 'assets/images/like.png',
+                    /*modelLikeStatus == 0
+                        ? */'assets/images/unlike.png'
+                       /* : 'assets/images/like.png'*/,
                     scale: 7,
                   ),
                   SizedBox(
