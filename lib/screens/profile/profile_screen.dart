@@ -66,7 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> getUserProfile(BuildContext context) async {
-
     sessionManager.initPref().then((onValue) async {
       setState(() {
         if (widget.from == 'main') {
@@ -154,6 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: myLoading.isDark ? Colors.black : Colors.white),
             child: CustomScrollView(
               controller: controller,
+              physics: NeverScrollableScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
@@ -591,7 +591,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }),
                   ),
                 ),
-                SliverToBoxAdapter(
+                SliverFillRemaining(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: ValueListenableBuilder<ProfileSuccessModel?>(

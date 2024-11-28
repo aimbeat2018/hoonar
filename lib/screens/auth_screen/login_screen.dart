@@ -51,7 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
       // For Android
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       setState(() {
-        deviceName = androidInfo.model ?? 'Unknown Android Device';
+        deviceName = "${androidInfo.brand}\n${androidInfo.model}";
+        // print("device : ${androidInfo.brand}");
+        // print(androidInfo.model);
+        // print(androidInfo.device);
+        // print(androidInfo.manufacturer);
+        // print(androidInfo.product);
         deviceType = 'Android';
       });
     } else if (Platform.isIOS) {

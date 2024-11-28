@@ -2,6 +2,7 @@ class ListCommonRequestModel {
   int? userId;
   int? start;
   int? limit;
+  int? page;
   int? categoryId;
   int? toUserId;
   int? postId;
@@ -19,6 +20,7 @@ class ListCommonRequestModel {
     this.userId,
     this.start,
     this.limit,
+    this.page,
     this.categoryId,
     this.toUserId,
     this.search,
@@ -37,6 +39,7 @@ class ListCommonRequestModel {
     userId = json['user_id'];
     start = json['start'];
     limit = json['limit'];
+    page = json['page'];
     categoryId = json['category_id'];
     toUserId = json['to_user_id'];
     postId = json['post_id'];
@@ -56,6 +59,7 @@ class ListCommonRequestModel {
     data['user_id'] = userId;
     data['start'] = start;
     data['limit'] = limit;
+    data['page'] = page;
     data['category_id'] = categoryId;
     data['to_user_id'] = toUserId;
     data['post_id'] = postId;

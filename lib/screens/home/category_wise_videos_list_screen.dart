@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../../providers/home_provider.dart';
 import '../../shimmerLoaders/category_shimmer.dart';
 import '../auth_screen/login_screen.dart';
@@ -30,8 +31,13 @@ class _CategoryWiseVideosListScreenState
   String selectedCategory = 'Dance';
   int selectedCategoryId = -1;
   List<String> categories = [];
+  List<PostsListData> postListData = [];
+  List<PostsListData> newPostListData = [];
   bool _isVisible = false;
   ScrollController scrollController = ScrollController();
+  ScrollController gridScrollController = ScrollController();
+  bool isLoading = false, isMoreLoading = false;
+  int page = 1;
 
   @override
   void initState() {
@@ -39,11 +45,29 @@ class _CategoryWiseVideosListScreenState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCategoryList(context);
     });
+
+    gridScrollController.addListener(loadMore);
+  }
+
+  loadMore() {
+    if (gridScrollController.position.maxScrollExtent ==
+        gridScrollController.position.pixels) {
+      if (!isLoading) {
+        setState(() {
+          isMoreLoading = true;
+          page++;
+        });
+
+        getPostByCategory(context);
+      }
+    }
   }
 
   Future<void> getCategoryList(BuildContext context) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
-
+    setState(() {
+      isLoading = true;
+    });
     await homeProvider.getCategoryList();
 
     if (homeProvider.errorMessage != null) {
@@ -74,14 +98,36 @@ class _CategoryWiseVideosListScreenState
   Future<void> getPostByCategory(BuildContext context) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
+    setState(() {
+      if (page == 1) {
+        isLoading = true;
+      } else {
+        isMoreLoading = true;
+      }
+    });
     ListCommonRequestModel requestModel = ListCommonRequestModel(
-        categoryId: selectedCategoryId, limit: paginationLimit);
+        categoryId: selectedCategoryId, limit: paginationLimit, page: page);
     await homeProvider.getPostList(requestModel);
 
     if (homeProvider.errorMessage != null) {
       SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
     } else {
       if (homeProvider.postListSuccessModel?.status == '200') {
+        if (homeProvider.postListSuccessModel != null ||
+            homeProvider.postListSuccessModel!.data != null ||
+            homeProvider.postListSuccessModel!.data!.isNotEmpty) {
+          if (page == 1) {
+            postListData = homeProvider.postListSuccessModel!.data!;
+          } else {
+            newPostListData = [];
+            newPostListData = homeProvider.postListSuccessModel!.data!;
+
+            if (newPostListData.isNotEmpty) {
+              postListData.addAll(newPostListData);
+              postListData = postListData.toSet().toList();
+            }
+          }
+        }
       } else if (homeProvider.postListSuccessModel?.message ==
           'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
@@ -90,12 +136,19 @@ class _CategoryWiseVideosListScreenState
             context, SlideRightRoute(page: LoginScreen()), (route) => false);
       }
     }
-
+    if (page == 1) {
+      isLoading = false;
+    } else {
+      isMoreLoading = false;
+    }
     setState(() {});
   }
 
   @override
   void dispose() {
+    scrollController.dispose();
+    gridScrollController.removeListener(loadMore);
+    gridScrollController.dispose();
     super.dispose();
   }
 
@@ -108,10 +161,7 @@ class _CategoryWiseVideosListScreenState
 
   @override
   Widget build(BuildContext context) {
-    // Get screen width
     var screenWidth = MediaQuery.of(context).size.width;
-
-    // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
     final homeProvider = Provider.of<HomeProvider>(context);
 
@@ -120,22 +170,22 @@ class _CategoryWiseVideosListScreenState
         backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
         appBar: buildAppbar(context, myLoading.isDark),
         body: SingleChildScrollView(
+          controller: gridScrollController,
+          // height: MediaQuery.of(context).size.height,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10.0),
             child: Stack(
               children: [
                 Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Row(
                         children: [
                           const SizedBox(
-                              width: 20,
-                              child: Divider(
-                                color: greyTextColor7,
-                              )),
+                            width: 20,
+                            child: Divider(color: greyTextColor7),
+                          ),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
@@ -154,9 +204,7 @@ class _CategoryWiseVideosListScreenState
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
+                                  const SizedBox(width: 10),
                                   Icon(
                                     Icons.keyboard_arrow_down_sharp,
                                     color: myLoading.isDark
@@ -168,73 +216,75 @@ class _CategoryWiseVideosListScreenState
                             ),
                           ),
                           const Expanded(
-                            child: Divider(
-                              color: greyTextColor7,
-                            ),
-                          )
+                            child: Divider(color: greyTextColor7),
+                          ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    homeProvider.isPostLoading ||
-                            homeProvider.postListSuccessModel == null
+                    const SizedBox(height: 5),
+                    isLoading && postListData.isEmpty
                         ? GridShimmer()
-                        : homeProvider.postListSuccessModel!.data == null ||
-                                homeProvider.postListSuccessModel!.data!.isEmpty
+                        : /*homeProvider.postListSuccessModel!.data == null ||
+                            homeProvider
+                                .postListSuccessModel!.data!.isEmpty*/
+                        postListData.isEmpty
                             ? DataNotFound()
-                            : GridView.builder(
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(8),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: crossAxisCount,
-                                  crossAxisSpacing: 0,
-                                  mainAxisSpacing: 2,
-                                  childAspectRatio:
-                                      0.6, // Adjust according to image dimensions
-                                ),
-                                itemCount: homeProvider
-                                    .postListSuccessModel!.data!.length,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        SlideRightRoute(
-                                            page: ReelsListScreen(
-                                          postList: homeProvider
-                                                  .postListSuccessModel!.data ??
-                                              [],
-                                          index: index,
-                                        )),
+                            : Column(
+                                children: [
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    // controller: gridScrollController,
+                                    padding: const EdgeInsets.all(8),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 2,
+                                      childAspectRatio: 0.6,
+                                    ),
+                                    itemCount: /*homeProvider
+                                        .postListSuccessModel!.data!*/
+                                        postListData.length,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            SlideRightRoute(
+                                              page: ReelsListScreen(
+                                                postList: /* homeProvider
+                                                        .postListSuccessModel!
+                                                        .data*/
+                                                    postListData ?? [],
+                                                index: index,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: CachedNetworkImage(
+                                          imageUrl: /*homeProvider
+                                                  .postListSuccessModel!
+                                                  .data!*/
+                                              postListData[index].postImage ??
+                                                  '',
+                                          placeholder: (context, url) => Center(
+                                            child:
+                                                const CircularProgressIndicator(),
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              buildInitialsAvatar('No Image',
+                                                  fontSize: 12),
+                                          fit: BoxFit.cover,
+                                        ),
                                       );
                                     },
-                                    child: CachedNetworkImage(
-                                      imageUrl: homeProvider
-                                              .postListSuccessModel!
-                                              .data![index]
-                                              .postImage ??
-                                          '',
-
-                                      placeholder: (context, url) => Center(
-                                        child: SizedBox(
-                                            height: 15,
-                                            width: 15,
-                                            child:
-                                                const CircularProgressIndicator()),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          buildInitialsAvatar('No Image',
-                                              fontSize: 12),
-                                      fit: BoxFit.cover,
-                                      width: 80,
-                                      // Match the size of the CircleAvatar
-                                      height: 80,
-                                    ),
-                                  );
-                                },
+                                  ),
+                                  if (isMoreLoading)
+                                    Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                ],
                               ),
                   ],
                 ),
@@ -245,13 +295,6 @@ class _CategoryWiseVideosListScreenState
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 400),
                     curve: Curves.easeInOut,
-                    // width: _isVisible
-                    //     ? homeProvider.isCategoryLoading
-                    //         ? 5 * 60
-                    //         : homeProvider
-                    //                 .categoryListSuccessModel!.data!.length *
-                    //             60
-                    //     : 0,
                     height: _isVisible
                         ? homeProvider.isCategoryLoading
                             ? 5 * 50
@@ -265,69 +308,49 @@ class _CategoryWiseVideosListScreenState
                       color: Colors.white,
                       child: homeProvider.isCategoryLoading
                           ? CategoryShimmer()
-                          : Column(
-                              children: [
-                                Expanded(
-                                  // Ensures ListView has space to scroll within AnimatedContainer
-                                  child: Scrollbar(
-                                    controller: scrollController,
-                                    thumbVisibility: true,
-                                    thickness: 2.5,
-                                    radius: const Radius.circular(10),
-                                    child: ListView.builder(
-                                      controller: scrollController,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 10),
-                                      physics: BouncingScrollPhysics(),
-                                      itemCount: homeProvider
-                                          .categoryListSuccessModel!
-                                          .data!
-                                          .length,
-                                      itemBuilder: (context, index) {
-                                        return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedCategory = homeProvider
-                                                      .categoryListSuccessModel!
-                                                      .data![index]
-                                                      .categoryName ??
-                                                  '';
-                                              selectedCategoryId = homeProvider
-                                                      .categoryListSuccessModel!
-                                                      .data![index]
-                                                      .categoryId ??
-                                                  -1;
-
-                                              getPostByCategory(context);
-                                            });
-                                            _toggleAnimation();
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              homeProvider
-                                                      .categoryListSuccessModel!
-                                                      .data![index]
-                                                      .categoryName ??
-                                                  '',
-                                              textAlign: TextAlign.start,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 17,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
+                          : ListView.builder(
+                              controller: scrollController,
+                              padding: const EdgeInsets.all(10),
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: homeProvider
+                                  .categoryListSuccessModel!.data!.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedCategory = homeProvider
+                                              .categoryListSuccessModel!
+                                              .data![index]
+                                              .categoryName ??
+                                          '';
+                                      selectedCategoryId = homeProvider
+                                              .categoryListSuccessModel!
+                                              .data![index]
+                                              .categoryId ??
+                                          -1;
+                                      getPostByCategory(context);
+                                    });
+                                    _toggleAnimation();
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      homeProvider.categoryListSuccessModel!
+                                              .data![index].categoryName ??
+                                          '',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 17,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                );
+                              },
                             ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
