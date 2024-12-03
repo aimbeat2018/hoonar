@@ -47,6 +47,7 @@ const buttonBlueColor1 = Color(0xFF1453AB);
 const orangeColor = Color(0xFFFFBB00);
 const redColor = Color(0xFFBF7D6D);
 const purpleColor = Color(0xFFA300CC);
+const goldenColor = Color(0xFFffd700);
 //Income expenses list
 var contColors = [
   const Color(0xFF6365ED),

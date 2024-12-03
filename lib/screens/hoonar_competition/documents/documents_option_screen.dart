@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,6 +74,46 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
     } finally {}
   }
 
+  void showInfoDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Consumer<MyLoading>(builder: (context, myLoading, child) {
+          return CupertinoAlertDialog(
+            title: Text(
+              AppLocalizations.of(context)!.alert,
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            content: Text(
+              AppLocalizations.of(context)!.kycApprovedMessage,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: myLoading.isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                child: Text(
+                  AppLocalizations.of(context)!.okay,
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -100,7 +141,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(left: 15.0, top: 30, bottom: 0),
+                        const EdgeInsets.only(left: 15.0, top: 10, bottom: 0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: InkWell(
@@ -160,6 +201,9 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                               itemBuilder: (context, index) {
                                 return InkWell(
                                   onTap: () {
+                                    /*  if (userKycStatus == 1) {
+                                      showInfoDialog(context);
+                                    } else {*/
                                     if (index == 0) {
                                       Navigator.push(
                                         context,
@@ -172,6 +216,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                         SlideRightRoute(page: KycScreen()),
                                       );
                                     }
+                                    // }
                                   },
                                   child: Card(
                                     elevation: 5,
@@ -179,10 +224,12 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                         userKycStatus == 0 || userKycStatus == 2
                                             ? (myLoading.isDark
                                                 ? const Color(0xFF3F3F3F)
-                                                : Color(0x153F3F3F))
+                                                : /*Color(0x153F3F3F)*/ Colors
+                                                    .white)
                                             : (myLoading.isDark
                                                 ? const Color(0xFF3F3F3F)
-                                                : Color(0x153F3F3F)),
+                                                : /* Color(0x153F3F3F)*/ Colors
+                                                    .white),
                                     color:
                                         userKycStatus == 0 || userKycStatus == 2
                                             ? (myLoading.isDark
@@ -190,7 +237,8 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                                 : Colors.grey.shade500)
                                             : (myLoading.isDark
                                                 ? const Color(0xFF3F3F3F)
-                                                : Color(0x153F3F3F)),
+                                                : /*Color(0x153F3F3F)*/ Colors
+                                                    .white),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
@@ -233,29 +281,37 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                               height: 50,
                             ),
                             userKycStatus == 1
-                                ? Text(
-                                    AppLocalizations.of(context)!
-                                        .kycApprovedMessage,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.w500,
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0),
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .kycApprovedMessage,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   )
                                 : userKycStatus == 2
-                                    ? Text(
-                                        AppLocalizations.of(context)!
-                                            .kycRejectedMessage,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .kycRejectedMessage,
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       )
                                     : SizedBox()

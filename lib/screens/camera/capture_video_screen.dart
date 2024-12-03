@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/camera/filters_screen.dart';
@@ -24,11 +24,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
-import '../../constants/slide_right_route.dart';
-import '../profile/customCameraAndCrop/custom_gallery_screen.dart';
 
 class CaptureVideoScreen extends StatefulWidget {
   final String from;
+
   const CaptureVideoScreen({super.key, required this.from});
 
   @override
@@ -227,6 +226,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
           _goToPreviewScreen(File(_mergedVideoPath!));
         }
       } else {
+        if (_videoSegments.length == 1) {
+          if (isDone) {
+            _goToPreviewScreen(File(_videoSegments[0]));
+          }
+        }
         print('Error merging video segments');
       }
     });
@@ -589,10 +593,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                             onTap: () {
                               showConfirmationDialog(myLoading.isDark);
                             },
-                            child: Image.asset(
-                              'assets/images/close.png',
-                              height: 33,
-                              width: 33,
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 30,
                             ),
                           ),
                         SizedBox(
@@ -624,7 +628,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                               });
                             },
                             child: Container(
-                              width: MediaQuery.of(context).size.width / 2,
+                              // width: MediaQuery.of(context).size.width / 2,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 20),
                               decoration: BoxDecoration(
@@ -771,7 +775,9 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                               : SizedBox(),
                           // Flash Icon
                           InkWell(
-                            onTap: () => _toggleFlash,
+                            onTap: () {
+                              _toggleFlash();
+                            },
                             child: Image.asset(
                               !_isFlashOn
                                   ? 'assets/images/flash.png' //on
@@ -781,56 +787,59 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                             ),
                           ),
 
-                          InkWell(
-                            onTap: () async {
-                              _isRecording = !_isRecording;
-                              // isRecordingStaring = true;
-                              setState(() {});
-                              startProgress();
-                            },
-                            child: Container(
-                              height: 55,
-                              width: 55,
-                              decoration: BoxDecoration(
-                                  color: Colors.white60,
-                                  shape: BoxShape.circle),
-                              // padding: EdgeInsets.all(10.0),
-                              alignment: Alignment.center,
-                              child: Stack(
+                          Padding(
+                            padding: const EdgeInsets.only(right: 15.0),
+                            child: InkWell(
+                              onTap: () async {
+                                _isRecording = !_isRecording;
+                                // isRecordingStaring = true;
+                                setState(() {});
+                                startProgress();
+                              },
+                              child: Container(
+                                height: 55,
+                                width: 55,
+                                decoration: BoxDecoration(
+                                    color: Colors.white60,
+                                    shape: BoxShape.circle),
+                                // padding: EdgeInsets.all(10.0),
                                 alignment: Alignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 55,
-                                    width: 55,
-                                    child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white60,
-                                        strokeWidth: 20,
-                                        value: currentPercentage / 100,
-                                        color: Colors.orange),
-                                  ),
-                                  _isRecording
-                                      ? Container(
-                                          height: 55,
-                                          width: 55,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 55,
+                                      width: 55,
+                                      child: CircularProgressIndicator(
+                                          backgroundColor: Colors.white60,
+                                          strokeWidth: 20,
+                                          value: currentPercentage / 100,
+                                          color: Colors.orange),
+                                    ),
+                                    _isRecording
+                                        ? Container(
+                                            height: 55,
+                                            width: 55,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.pause,
+                                              color: Colors.blue,
+                                              size: 40,
+                                            ),
+                                          )
+                                        : Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: _isRecording
+                                                  ? BoxShape.rectangle
+                                                  : BoxShape.circle,
+                                            ),
                                           ),
-                                          child: Icon(
-                                            Icons.pause,
-                                            color: Colors.blue,
-                                            size: 40,
-                                          ),
-                                        )
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: _isRecording
-                                                ? BoxShape.rectangle
-                                                : BoxShape.circle,
-                                          ),
-                                        ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -883,7 +892,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                       ),
                       if (!_isRecording)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 0.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

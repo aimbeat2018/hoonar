@@ -170,7 +170,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               maxLines: 1,
                               decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.black,
+                                  fillColor: /*myLoading.isDark
+                                      ? Colors.white
+                                      : */Colors.black,
                                   errorStyle: GoogleFonts.poppins(),
                                   border: GradientOutlineInputBorder(
                                     width: 1,
@@ -193,9 +195,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? Colors.white
                                   : Colors.black,
                               style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
+                                color: /*myLoading.isDark
+                                    ? Colors.black
+                                    :*/ Colors.white,
                                 fontSize: 14,
                               ),
                               keyboardType: TextInputType.text,
@@ -239,9 +241,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ? Colors.white
                                   : Colors.black,
                               style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
+                                color: /*myLoading.isDark
+                                    ?*/ Colors.white
+                                    /*: Colors.black*/,
                                 fontSize: 14,
                               ),
                               decoration: InputDecoration(

@@ -34,12 +34,17 @@ class _CropImageScreenState extends State<CropImageScreen> {
   Uint8List? fileBytes;
   XFile? croppedXFile;
   SessionManager sessionManager = SessionManager();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.selectedImageFile != null) {
+        setState(() {
+          isLoading = true;
+        });
+
         covertFileToBytes();
       } else {
         fileBytes = widget.fileBytes;
@@ -85,7 +90,9 @@ class _CropImageScreenState extends State<CropImageScreen> {
   covertFileToBytes() async {
     if (widget.selectedImageFile != null) {
       fileBytes = await getFileAsBytes(File(widget.selectedImageFile!.path));
-      setState(() {});
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -142,76 +149,94 @@ class _CropImageScreenState extends State<CropImageScreen> {
             },
           ),
         ),
-        body: Column(
+        body: Stack(
           children: [
-            // Upper half of the screen - Crop widget
-            Expanded(
-              flex: 5, // Give more space to the Crop widget
-              child: Crop(
-                image: fileBytes!,
-                controller: _cropController,
-                fixCropRect: true,
-                withCircleUi: true,
-                initialSize: 0.8,
-                cornerDotBuilder: (size, edgeAlignment) =>
-                    const SizedBox.shrink(),
-                interactive: true,
-                onCropped: (image) async {
-                  // When cropped, store the cropped image as an XFile
-                  croppedXFile = await saveCroppedImage(image);
+            Column(
+              children: [
+                // Upper half of the screen - Crop widget
+                Expanded(
+                  flex: 5, // Give more space to the Crop widget
+                  child: Crop(
+                    image: fileBytes!,
+                    controller: _cropController,
+                    fixCropRect: true,
+                    withCircleUi: true,
+                    initialSize: 0.8,
+                    cornerDotBuilder: (size, edgeAlignment) =>
+                        const SizedBox.shrink(),
+                    interactive: true,
+                    onCropped: (image) async {
+                      // When cropped, store the cropped image as an XFile
+                      croppedXFile = await saveCroppedImage(image);
 
-                  // After saving the cropped image, navigate to the edit profile screen
-                  if (croppedXFile != null) {
-                    updateProfileImage(
-                        context,
-                        UpdateProfileImageRequestModel(
-                            profileImage: File(croppedXFile!.path)));
-                  }
-                },
-              ),
-            ),
-            // Lower half - Crop button
-            Expanded(
-              flex: 2, // Less space for the button area
-              child: Center(
-                child: authProvider.isUpdateProfileImageLoading
-                    ? CircularProgressIndicator(
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                      )
-                    : InkWell(
-                        onTap: () {
-                          _cropController.crop();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 30),
-                          margin: const EdgeInsets.only(top: 15, bottom: 5),
-                          decoration: ShapeDecoration(
+                      // After saving the cropped image, navigate to the edit profile screen
+                      if (croppedXFile != null) {
+                        updateProfileImage(
+                            context,
+                            UpdateProfileImageRequestModel(
+                                profileImage: File(croppedXFile!.path)));
+                      }
+                    },
+                  ),
+                ),
+                // Lower half - Crop button
+                Expanded(
+                  flex: 2, // Less space for the button area
+                  child: Center(
+                    child: authProvider.isUpdateProfileImageLoading
+                        ? CircularProgressIndicator(
                             color:
                                 myLoading.isDark ? Colors.white : Colors.black,
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                strokeAlign: BorderSide.strokeAlignOutside,
-                                color: Colors.black,
+                          )
+                        : InkWell(
+                            onTap: () {
+                              _cropController.crop();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 30),
+                              margin: const EdgeInsets.only(top: 15, bottom: 5),
+                              decoration: ShapeDecoration(
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    strokeAlign: BorderSide.strokeAlignOutside,
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
-                              borderRadius: BorderRadius.circular(8),
+                              child: Text(
+                                AppLocalizations.of(context)!.save,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                          child: Text(
-                            AppLocalizations.of(context)!.save,
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-              ),
+                  ),
+                ),
+              ],
             ),
+            if (isLoading)
+              Positioned.fill(
+                top: 0,
+                bottom: 0,
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                  // semi-transparent background
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              ),
           ],
         ),
       );

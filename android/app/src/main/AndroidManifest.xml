@@ -13,10 +13,17 @@
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="image/jpeg" />
+        </intent>
+    </queries>
+
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="Hoonar Star"
+        android:label="Hoonarstar"
         android:largeHeap="true"
         android:usesCleartextTraffic="true">
         <activity

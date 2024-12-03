@@ -39,22 +39,24 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       optionsList = [
-        StarCategoryModel(
+        /*   StarCategoryModel(
             'assets/light_mode_icons/upload_video_light.png',
             AppLocalizations.of(context)!.uploadVideo,
-            'assets/dark_mode_icons/upload_video.png'),
+            'assets/dark_mode_icons/upload_video.png'),*/
+
+        StarCategoryModel(
+            'assets/light_mode_icons/create_video_light.png',
+            AppLocalizations.of(context)!.createAndUpload,
+            'assets/dark_mode_icons/create_video_dark.png'),
         StarCategoryModel(
             'assets/light_mode_icons/gallery_light.png',
             AppLocalizations.of(context)!.gallery,
             'assets/dark_mode_icons/gallery_dark.png'),
-        StarCategoryModel(
-            'assets/light_mode_icons/create_video_light.png',
-            AppLocalizations.of(context)!.createVideo,
-            'assets/dark_mode_icons/create_video_dark.png'),
-        StarCategoryModel(
+
+        /* StarCategoryModel(
             'assets/light_mode_icons/edit_video_light.png',
             AppLocalizations.of(context)!.editVideo,
-            'assets/dark_mode_icons/edit_video_dark.png'),
+            'assets/dark_mode_icons/edit_video_dark.png'),*/
         StarCategoryModel(
             'assets/light_mode_icons/music_library_light.png',
             AppLocalizations.of(context)!.musicLibrary,
@@ -66,41 +68,43 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
       ];
       setState(() {});
 
-      showInfoDialog(context, true);
+      showInfoDialog(context);
     });
   }
 
-  void showInfoDialog(BuildContext context, bool isDarkMode) {
+  void showInfoDialog(BuildContext context) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text(
-            AppLocalizations.of(context)!.alert,
-            style: GoogleFonts.poppins(
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-          ),
-          content: Text(
-            AppLocalizations.of(context)!.instructions,
-            style: GoogleFonts.poppins(
-              color: isDarkMode ? Colors.white70 : Colors.black87,
-            ),
-          ),
-          actions: [
-            CupertinoDialogAction(
-              child: Text(
-                AppLocalizations.of(context)!.okay,
-                style: GoogleFonts.poppins(
-                  color: Colors.red,
-                ),
+        return Consumer<MyLoading>(builder: (context, myLoading, child) {
+          return CupertinoAlertDialog(
+            title: Text(
+              AppLocalizations.of(context)!.alert,
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white : Colors.black,
               ),
-              onPressed: () async {
-                Navigator.of(context).pop();
-              },
             ),
-          ],
-        );
+            content: Text(
+              AppLocalizations.of(context)!.instructions,
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                child: Text(
+                  AppLocalizations.of(context)!.okay,
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
       },
     );
   }
@@ -167,7 +171,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(left: 15.0, top: 30, bottom: 30),
+                        const EdgeInsets.only(left: 15.0, top: 10, bottom: 30),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: InkWell(
@@ -221,23 +225,33 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                       return InkWell(
                         onTap: () {
                           if (index == 0) {
-                            Navigator.push(
+                          /*  Navigator.push(
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
+                            );*/
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(
+                                  page: const CaptureVideoScreen(
+                                    from: "level",
+                                  )),
                             );
                           } else if (index == 1) {
                             _selectVideoFromGallery();
-                          } else if (index == 2) {
+                          } /*else if (index == 2) {
                             Navigator.push(
                               context,
-                              SlideRightRoute(page: const CaptureVideoScreen(from: "level",)),
+                              SlideRightRoute(
+                                  page: const CaptureVideoScreen(
+                                from: "level",
+                              )),
                             );
                           } else if (index == 3) {
                             Navigator.push(
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );
-                          } else if (index == 4) {
+                          }*/ else if (index == 2) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -246,7 +260,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                 ),
                               ),
                             );
-                          } else if (index == 5) {
+                          } else if (index == 3) {
                             Navigator.push(
                               context,
                               SlideRightRoute(page: VideoShareOptionsScreen()),
@@ -261,10 +275,10 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                           elevation: 5,
                           shadowColor: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              : /*Color(0x153F3F3F)*/ Colors.white,
                           color: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              : /*Color(0x153F3F3F)*/ Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(

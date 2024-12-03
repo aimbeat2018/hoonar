@@ -134,7 +134,7 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                             style: {
                                 "body": Style(
                                     color: myLoading.isDark
-                                        ? Colors.pink
+                                        ? Colors.white
                                         : Colors.black),
                               })
                   ],

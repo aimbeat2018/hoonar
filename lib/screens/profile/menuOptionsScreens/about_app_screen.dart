@@ -199,7 +199,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                     myLoading.isDark,
                     icon: 'assets/images/contact_email.png',
                     title: AppLocalizations.of(context)!.contactEmail,
-                    subtitle: 'customercare@hoonarstar.in',
+                    subtitle: 'customercare@hoonarstar.com',
                   ),
                   _buildDivider(),
                   _buildSection(context, myLoading.isDark,

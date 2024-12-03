@@ -84,14 +84,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
       } else {
-        /*if (authProvider.profileSuccessModel?.status == '200') {
+        if (authProvider.profileSuccessModel?.status == '200') {
         } else if (authProvider.profileSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, authProvider.profileSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
               context, SlideRightRoute(page: LoginScreen()), (route) => false);
-        }*/
+        }
       }
     });
     setState(() {});
@@ -168,14 +168,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           /*else if (profile.data != null) {
                             return SizedBox();
                           }*/
-                          else if (profile.message == 'Unauthorized Access!') {
+                          /* else if (profile.message == 'Unauthorized Access!') {
                             Future.microtask(() {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   SlideRightRoute(page: LoginScreen()),
                                   (route) => false);
                             });
-                          }
+                          }*/
 
                           return Column(
                             children: [
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: redColor,
+                                                color: orangeColor,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -394,10 +394,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              gradient: const LinearGradient(
+                                              gradient: LinearGradient(
                                                 colors: [
-                                                  Colors.white,
-                                                  greyTextColor8
+                                                  myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  myLoading.isDark
+                                                      ? greyTextColor8
+                                                      : greyTextColor6
                                                 ],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
@@ -448,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: redColor,
+                                                color: orangeColor,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -547,16 +551,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 height: 20,
                               ),
                               Container(
-                                color: const Color(0x403F3F3F),
+                                color: myLoading.isDark
+                                    ? const Color(0x403F3F3F)
+                                    : Colors.grey,
                                 // padding: EdgeInsets.symmetric(vertical: 5),
                                 child: TabBar(
                                   labelColor: myLoading.isDark
                                       ? Colors.white
-                                      : Colors.black,
+                                      : Colors.white,
                                   // Color for selected tab label
                                   unselectedLabelColor: myLoading.isDark
                                       ? Colors.white60
-                                      : Colors.grey.shade900,
+                                      : Colors.white60,
                                   // Color for unselected tab labels
                                   labelStyle: GoogleFonts.montserrat(
                                     fontSize: 14,
@@ -593,14 +599,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SliverFillRemaining(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
+                    padding: EdgeInsets.zero,
                     child: ValueListenableBuilder<ProfileSuccessModel?>(
                         valueListenable: authProvider.profileNotifier,
                         builder: (context, profile, child) {
                           if (profile == null ||
                               authProvider.isProfileLoading) {
                             return GridShimmer();
-                          } else if (profile.message ==
+                          }
+                          /* else if (profile.message ==
                               'Unauthorized Access!') {
                             Future.microtask(() {
                               Navigator.pushAndRemoveUntil(
@@ -608,7 +615,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   SlideRightRoute(page: LoginScreen()),
                                   (route) => false);
                             });
-                          }
+                          }*/
                           return SizedBox(
                             height: MediaQuery.of(context).size.height,
                             child: TabBarView(

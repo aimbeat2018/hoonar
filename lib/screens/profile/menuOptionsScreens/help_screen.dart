@@ -591,8 +591,8 @@ class _HelpScreenState extends State<HelpScreen> {
                                   child: InkWell(
                                 onTap: () {
                                   if (emailId != "") {
-                                    sendEmail(emailId,
-                                        subject: "Feedback/Help Request");
+                                    sendEmail(email:  emailId,
+                                        subject: "Feedback/Help Request",body: 'Enquiry');
                                   }
                                 },
                                 child: Container(
@@ -641,7 +641,10 @@ class _HelpScreenState extends State<HelpScreen> {
                               ))
                             ],
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                       ],
                     ),
                   )
@@ -663,19 +666,38 @@ class _HelpScreenState extends State<HelpScreen> {
     }
   }
 
-  Future<void> sendEmail(String email, {String? subject, String? body}) async {
+ /* Future<void> sendEmail(String email, {String? subject, String? body}) async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: email,
-      queryParameters: {
+      query: {
         'subject': subject ?? '',
         'body': body ?? '',
-      },
+      }.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&'),
     );
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
+
+    try {
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(
+          emailUri,
+          mode: LaunchMode.externalApplication, // Ensures it opens outside your app
+        );
+      } else {
+        throw Exception('No email app available');
+      }
+    } catch (e) {
+      print('Error launching email client: $e');
+      // Optionally, show a user-friendly message
+    }
+  }*/
+
+  static Future<void> sendEmail(
+      {String? email, String subject = "", String body = ""}) async {
+    String mail = "mailto:$email?subject=$subject&body=${Uri.encodeFull(body)}";
+    if (await canLaunch(mail)) {
+      await launch(mail);
     } else {
-      print('Could not launch $emailUri');
+      throw Exception("Unable to open the email");
     }
   }
 

@@ -1,122 +1,40 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:card_swiper/card_swiper.dart';
-import 'package:chewie/chewie.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
-import 'package:hoonar/screens/customSlider/carousel_item.dart';
-import 'package:hoonar/screens/customSlider/carousel_slider.dart';
-import 'package:hoonar/screens/customSlider/enums.dart';
-import 'package:hoonar/screens/customSlider/models.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../constants/common_widgets.dart';
-import '../../../constants/my_loading/my_loading.dart';
 import '../../../model/success_models/home_post_success_model.dart';
 import '../../../providers/user_provider.dart';
 
-class SliderPageView extends StatefulWidget {
+class CarouselPageView extends StatefulWidget {
   final List<PostsListData> sliderModelList;
   final bool isDarkMode;
 
-  const SliderPageView(
+  const CarouselPageView(
       {super.key, required this.sliderModelList, required this.isDarkMode});
 
   @override
-  _SliderPageViewState createState() => _SliderPageViewState();
+  _CarouselPageViewState createState() => _CarouselPageViewState();
 }
 
-class _SliderPageViewState extends State<SliderPageView>
+class _CarouselPageViewState extends State<CarouselPageView>
     with SingleTickerProviderStateMixin {
   int activePage = 1;
   int previousPage = 0;
-  final Duration animationDuration = const Duration(milliseconds: 100);
-  late AnimationController controller;
   bool isLoading = false;
   bool isFollowLoading = false;
-  List<VideoPlayerController> videoControllers = [];
-  List<ChewieController> chewieControllers = [];
-  List<Widget> children = [];
-  bool _isPaused = false;
+  final CarouselSliderController _carouselController =
+      CarouselSliderController();
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setChildrenDataWidget();
-    });
-
-    controller = AnimationController(
-      vsync: this,
-      duration: animationDuration,
-    );
-
-    controller.addListener(() {
-      if (mounted) setState(() {});
-    });
-
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        controller.reset();
-      }
-    });
-  }
-
-  Future<void> setChildrenDataWidget() async {
-    setState(() => isLoading = true);
-
-    videoControllers.clear();
-    chewieControllers.clear();
-    children.clear();
-
-    final loadedWidgets =
-        await Future.wait(widget.sliderModelList.map((data) async {
-      try {
-        /* f inal videoController =
-            VideoPlayerController.networkUrl(Uri.parse(data.postVideo!));
-        await videoController.initialize();
-        videoControllers.add(videoController);
-
-        final chewieController = ChewieController(
-          videoPlayerController: videoController,
-          autoPlay: false,
-          showControls: false,
-          looping: false,
-        );
-        chewieControllers.add(chewieController);*/
-
-        final initials = (data.fullName ?? '').trim().isNotEmpty
-            ? data.fullName!
-                .split(' ')
-                .map((e) => e[0])
-                .take(2)
-                .join()
-                .toUpperCase()
-            : '';
-
-        return buildVideoWidget(
-            data, /* chewieController, videoController,*/ initials);
-      } catch (e) {
-        debugPrint('Error loading video: $e');
-        return const SizedBox(); // Fallback for failed video
-      }
-    }));
-
-    if (mounted) {
-      setState(() {
-        children = loadedWidgets;
-        double length = children.length / 2;
-        activePage = children.length - length.round();
-        previousPage = activePage - length.round();
-        isLoading = false;
-      });
-    }
   }
 
   Widget buildVideoWidget(
@@ -149,17 +67,29 @@ class _SliderPageViewState extends State<SliderPageView>
               child: SizedBox(
                 width: 250,
                 height: 250,
-                child: Image.network(data.postImage!,fit: BoxFit.fill,),
+                child: Image.network(
+                  data.postImage!,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           ),
-          buildVideoOverlay(data, initials),
+          buildVideoOverlay(data),
         ],
       ),
     );
   }
 
-  Widget buildVideoOverlay(PostsListData data, String initials) {
+  Widget buildVideoOverlay(PostsListData data) {
+    final initials = (data.fullName ?? '').trim().isNotEmpty
+        ? data.fullName!
+            .split(' ')
+            .map((e) => e[0])
+            .take(2)
+            .join()
+            .toUpperCase()
+        : '';
+
     return Align(
       alignment: Alignment.bottomLeft,
       child: Padding(
@@ -267,109 +197,74 @@ class _SliderPageViewState extends State<SliderPageView>
   }
 
   @override
-  void dispose() {
-    for (final controller in videoControllers) {
-      controller.dispose();
-    }
-    for (final chewieController in chewieControllers) {
-      chewieController.dispose();
-    }
-    videoControllers.clear();
-    chewieControllers.clear();
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : Column(
-            children: [
-              SizedBox(
-                height: 400,
-                child: GestureDetector(
-                  onHorizontalDragEnd: (details) {
-                    if (details.velocity.pixelsPerSecond.dx > 0) {
-                      _leftSwipe();
-                    } else {
-                      _rightSwipe();
-                    }
-                  },
-                  child: children.isNotEmpty
-                      ? Stack(children: stackItems())
-                      : const Center(child: Text('No videos available')),
+        : CarouselSlider.builder(
+            carouselController: _carouselController,
+            itemCount: widget.sliderModelList.length,
+            itemBuilder: (BuildContext context, int index, int realIndex) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _carouselController
+                        .animateToPage(index); // Navigate to tapped item
+                  });
+                },
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          SlideRightRoute(
+                            page: ReelsListScreen(
+                              postList: widget.sliderModelList,
+                              index: index,
+                            ),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        // Add rounded corners
+                        child: Image.network(
+                          widget.sliderModelList[index].postImage!,
+                          fit: BoxFit
+                              .cover, // Properly fills the available space
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            ); // Show a loader while the image loads
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(Icons.error,
+                                  size: 50, color: Colors.red),
+                            ); // Show an error icon if the image fails to load
+                          },
+                        ),
+                      ),
+                    ),
+                    buildVideoOverlay(widget.sliderModelList[index]),
+                    // Overlay for videos
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20),
-              if (children.length > 1)
-                CarouselSlider(
-                  position: activePage,
-                  amount: children.length,
-                  isDarkMode: widget.isDarkMode,
-                ),
-            ],
+              );
+            },
+            options: CarouselOptions(
+              enlargeCenterPage: true,
+              height: MediaQuery.of(context).size.height * 0.48,
+              viewportFraction: 0.7,
+              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  // Update the index if needed for additional state tracking
+                });
+              },
+            ),
           );
-  }
-
-  List<Widget> stackItems() {
-    List<CarouselData> beforeActive = children
-        .sublist(0, activePage)
-        .map((e) => CarouselData(e, PagePos.farBefore))
-        .toList();
-    List<CarouselData> afterActive = children
-        .sublist(activePage + 1, children.length)
-        .reversed
-        .map((e) => CarouselData(e, PagePos.farAfter))
-        .toList();
-
-    CarouselData currentPage =
-        CarouselData(children[activePage], PagePos.current);
-
-    if (afterActive.isNotEmpty) {
-      afterActive.last.setCurrent(PagePos.after);
-    }
-
-    if (beforeActive.isNotEmpty) {
-      beforeActive.last.setCurrent(PagePos.before);
-    }
-
-    List<CarouselData> currentItemList = [
-      ...beforeActive,
-      ...afterActive,
-      currentPage,
-    ];
-
-    return currentItemList.map((item) {
-      return CarouselItem(
-          bigItemWidth: 250,
-          bigItemHeight: MediaQuery.of(context).size.height,
-          smallItemWidth: 250,
-          smallItemHeight: 300,
-          animation: 1 - controller.value,
-          forward: activePage > previousPage,
-          startAnimating: controller.isAnimating,
-          data: item);
-    }).toList();
-  }
-
-  void _leftSwipe() {
-    if (activePage > 0) {
-      setState(() {
-        previousPage = activePage;
-        activePage -= 1;
-        controller.forward();
-      });
-    }
-  }
-
-  void _rightSwipe() {
-    if (activePage < children.length - 1) {
-      setState(() {
-        previousPage = activePage;
-        activePage += 1;
-        controller.forward();
-      });
-    }
   }
 }

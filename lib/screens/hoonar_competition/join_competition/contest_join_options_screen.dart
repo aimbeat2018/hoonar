@@ -160,10 +160,10 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                           elevation: 5,
                           shadowColor: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              :/* Color(0x153F3F3F)*/Colors.white,
                           color: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : Color(0x153F3F3F),
+                              : /*Color(0x153F3F3F)*/Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(

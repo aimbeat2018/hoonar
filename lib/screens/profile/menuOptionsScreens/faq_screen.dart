@@ -105,6 +105,7 @@ class _FaqScreenState extends State<FaqScreen> {
                             initialItemCount:
                                 settingProvider.faqListModel!.data!.length,
                             shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index, animation) {
                               return buildItem(
                                   animation,
@@ -124,72 +125,80 @@ class _FaqScreenState extends State<FaqScreen> {
 
   Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
       FaqListData model) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 0.80,
-            strokeAlign: BorderSide.strokeAlignOutside,
-            color: isDarkMode ? Colors.white : Colors.black,
+    return InkWell(
+      onTap: (){
+        setState(() {
+          model.isExpanded = !model.isExpanded;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              width: 0.80,
+              strokeAlign: BorderSide.strokeAlignOutside,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            borderRadius: BorderRadius.circular(6.19),
           ),
-          borderRadius: BorderRadius.circular(6.19),
         ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  model.question ?? '',
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w400,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    model.question ?? '',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
-              ),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    model.isExpanded = !model.isExpanded;
-                  });
-                },
-                child: Icon(
-                  model.isExpanded
-                      ? Icons.keyboard_arrow_up_outlined
-                      : Icons.keyboard_arrow_down_outlined,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-              )
-            ],
-          ),
-          model.isExpanded
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: Column(
-                    children: [
-                      Divider(
-                        color: isDarkMode ? Colors.white : Colors.black,
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        model.answer ?? '',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          color: isDarkMode ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                SizedBox(width: 5,),
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      model.isExpanded = !model.isExpanded;
+                    });
+                  },
+                  child: Icon(
+                    model.isExpanded
+                        ? Icons.keyboard_arrow_up_outlined
+                        : Icons.keyboard_arrow_down_outlined,
+                    color: isDarkMode ? Colors.white : Colors.black,
                   ),
                 )
-              : SizedBox(),
-        ],
+              ],
+            ),
+            model.isExpanded
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: Column(
+                      children: [
+                        Divider(
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          model.answer ?? '',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            color: isDarkMode ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox(),
+          ],
+        ),
       ),
     );
   }

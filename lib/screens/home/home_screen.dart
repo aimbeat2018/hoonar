@@ -13,6 +13,7 @@ import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/view_all_screen.dart';
+import 'package:hoonar/screens/home/widgets/carousel_page_view.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:hoonar/shimmerLoaders/home_slider_shimmers.dart';
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel =
-          ListCommonRequestModel(limit: /*paginationLimit*/3);
+          ListCommonRequestModel(limit: /*paginationLimit*/ 3);
 
       await homeProvider.getHomePostList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -129,6 +130,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> _refresh() async {
+    await Future.delayed(Duration(seconds: 2)); // Simulate a network request
+    getHomePost(context);
+    getHomePageOtherPost(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -173,295 +180,305 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                homeProvider.isHomeLoading ||
-                        homeProvider.homePostSuccessModel == null ||
-                        homeProvider.homePostSuccessModel!.data == null
-                    ? HomeSliderShimmers()
-                    : Column(
-                        children: [
-                          CS.CarouselSlider.builder(
-                            carouselController: _carouselController,
-                            itemCount:
-                                homeProvider.homePostSuccessModel!.data!.length,
-                            itemBuilder: (BuildContext context, int index,
-                                int realIndex) {
-                              return GestureDetector(
-                                onTap: () {
-                                  // On tap, go to the next slide
-                                  setState(() {
-                                    _currentIndex = index;
-                                    _carouselController.animateToPage(
-                                        index); // Jump to the tapped item
-                                  });
-                                },
-                                child: Container(
-                                  /*margin:
-                                    EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
-                                  // 10% of the screen width for margin
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 10),
-                                  decoration: _currentIndex == index
-                                      ? const BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment(0.00, 1.00),
-                                            end: Alignment(0, -1),
-                                            colors: [
-                                              Colors.black,
-                                              Color(0xFF313131),
-                                              Color(0xFF636363)
-                                            ],
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  homeProvider.isHomeLoading ||
+                          homeProvider.homePostSuccessModel == null ||
+                          homeProvider.homePostSuccessModel!.data == null
+                      ? HomeSliderShimmers()
+                      : Column(
+                          children: [
+                            CS.CarouselSlider.builder(
+                              carouselController: _carouselController,
+                              itemCount: homeProvider
+                                  .homePostSuccessModel!.data!.length,
+                              itemBuilder: (BuildContext context, int index,
+                                  int realIndex) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // On tap, go to the next slide
+                                    setState(() {
+                                      _currentIndex = index;
+                                      _carouselController.animateToPage(
+                                          index); // Jump to the tapped item
+                                    });
+                                  },
+                                  child: Container(
+                                    /*margin:
+                                      EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
+                                    // 10% of the screen width for margin
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: _currentIndex == index
+                                        ? const BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment(0.00, 1.00),
+                                              end: Alignment(0, -1),
+                                              colors: [
+                                                Colors.black,
+                                                Color(0xFF313131),
+                                                Color(0xFF636363)
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(7.96),
+                                              topRight: Radius.circular(7.96),
+                                            ),
+                                            // border: Border(
+                                            //   top: BorderSide(
+                                            //     width: 1.5,
+                                            //     color: myLoading.isDark
+                                            //         ? Colors.white
+                                            //         : Colors.grey,
+                                            //   ),
+                                            // ),
+                                          )
+                                        : BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(7.96),
-                                            topRight: Radius.circular(7.96),
-                                          ),
-                                          // border: Border(
-                                          //   top: BorderSide(
-                                          //     width: 1.5,
-                                          //     color: myLoading.isDark
-                                          //         ? Colors.white
-                                          //         : Colors.grey,
-                                          //   ),
-                                          // ),
-                                        )
-                                      : BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                    child: Center(
+                                      child: Text(
+                                        homeProvider.homePostSuccessModel!
+                                                .data![index].categoryName ??
+                                            '',
+                                        textAlign: TextAlign.start,
+                                        style: GoogleFonts.poppins(
+                                          color: _currentIndex == index
+                                              ? Colors.white
+                                              : myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize:
+                                              _currentIndex == index ? 13 : 12,
                                         ),
-                                  child: Center(
-                                    child: Text(
-                                      homeProvider.homePostSuccessModel!
-                                              .data![index].categoryName ??
-                                          '',
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.poppins(
-                                        color: _currentIndex == index
-                                            ? Colors.white
-                                            : myLoading.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize:
-                                            _currentIndex == index ? 13 : 12,
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            options: CS.CarouselOptions(
-                              height: 50.0,
-                              autoPlay: false,
-                              enlargeCenterPage: true,
-                              aspectRatio: 4 / 3,
-                              autoPlayInterval: const Duration(seconds: 3),
-                              enableInfiniteScroll: true,
-                              viewportFraction: 0.3,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  _currentIndex =
-                                      index; // Update the current index
-                                });
+                                );
                               },
+                              options: CS.CarouselOptions(
+                                height: 50.0,
+                                autoPlay: false,
+                                enlargeCenterPage: true,
+                                aspectRatio: 4 / 3,
+                                autoPlayInterval: const Duration(seconds: 3),
+                                enableInfiniteScroll: true,
+                                viewportFraction: 0.3,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    _currentIndex =
+                                        index; // Update the current index
+                                  });
+                                },
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          homeProvider.homePostSuccessModel!
-                                      .data![_currentIndex].posts ==
-                                  null
-                              ? DataNotFound()
-                              : homeProvider.homePostSuccessModel!
-                                      .data![_currentIndex].posts!.isEmpty
-                                  ? DataNotFound()
-                                  : SizedBox(
-                                      height: screenHeight * 0.58,
-                                      child: SliderPageView(
-                                        sliderModelList: homeProvider
-                                                .homePostSuccessModel!
-                                                .data![_currentIndex]
-                                                .posts ??
-                                            [],
-                                        isDarkMode: myLoading.isDark,
-                                      )),
-                        ],
-                      ),
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        SlideRightRoute(
-                            page: const CategoryWiseVideosListScreen()),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          gradient: LinearGradient(
-                            colors: [
-                              myLoading.isDark
-                                  ? greyTextColor5
-                                  : greyTextColor6,
-                              myLoading.isDark
-                                  ? greyTextColor6
-                                  : greyTextColor8,
-                              myLoading.isDark
-                                  ? greyTextColor5
-                                  : greyTextColor6,
-                            ],
-                          )),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.arrow_drop_down_sharp,
-                            color: Colors.white,
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.viewMore,
-                            textAlign: TextAlign.start,
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            homeProvider.homePostSuccessModel!
+                                        .data![_currentIndex].posts ==
+                                    null
+                                ? DataNotFound()
+                                : homeProvider.homePostSuccessModel!
+                                        .data![_currentIndex].posts!.isEmpty
+                                    ? DataNotFound()
+                                    : SizedBox(
+                                        // height: screenHeight * 0.58,
+                                        child: CarouselPageView(
+                                          sliderModelList: homeProvider
+                                                  .homePostSuccessModel!
+                                                  .data![_currentIndex]
+                                                  .posts ??
+                                              [],
+                                          isDarkMode: myLoading.isDark,
+                                        ))
+                          ],
+                        ),
+                  Center(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          SlideRightRoute(
+                              page: const CategoryWiseVideosListScreen()),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            gradient: LinearGradient(
+                              colors: [
+                                myLoading.isDark
+                                    ? greyTextColor5
+                                    : greyTextColor6,
+                                myLoading.isDark
+                                    ? greyTextColor6
+                                    : greyTextColor8,
+                                myLoading.isDark
+                                    ? greyTextColor5
+                                    : greyTextColor6,
+                              ],
+                            )),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.arrow_drop_down_sharp,
                               color: Colors.white,
-                              fontWeight: FontWeight.w500,
                             ),
-                          ),
-                        ],
+                            Text(
+                              AppLocalizations.of(context)!.viewMore,
+                              textAlign: TextAlign.start,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                homeProvider.isOtherHomeLoading
-                    ? const ListHorizontalShimmer()
-                    : Column(
-                        children: [
-                          homeOtherData!.judgesChoicePostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.judgesChoicePostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : Column(
-                                      children: [
-                                        otherListWidget(
-                                            AppLocalizations.of(context)!
-                                                .judgesChoice,
-                                            homeOtherData!
-                                                    .judgesChoicePostList ??
-                                                [],
-                                            myLoading.isDark),
-                                      ],
-                                    ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.myFavPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.myFavPostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : Column(
-                                      children: [
-                                        otherListWidget(
-                                            AppLocalizations.of(context)!
-                                                .favrite,
-                                            homeOtherData!.myFavPostList ?? [],
-                                            myLoading.isDark),
-                                      ],
-                                    ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.forYouPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.forYouPostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : otherListWidget(
-                                      AppLocalizations.of(context)!.foryours,
-                                      homeOtherData!.forYouPostList ?? [],
-                                      myLoading.isDark),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.trendingNowPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.trendingNowPostList!.isNotEmpty
-                                  ? otherListWidget(
-                                      AppLocalizations.of(context)!.trendingNow,
-                                      homeOtherData!.trendingNowPostList ?? [],
-                                      myLoading.isDark)
-                                  : const SizedBox.shrink(),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.hoonarHighlightsPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.hoonarHighlightsPostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : otherListWidget(
-                                      AppLocalizations.of(context)!
-                                          .hoonarHighlights,
-                                      homeOtherData!.hoonarHighlightsPostList ??
-                                          [],
-                                      myLoading.isDark),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.featuredTalentPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.featuredTalentPostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : otherListWidget(
-                                      AppLocalizations.of(context)!
-                                          .featuredTalents,
-                                      homeOtherData!.featuredTalentPostList ??
-                                          [],
-                                      myLoading.isDark),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.hoonarStarsPostList == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.hoonarStarsPostList!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : otherListWidget(
-                                      AppLocalizations.of(context)!.hoonarStar,
-                                      homeOtherData!.hoonarStarsPostList ?? [],
-                                      myLoading.isDark),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          homeOtherData!.hoonarStarOfMonths == null
-                              ? const SizedBox.shrink()
-                              : homeOtherData!.hoonarStarOfMonths!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : otherListWidget(
-                                      AppLocalizations.of(context)!
-                                          .hoonarStarOfTheMonth,
-                                      homeOtherData!.hoonarStarOfMonths ?? [],
-                                      myLoading.isDark),
-                        ],
-                      ),
+                  homeProvider.isOtherHomeLoading
+                      ? const ListHorizontalShimmer()
+                      : Column(
+                          children: [
+                            homeOtherData!.judgesChoicePostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.judgesChoicePostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : Column(
+                                        children: [
+                                          otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .judgesChoice,
+                                              homeOtherData!
+                                                      .judgesChoicePostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                        ],
+                                      ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.myFavPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.myFavPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : Column(
+                                        children: [
+                                          otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .favrite,
+                                              homeOtherData!.myFavPostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                        ],
+                                      ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.forYouPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.forYouPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : otherListWidget(
+                                        AppLocalizations.of(context)!.foryours,
+                                        homeOtherData!.forYouPostList ?? [],
+                                        myLoading.isDark),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.trendingNowPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.trendingNowPostList!.isNotEmpty
+                                    ? otherListWidget(
+                                        AppLocalizations.of(context)!
+                                            .trendingNow,
+                                        homeOtherData!.trendingNowPostList ??
+                                            [],
+                                        myLoading.isDark)
+                                    : const SizedBox.shrink(),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.hoonarHighlightsPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!
+                                        .hoonarHighlightsPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : otherListWidget(
+                                        AppLocalizations.of(context)!
+                                            .hoonarHighlights,
+                                        homeOtherData!
+                                                .hoonarHighlightsPostList ??
+                                            [],
+                                        myLoading.isDark),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.featuredTalentPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.featuredTalentPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : otherListWidget(
+                                        AppLocalizations.of(context)!
+                                            .featuredTalents,
+                                        homeOtherData!.featuredTalentPostList ??
+                                            [],
+                                        myLoading.isDark),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.hoonarStarsPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.hoonarStarsPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : otherListWidget(
+                                        AppLocalizations.of(context)!
+                                            .hoonarStar,
+                                        homeOtherData!.hoonarStarsPostList ??
+                                            [],
+                                        myLoading.isDark),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            homeOtherData!.hoonarStarOfMonths == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.hoonarStarOfMonths!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : otherListWidget(
+                                        AppLocalizations.of(context)!
+                                            .hoonarStarOfTheMonth,
+                                        homeOtherData!.hoonarStarOfMonths ?? [],
+                                        myLoading.isDark),
+                          ],
+                        ),
 
-                /*ListView.builder(
-                  itemCount: otherList.length,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return otherListWidget(otherList[index], myLoading.isDark);
-                  },
-                ),*/
-                const SizedBox(
-                  height: 50,
-                )
-              ],
+                  /*ListView.builder(
+                    itemCount: otherList.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return otherListWidget(otherList[index], myLoading.isDark);
+                    },
+                  ),*/
+                  const SizedBox(
+                    height: 50,
+                  )
+                ],
+              ),
             ),
           ),
         ),

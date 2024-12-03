@@ -78,6 +78,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
       } else {
         if (settingProvider.removeDeviceModel?.status == '200') {
           Navigator.of(context).pop();
+          getLoginDevices(context);
         } else if (settingProvider.removeDeviceModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(

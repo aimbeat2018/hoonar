@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
+import '../../dummy_screen.dart';
 import '../main_screen/main_screen.dart';
 
 class SplashScreens extends StatefulWidget {
@@ -58,12 +59,16 @@ class _SplashScreensState extends State<SplashScreens>
           (Route<dynamic> route) => false,
         );
       } else {
-        Navigator.pushAndRemoveUntil(
+         Navigator.pushAndRemoveUntil(
             context,
             SlideRightRoute(page: const MainScreen(fromIndex: 0)),
             (route) => false);
       }
     });
+        /*Navigator.pushAndRemoveUntil(context,
+            SlideRightRoute(page: PictureSlideShow()), (route) => false);
+      }
+    });*/
   }
 
   @override

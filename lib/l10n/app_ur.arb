@@ -1,5 +1,5 @@
 {
-  "appName": "ہنر ستار",
+  "appName": "ہنرستار",
   "login": "لاگ ان",
   "phoneNumber": "ای میل / فون نمبر",
   "password": "پاس ورڈ",
@@ -177,9 +177,9 @@
   "documentsAndKyc": "دستاویزات اور KYC",
   "kyc": "KYC",
   "uploadIdProof": "شناختی ثبوت اپلوڈ کریں",
-  "uploadIdProofDesc": "آدھار کارڈ، پاسپورٹ، ڈرائیونگ لائسنس، PAN کارڈ",
+  "uploadIdProofDesc": "PAN کارڈ",
   "residenceProof": "رہائش کا ثبوت",
-  "residenceProofDesc": "یوٹیلیٹی بل، بینک اسٹیٹمنٹس، کرایہ کے معاہدے",
+  "residenceProofDesc": "یوٹیلیٹی بل، بینک اسٹیٹمنٹس، کرایہ کے معاہدےآدھار کارڈ، پاسپورٹ، ڈرائیونگ لائسنس",
   "scanFace": "چہرے کو اسکین کریں",
   "scanFaceDesc": "اسکیننگ کے عمل کے دوران اپنا چہرہ اسکرین کے سامنے رکھیں",
   "clickHere": "یہاں کلک کریں",

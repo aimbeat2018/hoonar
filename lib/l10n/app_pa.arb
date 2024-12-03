@@ -1,5 +1,5 @@
 {
-  "appName": "ਹੂਨਰ ਸਟਾਰ",
+  "appName": "ਹੂਨਰਸਟਾਰ",
   "login": "ਲਾਗਿਨ",
   "phoneNumber": "ਈਮੇਲ / ਫੋਨ ਨੰਬਰ",
   "password": "ਪਾਸਵਰਡ",
@@ -177,9 +177,9 @@
   "documentsAndKyc": "ਦਸਤਾਵੇਜ਼ ਅਤੇ KYC",
   "kyc": "KYC",
   "uploadIdProof": "ID ਪ੍ਰਮਾਣ ਪੱਤਰ ਅਪਲੋਡ ਕਰੋ",
-  "uploadIdProofDesc": "ਆਧਾਰ ਕਾਰਡ, ਪਾਸਪੋਰਟ, ਡਰਾਈਵਿੰਗ ਲਾਇਸੈਂਸ, ਪੈਨ ਕਾਰਡ",
+  "uploadIdProofDesc": "ਪੈਨ ਕਾਰਡ",
   "residenceProof": "ਰਿਹਾਇਸ਼ ਦਾ ਪ੍ਰਮਾਣ",
-  "residenceProofDesc": "ਯੂਟਿਲਿਟੀ ਬਿਲਾਂ, ਬੈਂਕ ਬਿਆਨ, ਕਿਰਾਏ ਦੇ ਸਮਝੌਤੇ",
+  "residenceProofDesc": "ਯੂਟਿਲਿਟੀ ਬਿਲਾਂ, ਬੈਂਕ ਬਿਆਨ, ਕਿਰਾਏ ਦੇ ਸਮਝੌਤੇ,ਆਧਾਰ ਕਾਰਡ, ਪਾਸਪੋਰਟ, ਡਰਾਈਵਿੰਗ ਲਾਇਸੈਂਸ",
   "scanFace": "ਚਿਹਰਾ ਸਕੈਨ ਕਰੋ",
   "scanFaceDesc": "ਸਕੈਨ ਕਰਨ ਦੇ ਦੌਰਾਨ ਆਪਣਾ ਚਿਹਰਾ ਸਕ੍ਰੀਨ ਸਾਹਮਣੇ ਰੱਖੋ",
   "clickHere": "ਇੱਥੇ ਕਲਿੱਕ ਕਰੋ",

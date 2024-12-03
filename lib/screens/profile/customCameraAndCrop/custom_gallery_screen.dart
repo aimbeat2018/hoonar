@@ -212,7 +212,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
       itemCount: _recentImages.length,
       itemBuilder: (context, index) {
         return FutureBuilder<Uint8List?>(
-          future: _recentImages[index].originBytes, // Get thumbnail
+          future: _recentImages[index].thumbnailData, // Get thumbnail
           builder: (context, snapshot) {
             final bytes = snapshot.data;
             if (bytes == null) {

@@ -128,6 +128,18 @@ class _CategoryWiseVideosListScreenState
             }
           }
         }
+      }else if(homeProvider.postListSuccessModel?.status == '401'){
+        if (page == 1) {
+          postListData = homeProvider.postListSuccessModel!.data!;
+        } else {
+          newPostListData = [];
+          newPostListData = homeProvider.postListSuccessModel!.data!;
+
+          if (newPostListData.isNotEmpty) {
+            postListData.addAll(newPostListData);
+            postListData = postListData.toSet().toList();
+          }
+        }
       } else if (homeProvider.postListSuccessModel?.message ==
           'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
@@ -328,6 +340,7 @@ class _CategoryWiseVideosListScreenState
                                               .data![index]
                                               .categoryId ??
                                           -1;
+                                      page =1;
                                       getPostByCategory(context);
                                     });
                                     _toggleAnimation();

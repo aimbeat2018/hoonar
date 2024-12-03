@@ -209,7 +209,7 @@ class ContestService {
       '$baseUrl$getSoundListUrl',
       // method: 'POST',
       accessToken: accessToken,
-      data: requestModel.toJson(),
+      // data: requestModel.toJson(),
       fromJson: (data) => SoundListModel.fromJson(data),
     );
   }
@@ -220,7 +220,7 @@ class ContestService {
       '$baseUrl$getUserSavedSoundsUrl',
       // method: 'POST',
       accessToken: accessToken,
-      data: requestModel.toJson(),
+      // data: requestModel.toJson(),
       fromJson: (data) => SoundListModel.fromJson(data),
     );
   }

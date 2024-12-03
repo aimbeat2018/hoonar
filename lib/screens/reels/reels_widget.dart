@@ -12,6 +12,7 @@ import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../constants/common_widgets.dart';
 import '../../constants/my_loading/my_loading.dart';
@@ -49,6 +50,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
   int modelLikeStatus = 0;
   PostsListData? model;
+
   @override
   void initState() {
     super.initState();
@@ -81,10 +83,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
               'Post Unlike Successful') {
             setState(() {
               isDismissed[1] = false;
+              widget.model.videoLikesOrNot = 1;
             });
           } else {
             setState(() {
               isDismissed[1] = true;
+              widget.model.videoLikesOrNot = 1;
             });
           }
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
@@ -165,6 +169,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
     super.dispose();
   }
 
+  void _onTap() {
+    if (_videoPlayerController.value.isPlaying) {
+      _videoPlayerController.pause();
+    } else {
+      _videoPlayerController.play();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -182,11 +194,48 @@ class _ReelsWidgetState extends State<ReelsWidget>
               : '';
 
       return Scaffold(
-        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+        backgroundColor: Colors.black,
         body: Stack(
-          fit: StackFit.expand,
+          // fit: StackFit.expand,
           children: [
-            _chewieController != null &&
+            InkWell(
+              onTap: _onTap,
+              child: VisibilityDetector(
+                onVisibilityChanged: (VisibilityInfo info) {
+                  var visiblePercentage = info.visibleFraction * 100;
+                  if (visiblePercentage > 50) {
+                    _videoPlayerController.play();
+                  } else {
+                    _videoPlayerController.pause();
+                  }
+                },
+                key: Key('ke1' + widget.model.postId!.toString()),
+                child: SizedBox.expand(
+                  child: FittedBox(
+                    fit: (_videoPlayerController.value.size.width ?? 0) <
+                            (_videoPlayerController.value.size.height ?? 0)
+                        ? BoxFit.cover
+                        : BoxFit.fitWidth,
+                    child: SizedBox(
+                      width: _videoPlayerController.value.size.width ?? 0,
+                      height: _videoPlayerController.value.size.height ?? 0,
+                      child: _videoPlayerController != null
+                          ? VideoPlayer(_videoPlayerController)
+                          : const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(height: 10),
+                                Text('Loading...')
+                              ],
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            /*_chewieController != null &&
                     _chewieController!.videoPlayerController.value.isInitialized
                 ? GestureDetector(
                     onTap: () {
@@ -210,11 +259,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         // Set the desired width
-                        height: MediaQuery.of(context).size.width /
+                        height: MediaQuery.of(context).size.height /
                             _videoPlayerController.value.aspectRatio,
                         // Calculate height based on aspect ratio
                         child: Chewie(
                           controller: _chewieController!,
+
                         ),
                       ),
                     ),
@@ -226,7 +276,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                       SizedBox(height: 10),
                       Text('Loading...')
                     ],
-                  ),
+                  ),*/
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
@@ -329,7 +379,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                                     ? Colors
                                                                         .white
                                                                     : Colors
-                                                                        .black)
+                                                                        .white)
                                                                 : Colors
                                                                     .transparent,
                                                             width: 1),
@@ -341,7 +391,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                             ? Colors.transparent
                                                             : (myLoading.isDark
                                                                 ? Colors.white
-                                                                : Colors.black)),
+                                                                : Colors.white)),
                                                     child: isFollowLoading
                                                         ? const Center(
                                                             child:
@@ -369,7 +419,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                                       ? Colors
                                                                           .white
                                                                       : Colors
-                                                                          .black)
+                                                                          .white)
                                                                   : (myLoading.isDark
                                                                       ? Colors
                                                                           .black
@@ -557,6 +607,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                       color: Colors.white,
                                       fontWeight: FontWeight.w500,
                                     ),
+                                  ),
+                                  const SizedBox(
+                                    height: 65,
                                   ),
                                 ],
                               ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,8 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_gallery_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/profile_avatar/avatar_list_tab_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../constants/slide_right_route.dart';
+import '../customCameraAndCrop/crop_image_screen.dart';
 
 class ChangeProfilePhotoOptionScreen extends StatefulWidget {
   final bool isDarkMode;
@@ -80,11 +83,15 @@ class _ChangeProfilePhotoOptionScreenState
               Expanded(
                   child: InkWell(
                 onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
+                  // Navigator.pop(context);
+                  /*Navigator.push(
                     context,
-                    SlideRightRoute(page:  CustomGalleryScreen(requestType: 'image',)),
-                  );
+                    SlideRightRoute(
+                        page: CustomGalleryScreen(
+                      requestType: 'image',
+                    )),
+                  );*/
+                  _selectImageFromGallery();
                 },
                 child: Column(
                   children: [
@@ -146,5 +153,29 @@ class _ChangeProfilePhotoOptionScreenState
         ),
       ],
     );
+  }
+
+  XFile? imageFile;
+
+  Future<void> _selectImageFromGallery() async {
+    final pickedFile = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 50);
+    if (pickedFile != null) {
+      setState(() {
+        imageFile = XFile(pickedFile.path);
+      });
+
+      Uint8List fileBytes = await imageFile!.readAsBytes();
+
+      Navigator.push(
+        context,
+        SlideRightRoute(
+          page: CropImageScreen(
+            // fileBytes: fileBytes,
+            selectedImageFile: imageFile,
+          ),
+        ),
+      );
+    }
   }
 }

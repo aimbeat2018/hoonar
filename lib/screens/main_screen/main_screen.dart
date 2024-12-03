@@ -87,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
             height: 65, // Set custom height
             width: 65, // Set custom width
             child: FloatingActionButton(
-              backgroundColor: Colors.white,
+              backgroundColor: myLoading.isDark ? Colors.white : Colors.black,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50.0)),
               onPressed: () {
@@ -105,6 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                     bottom: 10,
                     child: Image.asset(
                       'assets/images/star.png',
+                      color: myLoading.isDark ? Colors.black : Colors.white,
                     ),
                   ),
                 ],
@@ -233,7 +234,10 @@ class _MainScreenState extends State<MainScreen> {
   void openCameraScreen() {
     Navigator.push(
       context,
-      SlideRightRoute(page: const CaptureVideoScreen(from: "normal",)),
+      SlideRightRoute(
+          page: const CaptureVideoScreen(
+        from: "normal",
+      )),
     );
   }
 

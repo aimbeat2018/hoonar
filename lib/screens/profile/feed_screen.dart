@@ -32,7 +32,7 @@ class _FeedScreenState extends State<FeedScreen> {
               controller: widget.controller,
               shrinkWrap: true,
               // controller: gridScrollController,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 0,
