@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_search_data_request_model.dart';
@@ -27,6 +29,7 @@ import 'package:hoonar/model/success_models/user_search_history_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
+import 'package:retry/retry.dart';
 
 import '../constants/utils.dart';
 import 'common_api_methods.dart';
@@ -115,12 +118,27 @@ class HomePageService {
 
   Future<FollowUnfollowSuccessModel> updatePost(
       AddPostRequestModel requestModel, String accessToken) async {
-    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+
+    final r = RetryOptions(maxAttempts: 3, delayFactor: Duration(seconds: 2));
+
+    return await r.retry(
+          () async {
+        return await apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+          '$baseUrl$addPostUrl',
+          method: 'POST',
+          data: requestModel.toFormData(),
+          accessToken: accessToken,
+          fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+        );
+      },
+      retryIf: (e) => e is DioException || e is SocketException,
+    );
+  /*  return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$updatePostUrl',
       method: 'POST',
       data: requestModel.toFormData(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
-    );
+    );*/
   }
 
   Future<HashTagListModel> getHashTagList(

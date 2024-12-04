@@ -70,6 +70,7 @@ const String addUserWithdrawRequestsUrl = 'User/requestWithdrawal';
 const String viewBankDetailsUrl = 'User/viewBankDetails';
 const String addBankDetailsUrl = 'User/addBankDetails';
 const String updateBankDetailsUrl = 'User/updateBankDetails';
+const String getNotificationListUrl = 'User/getNotificationList';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

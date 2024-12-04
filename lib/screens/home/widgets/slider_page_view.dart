@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -13,10 +12,8 @@ import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../constants/common_widgets.dart';
-import '../../../constants/my_loading/my_loading.dart';
 import '../../../model/success_models/home_post_success_model.dart';
 import '../../../providers/user_provider.dart';
 

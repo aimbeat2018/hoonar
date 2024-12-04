@@ -9,286 +9,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:http/http.dart' as http;
-
-// import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../model/success_models/sound_list_model.dart';
-
-/*class VideoPreviewScreen extends StatefulWidget {
-  final File videoFile;
-
-  const VideoPreviewScreen({Key? key, required this.videoFile})
-      : super(key: key);
-
-  @override
-  _VideoPreviewScreenState createState() => _VideoPreviewScreenState();
-}
-
-class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
-  late VideoPlayerController _videoController;
-  VideoPlayerController? _mergedVideoController;
-  File? _mergedVideoFile;
-  ColorFilter? _currentFilter;
-  bool _isMerging = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeVideoController(widget.videoFile);
-  }
-
-  void _initializeVideoController(File videoFile) {
-    _videoController = VideoPlayerController.file(videoFile)
-      ..initialize().then((_) {
-        setState(() {});
-        _videoController.play();
-      });
-  }
-
-  @override
-  void dispose() {
-    _videoController.dispose();
-    _mergedVideoController?.dispose();
-    super.dispose();
-  }
-
-  void _applyFilter(ColorFilter? filter) {
-    setState(() {
-      _currentFilter = filter;
-    });
-  }
-
-  Future<void> _pickAudioAndMerge() async {
-    // final status = await Permission.storage.request();
-    // if (!status.isGranted) {
-    //   return;
-    // }
-
-    final result = await FilePicker.platform.pickFiles(type: FileType.audio);
-    if (result != null) {
-      final audioFile = File(result.files.single.path!);
-      _mergeAudioWithVideo(audioFile);
-    }
-  }
-
-  Future<void> _mergeAudioWithVideo(File audioFile) async {
-    setState(() {
-      _isMerging = true;
-    });
-
-    try {
-      final tempDir = await getTemporaryDirectory();
-      final outputFilePath = '${tempDir.path}/merged_video.mp4';
-
-      final mergeCommand =
-          '-y -i "${widget.videoFile.path}" -i "${audioFile.path}" -map 0:v -map 1:a -c:v copy -shortest "$outputFilePath"';
-
-      await FFmpegKit.execute(mergeCommand);
-
-      final mergedFile = File(outputFilePath);
-      _mergedVideoFile = mergedFile;
-
-      // Initialize the merged video controller
-      _mergedVideoController = VideoPlayerController.file(mergedFile)
-        ..initialize().then((_) {
-          setState(() {});
-          _mergedVideoController!.play();
-        });
-    } catch (e) {
-      print('Error during merge: $e');
-    } finally {
-      setState(() {
-        _isMerging = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          _mergedVideoController != null &&
-                  _mergedVideoController!.value.isInitialized
-              ? FittedBox(
-                  fit: BoxFit.fill,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    // Set the desired width
-                    height: MediaQuery.of(context).size.width /
-                        _mergedVideoController!.value.aspectRatio,
-                    // Calculate height based on aspect ratio
-                    child: VideoPlayer(_mergedVideoController!),
-                  ),
-                ) */ /*,Center(
-                  child: VideoPlayer(_mergedVideoController!),
-                )*/ /*
-              : _videoController.value.isInitialized
-                  ? Center(
-                      child: ColorFiltered(
-                          colorFilter: _currentFilter ??
-                              const ColorFilter.mode(
-                                  Colors.transparent, BlendMode.dst),
-                          child: FittedBox(
-                            fit: BoxFit.fill,
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              // Set the desired width
-                              height: MediaQuery.of(context).size.width /
-                                  _videoController.value.aspectRatio,
-                              // Calculate height based on aspect ratio
-                              child: VideoPlayer(_videoController),
-                            ),
-                          )
-
-                          */ /* AspectRatio(
-                          aspectRatio: _videoController.value.aspectRatio,
-                          child: VideoPlayer(_videoController),
-                        ),*/ /*
-                          ),
-                    )
-                  : const Center(child: CircularProgressIndicator()),
-          */ /* const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => _applyFilter(
-                    const ColorFilter.mode(Colors.grey, BlendMode.saturation)),
-                child: const Text('Grayscale'),
-              ),
-              ElevatedButton(
-                onPressed: () => _applyFilter(const ColorFilter.matrix([
-                  0.393,
-                  0.769,
-                  0.189,
-                  0,
-                  0,
-                  0.349,
-                  0.686,
-                  0.168,
-                  0,
-                  0,
-                  0.272,
-                  0.534,
-                  0.131,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ])),
-                child: const Text('Sepia'),
-              ),
-              ElevatedButton(
-                onPressed: () => _applyFilter(
-                    const ColorFilter.mode(Colors.white, BlendMode.difference)),
-                child: const Text('Invert'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () => _applyFilter(const ColorFilter.matrix([
-                  1.2,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1.2,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1.2,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ])),
-                child: const Text('Bright'),
-              ),
-              ElevatedButton(
-                onPressed: () => _applyFilter(const ColorFilter.matrix([
-                  1.5,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1.5,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1.5,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ])),
-                child: const Text('Saturation'),
-              ),
-              ElevatedButton(
-                onPressed: () => _applyFilter(const ColorFilter.matrix([
-                  1.2,
-                  0.1,
-                  0.1,
-                  0,
-                  0,
-                  0.1,
-                  1.1,
-                  0.1,
-                  0,
-                  0,
-                  0.1,
-                  0.1,
-                  1.0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  0,
-                  1,
-                  0,
-                ])),
-                child: const Text('Warm'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: _pickAudioAndMerge,
-            child: _isMerging
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text('Merge Audio & Preview'),
-          ),*/ /*
-        ],
-      ),
-    );
-  }
-}*/
 
 class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
@@ -300,7 +29,8 @@ class VideoPreviewScreen extends StatefulWidget {
     Key? key,
     required this.videoFile,
     this.selectedMusic,
-    this.duration, required this.from,
+    this.duration,
+    required this.from,
   }) : super(key: key);
 
   @override
@@ -414,29 +144,57 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
     });
   }
 
+  void _onTap() {
+    if (_videoController.value.isPlaying) {
+      _videoController.pause();
+    } else {
+      _videoController.play();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         body: Stack(
-          fit: StackFit.expand,
+          // fit: StackFit.expand,
           children: [
             _videoController.value.isInitialized
                 ? Center(
-                    child: ColorFiltered(
-                      colorFilter: _currentFilter ??
-                          const ColorFilter.mode(
-                              Colors.transparent, BlendMode.dst),
-                      child: FittedBox(
-                        fit: BoxFit.fill,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context)
-                              .size
-                              .height /* /
-                                _videoController.value.aspectRatio*/
-                          ,
-                          child: VideoPlayer(_videoController),
+                    child: InkWell(
+                      onTap: _onTap,
+                      child: VisibilityDetector(
+                        onVisibilityChanged: (VisibilityInfo info) {
+                          var visiblePercentage = info.visibleFraction * 100;
+                          if (visiblePercentage > 50) {
+                            _videoController.play();
+                          } else {
+                            _videoController.pause();
+                          }
+                        },
+                        key: Key('key1' + widget.videoFile.path),
+                        child: SizedBox.expand(
+                          child: FittedBox(
+                            fit: (_videoController.value.size.width ?? 0) <
+                                    (_videoController.value.size.height ?? 0)
+                                ? BoxFit.cover
+                                : BoxFit.fitWidth,
+                            child: SizedBox(
+                              width: _videoController.value.size.width ?? 0,
+                              height: _videoController.value.size.height ?? 0,
+                              child: _videoController != null
+                                  ? VideoPlayer(_videoController)
+                                  : const Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(),
+                                        SizedBox(height: 10),
+                                        Text('Loading...')
+                                      ],
+                                    ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -488,7 +246,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                           });
                         },
                         child: Container(
-                          width: MediaQuery.of(context).size.width / 2,
+                          // width: MediaQuery.of(context).size.width / 2,
                           padding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 20),
                           decoration: BoxDecoration(
@@ -596,7 +354,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                                 page: UploadVideoScreen(
                               videoThumbnail: _thumbnailPath!,
                               videoUrl: _videoFile!.path,
-                              from:widget.from,
+                              from: widget.from,
                               selectedMusic: _selectedMusic,
                             )),
                           );

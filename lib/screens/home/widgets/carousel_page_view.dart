@@ -7,6 +7,7 @@ import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../model/success_models/home_post_success_model.dart';
@@ -25,16 +26,18 @@ class CarouselPageView extends StatefulWidget {
 
 class _CarouselPageViewState extends State<CarouselPageView>
     with SingleTickerProviderStateMixin {
-  int activePage = 1;
-  int previousPage = 0;
   bool isLoading = false;
   bool isFollowLoading = false;
   final CarouselSliderController _carouselController =
       CarouselSliderController();
+  int currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      currentIndex = widget.sliderModelList.length ~/ 2;
+    });
   }
 
   Widget buildVideoWidget(
@@ -151,7 +154,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
                   overflow: TextOverflow.ellipsis, // Ensure text truncation
                 ),
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 3),
               buildFollowButton(data, userProvider),
             ],
           ),
@@ -171,7 +174,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
             margin: const EdgeInsets.only(left: 5),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
               border: Border.all(
                 color: isFollowing ? Colors.white : Colors.transparent,
                 width: 1,
@@ -179,11 +182,17 @@ class _CarouselPageViewState extends State<CarouselPageView>
               color: isFollowing ? Colors.transparent : Colors.white,
             ),
             child: isFollowLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator()))
                 : Text(
                     isFollowing
                         ? AppLocalizations.of(context)!.unfollow
                         : AppLocalizations.of(context)!.follow,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.poppins(
                       fontSize: 8,
                       color: isFollowing ? Colors.white : Colors.black,
@@ -200,71 +209,97 @@ class _CarouselPageViewState extends State<CarouselPageView>
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : CarouselSlider.builder(
-            carouselController: _carouselController,
-            itemCount: widget.sliderModelList.length,
-            itemBuilder: (BuildContext context, int index, int realIndex) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _carouselController
-                        .animateToPage(index); // Navigate to tapped item
-                  });
-                },
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          SlideRightRoute(
-                            page: ReelsListScreen(
-                              postList: widget.sliderModelList,
-                              index: index,
+        : Column(
+            children: [
+              CarouselSlider(
+                carouselController: _carouselController,
+                items: widget.sliderModelList.map((item) {
+                  final index =
+                      widget.sliderModelList.indexOf(item); // Get the index
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _carouselController
+                            .animateToPage(index); // Navigate to tapped item
+                      });
+                    },
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              SlideRightRoute(
+                                page: ReelsListScreen(
+                                  postList: widget.sliderModelList,
+                                  index: index,
+                                ),
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            // Add rounded corners
+                            child: Image.network(
+                              item.postImage!,
+                              fit: BoxFit
+                                  .cover, // Properly fills the available space
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                ); // Show a loader while the image loads
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Center(
+                                  child: Icon(Icons.error,
+                                      size: 50, color: Colors.red),
+                                ); // Show an error icon if the image fails to load
+                              },
                             ),
                           ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        // Add rounded corners
-                        child: Image.network(
-                          widget.sliderModelList[index].postImage!,
-                          fit: BoxFit
-                              .cover, // Properly fills the available space
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            ); // Show a loader while the image loads
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(Icons.error,
-                                  size: 50, color: Colors.red),
-                            ); // Show an error icon if the image fails to load
-                          },
                         ),
-                      ),
+                        buildVideoOverlay(item), // Overlay for videos
+                      ],
                     ),
-                    buildVideoOverlay(widget.sliderModelList[index]),
-                    // Overlay for videos
-                  ],
+                  );
+                }).toList(),
+                options: CarouselOptions(
+                  enlargeCenterPage: true,
+                  height: MediaQuery.of(context).size.height * 0.45,
+                  viewportFraction: 0.65,
+                  padEnds: true,
+                  enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                  scrollPhysics: const BouncingScrollPhysics(),
+                  // Smooth scrolling
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  enlargeFactor: 0.4,
+                  enableInfiniteScroll: false,
+                  initialPage: widget.sliderModelList.length ~/ 2,
                 ),
-              );
-            },
-            options: CarouselOptions(
-              enlargeCenterPage: true,
-              height: MediaQuery.of(context).size.height * 0.48,
-              viewportFraction: 0.7,
-              enlargeStrategy: CenterPageEnlargeStrategy.zoom,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  // Update the index if needed for additional state tracking
-                });
-              },
-            ),
+              ),
+              const SizedBox(height: 16),
+              AnimatedSmoothIndicator(
+                activeIndex: currentIndex,
+                count: widget.sliderModelList.length,
+                effect: ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor:
+                      widget.isDarkMode ? Colors.white : Colors.black,
+                  dotColor: Colors.grey,
+                ),
+                onDotClicked: (index) {
+                  _carouselController.animateToPage(index);
+                },
+              ),
+            ],
           );
   }
 }

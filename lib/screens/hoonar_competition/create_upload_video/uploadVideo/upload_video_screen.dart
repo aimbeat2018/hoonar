@@ -55,6 +55,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
   List<HashTagData>? hashTagList = [];
   bool isLoading = false;
+  double progressPercentage = 0.0; // To track progress
 
   @override
   void initState() {
@@ -81,16 +82,40 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
     setState(() {
       isLoading = true;
+      progressPercentage = 0.0; // Reset progress
     });
 
     try {
+      // Simulate initialization progress
+      for (int i = 1; i <= 3; i++) {
+        await Future.delayed(const Duration(milliseconds: 200), () {
+          setState(() {
+            progressPercentage = i * 0.1; // Increment by 10% per step
+          });
+        });
+      }
+
       await sessionManager.initPref();
+      setState(() {
+        progressPercentage = 0.4; // Set progress to 40%
+      });
+
+      // Simulate API call progress
       await homeProvider.addPost(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
 
+      setState(() {
+        progressPercentage = 0.8; // Set progress to 80%
+      });
+
+      // Handle API response
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else if (homeProvider.addPostModel?.status == '200') {
+        setState(() {
+          progressPercentage = 1.0; // Set progress to 100%
+        });
+
         if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
@@ -114,6 +139,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     } finally {
       setState(() {
         isLoading = false; // Stop loading indicator
+        progressPercentage = 0.0; // Reset progress
       });
     }
   }
@@ -192,6 +218,38 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     });
 
     setState(() {});
+  }
+
+  void showProgressLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Uploading Post',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                LinearProgressIndicator(value: progressPercentage),
+                const SizedBox(height: 10),
+                Text('${(progressPercentage * 100).toInt()}%',
+                    // Display percentage
+                    style: const TextStyle(fontSize: 16)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> getKycStatus(
@@ -769,7 +827,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                             .toString();
                                                   }
                                                 }
-
+                                                // showProgressLoader(context);
                                                 addPost(context, requestModel);
                                               }
                                             : null,
@@ -813,7 +871,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     ),
                   ],
                 ),
-                if (isLoading)
+              /*  if (isLoading)
                   Positioned.fill(
                     top: 0,
                     bottom: 0,
@@ -824,7 +882,24 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                  ),
+                  ),*/
+                if (isLoading)
+                  Positioned.fill(
+                    top: 0,
+                    bottom: 0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          value: progressPercentage,
+                          backgroundColor: Colors.grey[200],
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        ),
+                        const SizedBox(height: 16),
+                        Text('${(progressPercentage * 100).toInt()}%'),
+                      ],
+                    ),
+                  )
               ],
             ),
           ),

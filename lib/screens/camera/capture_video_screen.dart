@@ -714,7 +714,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                   ),
                 ),
 
-              if (_isRecording || _isPaused)
+              if (!_isRecording || !_isPaused)
                 Positioned(
                   top: 50,
                   // left: 0,

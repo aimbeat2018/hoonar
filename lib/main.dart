@@ -22,6 +22,7 @@ import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
 import 'package:notification_permissions/notification_permissions.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'constants/const_res.dart';
 import 'constants/key_res.dart';
@@ -40,7 +41,7 @@ final FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin =
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setupServiceLocator();
-  // await FaceCamera.initialize(); //Add this
+  await Upgrader.clearSavedSettings();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
     apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
@@ -98,27 +99,34 @@ class MyApp extends StatelessWidget {
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
           );
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              AppLocalizations.delegate,
-            ],
-            supportedLocales: supportedLocales,
-            locale: Locale(myLoading.languageCode),
-            theme: myLoading.isDark
-                ? ThemeUtils.darkTheme(context)
-                : ThemeUtils.lightTheme(context),
-            routes: {
-              'CropImageScreen': (context) =>
-                  CropImageScreen(selectedImageFile: null),
-              'CameraScreen': (context) => CustomCameraScreen(),
-              'EditProfileScreen': (context) => EditProfileScreen()
-            },
-            home: SplashScreens(),
-            // home: MainScreen(),
+          return UpgradeAlert(
+            barrierDismissible: false,
+            dialogStyle: UpgradeDialogStyle.cupertino,
+            upgrader: Upgrader(
+              durationUntilAlertAgain: const Duration(microseconds: 5),
+            ),
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                AppLocalizations.delegate,
+              ],
+              supportedLocales: supportedLocales,
+              locale: Locale(myLoading.languageCode),
+              theme: myLoading.isDark
+                  ? ThemeUtils.darkTheme(context)
+                  : ThemeUtils.lightTheme(context),
+              routes: {
+                'CropImageScreen': (context) =>
+                    CropImageScreen(selectedImageFile: null),
+                'CameraScreen': (context) => CustomCameraScreen(),
+                'EditProfileScreen': (context) => EditProfileScreen()
+              },
+              home: SplashScreens(),
+              // home: MainScreen(),
+            ),
           );
         },
       ),

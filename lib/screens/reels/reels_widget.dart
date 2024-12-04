@@ -37,32 +37,40 @@ class ReelsWidget extends StatefulWidget {
 class _ReelsWidgetState extends State<ReelsWidget>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
-  ChewieController? _chewieController;
-
-  // late FijkPlayer _fijkPlayer;
-  late Chewie _chewie;
-  bool _isPaused = false;
   bool isFollow = false, isFollowLoading = false;
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
-
+  bool _showLikeAnimation = false;
   SessionManager sessionManager = SessionManager();
-
+  int likeOrVote = -1;
   int modelLikeStatus = 0;
   PostsListData? model;
+  late Animation<double> _fadeAnimation;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     initializePlayer();
     sessionManager.initPref();
-    setState(() {
-      if (widget.model.videoLikesOrNot == 0) {
-        isDismissed[1] = false;
-      } else {
-        isDismissed[1] = true;
-      }
-    });
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeOut,
+      ),
+    );
   }
 
   Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
@@ -82,13 +90,20 @@ class _ReelsWidgetState extends State<ReelsWidget>
           if (homeProvider.likeUnlikeVideoModel?.message ==
               'Post Unlike Successful') {
             setState(() {
-              isDismissed[1] = false;
-              widget.model.videoLikesOrNot = 1;
+              widget.model.videoLikesOrNot = 0;
+              _showLikeAnimation = false; // No animation for unlike
             });
           } else {
             setState(() {
-              isDismissed[1] = true;
               widget.model.videoLikesOrNot = 1;
+              likeOrVote = 1;
+              _showLikeAnimation = true; // Trigger animation for like
+              _controller.forward().then((_) {
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  _controller.reverse();
+                  _showLikeAnimation = false;
+                });
+              });
             });
           }
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
@@ -119,6 +134,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
         if (homeProvider.likeUnlikeVideoModel?.status == '200') {
           setState(() {
             widget.model.hasVoted = 1;
+            likeOrVote = 0;
+            _showLikeAnimation = true; // Trigger animation for like
+            _controller.forward().then((_) {
+              Future.delayed(const Duration(milliseconds: 300), () {
+                _controller.reverse();
+                _showLikeAnimation = false;
+              });
+            });
           });
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
             'Unauthorized Access!') {
@@ -135,12 +158,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(widget.model.postVideo ?? ''));
     await Future.wait([_videoPlayerController.initialize()]);
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      showControls: false,
-      looping: true,
-    );
     setState(() {});
   }
 
@@ -165,7 +182,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
   @override
   void dispose() {
     _videoPlayerController.dispose();
-    if (_chewieController != null) _chewieController!.dispose();
+    _controller.dispose();
+
     super.dispose();
   }
 
@@ -474,7 +492,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             if (widget.model.canVote == 1)
                               Column(
                                 children: [
-                                  SwipeTo(
+                                  /* SwipeTo(
                                     onRightSwipe: (details) {
                                       if (widget.model.hasVoted == 0) {
                                         addVote(context, widget.model.postId!);
@@ -483,13 +501,22 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     iconSize: 5,
                                     iconOnRightSwipe:
                                         CupertinoIcons.arrow_2_circlepath,
-                                    onLeftSwipe: (details) {
+                                    onLeftSwipe: (details) {},
+                                    iconOnLeftSwipe:
+                                        CupertinoIcons.arrow_2_circlepath,
+                                    child: Image.asset(
+                                        widget.model.hasVoted == 0
+                                            ? 'assets/images/vote_not_given.png'
+                                            : 'assets/images/vote_given.png',
+                                        width: 33,
+                                        height: 33),
+                                  ),*/
+                                  InkWell(
+                                    onTap: () {
                                       if (widget.model.hasVoted == 0) {
                                         addVote(context, widget.model.postId!);
                                       }
                                     },
-                                    iconOnLeftSwipe:
-                                        CupertinoIcons.arrow_2_circlepath,
                                     child: Image.asset(
                                         widget.model.hasVoted == 0
                                             ? 'assets/images/vote_not_given.png'
@@ -515,31 +542,19 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             Column(
                               children: [
-                                !isDismissed[1]
-                                    ? Dismissible(
-                                        key: const Key('2'),
-                                        onDismissed: (direction) {
-                                          likeUnlikeVideo(
-                                              context, widget.model.postId!);
-                                        },
-                                        child: Image.asset(
-                                          'assets/images/unlike.png',
-                                          width: 25,
-                                          height: 25,
-                                        ),
-                                      )
-                                    : Dismissible(
-                                        key: const Key('3'),
-                                        onDismissed: (direction) {
-                                          likeUnlikeVideo(
-                                              context, widget.model.postId!);
-                                        },
-                                        child: Image.asset(
-                                          'assets/images/like.png',
-                                          width: 25,
-                                          height: 25,
-                                        ),
-                                      ),
+                                InkWell(
+                                  onTap: () {
+                                    likeUnlikeVideo(
+                                        context, widget.model.postId!);
+                                  },
+                                  child: Image.asset(
+                                    widget.model.videoLikesOrNot == 0
+                                        ? 'assets/images/unlike.png'
+                                        : 'assets/images/like.png',
+                                    width: 25,
+                                    height: 25,
+                                  ),
+                                ),
                                 const SizedBox(
                                   height: 3,
                                 ),
@@ -622,6 +637,31 @@ class _ReelsWidgetState extends State<ReelsWidget>
                 ),
               ),
             ),
+            if (_showLikeAnimation)
+              Positioned.fill(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: /*Icon(
+                      Icons.favorite,
+                      color: Colors.red.withOpacity(0.8),
+                      // Slightly transparent
+                      size: 100,
+                    )*/
+                        Opacity(
+                      opacity: 0.5,
+                      child: Image.asset(
+                        likeOrVote == 1
+                            ? 'assets/images/like.png'
+                            : 'assets/images/vote_given.png',
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       );

@@ -443,7 +443,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
+             /*     Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -461,7 +461,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 40,
                       ),
                     ],
-                  )
+                  )*/
                 ],
               ),
             ),

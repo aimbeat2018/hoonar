@@ -154,19 +154,33 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                               ],
                             ),
                           ),
+
+                          Positioned(
+                            bottom: 10,
+                            right: 0,
+                            left: 0,
+                            child: IconButton(
+                              icon: Icon(Icons.camera,
+                                  size: 60,
+                                  color: /*myLoading.isDark
+                                  ? Colors.white
+                                  : Colors.black*/Colors.white),
+                              onPressed: captureImage,
+                            ),
+                          ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 60.0),
+                      /*Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
                         child: IconButton(
                           icon: Icon(Icons.camera,
                               size: 60,
-                              color: myLoading.isDark
+                              color: *//*myLoading.isDark
                                   ? Colors.white
-                                  : Colors.black),
+                                  : Colors.black*//*Colors.white),
                           onPressed: captureImage,
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 );

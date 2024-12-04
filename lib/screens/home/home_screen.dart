@@ -15,6 +15,7 @@ import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/view_all_screen.dart';
 import 'package:hoonar/screens/home/widgets/carousel_page_view.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
+import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:hoonar/shimmerLoaders/home_slider_shimmers.dart';
 import 'package:hoonar/shimmerLoaders/list_horizontal_shimmer.dart';
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel =
-          ListCommonRequestModel(limit: /*paginationLimit*/ 3);
+          ListCommonRequestModel(limit: paginationLimit);
 
       await homeProvider.getHomePostList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -170,14 +171,55 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Icon(
-                Icons.notifications,
-                color: myLoading.isDark ? Colors.white : Colors.black,
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  SlideRightRoute(page: NotificationListScreen()),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Stack(
+                  children: [
+                    Icon(
+                      Icons.notifications,
+                      color: myLoading.isDark ? Colors.white : Colors.black,
+                      size: 30, // Adjust size as needed
+                    ),
+                    // Notification count
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red, // Background color for the count
+                          shape: BoxShape.circle, // Circular shape
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '5', // Replace with your notification count variable
+                            style: const TextStyle(
+                              color: Colors.white, // Text color
+                              fontSize: 12, // Font size
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
+
         ),
         body: SafeArea(
           child: RefreshIndicator(
@@ -290,18 +332,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts!.isEmpty
                                     ? DataNotFound()
-                                    : SizedBox(
+                                    : /*SizedBox(
                                         // height: screenHeight * 0.58,
                                         child: CarouselPageView(
-                                          sliderModelList: homeProvider
-                                                  .homePostSuccessModel!
-                                                  .data![_currentIndex]
-                                                  .posts ??
-                                              [],
-                                          isDarkMode: myLoading.isDark,
-                                        ))
+                                        sliderModelList: homeProvider
+                                                .homePostSuccessModel!
+                                                .data![_currentIndex]
+                                                .posts ??
+                                            [],
+                                        isDarkMode: myLoading.isDark,
+                                      ))*/
+                            SizedBox(
+                              height: screenHeight * 0.58,
+                                child: SliderPageView(
+                                  sliderModelList: homeProvider
+                                      .homePostSuccessModel!
+                                      .data![_currentIndex]
+                                      .posts ??
+                                      [],
+                                  isDarkMode: myLoading.isDark,
+                                ))
                           ],
                         ),
+                  SizedBox(
+                    height: 15,
+                  ),
                   Center(
                     child: InkWell(
                       onTap: () {

@@ -4,7 +4,12 @@ import '../constants/session_manager.dart';
 import '../constants/utils.dart';
 
 class CommonApiMethods {
-  final Dio dio = Dio();
+  final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: Duration(minutes: 10), // 10 seconds
+      receiveTimeout: Duration(minutes: 10),
+    )
+  );
   final SessionManager sessionManager = SessionManager();
 
   CommonApiMethods() {
@@ -83,6 +88,7 @@ class CommonApiMethods {
   }) async {
     try {
       final formData = await data; // Await here to get the FormData
+
 
       final response = await dio.request(
         url,
