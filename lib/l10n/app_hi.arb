@@ -239,5 +239,6 @@
   "withdraw_request": "निकासी अनुरोध",
   "withdraw_request_list": "निकासी अनुरोध सूची",
   "areYouSureYouWantToWithdraw": "क्या आप वाकई {amount} राशि निकालना चाहते हैं?",
-  "withdraw": "निकालें"
+  "withdraw": "निकालें",
+  "uploadVideoMsg": "आप {fromDate} से {toDate} की अवधि के दौरान वीडियो अपलोड करने की अनुमति है।"
 }

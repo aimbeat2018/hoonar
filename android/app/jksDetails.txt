@@ -1,0 +1,3 @@
+jks name : hoonarstar.jks
+key name : hoonarstar
+password : hoonarstar123

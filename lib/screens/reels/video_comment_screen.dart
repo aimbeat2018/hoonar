@@ -232,6 +232,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                         commentDataList = commentData.data!;
                       }
                       return ListView.builder(
+                        controller: _scrollController,
                         itemCount: commentDataList.length,
                         itemBuilder: (context, index) {
                           return _buildCommentItem(

@@ -3,6 +3,7 @@ class CommonRequestModel {
   String? gender;
   String? avatarId;
   String? rewardId;
+  String? levelId;
   String? soundId;
   String? categoryId;
   String? deviceToken;
@@ -16,6 +17,7 @@ class CommonRequestModel {
       this.rewardId,
       this.soundId,
       this.categoryId,
+      this.levelId,
       this.notificationStatus,
       this.amount,
       this.deviceToken});
@@ -30,6 +32,7 @@ class CommonRequestModel {
     deviceToken = json['device_token'];
     notificationStatus = json['notification_status'];
     amount = json['amount'];
+    levelId = json['level_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +46,7 @@ class CommonRequestModel {
     data['device_token'] = deviceToken;
     data['notification_status'] = notificationStatus;
     data['amount'] = amount;
+    data['level_id'] = levelId;
     return data;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
@@ -7,6 +8,7 @@ import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/hash_tag_list_model.dart';
 import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
+import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/post_list_success_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/user_search_history_model.dart';
@@ -22,6 +24,12 @@ class HomeProvider extends ChangeNotifier {
   ValueNotifier<VideoCommentListModel?> commentListNotifier =
       ValueNotifier(null);
 
+  ValueNotifier<String> notificationCountNotifier = ValueNotifier('0');
+
+  ValueNotifier<NotificationListModel?> notificationListNotifier =
+      ValueNotifier(null);
+  double _uploadProgress = 0.0;
+
   bool _isCategoryLoading = false;
   bool _isPostLoading = false;
   bool _isHomeLoading = false;
@@ -31,19 +39,25 @@ class HomeProvider extends ChangeNotifier {
   bool _isHashTagLoading = false;
   bool _isViewAllLoading = false;
   bool _isSearchLoading = false;
+  bool _isNotificationLoading = false;
+  bool _isReadNotificationLoading = false;
   String? _errorMessage;
   CategoryListSuccessModel? _categoryListSuccessModel;
   PostListSuccessModel? _postListSuccessModel;
   HomePostSuccessModel? _homePostSuccessModel;
   FollowUnfollowSuccessModel? _likeUnlikeModel;
   FollowUnfollowSuccessModel? _deleteCommentModel;
+  NotificationListModel? _notificationListModel;
   FollowUnfollowSuccessModel? _addPostModel;
+  FollowUnfollowSuccessModel? _notificationReadModel;
   VideoCommentListModel? _videoCommentListModel;
   HashTagListModel? _hashTagListModel;
   HomePageOtherDataModel? _homePageOtherDataModel;
   HomePageOtherViewAllModel? _homePageOtherViewAllModel;
   SearchListModel? _searchListModel;
   UserSearchHistoryModel? _userSearchHistoryModel;
+
+  double get uploadProgress => _uploadProgress;
 
   bool get isCategoryLoading => _isCategoryLoading;
 
@@ -77,6 +91,11 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get likeUnlikeVideoModel => _likeUnlikeModel;
 
   FollowUnfollowSuccessModel? get deleteCommentModel => _deleteCommentModel;
+
+  FollowUnfollowSuccessModel? get notificationReadModel =>
+      _notificationReadModel;
+
+  NotificationListModel? get notificationListModel => _notificationListModel;
 
   FollowUnfollowSuccessModel? get addPostModel => _addPostModel;
 
@@ -216,16 +235,26 @@ class HomeProvider extends ChangeNotifier {
       AddPostRequestModel requestModel, String accessToken) async {
     _isAddPostLoading = true;
     _errorMessage = null;
+    _uploadProgress = 0.0;
     notifyListeners();
+    print("Progress1" + _uploadProgress.toString());
 
     try {
-      FollowUnfollowSuccessModel successModel =
-          await _homePageService.addPost(requestModel, accessToken);
+      FollowUnfollowSuccessModel successModel = await _homePageService.addPost(
+        requestModel,
+        accessToken,
+        onProgress: (sent, total) {
+          _uploadProgress = sent / total; // Update progress
+          print("Progress" + _uploadProgress.toString());
+          notifyListeners();
+        },
+      );
       _addPostModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isAddPostLoading = false;
+      print("Progress2" + _uploadProgress.toString());
       notifyListeners();
     }
   }
@@ -238,7 +267,7 @@ class HomeProvider extends ChangeNotifier {
 
     try {
       FollowUnfollowSuccessModel successModel =
-      await _homePageService.updatePost(requestModel, accessToken);
+          await _homePageService.updatePost(requestModel, accessToken);
       _addPostModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
@@ -247,7 +276,6 @@ class HomeProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 
   Future<void> getHashTagList(
       ListCommonRequestModel requestModel, String accessToken) async {
@@ -412,6 +440,50 @@ class HomeProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> getNotificationList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isNotificationLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      NotificationListModel successModel =
+          await _homePageService.getNotificationList(requestModel, accessToken);
+      _notificationListModel = successModel;
+      if (successModel.status == '200') {
+        notificationCountNotifier.value =
+            _notificationListModel!.unreadCount!.toString();
+        notificationListNotifier.value = _notificationListModel;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isNotificationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> markNotificationAsRead(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isReadNotificationLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel = await _homePageService
+          .markNotificationAsRead(requestModel, accessToken);
+      _notificationReadModel = successModel;
+      if (successModel.status == '200') {
+        notificationCountNotifier.value = '0';
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isReadNotificationLoading = false;
       notifyListeners();
     }
   }

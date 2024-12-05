@@ -24,6 +24,9 @@ import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
+import 'package:hoonar/model/success_models/upload_video_status_model.dart';
+import 'package:hoonar/model/success_models/upload_video_status_model.dart';
+import 'package:hoonar/model/success_models/upload_video_status_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
@@ -277,6 +280,17 @@ class ContestService {
       data: requestModel.toJson(),
       accessToken: accessToken,
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<UploadVideoStatusModel> getUploadVideoStatus(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<UploadVideoStatusModel>(
+      '$baseUrl$getPostUploadStatusUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => UploadVideoStatusModel.fromJson(data),
     );
   }
 }

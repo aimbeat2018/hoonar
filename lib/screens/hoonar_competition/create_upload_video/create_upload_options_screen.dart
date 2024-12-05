@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/screens/hoonar_competition/create_upload_video/connectShare/connect_share_screen.dart';
-import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_options_screen.dart';
+import 'package:hoonar/constants/key_res.dart';
+import 'package:hoonar/constants/session_manager.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/model/success_models/upload_video_status_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/video_share_options_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,10 @@ import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
+import '../../../custom/snackbar_util.dart';
 import '../../../model/star_category_model.dart';
+import '../../../providers/contest_provider.dart';
+import '../../auth_screen/login_screen.dart';
 import '../../camera/capture_video_screen.dart';
 import '../../camera/sounds/select_sound_list_screen.dart';
 import '../../camera/video_preview_screen.dart';
@@ -32,6 +36,7 @@ class CreateUploadOptionsScreen extends StatefulWidget {
 class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
   List<StarCategoryModel> optionsList = [];
   File? _videoFile;
+  SessionManager sessionManager = SessionManager();
 
   @override
   void initState() {
@@ -68,8 +73,36 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
       ];
       setState(() {});
 
+      getUploadVideoStatus(context);
       showInfoDialog(context);
     });
+  }
+
+  Future<void> getUploadVideoStatus(BuildContext context) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      CommonRequestModel requestModel =
+          CommonRequestModel(levelId: KeyRes.selectedLevelId.toString());
+
+      await contestProvider.uploadVideoStatus(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.uploadVideoStatusModel?.status == '200') {
+        } else if (contestProvider.uploadVideoStatusModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.uploadVideoStatusModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+    setState(() {});
   }
 
   void showInfoDialog(BuildContext context) {
@@ -86,6 +119,45 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             ),
             content: Text(
               AppLocalizations.of(context)!.instructions,
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                child: Text(
+                  AppLocalizations.of(context)!.okay,
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  void showCompetitionDateDialog(
+      BuildContext context, UploadVideoStatusData model) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Consumer<MyLoading>(builder: (context, myLoading, child) {
+          return CupertinoAlertDialog(
+            title: Text(
+              AppLocalizations.of(context)!.alert,
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            content: Text(
+              AppLocalizations.of(context)!.uploadVideoMsg(
+                  model.uploadEndDate ?? '', model.uploadStartDate ?? ''),
               style: GoogleFonts.poppins(
                 color: myLoading.isDark ? Colors.white70 : Colors.black87,
               ),
@@ -151,6 +223,8 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = screenWidth < 600 ? 2 : 3;
+    final contestProvider = Provider.of<ContestProvider>(context);
+
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
@@ -225,20 +299,43 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                       return InkWell(
                         onTap: () {
                           if (index == 0) {
-                          /*  Navigator.push(
+                            /*  Navigator.push(
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );*/
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: const CaptureVideoScreen(
-                                    from: "level",
-                                  )),
-                            );
+                            if (contestProvider.uploadVideoStatusModel !=
+                                    null &&
+                                contestProvider
+                                        .uploadVideoStatusModel!.status !=
+                                    "200") {
+                              Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                    page: const CaptureVideoScreen(
+                                  from: "level",
+                                )),
+                              );
+                            } else {
+                              showCompetitionDateDialog(
+                                  context,
+                                  contestProvider
+                                      .uploadVideoStatusModel!.data!);
+                            }
                           } else if (index == 1) {
-                            _selectVideoFromGallery();
-                          } /*else if (index == 2) {
+                            if (contestProvider.uploadVideoStatusModel !=
+                                    null &&
+                                contestProvider
+                                        .uploadVideoStatusModel!.status ==
+                                    "200") {
+                              _selectVideoFromGallery();
+                            } else {
+                              showCompetitionDateDialog(
+                                  context,
+                                  contestProvider
+                                      .uploadVideoStatusModel!.data!);
+                            }
+                          }
+                          /*else if (index == 2) {
                             Navigator.push(
                               context,
                               SlideRightRoute(
@@ -251,7 +348,8 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                               context,
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );
-                          }*/ else if (index == 2) {
+                          }*/
+                          else if (index == 2) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

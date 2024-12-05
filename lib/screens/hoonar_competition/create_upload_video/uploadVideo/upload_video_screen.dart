@@ -220,38 +220,6 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     setState(() {});
   }
 
-  void showProgressLoader(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Uploading Post',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                LinearProgressIndicator(value: progressPercentage),
-                const SizedBox(height: 10),
-                Text('${(progressPercentage * 100).toInt()}%',
-                    // Display percentage
-                    style: const TextStyle(fontSize: 16)),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> getKycStatus(
       BuildContext context, CommonRequestModel requestModel) async {
     final contestProvider =
@@ -871,7 +839,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     ),
                   ],
                 ),
-              /*  if (isLoading)
+                /*  if (isLoading)
                   Positioned.fill(
                     top: 0,
                     bottom: 0,
@@ -884,21 +852,53 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     ),
                   ),*/
                 if (isLoading)
-                  Positioned.fill(
-                    top: 0,
-                    bottom: 0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          value: progressPercentage,
-                          backgroundColor: Colors.grey[200],
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  Selector<HomeProvider, double>(
+                    selector: (_, provider) => provider.uploadProgress,
+                    builder: (_, uploadProgress, __) {
+                      return Positioned(
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: Center(
+                          child: Wrap(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 10),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      value: uploadProgress,
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.blue),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      '${(uploadProgress * 100).toStringAsFixed(1)}%',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 13,
+                                        color: myLoading.isDark
+                                            ? Colors.black
+                                            : Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 16),
-                        Text('${(progressPercentage * 100).toInt()}%'),
-                      ],
-                    ),
+                      );
+                    },
                   )
               ],
             ),

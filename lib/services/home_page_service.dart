@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_search_data_request_model.dart';
@@ -19,6 +20,9 @@ import 'package:hoonar/model/success_models/home_page_other_view_all_model.dart'
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
+import 'package:hoonar/model/success_models/notification_list_model.dart';
+import 'package:hoonar/model/success_models/notification_list_model.dart';
+import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/post_list_success_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
@@ -107,23 +111,28 @@ class HomePageService {
   }
 
   Future<FollowUnfollowSuccessModel> addPost(
-      AddPostRequestModel requestModel, String accessToken) async {
+    AddPostRequestModel requestModel,
+    String accessToken, {
+    void Function(int sent, int total)?
+        onProgress, // Add progress tracking callback
+  }) async {
     return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$addPostUrl',
       method: 'POST',
       data: requestModel.toFormData(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+      onProgress: onProgress,
     );
   }
 
   Future<FollowUnfollowSuccessModel> updatePost(
       AddPostRequestModel requestModel, String accessToken) async {
-
     final r = RetryOptions(maxAttempts: 3, delayFactor: Duration(seconds: 2));
 
     return await r.retry(
-          () async {
-        return await apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+      () async {
+        return await apiMethods
+            .sendMultipartRequest<FollowUnfollowSuccessModel>(
           '$baseUrl$addPostUrl',
           method: 'POST',
           data: requestModel.toFormData(),
@@ -133,7 +142,7 @@ class HomePageService {
       },
       retryIf: (e) => e is DioException || e is SocketException,
     );
-  /*  return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+    /*  return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$updatePostUrl',
       method: 'POST',
       data: requestModel.toFormData(),
@@ -226,6 +235,26 @@ class HomePageService {
       '$baseUrl$deleteCommentUrl',
       method: 'POST',
       data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<NotificationListModel> getNotificationList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<NotificationListModel>(
+      '$baseUrl$getNotificationListUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => NotificationListModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> markNotificationAsRead(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$markNotificationAsReadUrl',
+      // method: 'POST',
+      // data: requestModel.toJson(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }

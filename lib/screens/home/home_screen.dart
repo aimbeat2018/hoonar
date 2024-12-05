@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getHomePost(context);
       getHomePageOtherPost(context);
+      getNotificationCount(context);
     });
   }
 
@@ -124,6 +125,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> getNotificationCount(BuildContext context) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel = ListCommonRequestModel(
+        start: 1,
+      );
+
+      await homeProvider.getNotificationList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.notificationListModel?.status == '200') {
+        } else if (homeProvider.notificationListModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.notificationListModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
   @override
   void dispose() {
     controller.dispose();
@@ -188,38 +215,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       size: 30, // Adjust size as needed
                     ),
                     // Notification count
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.red, // Background color for the count
-                          shape: BoxShape.circle, // Circular shape
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Center(
-                          child: Text(
-                            '5', // Replace with your notification count variable
-                            style: const TextStyle(
-                              color: Colors.white, // Text color
-                              fontSize: 12, // Font size
-                              fontWeight: FontWeight.bold,
+                    if (homeProvider.notificationCountNotifier.value != "0")
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red, // Background color for the count
+                            shape: BoxShape.circle, // Circular shape
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Center(
+                            child: Text(
+                              homeProvider.notificationCountNotifier.value,
+                              style: const TextStyle(
+                                color: Colors.white, // Text color
+                                fontSize: 12, // Font size
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
           ],
-
         ),
         body: SafeArea(
           child: RefreshIndicator(
@@ -332,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts!.isEmpty
                                     ? DataNotFound()
-                                    : /*SizedBox(
+                                    : SizedBox(
                                         // height: screenHeight * 0.58,
                                         child: CarouselPageView(
                                         sliderModelList: homeProvider
@@ -341,17 +368,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .posts ??
                                             [],
                                         isDarkMode: myLoading.isDark,
-                                      ))*/
-                            SizedBox(
-                              height: screenHeight * 0.58,
-                                child: SliderPageView(
-                                  sliderModelList: homeProvider
-                                      .homePostSuccessModel!
-                                      .data![_currentIndex]
-                                      .posts ??
-                                      [],
-                                  isDarkMode: myLoading.isDark,
-                                ))
+                                      ))
+                            /* SizedBox(
+                                        height: screenHeight * 0.58,
+                                        child: SliderPageView(
+                                          sliderModelList: homeProvider
+                                                  .homePostSuccessModel!
+                                                  .data![_currentIndex]
+                                                  .posts ??
+                                              [],
+                                          isDarkMode: myLoading.isDark,
+                                        ))*/
                           ],
                         ),
                   SizedBox(

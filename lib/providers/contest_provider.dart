@@ -15,6 +15,7 @@ import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
+import 'package:hoonar/model/success_models/upload_video_status_model.dart';
 import 'package:hoonar/model/success_models/user_rank_success_model.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
@@ -41,6 +42,7 @@ class ContestProvider extends ChangeNotifier {
   bool _isNewsLoading = false;
   bool _isDocumentLoading = false;
   bool _isKycStatusLoading = false;
+  bool _isUploadStatusLoading = false;
   bool _isRewardsLoading = false;
   bool _isWalletTransactionLoading = false;
   bool _isWithdrawTransactionLoading = false;
@@ -73,6 +75,7 @@ class ContestProvider extends ChangeNotifier {
   SoundListModel? _soundListModel;
   SoundListModel? _savedSoundListModel;
   DraftFeedListModel? _draftFeedListModel;
+  UploadVideoStatusModel? _uploadVideoStatusModel;
   WalletTransactionListModel? _walletTransactionListModel;
   WithdrawRequestListModel? _withdrawRequestListModel;
   List<LeaderboardListData> _leaderboardList = [];
@@ -116,6 +119,8 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isSoundLoading => _isSoundLoading;
 
+  bool get isUploadStatusLoading => _isUploadStatusLoading;
+
   String? get errorMessage => _errorMessage;
 
   LevelListModel? get levelListModel => _levelListModel;
@@ -145,6 +150,8 @@ class ContestProvider extends ChangeNotifier {
   RewardListModel? get rewardListModel => _rewardListModel;
 
   SoundListModel? get soundListModel => _soundListModel;
+
+  UploadVideoStatusModel? get uploadVideoStatusModel => _uploadVideoStatusModel;
 
   NewsEventSuccessModel? get upcomingNewsEventSuccessModel =>
       _upcomingNewsEventSuccessModel;
@@ -598,6 +605,25 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isBankDetailsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> uploadVideoStatus(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isUploadStatusLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      UploadVideoStatusModel successModel =
+          await _contestService.getUploadVideoStatus(requestModel, accessToken);
+      _uploadVideoStatusModel = successModel;
+      if (successModel.status == "200" && successModel.data != null) {}
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isUploadStatusLoading = false;
       notifyListeners();
     }
   }

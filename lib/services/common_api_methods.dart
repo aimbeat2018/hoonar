@@ -4,12 +4,10 @@ import '../constants/session_manager.dart';
 import '../constants/utils.dart';
 
 class CommonApiMethods {
-  final Dio dio = Dio(
-    BaseOptions(
-      connectTimeout: Duration(minutes: 10), // 10 seconds
-      receiveTimeout: Duration(minutes: 10),
-    )
-  );
+  final Dio dio = Dio(BaseOptions(
+    connectTimeout: Duration(minutes: 10), // 10 seconds
+    receiveTimeout: Duration(minutes: 10),
+  ));
   final SessionManager sessionManager = SessionManager();
 
   CommonApiMethods() {
@@ -85,10 +83,10 @@ class CommonApiMethods {
     String method = 'POST',
     String? accessToken,
     required T Function(dynamic) fromJson,
+    void Function(int sent, int total)? onProgress,
   }) async {
     try {
       final formData = await data; // Await here to get the FormData
-
 
       final response = await dio.request(
         url,
@@ -99,6 +97,7 @@ class CommonApiMethods {
               accessToken,
           contentType: 'multipart/form-data',
         ),
+        onSendProgress: onProgress,
       );
 
       if (response.statusCode == 200) {

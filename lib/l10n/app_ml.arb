@@ -239,5 +239,6 @@
   "withdraw_request": "പിന്‍വലിക്കല്‍ അപേക്ഷ",
   "withdraw_request_list": "പിന്‍വലിക്കല്‍ അഭ്യര്‍ത്ഥന പട്ടിക",
   "areYouSureYouWantToWithdraw": "നിങ്ങള്‍ തീർച്ചയായും {amount} തുക പിന്‍വലിക്കണോ?",
-  "withdraw": "പിന്‍വലിക്കുക"
+  "withdraw": "പിന്‍വലിക്കുക",
+  "uploadVideoMsg": "നിങ്ങൾക്ക് {fromDate} മുതൽ {toDate} വരെ കാലയളവിൽ വീഡിയോകൾ അപ്ലോഡ് ചെയ്യാൻ അനുവാദമുണ്ട്."
 }
