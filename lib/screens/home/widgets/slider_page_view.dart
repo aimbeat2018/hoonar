@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +10,6 @@ import 'package:hoonar/screens/customSlider/models.dart';
 import 'package:hoonar/screens/home/widgets/options_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../model/success_models/home_post_success_model.dart';
@@ -36,8 +34,6 @@ class _SliderPageViewState extends State<SliderPageView>
   late AnimationController controller;
   bool isLoading = false;
   bool isFollowLoading = false;
-  List<VideoPlayerController> videoControllers = [];
-  List<ChewieController> chewieControllers = [];
   List<Widget> children = [];
   bool _isPaused = false;
 
@@ -68,8 +64,7 @@ class _SliderPageViewState extends State<SliderPageView>
   Future<void> setChildrenDataWidget() async {
     setState(() => isLoading = true);
 
-    videoControllers.clear();
-    chewieControllers.clear();
+
     children.clear();
 
     final loadedWidgets =
@@ -268,14 +263,6 @@ class _SliderPageViewState extends State<SliderPageView>
 
   @override
   void dispose() {
-    for (final controller in videoControllers) {
-      controller.dispose();
-    }
-    for (final chewieController in chewieControllers) {
-      chewieController.dispose();
-    }
-    videoControllers.clear();
-    chewieControllers.clear();
     controller.dispose();
     super.dispose();
   }
