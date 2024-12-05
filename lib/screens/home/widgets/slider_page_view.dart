@@ -146,7 +146,10 @@ class _SliderPageViewState extends State<SliderPageView>
               child: SizedBox(
                 width: 250,
                 height: 250,
-                child: Image.network(data.postImage!,fit: BoxFit.fill,),
+                child: Image.network(
+                  data.postImage!,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           ),

@@ -359,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts!.isEmpty
                                     ? DataNotFound()
-                                    : SizedBox(
+                                    : /*SizedBox(
                                         // height: screenHeight * 0.58,
                                         child: CarouselPageView(
                                         sliderModelList: homeProvider
@@ -368,8 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .posts ??
                                             [],
                                         isDarkMode: myLoading.isDark,
-                                      ))
-                            /* SizedBox(
+                                      ))*/
+                             SizedBox(
                                         height: screenHeight * 0.58,
                                         child: SliderPageView(
                                           sliderModelList: homeProvider
@@ -378,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .posts ??
                                               [],
                                           isDarkMode: myLoading.isDark,
-                                        ))*/
+                                        ))
                           ],
                         ),
                   SizedBox(
