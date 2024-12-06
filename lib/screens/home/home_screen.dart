@@ -369,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             [],
                                         isDarkMode: myLoading.isDark,
                                       ))*/
-                             SizedBox(
+                                    SizedBox(
                                         height: screenHeight * 0.58,
                                         child: SliderPageView(
                                           sliderModelList: homeProvider
