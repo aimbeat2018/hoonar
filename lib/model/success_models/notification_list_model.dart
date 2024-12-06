@@ -33,8 +33,8 @@ class NotificationListModel {
 
 class NotificationData {
   int? notificationId;
-  int? senderUserId;
-  int? receivedUserId;
+  /*int? senderUserId;
+  String? receivedUserId;*/
   int? notificationType;
   String? message;
   String? createdAt;
@@ -43,8 +43,8 @@ class NotificationData {
 
   NotificationData(
       {this.notificationId,
-      this.senderUserId,
-      this.receivedUserId,
+     /* this.senderUserId,
+      this.receivedUserId,*/
       this.notificationType,
       this.message,
       this.createdAt,
@@ -53,8 +53,8 @@ class NotificationData {
 
   NotificationData.fromJson(Map<String, dynamic> json) {
     notificationId = json['notification_id'];
-    senderUserId = json['sender_user_id'];
-    receivedUserId = json['received_user_id'];
+   /* senderUserId = json['sender_user_id'];
+    receivedUserId = json['received_user_id'];*/
     notificationType = json['notification_type'];
     message = json['message'];
     createdAt = json['created_at'];
@@ -65,8 +65,8 @@ class NotificationData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['notification_id'] = notificationId;
-    data['sender_user_id'] = senderUserId;
-    data['received_user_id'] = receivedUserId;
+/*    data['sender_user_id'] = senderUserId;
+    data['received_user_id'] = receivedUserId;*/
     data['notification_type'] = notificationType;
     data['message'] = message;
     data['created_at'] = createdAt;
