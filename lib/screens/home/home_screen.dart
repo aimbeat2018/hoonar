@@ -13,7 +13,6 @@ import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/view_all_screen.dart';
-import 'package:hoonar/screens/home/widgets/carousel_page_view.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
@@ -206,13 +205,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
                 child: Stack(
                   children: [
                     Icon(
                       Icons.notifications,
                       color: myLoading.isDark ? Colors.white : Colors.black,
-                      size: 30, // Adjust size as needed
+                      size: 25, // Adjust size as needed
                     ),
                     // Notification count
                     if (homeProvider.notificationCountNotifier.value != "0")
@@ -226,8 +225,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             shape: BoxShape.circle, // Circular shape
                           ),
                           constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
+                            minWidth: 14,
+                            minHeight: 14,
                           ),
                           child: Center(
                             child: Text(
