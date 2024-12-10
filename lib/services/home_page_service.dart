@@ -154,7 +154,7 @@ class HomePageService {
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<HashTagListModel>(
       '$baseUrl$getHashTagListUrl',
-      data: requestModel.toJson(),
+      // data: requestModel.toJson(),
       fromJson: (data) => HashTagListModel.fromJson(data),
     );
   }

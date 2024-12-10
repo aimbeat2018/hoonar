@@ -13,6 +13,7 @@ import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/view_all_screen.dart';
+import 'package:hoonar/screens/home/widgets/carousel_page_view.dart';
 import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
@@ -358,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts!.isEmpty
                                     ? DataNotFound()
-                                    : /*SizedBox(
+                                    : SizedBox(
                                         // height: screenHeight * 0.58,
                                         child: CarouselPageView(
                                         sliderModelList: homeProvider
@@ -367,8 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .posts ??
                                             [],
                                         isDarkMode: myLoading.isDark,
-                                      ))*/
-                                    SizedBox(
+                                      ))
+                                   /* SizedBox(
                                         height: screenHeight * 0.58,
                                         child: SliderPageView(
                                           sliderModelList: homeProvider
@@ -377,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .posts ??
                                               [],
                                           isDarkMode: myLoading.isDark,
-                                        ))
+                                        ))*/
                           ],
                         ),
                   SizedBox(

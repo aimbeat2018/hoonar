@@ -839,18 +839,14 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                     ),
                   ],
                 ),
-                /*  if (isLoading)
+                if (isLoading)
                   Positioned.fill(
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      color: Colors.black.withOpacity(0.5),
-                      // semi-transparent background
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    child: ModalBarrier(
+                      dismissible: false, // Prevent closing by touch
+                      color: Colors.black
+                          .withOpacity(0.5), // Optional: Dim background
                     ),
-                  ),*/
+                  ),
                 if (isLoading)
                   Selector<HomeProvider, double>(
                     selector: (_, provider) => provider.uploadProgress,
