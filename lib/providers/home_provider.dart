@@ -237,7 +237,6 @@ class HomeProvider extends ChangeNotifier {
     _errorMessage = null;
     _uploadProgress = 0.0;
     notifyListeners();
-    print("Progress1" + _uploadProgress.toString());
 
     try {
       FollowUnfollowSuccessModel successModel = await _homePageService.addPost(
@@ -245,7 +244,6 @@ class HomeProvider extends ChangeNotifier {
         accessToken,
         onProgress: (sent, total) {
           _uploadProgress = sent / total; // Update progress
-          print("Progress" + _uploadProgress.toString());
           notifyListeners();
         },
       );
@@ -254,7 +252,7 @@ class HomeProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isAddPostLoading = false;
-      print("Progress2" + _uploadProgress.toString());
+
       notifyListeners();
     }
   }

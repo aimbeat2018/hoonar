@@ -398,10 +398,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 colors: [
                                                   myLoading.isDark
                                                       ? Colors.white
-                                                      : Colors.black,
+                                                      : hintGreyColor,
                                                   myLoading.isDark
                                                       ? greyTextColor8
-                                                      : greyTextColor6
+                                                      : greyTextColor8
                                                 ],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter,
@@ -414,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               textAlign: TextAlign.center,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
-                                                color: Colors.black,
+                                                color: myLoading.isDark?Colors.black:Colors.white,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -511,10 +511,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                           BorderRadius.circular(
                                                               8),
                                                       gradient:
-                                                          const LinearGradient(
+                                                           LinearGradient(
                                                         colors: [
-                                                          Colors.white,
-                                                          greyTextColor8
+                                                          myLoading.isDark
+                                                              ? Colors.white
+                                                              : greyTextColor4,
+                                                          myLoading.isDark
+                                                              ? greyTextColor8
+                                                              : greyTextColor6
                                                         ],
                                                         begin:
                                                             Alignment.topCenter,
@@ -537,7 +541,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style:
                                                           GoogleFonts.poppins(
                                                         fontSize: 14,
-                                                        color: Colors.black,
+                                                        color:  myLoading.isDark?Colors.black:Colors.white,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),

@@ -128,7 +128,7 @@ class _CategoryWiseVideosListScreenState
             }
           }
         }
-      }else if(homeProvider.postListSuccessModel?.status == '401'){
+      } else if (homeProvider.postListSuccessModel?.status == '401') {
         if (page == 1) {
           postListData = homeProvider.postListSuccessModel!.data!;
         } else {
@@ -320,46 +320,53 @@ class _CategoryWiseVideosListScreenState
                       color: Colors.white,
                       child: homeProvider.isCategoryLoading
                           ? CategoryShimmer()
-                          : ListView.builder(
-                              controller: scrollController,
-                              padding: const EdgeInsets.all(10),
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: homeProvider
-                                  .categoryListSuccessModel!.data!.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedCategory = homeProvider
-                                              .categoryListSuccessModel!
-                                              .data![index]
-                                              .categoryName ??
-                                          '';
-                                      selectedCategoryId = homeProvider
-                                              .categoryListSuccessModel!
-                                              .data![index]
-                                              .categoryId ??
-                                          -1;
-                                      page =1;
-                                      getPostByCategory(context);
-                                    });
-                                    _toggleAnimation();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      homeProvider.categoryListSuccessModel!
-                                              .data![index].categoryName ??
-                                          '',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 17,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w500,
+                          : Scrollbar(
+                              interactive: true,
+                              // Allows interactive scrolling
+                              thumbVisibility: true,
+                              // Always shows the scrollbar thumb
+                              thickness: 1.8,
+                              child: ListView.builder(
+                                controller: scrollController,
+                                padding: const EdgeInsets.all(10),
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: homeProvider
+                                    .categoryListSuccessModel!.data!.length,
+                                itemBuilder: (context, index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedCategory = homeProvider
+                                                .categoryListSuccessModel!
+                                                .data![index]
+                                                .categoryName ??
+                                            '';
+                                        selectedCategoryId = homeProvider
+                                                .categoryListSuccessModel!
+                                                .data![index]
+                                                .categoryId ??
+                                            -1;
+                                        page = 1;
+                                        getPostByCategory(context);
+                                      });
+                                      _toggleAnimation();
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        homeProvider.categoryListSuccessModel!
+                                                .data![index].categoryName ??
+                                            '',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 17,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                     ),
                   ),

@@ -10,6 +10,7 @@ import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/success_models/upload_video_status_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/video_share_options_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -144,6 +145,12 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
 
   void showCompetitionDateDialog(
       BuildContext context, UploadVideoStatusData model) {
+    DateTime startDate = DateFormat('yyyy-MM-dd').parse(model.uploadStartDate!);
+    String formattedStartDate = DateFormat('dd-MM-yyyy').format(startDate);
+
+    DateTime endDate = DateFormat('yyyy-MM-dd').parse(model.uploadEndDate!);
+    String formattedEndDate = DateFormat('dd-MM-yyyy').format(endDate);
+
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -156,8 +163,8 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
               ),
             ),
             content: Text(
-              AppLocalizations.of(context)!.uploadVideoMsg(
-                  model.uploadEndDate ?? '', model.uploadStartDate ?? ''),
+              AppLocalizations.of(context)!
+                  .uploadVideoMsg(formattedEndDate, formattedStartDate),
               style: GoogleFonts.poppins(
                 color: myLoading.isDark ? Colors.white70 : Colors.black87,
               ),
@@ -306,7 +313,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                             if (contestProvider.uploadVideoStatusModel !=
                                     null &&
                                 contestProvider
-                                        .uploadVideoStatusModel!.status !=
+                                        .uploadVideoStatusModel!.status ==
                                     "200") {
                               Navigator.push(
                                 context,

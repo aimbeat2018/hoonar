@@ -65,8 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
-      ListCommonRequestModel requestModel =
-          ListCommonRequestModel(limit: paginationLimit);
+      ListCommonRequestModel requestModel = ListCommonRequestModel(limit: 5);
 
       await homeProvider.getHomePostList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -206,7 +205,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
                 child: Stack(
                   children: [
                     Icon(
@@ -285,14 +285,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: _currentIndex == index
-                                        ? const BoxDecoration(
+                                        ? BoxDecoration(
                                             gradient: LinearGradient(
-                                              begin: Alignment(0.00, 1.00),
-                                              end: Alignment(0, -1),
+                                              begin: Alignment(0, -1), // Top
+                                              end: Alignment(0, 1), // Bottom
                                               colors: [
-                                                Colors.black,
-                                                Color(0xFF313131),
-                                                Color(0xFF636363)
+                                                myLoading.isDark
+                                                    ? Colors.black
+                                                    : greyTextColor3,
+                                                myLoading.isDark
+                                                    ? Color(0xFF313131)
+                                                    : Colors.grey.shade500,
+                                                myLoading.isDark
+                                                    ? Color(0xFF636363)
+                                                    : Colors.grey.shade400
                                               ],
                                             ),
                                             borderRadius: BorderRadius.only(
@@ -369,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             [],
                                         isDarkMode: myLoading.isDark,
                                       ))
-                                   /* SizedBox(
+                            /* SizedBox(
                                         height: screenHeight * 0.58,
                                         child: SliderPageView(
                                           sliderModelList: homeProvider
@@ -402,13 +408,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               colors: [
                                 myLoading.isDark
                                     ? greyTextColor5
-                                    : greyTextColor6,
+                                    : greyTextColor3,
                                 myLoading.isDark
                                     ? greyTextColor6
                                     : greyTextColor8,
                                 myLoading.isDark
                                     ? greyTextColor5
-                                    : greyTextColor6,
+                                    : greyTextColor4,
                               ],
                             )),
                         child: Row(

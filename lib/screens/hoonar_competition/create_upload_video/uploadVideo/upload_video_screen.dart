@@ -630,7 +630,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                     ),
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                           const SizedBox(
                             width: 15,
                           ),
@@ -860,7 +860,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                           child: Wrap(
                             children: [
                               Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     horizontal: 25, vertical: 10),
                                 decoration: BoxDecoration(
                                     color: Colors.white,
@@ -872,18 +872,20 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                     CircularProgressIndicator(
                                       value: uploadProgress,
                                       backgroundColor: Colors.grey[200],
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.blue),
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Colors.blue),
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
-                                      '${(uploadProgress * 100).toStringAsFixed(1)}%',
+                                      // '${(uploadProgress * 100).toStringAsFixed(1)}%',
+                                      '${(uploadProgress).round()}%',
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
                                         color: myLoading.isDark
                                             ? Colors.black
-                                            : Colors.white,
+                                            : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

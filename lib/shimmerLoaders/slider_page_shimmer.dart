@@ -95,36 +95,40 @@ class _SliderPageShimmerState extends State<SliderPageShimmer>
                   height: 30, width: 30, child: CircularProgressIndicator()))
           : SizedBox(
               height: screenHeight,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onHorizontalDragEnd: ((details) {
-                      if (details.velocity.pixelsPerSecond.dx > 0) {
-                        _leftSwipe();
-                      } else {
-                        _rightSwipe();
-                      }
-                    }),
-                    child: SizedBox(
-                      width: double.maxFinite,
-                      height: 400,
-                      child: Stack(
-                        children: children.isNotEmpty ? stackItems() : [],
+              child: IntrinsicHeight(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onHorizontalDragEnd: ((details) {
+                          if (details.velocity.pixelsPerSecond.dx > 0) {
+                            _leftSwipe();
+                          } else {
+                            _rightSwipe();
+                          }
+                        }),
+                        child: SizedBox(
+                          width: double.maxFinite,
+                          height: 400,
+                          child: Stack(
+                            children: children.isNotEmpty ? stackItems() : [],
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      if (children.length > 1)
+                        CarouselSlider(
+                          position: activePage,
+                          amount: children.length,
+                          isDarkMode: myLoading.isDark,
+                        )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  if (children.length > 1)
-                    CarouselSlider(
-                      position: activePage,
-                      amount: children.length,
-                      isDarkMode: myLoading.isDark,
-                    )
-                ],
+                ),
               ),
             );
     });
