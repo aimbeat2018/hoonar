@@ -65,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
-      ListCommonRequestModel requestModel = ListCommonRequestModel(limit: 5);
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(limit: paginationLimit);
 
       await homeProvider.getHomePostList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -287,8 +288,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     decoration: _currentIndex == index
                                         ? BoxDecoration(
                                             gradient: LinearGradient(
-                                              begin: Alignment(0, -1), // Top
-                                              end: Alignment(0, 1), // Bottom
+                                              /* begin: Alignment(0.00, 1.00),
+                                              end: Alignment(0, -1),*/
+                                              begin: myLoading.isDark
+                                                  ? Alignment(0.00, 1.00)
+                                                  : Alignment(0, -1), // Top
+                                              end: myLoading.isDark
+                                                  ? Alignment(0, -1)
+                                                  : Alignment(0, 1), // Bottom
                                               colors: [
                                                 myLoading.isDark
                                                     ? Colors.black
@@ -298,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     : Colors.grey.shade500,
                                                 myLoading.isDark
                                                     ? Color(0xFF636363)
-                                                    : Colors.grey.shade400
+                                                    : Colors.grey.shade100
                                               ],
                                             ),
                                             borderRadius: BorderRadius.only(
@@ -330,9 +337,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                               : myLoading.isDark
                                                   ? Colors.white
                                                   : Colors.black,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: _currentIndex == index
+                                              ? FontWeight.bold
+                                              : FontWeight.w500,
                                           fontSize:
-                                              _currentIndex == index ? 13 : 12,
+                                              _currentIndex == index ? 15 : 13,
                                         ),
                                       ),
                                     ),
@@ -442,7 +451,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const ListHorizontalShimmer()
                       : Column(
                           children: [
-                            homeOtherData!.judgesChoicePostList == null
+                            /* homeOtherData!.judgesChoicePostList == null
                                 ? const SizedBox.shrink()
                                 : homeOtherData!.judgesChoicePostList!.isEmpty
                                     ? const SizedBox.shrink()
@@ -453,6 +462,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .judgesChoice,
                                               homeOtherData!
                                                       .judgesChoicePostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                        ],
+                                      ),*/
+
+                            homeOtherData!.dailyFeedPostList == null
+                                ? const SizedBox.shrink()
+                                : homeOtherData!.dailyFeedPostList!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : Column(
+                                        children: [
+                                          otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .dailyFeed,
+                                              homeOtherData!
+                                                      .dailyFeedPostList ??
                                                   [],
                                               myLoading.isDark),
                                         ],
@@ -602,12 +627,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               InkWell(
                 onTap: () {
-                  if (title == AppLocalizations.of(context)!.judgesChoice) {
+                  /* if (title == AppLocalizations.of(context)!.judgesChoice) {
                     Navigator.push(
                       context,
                       SlideRightRoute(
                           page: const ViewAllScreen(
                         type: 'judges_choice',
+                      )),
+                    );
+                  } */
+                  if (title == AppLocalizations.of(context)!.dailyFeed) {
+                    Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: const ViewAllScreen(
+                        type: 'daily_feeds',
                       )),
                     );
                   } else if (title == AppLocalizations.of(context)!.favrite) {

@@ -240,5 +240,6 @@
   "withdraw_request_list": "ତିଆଉ ପ୍ରସ୍ତାବ ତାଲିକା",
   "areYouSureYouWantToWithdraw": "ଆପଣ ନିଶ୍ଚିତ କି ଆପଣ {amount} ରାଶି ତିଆଉ କରିବାକୁ ଚାହାଁନ୍ତି?",
   "withdraw": "ତିଆଉ କରନ୍ତୁ",
-  "uploadVideoMsg": "ଆପଣ {fromDate} ରୁ {toDate} ପର୍ଯ୍ୟନ୍ତ ଅବଧିରେ ଭିଡିଓ ଅପଲୋଡ୍ କରିବାକୁ ଅନୁମତି ମିଳିଛି।"
+  "uploadVideoMsg": "ଆପଣ {fromDate} ରୁ {toDate} ପର୍ଯ୍ୟନ୍ତ ଅବଧିରେ ଭିଡିଓ ଅପଲୋଡ୍ କରିବାକୁ ଅନୁମତି ମିଳିଛି।",
+  "dailyFeed": "ଡେଲି ଫିଡ୍"
 }

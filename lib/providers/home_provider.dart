@@ -47,6 +47,7 @@ class HomeProvider extends ChangeNotifier {
   HomePostSuccessModel? _homePostSuccessModel;
   FollowUnfollowSuccessModel? _likeUnlikeModel;
   FollowUnfollowSuccessModel? _deleteCommentModel;
+  FollowUnfollowSuccessModel? _videoCountModel;
   NotificationListModel? _notificationListModel;
   FollowUnfollowSuccessModel? _addPostModel;
   FollowUnfollowSuccessModel? _notificationReadModel;
@@ -91,6 +92,8 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get likeUnlikeVideoModel => _likeUnlikeModel;
 
   FollowUnfollowSuccessModel? get deleteCommentModel => _deleteCommentModel;
+
+  FollowUnfollowSuccessModel? get videoCountModel => _videoCountModel;
 
   FollowUnfollowSuccessModel? get notificationReadModel =>
       _notificationReadModel;
@@ -435,6 +438,22 @@ class HomeProvider extends ChangeNotifier {
       if (successModel.status == '200') {
         getCommentList(requestModel, accessToken);
       }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> updatePostViewCount(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.updatePostViewCount(requestModel, accessToken);
+      _videoCountModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
     } finally {

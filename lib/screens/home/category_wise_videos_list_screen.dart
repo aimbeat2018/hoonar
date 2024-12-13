@@ -320,52 +320,71 @@ class _CategoryWiseVideosListScreenState
                       color: Colors.white,
                       child: homeProvider.isCategoryLoading
                           ? CategoryShimmer()
-                          : Scrollbar(
-                              interactive: true,
-                              // Allows interactive scrolling
-                              thumbVisibility: true,
-                              // Always shows the scrollbar thumb
-                              thickness: 1.8,
-                              child: ListView.builder(
-                                controller: scrollController,
-                                padding: const EdgeInsets.all(10),
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: homeProvider
-                                    .categoryListSuccessModel!.data!.length,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        selectedCategory = homeProvider
-                                                .categoryListSuccessModel!
-                                                .data![index]
-                                                .categoryName ??
-                                            '';
-                                        selectedCategoryId = homeProvider
-                                                .categoryListSuccessModel!
-                                                .data![index]
-                                                .categoryId ??
-                                            -1;
-                                        page = 1;
-                                        getPostByCategory(context);
-                                      });
-                                      _toggleAnimation();
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        homeProvider.categoryListSuccessModel!
-                                                .data![index].categoryName ??
-                                            '',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 17,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
+                          : Padding(
+                              padding:
+                                  EdgeInsets.only(right: 2, top: 3, bottom: 3),
+                              child: ScrollbarTheme(
+                                data: ScrollbarThemeData(
+                                  thumbColor:
+                                      WidgetStateProperty.all(Colors.grey),
+                                  // Thumb color
+                                  trackColor:
+                                      WidgetStateProperty.all(Colors.grey),
+                                  // Track color
+                                  trackBorderColor:
+                                      WidgetStateProperty.all(Colors.grey),
+                                ),
+                                child: Scrollbar(
+                                  interactive: true,
+                                  // Allows interactive scrolling
+                                  thumbVisibility: true,
+                                  // Always shows the scrollbar thumb
+                                  thickness: 1.8,
+
+                                  child: ListView.builder(
+                                    controller: scrollController,
+                                    padding: const EdgeInsets.all(10),
+                                    physics: const BouncingScrollPhysics(),
+                                    itemCount: homeProvider
+                                        .categoryListSuccessModel!.data!.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedCategory = homeProvider
+                                                    .categoryListSuccessModel!
+                                                    .data![index]
+                                                    .categoryName ??
+                                                '';
+                                            selectedCategoryId = homeProvider
+                                                    .categoryListSuccessModel!
+                                                    .data![index]
+                                                    .categoryId ??
+                                                -1;
+                                            page = 1;
+                                            getPostByCategory(context);
+                                          });
+                                          _toggleAnimation();
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            homeProvider
+                                                    .categoryListSuccessModel!
+                                                    .data![index]
+                                                    .categoryName ??
+                                                '',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 17,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                                      );
+                                    },
+                                  ),
+                                ),
                               ),
                             ),
                     ),

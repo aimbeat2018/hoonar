@@ -280,14 +280,16 @@ class _CarouselPageViewState extends State<CarouselPageView>
                     });
                   },
                   enlargeFactor: 0.4,
-                  enableInfiniteScroll: false,
+                  enableInfiniteScroll: true,
                   initialPage: widget.sliderModelList.length ~/ 2,
                 ),
               ),
               const SizedBox(height: 16),
               AnimatedSmoothIndicator(
                 activeIndex: currentIndex,
-                count: widget.sliderModelList.length,
+                count: widget.sliderModelList.length > 5
+                    ? 5
+                    : widget.sliderModelList.length,
                 effect: ExpandingDotsEffect(
                   dotHeight: 8,
                   dotWidth: 8,

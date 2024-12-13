@@ -33,6 +33,7 @@ class HomeOtherData {
   List<PostsListData>? featuredTalentPostList;
   List<PostsListData>? hoonarStarsPostList;
   List<PostsListData>? hoonarStarOfMonths;
+  List<PostsListData>? dailyFeedPostList;
 
   HomeOtherData(
       {this.myFavPostList, this.judgesChoicePostList, this.forYouPostList});
@@ -48,6 +49,12 @@ class HomeOtherData {
       judgesChoicePostList = <PostsListData>[];
       json['judges_choice_post_list'].forEach((v) {
         judgesChoicePostList!.add(PostsListData.fromJson(v));
+      });
+    }
+    if (json['daily_feed_post_list'] != null) {
+      dailyFeedPostList = <PostsListData>[];
+      json['daily_feed_post_list'].forEach((v) {
+        dailyFeedPostList!.add(PostsListData.fromJson(v));
       });
     }
     if (json['for_you_post_list'] != null) {
@@ -96,6 +103,10 @@ class HomeOtherData {
     if (judgesChoicePostList != null) {
       data['judges_choice_post_list'] =
           judgesChoicePostList!.map((v) => v.toJson()).toList();
+    }
+    if (dailyFeedPostList != null) {
+      data['daily_feed_post_list'] =
+          dailyFeedPostList!.map((v) => v.toJson()).toList();
     }
     if (forYouPostList != null) {
       data['for_you_post_list'] =

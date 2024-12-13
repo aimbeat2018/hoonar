@@ -238,5 +238,6 @@
   "withdraw_request": "ਪਿੱਛੇ ਹਟਣ ਦੀ ਬੇਨਤੀ",
   "withdraw_request_list": "ਪਿੱਛੇ ਹਟਣ ਦੀਆਂ ਬੇਨਤੀਆਂ ਦੀ ਸੂਚੀ","areYouSureYouWantToWithdraw": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ {amount} ਦੀ ਰਕਮ ਪਿੱਛੇ ਲੈਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
   "withdraw": "ਪਿੱਛੇ ਲਵੋ",
-  "uploadVideoMsg": "ਤੁਹਾਨੂੰ {fromDate} ਤੋਂ {toDate} ਦੀ ਮਿਆਦ ਦੌਰਾਨ ਵੀਡੀਓ ਅਪਲੋਡ ਕਰਨ ਦੀ ਆਗਿਆ ਹੈ।"
+  "uploadVideoMsg": "ਤੁਹਾਨੂੰ {fromDate} ਤੋਂ {toDate} ਦੀ ਮਿਆਦ ਦੌਰਾਨ ਵੀਡੀਓ ਅਪਲੋਡ ਕਰਨ ਦੀ ਆਗਿਆ ਹੈ।",
+  "dailyFeed": "ਡੇਲੀ ਫੀਡ"
 }

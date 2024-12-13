@@ -241,5 +241,6 @@
   "withdraw_request_list": "Withdraw Request List",
   "areYouSureYouWantToWithdraw": "Are you sure you want to withdraw amount {amount}",
   "withdraw": "Withdraw",
-  "uploadVideoMsg": "You are allowed to upload videos during the period from {fromDate} to {toDate}."
+  "uploadVideoMsg": "You are allowed to upload videos during the period from {fromDate} to {toDate}.",
+  "dailyFeed": "Daily Feed"
 }

@@ -240,5 +240,6 @@
   "withdraw_request_list": "ಹಿಂಪಡೆಯಲು ವಿನಂತಿಗಳ ಪಟ್ಟಿ",
   "areYouSureYouWantToWithdraw": "ನೀವು ಖಚಿತವಾಗಿ {amount} ಮೊತ್ತವನ್ನು ಹಿಂಪಡೆಯಲು ಇಚ್ಛಿಸುತ್ತೀರಾ?",
   "withdraw": "ಹಿಂಪಡೆ",
-  "uploadVideoMsg": "ನೀವು {fromDate} ರಿಂದ {toDate} ವರೆಗೆ ಅವಧಿಯಲ್ಲಿ ವೀಡಿಯೊಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಅನುಮತಿ ಇದೆ."
+  "uploadVideoMsg": "ನೀವು {fromDate} ರಿಂದ {toDate} ವರೆಗೆ ಅವಧಿಯಲ್ಲಿ ವೀಡಿಯೊಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ಅನುಮತಿ ಇದೆ.",
+  "dailyFeed": "ಡೇಲಿ ಫೀಡ್"
 }

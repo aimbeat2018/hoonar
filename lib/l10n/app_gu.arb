@@ -240,5 +240,6 @@
   "withdraw_request_list": "ઉપાડવાની વિનંતી સૂચિ",
   "areYouSureYouWantToWithdraw": "શું તમે ખરેખર {amount} રકમ ઉપાડવા માગો છો?",
   "withdraw": "ઉપાડો",
-  "uploadVideoMsg": "તમે {fromDate} થી {toDate} દરમિયાન વિડિઓઝ અપલોડ કરવા માટે પરવાનગી આપો છો."
+  "uploadVideoMsg": "તમે {fromDate} થી {toDate} દરમિયાન વિડિઓઝ અપલોડ કરવા માટે પરવાનગી આપો છો.",
+  "dailyFeed": "ડેઇલી ફીડ"
 }

@@ -1,16 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:custom_social_share/custom_social_share.dart';
-
-// import 'package:fijkplayer/fijkplayer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:swipe_to/swipe_to.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -71,6 +66,31 @@ class _ReelsWidgetState extends State<ReelsWidget>
         curve: Curves.easeOut,
       ),
     );
+  }
+
+  Future<void> updateVideoCount(BuildContext context, int postId) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(postId: postId);
+
+      await homeProvider.updatePostViewCount(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.videoCountModel?.status == '200') {
+        } else if (homeProvider.videoCountModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.videoCountModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
   }
 
   Future<void> likeUnlikeVideo(BuildContext context, int postId) async {
@@ -223,6 +243,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                   var visiblePercentage = info.visibleFraction * 100;
                   if (visiblePercentage > 50) {
                     _videoPlayerController.play();
+                    updateVideoCount(context, widget.model.postId!);
                   } else {
                     _videoPlayerController.pause();
                   }

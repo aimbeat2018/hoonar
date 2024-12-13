@@ -73,6 +73,7 @@ const String updateBankDetailsUrl = 'User/updateBankDetails';
 const String getNotificationListUrl = 'User/getNotificationList';
 const String markNotificationAsReadUrl = 'User/markNotificationAsRead';
 const String getPostUploadStatusUrl = 'User/getPostUploadStatus';
+const String updatePostViewCountUrl = 'Post/IncreasePostViewCount';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

@@ -240,5 +240,6 @@
   "withdraw_request_list": "వెనుక తీసుకునే అభ్యర్థన జాబితా",
   "areYouSureYouWantToWithdraw": "మీరు నిజంగా {amount} మొత్తాన్ని వెనక్కి తీసుకోవాలని అనుకుంటున్నారా?",
   "withdraw": "వెనుక తీసుకోండి",
-  "uploadVideoMsg": "మీకు {fromDate} నుండి {toDate} వరకు కాలంలో వీడియోలను అప్‌లోడ్ చేయడానికి అనుమతి ఉంది."
+  "uploadVideoMsg": "మీకు {fromDate} నుండి {toDate} వరకు కాలంలో వీడియోలను అప్‌లోడ్ చేయడానికి అనుమతి ఉంది.",
+  "dailyFeed": "డైలీ ఫీడ్"
 }

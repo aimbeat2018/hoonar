@@ -240,5 +240,6 @@
   "withdraw_request_list": "माघारी विनंती यादी",
   "areYouSureYouWantToWithdraw": "तुम्हाला खात्री आहे का की तुम्ही {amount} रक्कम काढू इच्छिता?",
   "withdraw": "काढा",
-  "uploadVideoMsg": "आपल्याला {fromDate} ते {toDate} दरम्यान व्हिडिओ अपलोड करण्याची परवानगी आहे."
+  "uploadVideoMsg": "आपल्याला {fromDate} ते {toDate} दरम्यान व्हिडिओ अपलोड करण्याची परवानगी आहे.",
+  "dailyFeed": "डेली फीड"
 }

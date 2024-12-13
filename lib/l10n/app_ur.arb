@@ -240,5 +240,6 @@
   "withdraw_request_list": "نکالنے کی درخواست کی فہرست",
   "areYouSureYouWantToWithdraw": "کیا آپ واقعی {amount} رقم نکالنا چاہتے ہیں؟",
   "withdraw": "نکالیں",
-  "uploadVideoMsg": "آپ کو {fromDate} سے {toDate} کی مدت کے دوران ویڈیوز اپ لوڈ کرنے کی اجازت ہے۔"
+  "uploadVideoMsg": "آپ کو {fromDate} سے {toDate} کی مدت کے دوران ویڈیوز اپ لوڈ کرنے کی اجازت ہے۔",
+  "dailyFeed": "ڈیلی فیڈ"
 }

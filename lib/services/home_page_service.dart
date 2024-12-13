@@ -258,4 +258,14 @@ class HomePageService {
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
     );
   }
+
+  Future<FollowUnfollowSuccessModel> updatePostViewCount(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$updatePostViewCountUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
 }
