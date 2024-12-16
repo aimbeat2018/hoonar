@@ -71,15 +71,16 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.visibility_outlined,
-                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                          color:
+                              myLoading.isDark ? Colors.white60 : Colors.grey,
                         ),
                         SizedBox(
                           width: 5,
@@ -89,7 +90,8 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
-                            color: myLoading.isDark ? Colors.white : Colors.black,
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -97,22 +99,24 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 15,
-                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                          color:
+                              myLoading.isDark ? Colors.white60 : Colors.grey,
                         ),
                       ],
                     ),
                   ),
                   Divider(),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.visibility_off_outlined,
-                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                          color:
+                              myLoading.isDark ? Colors.white60 : Colors.grey,
                         ),
                         SizedBox(
                           width: 5,
@@ -122,7 +126,8 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             fontSize: 14,
-                            color: myLoading.isDark ? Colors.white : Colors.black,
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
@@ -130,15 +135,16 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           size: 15,
-                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                          color:
+                              myLoading.isDark ? Colors.white60 : Colors.grey,
                         ),
                       ],
                     ),
                   ),
                   Divider(),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical:5.0, horizontal: 15),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 5.0, horizontal: 15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
