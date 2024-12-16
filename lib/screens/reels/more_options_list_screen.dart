@@ -17,7 +17,7 @@ class MoreOptionsListScreen extends StatefulWidget {
 
 class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
     with SingleTickerProviderStateMixin {
-  double _height = 350;
+  double _height = 250;
 
   List<StarCategoryModel> optionsList = [];
 
@@ -66,7 +66,111 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
               SizedBox(
                 height: 10,
               ),
-              ListView.separated(
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.visibility_outlined,
+                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          optionsList[0].name!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: myLoading.isDark ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 15,
+                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.visibility_off_outlined,
+                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          optionsList[1].name!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: myLoading.isDark ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 15,
+                          color: myLoading.isDark ? Colors.white60 : Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical:5.0, horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.report_gmailerrorred,
+                          color: myLoading.isDark ? Colors.red : Colors.red,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          optionsList[2].name!,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: myLoading.isDark ? Colors.red : Colors.red,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        Spacer(),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 15,
+                          color: myLoading.isDark ? Colors.red : Colors.red,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              /*  ListView.separated(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: optionsList.length,
@@ -82,6 +186,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            Icon(Icons.visibility),
                             SizedBox(
                               height: 10,
                             ),
@@ -105,7 +210,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                 separatorBuilder: (BuildContext context, int index) {
                   return Divider();
                 },
-              )
+              )*/
             ],
           ),
         ),
