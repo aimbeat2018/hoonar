@@ -241,5 +241,8 @@
   "areYouSureYouWantToWithdraw": "നിങ്ങള്‍ തീർച്ചയായും {amount} തുക പിന്‍വലിക്കണോ?",
   "withdraw": "പിന്‍വലിക്കുക",
   "uploadVideoMsg": "നിങ്ങൾക്ക് {fromDate} മുതൽ {toDate} വരെ കാലയളവിൽ വീഡിയോകൾ അപ്ലോഡ് ചെയ്യാൻ അനുവാദമുണ്ട്.",
-  "dailyFeed": "ഡെയിലി ഫീഡ്"
+  "dailyFeed": "ഡെയിലി ഫീഡ്",
+  "interested": "ആസക്തരാണ്",
+  "not_interested": "ആസക്തരല്ല",
+  "report": "റിപ്പോർട്ട്"
 }

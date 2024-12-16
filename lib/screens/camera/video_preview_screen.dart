@@ -45,6 +45,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   SoundList? _selectedMusic;
   File? _localMusic;
   File? _videoFile;
+  double _progress = 0.0;
 
   @override
   void initState() {
@@ -63,6 +64,13 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
       ..initialize().then((_) {
         setState(() {});
         _videoController.play();
+
+        _videoController.addListener(() {
+          setState(() {
+            _progress =
+                _videoController.value.position.inMilliseconds.toDouble();
+          });
+        });
       });
   }
 
@@ -380,6 +388,44 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                 ],
               ),
             ),
+
+            /*  Video player control seekbar  */
+            if (_videoController.value.isInitialized)
+              Positioned(
+                top: 0,
+                child: SafeArea(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: Colors.white,
+                        trackHeight: 5,
+                        thumbShape:
+                            RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                        overlayShape:
+                            RoundSliderOverlayShape(overlayRadius: 0.0),
+                      ),
+                      child: Builder(builder: (context) {
+                        return Slider(
+                          value: _progress,
+                          min: 0,
+                          max: _videoController.value.duration.inMilliseconds
+                              .toDouble(),
+                          activeColor: Colors.white,
+                          inactiveColor: Colors.grey,
+                          onChanged: (value) {
+                            setState(() {
+                              _progress = value;
+                            });
+                            _videoController
+                                .seekTo(Duration(milliseconds: value.toInt()));
+                          },
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       );

@@ -54,11 +54,11 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             'assets/light_mode_icons/create_video_light.png',
             AppLocalizations.of(context)!.createAndUpload,
             'assets/dark_mode_icons/create_video_dark.png'),
-        StarCategoryModel(
+        /*StarCategoryModel(
             'assets/light_mode_icons/gallery_light.png',
             AppLocalizations.of(context)!.gallery,
             'assets/dark_mode_icons/gallery_dark.png'),
-
+*/
         /* StarCategoryModel(
             'assets/light_mode_icons/edit_video_light.png',
             AppLocalizations.of(context)!.editVideo,
@@ -290,17 +290,136 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                   SizedBox(
                     height: 30,
                   ),
-                  GridView.builder(
+                  // GridView.builder(
+                  //   shrinkWrap: true,
+                  //   physics: NeverScrollableScrollPhysics(),
+                  //   padding: const EdgeInsets.symmetric(horizontal: 25),
+                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  //     crossAxisCount: crossAxisCount,
+                  //     crossAxisSpacing: 25,
+                  //     mainAxisSpacing: 20,
+                  //     childAspectRatio:
+                  //         1.1, // Adjust according to image dimensions
+                  //   ),
+                  //   itemCount: optionsList.length,
+                  //   itemBuilder: (context, index) {
+                  //     return InkWell(
+                  //       onTap: () {
+                  //         if (index == 0) {
+                  //           /*  Navigator.push(
+                  //             context,
+                  //             SlideRightRoute(page: UploadVideoOptionsScreen()),
+                  //           );*/
+                  //           if (contestProvider.uploadVideoStatusModel !=
+                  //                   null &&
+                  //               contestProvider
+                  //                       .uploadVideoStatusModel!.status ==
+                  //                   "200") {
+                  //             Navigator.push(
+                  //               context,
+                  //               SlideRightRoute(
+                  //                   page: const CaptureVideoScreen(
+                  //                 from: "level",
+                  //               )),
+                  //             );
+                  //           } else {
+                  //             showCompetitionDateDialog(
+                  //                 context,
+                  //                 contestProvider
+                  //                     .uploadVideoStatusModel!.data!);
+                  //           }
+                  //         } else if (index == 1) {
+                  //           if (contestProvider.uploadVideoStatusModel !=
+                  //                   null &&
+                  //               contestProvider
+                  //                       .uploadVideoStatusModel!.status ==
+                  //                   "200") {
+                  //             _selectVideoFromGallery();
+                  //           } else {
+                  //             showCompetitionDateDialog(
+                  //                 context,
+                  //                 contestProvider
+                  //                     .uploadVideoStatusModel!.data!);
+                  //           }
+                  //         }
+                  //         /*else if (index == 2) {
+                  //           Navigator.push(
+                  //             context,
+                  //             SlideRightRoute(
+                  //                 page: const CaptureVideoScreen(
+                  //               from: "level",
+                  //             )),
+                  //           );
+                  //         } else if (index == 3) {
+                  //           Navigator.push(
+                  //             context,
+                  //             SlideRightRoute(page: UploadVideoOptionsScreen()),
+                  //           );
+                  //         }*/
+                  //         else if (index == 2) {
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (context) => SelectSoundListScreen(
+                  //                 duration: "0",
+                  //               ),
+                  //             ),
+                  //           );
+                  //         } else if (index == 3) {
+                  //           Navigator.push(
+                  //             context,
+                  //             SlideRightRoute(page: VideoShareOptionsScreen()),
+                  //           );
+                  //         }
+                  //         // Navigator.push(
+                  //         //   context,
+                  //         //   SlideRightRoute(page: SelectContestLevel()),
+                  //         // );
+                  //       },
+                  //       child: Card(
+                  //         elevation: 5,
+                  //         shadowColor: myLoading.isDark
+                  //             ? const Color(0xFF3F3F3F)
+                  //             : /*Color(0x153F3F3F)*/ Colors.white,
+                  //         color: myLoading.isDark
+                  //             ? const Color(0xFF3F3F3F)
+                  //             : /*Color(0x153F3F3F)*/ Colors.white,
+                  //         shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(10)),
+                  //         child: Column(
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           crossAxisAlignment: CrossAxisAlignment.center,
+                  //           children: [
+                  //             Image.asset(
+                  //               myLoading.isDark
+                  //                   ? optionsList[index].darkModeImage!
+                  //                   : optionsList[index].lightModeImage!,
+                  //               height: 50,
+                  //               width: 50,
+                  //             ),
+                  //             SizedBox(
+                  //               height: 20,
+                  //             ),
+                  //             Text(
+                  //               optionsList[index].name!,
+                  //               textAlign: TextAlign.center,
+                  //               style: GoogleFonts.poppins(
+                  //                 fontSize: 14,
+                  //                 color: myLoading.isDark
+                  //                     ? Colors.white
+                  //                     : Colors.black,
+                  //                 fontWeight: FontWeight.w500,
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 25,
-                      mainAxisSpacing: 20,
-                      childAspectRatio:
-                          1.1, // Adjust according to image dimensions
-                    ),
                     itemCount: optionsList.length,
                     itemBuilder: (context, index) {
                       return InkWell(
@@ -328,7 +447,8 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                   contestProvider
                                       .uploadVideoStatusModel!.data!);
                             }
-                          } else if (index == 1) {
+                          }
+                          /*else if (index == 1) {
                             if (contestProvider.uploadVideoStatusModel !=
                                     null &&
                                 contestProvider
@@ -341,7 +461,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                   contestProvider
                                       .uploadVideoStatusModel!.data!);
                             }
-                          }
+                          }*/
                           /*else if (index == 2) {
                             Navigator.push(
                               context,
@@ -356,7 +476,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                               SlideRightRoute(page: UploadVideoOptionsScreen()),
                             );
                           }*/
-                          else if (index == 2) {
+                          else if (index == 1) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -365,7 +485,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                 ),
                               ),
                             );
-                          } else if (index == 3) {
+                          } else if (index == 2) {
                             Navigator.push(
                               context,
                               SlideRightRoute(page: VideoShareOptionsScreen()),
@@ -376,47 +496,55 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                           //   SlideRightRoute(page: SelectContestLevel()),
                           // );
                         },
-                        child: Card(
-                          elevation: 5,
-                          shadowColor: myLoading.isDark
-                              ? const Color(0xFF3F3F3F)
-                              : /*Color(0x153F3F3F)*/ Colors.white,
-                          color: myLoading.isDark
-                              ? const Color(0xFF3F3F3F)
-                              : /*Color(0x153F3F3F)*/ Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                myLoading.isDark
-                                    ? optionsList[index].darkModeImage!
-                                    : optionsList[index].lightModeImage!,
-                                height: 50,
-                                width: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 3),
+                          child: Card(
+                            elevation: 5,
+                            shadowColor: myLoading.isDark
+                                ? const Color(0xFF3F3F3F)
+                                : /*Color(0x153F3F3F)*/ Colors.white,
+                            color: myLoading.isDark
+                                ? const Color(0xFF3F3F3F)
+                                : /*Color(0x153F3F3F)*/ Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    myLoading.isDark
+                                        ? optionsList[index].darkModeImage!
+                                        : optionsList[index].lightModeImage!,
+                                    height: 50,
+                                    width: 50,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    optionsList[index].name!,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                optionsList[index].name!,
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       );
                     },
-                  ),
+                  )
                 ],
               ),
             ),

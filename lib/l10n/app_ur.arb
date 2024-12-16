@@ -241,5 +241,8 @@
   "areYouSureYouWantToWithdraw": "کیا آپ واقعی {amount} رقم نکالنا چاہتے ہیں؟",
   "withdraw": "نکالیں",
   "uploadVideoMsg": "آپ کو {fromDate} سے {toDate} کی مدت کے دوران ویڈیوز اپ لوڈ کرنے کی اجازت ہے۔",
-  "dailyFeed": "ڈیلی فیڈ"
+  "dailyFeed": "ڈیلی فیڈ",
+  "interested": "دلچسپی ہے",
+  "not_interested": "دلچسپی نہیں ہے",
+  "report": "رپورٹ"
 }

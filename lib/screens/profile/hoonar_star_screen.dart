@@ -25,6 +25,7 @@ class _HoonarStarScreenState extends State<HoonarStarScreen> {
 
     // Set number of columns based on screen width
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
+
     return widget.hoonarStarList.isEmpty
         ? SizedBox(height: 120, child: DataNotFound())
         : SingleChildScrollView(
@@ -33,7 +34,7 @@ class _HoonarStarScreenState extends State<HoonarStarScreen> {
               controller: widget.controller,
               shrinkWrap: true,
               // controller: gridScrollController,
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: 0,

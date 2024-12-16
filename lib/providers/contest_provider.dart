@@ -197,8 +197,7 @@ class ContestProvider extends ChangeNotifier {
   }
 
   Future<void> getGuidelines(
-      /*
-      ListCommonRequestModel requestModel, String accessToken*/
+      ListCommonRequestModel requestModel, String accessToken
       ) async {
     _isGuidelinesLoading = true;
     _errorMessage = null;
@@ -206,7 +205,7 @@ class ContestProvider extends ChangeNotifier {
 
     try {
       GuidelinesModel successModel =
-          await _contestService.getGuidelines(/*requestModel, accessToken*/);
+          await _contestService.getGuidelines(requestModel, accessToken);
       _guidelinesModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();

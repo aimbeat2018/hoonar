@@ -241,5 +241,8 @@
   "areYouSureYouWantToWithdraw": "আপনি কি নিশ্চিত যে আপনি {amount} টাকা তুলতে চান?",
   "withdraw": "তোলা",
   "uploadVideoMsg": "আপনাকে {fromDate} থেকে {toDate} সময়কালের মধ্যে ভিডিও আপলোড করার অনুমতি দেওয়া হয়েছে।",
-  "dailyFeed": "ডেইলি ফিড"
+  "dailyFeed": "ডেইলি ফিড",
+  "interested": "আগ্রহী",
+  "not_interested": "আগ্রহী নই",
+  "report": "রিপোর্ট"
 }

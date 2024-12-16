@@ -116,7 +116,7 @@ class _ChangeProfilePhotoOptionScreenState
                   ],
                 ),
               )),
-              Expanded(
+              /*Expanded(
                   child: InkWell(
                 onTap: () {
                   Navigator.pop(context);
@@ -147,7 +147,7 @@ class _ChangeProfilePhotoOptionScreenState
                     ),
                   ],
                 ),
-              ))
+              ))*/
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,6 +12,7 @@ import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../model/request_model/list_common_request_model.dart';
 import '../../../shimmerLoaders/page_content_shimmer.dart';
 import '../../auth_screen/login_screen.dart';
 
@@ -38,13 +40,11 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
         Provider.of<ContestProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
-      /*     ListCommonRequestModel requestModel =
-          ListCommonRequestModel(pageType: widget.from);*/
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(categoryId: KeyRes.selectedCategoryId);
 
-      await contestProvider.getGuidelines(
-          /*requestModel,
-          sessionManager.getString(SessionManager.accessToken) ?? ''*/
-          );
+      await contestProvider.getGuidelines(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
 
       if (contestProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');

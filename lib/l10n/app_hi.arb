@@ -241,5 +241,8 @@
   "areYouSureYouWantToWithdraw": "क्या आप वाकई {amount} राशि निकालना चाहते हैं?",
   "withdraw": "निकालें",
   "uploadVideoMsg": "आप {fromDate} से {toDate} की अवधि के दौरान वीडियो अपलोड करने की अनुमति है।",
-  "dailyFeed": "डेली फीड"
+  "dailyFeed": "डेली फीड",
+  "interested": "रुचि रखते हैं",
+  "not_interested": "रुचि नहीं रखते",
+  "report": "रिपोर्ट"
 }

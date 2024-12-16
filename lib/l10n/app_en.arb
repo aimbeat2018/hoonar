@@ -242,5 +242,8 @@
   "areYouSureYouWantToWithdraw": "Are you sure you want to withdraw amount {amount}",
   "withdraw": "Withdraw",
   "uploadVideoMsg": "You are allowed to upload videos during the period from {fromDate} to {toDate}.",
-  "dailyFeed": "Daily Feed"
+  "dailyFeed": "Daily Feed",
+  "interested": "Interested",
+  "not_interested": "Not Interested",
+  "report": "Report"
 }

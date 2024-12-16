@@ -236,8 +236,12 @@
   "okay": "ਠੀਕ ਹੈ",
   "congratulations_on_achievement": "ਤੁਹਾਡੇ ਯਤਨ ਨੂੰ ਵਧਾਈ ਹੋ! ਤੁਸੀਂ {votes} ਵੋਟਾਂ ਦੀ ਸ਼ਾਨਦਾਰ ਅੱਗੇਵੱਡੀ ਨਾਲ ਇਹ ਪੱਧਰ ਸਫਲਤਾਪੂਰਵਕ ਜਿੱਤਿਆ ਹੈ। ਵਧੀਆ ਕੀਤਾ!\nਤੁਹਾਡੀ ਮੌਜੂਦਾ ਰੈਂਕ {rank} ਹੈ।",
   "withdraw_request": "ਪਿੱਛੇ ਹਟਣ ਦੀ ਬੇਨਤੀ",
-  "withdraw_request_list": "ਪਿੱਛੇ ਹਟਣ ਦੀਆਂ ਬੇਨਤੀਆਂ ਦੀ ਸੂਚੀ","areYouSureYouWantToWithdraw": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ {amount} ਦੀ ਰਕਮ ਪਿੱਛੇ ਲੈਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+  "withdraw_request_list": "ਪਿੱਛੇ ਹਟਣ ਦੀਆਂ ਬੇਨਤੀਆਂ ਦੀ ਸੂਚੀ",
+  "areYouSureYouWantToWithdraw": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ {amount} ਦੀ ਰਕਮ ਪਿੱਛੇ ਲੈਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
   "withdraw": "ਪਿੱਛੇ ਲਵੋ",
   "uploadVideoMsg": "ਤੁਹਾਨੂੰ {fromDate} ਤੋਂ {toDate} ਦੀ ਮਿਆਦ ਦੌਰਾਨ ਵੀਡੀਓ ਅਪਲੋਡ ਕਰਨ ਦੀ ਆਗਿਆ ਹੈ।",
-  "dailyFeed": "ਡੇਲੀ ਫੀਡ"
+  "dailyFeed": "ਡੇਲੀ ਫੀਡ",
+  "interested": "ਰੁਚੀ ਰੱਖਦੇ ਹੋ",
+  "not_interested": "ਰੁਚੀ ਨਹੀਂ ਰੱਖਦੇ",
+  "report": "ਰਿਪੋਰਟ"
 }

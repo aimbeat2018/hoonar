@@ -51,6 +51,7 @@ class Data {
   String? college;
   int? isFollowingEachOther;
   int? followersCount;
+  int? totalVotes;
   int? followingCount;
   int? myPostLikes;
   String? profileCategoryName;
@@ -88,6 +89,7 @@ class Data {
       this.isFollowingEachOther,
       this.followersCount,
       this.followingCount,
+      this.totalVotes,
       this.myPostLikes,
       this.profileCategoryName,
       this.isFollowing,
@@ -123,6 +125,7 @@ class Data {
     college = json['college'];
     isFollowingEachOther = json['is_following_eachOther'];
     followersCount = json['followers_count'];
+    totalVotes = json['total_votes'];
     followingCount = json['following_count'];
     myPostLikes = json['my_post_likes'];
     profileCategoryName = json['profile_category_name'];
@@ -177,6 +180,7 @@ class Data {
     data['is_following_eachOther'] = isFollowingEachOther;
     data['followers_count'] = followersCount;
     data['following_count'] = followingCount;
+    data['total_votes'] = totalVotes;
     data['my_post_likes'] = myPostLikes;
     data['profile_category_name'] = profileCategoryName;
     data['is_following'] = isFollowing;

@@ -127,15 +127,18 @@ class _FollowersScreenState extends State<FollowersScreen>
                       ValueListenableBuilder<String?>(
                           valueListenable: userProvider.followersCountNotifier,
                           builder: (context, followersCount, child) {
-                            return Text(
-                              '$followersCount ${AppLocalizations.of(context)!.followers}',
-                              textAlign: TextAlign.end,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w600,
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15.0),
+                              child: Text(
+                                '$followersCount ${AppLocalizations.of(context)!.followers}',
+                                textAlign: TextAlign.end,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             );
                           }),

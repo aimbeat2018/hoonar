@@ -53,12 +53,13 @@ class ContestService {
     );
   }
 
-  Future<GuidelinesModel> getGuidelines() async {
+  Future<GuidelinesModel> getGuidelines(
+      ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<GuidelinesModel>(
       '$baseUrl$getGuidelinesUrl',
-      /*method: 'POST',
+      method: 'POST',
       accessToken: accessToken,
-      data: requestModel.toJson(),*/
+      data: requestModel.toJson(),
       fromJson: (data) => GuidelinesModel.fromJson(data),
     );
   }

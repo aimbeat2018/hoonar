@@ -386,38 +386,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               userId: userId,
                                             )),
                                           ),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8),
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 15.0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              gradient: LinearGradient(
-                                                colors: [
-                                                  myLoading.isDark
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                profile.data?.totalVotes
+                                                        .toString() ??
+                                                    '0',
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  color: myLoading.isDark
                                                       ? Colors.white
-                                                      : hintGreyColor,
-                                                  myLoading.isDark
-                                                      ? greyTextColor8
-                                                      : greyTextColor8
-                                                ],
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .votes
-                                                  .toUpperCase(),
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: myLoading.isDark?Colors.black:Colors.white,
-                                                fontWeight: FontWeight.w500,
+                                              Text(
+                                                AppLocalizations.of(context)!
+                                                    .votes,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: orangeColor,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
                                         ),
                                       ),
@@ -510,8 +504,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               8),
-                                                      gradient:
-                                                           LinearGradient(
+                                                      gradient: LinearGradient(
                                                         colors: [
                                                           myLoading.isDark
                                                               ? Colors.white
@@ -541,7 +534,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       style:
                                                           GoogleFonts.poppins(
                                                         fontSize: 14,
-                                                        color:  myLoading.isDark?Colors.black:Colors.white,
+                                                        color: myLoading.isDark
+                                                            ? Colors.black
+                                                            : Colors.white,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),

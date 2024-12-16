@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
+import 'package:hoonar/screens/reels/more_options_list_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -35,7 +37,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   bool isFollow = false, isFollowLoading = false;
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
-  bool _showLikeAnimation = false;
+  bool _showLikeAnimation = false, _showLottie = false;
   SessionManager sessionManager = SessionManager();
   int likeOrVote = -1;
   int modelLikeStatus = 0;
@@ -43,6 +45,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
   late Animation<double> _fadeAnimation;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  bool isMute = false;
+  double _progress = 0.0;
 
   @override
   void initState() {
@@ -177,7 +181,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   Future initializePlayer() async {
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(widget.model.postVideo ?? ''));
-    await Future.wait([_videoPlayerController.initialize()]);
+    await Future.wait([_videoPlayerController.initialize()]).then((_) {});
     setState(() {});
   }
 
@@ -197,6 +201,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
     isFollowLoading = false;
     setState(() {});
+  }
+
+  void _hideLottieAfterDelay() {
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        _showLottie = false;
+      });
+    });
   }
 
   @override
@@ -233,20 +245,105 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
       return Scaffold(
         backgroundColor: Colors.black,
+        /* bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Custom slider container
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              height: 10,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(2.5),
+              ),
+              child: Stack(
+                children: [
+                  // Active progress
+                  FractionallySizedBox(
+                    widthFactor: _videoPlayerController.value.isInitialized
+                        ? _progress /
+                            _videoPlayerController.value.duration.inMilliseconds
+                                .toDouble()
+                        : 0.0,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(2.5),
+                      ),
+                    ),
+                  ),
+                  // Draggable thumb
+                  Positioned(
+                    left: (_videoPlayerController.value.isInitialized
+                            ? _progress /
+                                _videoPlayerController
+                                    .value.duration.inMilliseconds
+                                    .toDouble()
+                            : 0.0) *
+                        MediaQuery.of(context).size.width,
+                    child: GestureDetector(
+                      onHorizontalDragUpdate: (details) {
+                        final newPosition = (details.localPosition.dx /
+                                MediaQuery.of(context).size.width) *
+                            _videoPlayerController
+                                .value.duration.inMilliseconds;
+                        _videoPlayerController.seekTo(Duration(
+                            milliseconds: newPosition.toInt().clamp(
+                                0,
+                                _videoPlayerController
+                                    .value.duration.inMilliseconds)));
+                      },
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),*/
         body: Stack(
           // fit: StackFit.expand,
           children: [
             InkWell(
               onTap: _onTap,
+              onDoubleTap: () {
+                setState(() {
+                  _showLottie = true;
+                });
+                likeUnlikeVideo(context, widget.model.postId!);
+
+                _hideLottieAfterDelay();
+              },
               child: VisibilityDetector(
                 onVisibilityChanged: (VisibilityInfo info) {
                   var visiblePercentage = info.visibleFraction * 100;
                   if (visiblePercentage > 50) {
                     _videoPlayerController.play();
+
+                    _videoPlayerController.setLooping(true);
+
+                    _videoPlayerController.addListener(() {
+                      setState(() {
+                        _progress = _videoPlayerController
+                            .value.position.inMilliseconds
+                            .toDouble();
+                      });
+                    });
+
                     updateVideoCount(context, widget.model.postId!);
-                  } else {
+                  } /*else {
                     _videoPlayerController.pause();
-                  }
+                  }*/
                 },
                 key: Key('ke1' + widget.model.postId!.toString()),
                 child: SizedBox.expand(
@@ -274,48 +371,28 @@ class _ReelsWidgetState extends State<ReelsWidget>
               ),
             ),
 
-            /*_chewieController != null &&
-                    _chewieController!.videoPlayerController.value.isInitialized
-                ? GestureDetector(
-                    onTap: () {
-                      if (_videoPlayerController.value.isPlaying) {
-                        _videoPlayerController.pause();
-                        setState(() {
-                          _isPaused = !_isPaused;
-                        });
-                      } else {
-                        // If the video is paused, play it.
-                        _videoPlayerController.play();
+            /*video player sound volume*/
+            Positioned(
+                top: 10,
+                right: 15,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      isMute = !isMute;
+                      _videoPlayerController.setVolume(isMute ? 0.0 : 1.0);
+                    });
+                  },
+                  child: Image.asset(
+                    isMute
+                        ? 'assets/images/speaker_mute.png'
+                        : 'assets/images/speaker.png',
+                    height: 28,
+                    width: 28,
+                    color: Colors.white,
+                  ),
+                )),
 
-                        setState(() {
-                          _isPaused = !_isPaused;
-                        });
-                      }
-                      // _videoPlayerController.pause();
-                    },
-                    child: FittedBox(
-                      fit: BoxFit.fill,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        // Set the desired width
-                        height: MediaQuery.of(context).size.height /
-                            _videoPlayerController.value.aspectRatio,
-                        // Calculate height based on aspect ratio
-                        child: Chewie(
-                          controller: _chewieController!,
-
-                        ),
-                      ),
-                    ),
-                  )
-                : const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 10),
-                      Text('Loading...')
-                    ],
-                  ),*/
+            /*Reels right side options*/
             Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
@@ -567,6 +644,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                   onTap: () {
                                     likeUnlikeVideo(
                                         context, widget.model.postId!);
+
+                                    _hideLottieAfterDelay();
                                   },
                                   child: Image.asset(
                                     widget.model.videoLikesOrNot == 0
@@ -644,6 +723,24 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                _moreOptionsBottomSheet(context,
+                                    myLoading.isDark, widget.model.postId!);
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.more_vert,
+                                    size: 25,
+                                    color: Colors.white,
+                                  ),
                                   const SizedBox(
                                     height: 65,
                                   ),
@@ -658,28 +755,76 @@ class _ReelsWidgetState extends State<ReelsWidget>
                 ),
               ),
             ),
+
+            /*Like and vote animation*/
             if (_showLikeAnimation)
               Positioned.fill(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: /*Icon(
+                child: likeOrVote == 1 && _showLottie
+                    ? Opacity(
+                        opacity: 0.5,
+                        child: Lottie.asset(
+                          'assets/lottie_json/like_anim.json',
+                          /*  width: 50,
+                          height: 50,*/
+                        ),
+                      )
+                    : FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: ScaleTransition(
+                          scale: _scaleAnimation,
+                          child: /*Icon(
                       Icons.favorite,
                       color: Colors.red.withOpacity(0.8),
                       // Slightly transparent
                       size: 100,
                     )*/
-                        Opacity(
-                      opacity: 0.5,
-                      child: Image.asset(
-                        likeOrVote == 1
+                              Opacity(
+                            opacity: 0.5,
+                            child: Image.asset(
+                              /* likeOrVote == 1
                             ? 'assets/images/like.png'
-                            : 'assets/images/vote_given.png',
-                        width: 100,
-                        height: 100,
+                            :*/
+                              'assets/images/vote_given.png',
+                              width: 100,
+                              height: 100,
+                            ),
+                          ),
+                        ),
                       ),
+              ),
+
+            /*  Video player control seekbar  */
+            if (_videoPlayerController.value.isInitialized)
+              Positioned(
+                top: 0,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      activeTrackColor: Colors.white,
+                      trackHeight: 5,
+                      thumbShape:
+                          RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 0.0),
                     ),
+                    child: Builder(builder: (context) {
+                      return Slider(
+                        value: _progress,
+                        min: 0,
+                        max: _videoPlayerController
+                            .value.duration.inMilliseconds
+                            .toDouble(),
+                        activeColor: Colors.white,
+                        inactiveColor: Colors.grey,
+                        onChanged: (value) {
+                          setState(() {
+                            _progress = value;
+                          });
+                          _videoPlayerController
+                              .seekTo(Duration(milliseconds: value.toInt()));
+                        },
+                      );
+                    }),
                   ),
                 ),
               ),
@@ -707,6 +852,32 @@ class _ReelsWidgetState extends State<ReelsWidget>
             ),
             child: SafeArea(
               child: VideoCommentScreen(
+                key: _bottomSheetKey,
+                postId: postId,
+              ),
+            ));
+      },
+    );
+  }
+
+  void _moreOptionsBottomSheet(
+      BuildContext context, bool isDarkMode, int postId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.black : Colors.white,
+              // Adjust as per your theme
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: SafeArea(
+              child: MoreOptionsListScreen(
                 key: _bottomSheetKey,
                 postId: postId,
               ),

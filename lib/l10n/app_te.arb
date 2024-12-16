@@ -241,5 +241,8 @@
   "areYouSureYouWantToWithdraw": "మీరు నిజంగా {amount} మొత్తాన్ని వెనక్కి తీసుకోవాలని అనుకుంటున్నారా?",
   "withdraw": "వెనుక తీసుకోండి",
   "uploadVideoMsg": "మీకు {fromDate} నుండి {toDate} వరకు కాలంలో వీడియోలను అప్‌లోడ్ చేయడానికి అనుమతి ఉంది.",
-  "dailyFeed": "డైలీ ఫీడ్"
+  "dailyFeed": "డైలీ ఫీడ్",
+  "interested": "ఆసక్తి ఉంది",
+  "not_interested": "ఆసక్తి లేదు",
+  "report": "నివేదిక"
 }
