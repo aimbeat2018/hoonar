@@ -290,14 +290,15 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getProfile(CommonRequestModel requestModel) async {
+  Future<void> getProfile(
+      CommonRequestModel requestModel, String accessToken) async {
     _isProfileLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      ProfileSuccessModel successModel =
-          await _userService.getUserProfile(requestModel: requestModel);
+      ProfileSuccessModel successModel = await _userService.getUserProfile(
+          requestModel: requestModel, accessToken: accessToken);
       _profileSuccessModel = successModel;
       profileNotifier.value = successModel;
     } catch (e) {
@@ -338,7 +339,7 @@ class AuthProvider extends ChangeNotifier {
               requestModel: requestModel, accessToken: accessToken);
       _updateAvatarModel = successModel;
       if (successModel.status == '200') {
-        getProfile(requestModel);
+        getProfile(requestModel,accessToken);
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -376,7 +377,7 @@ class AuthProvider extends ChangeNotifier {
           await _userService.updateProfileImage(requestModel, accessToken);
       _updateProfileImageModel = successModel;
       if (successModel.status == '200') {
-        getProfile(profileRequest);
+        getProfile(profileRequest,accessToken);
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -403,14 +404,15 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> enableDisableNotification(CommonRequestModel requestModel, String accessToken) async {
+  Future<void> enableDisableNotification(
+      CommonRequestModel requestModel, String accessToken) async {
     _isDeleteAccountLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      FollowUnfollowSuccessModel successModel =
-          await _userService.enableDisableNotification(requestModel,accessToken);
+      FollowUnfollowSuccessModel successModel = await _userService
+          .enableDisableNotification(requestModel, accessToken);
       _unableDisableNotification = successModel;
     } catch (e) {
       _errorMessage = e.toString();

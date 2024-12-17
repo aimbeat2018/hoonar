@@ -113,13 +113,13 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
-            image: DecorationImage(
+              /*image: DecorationImage(
               image: AssetImage(myLoading.isDark
                   ? 'assets/images/screens_back.png'
                   : 'assets/dark_mode_icons/white_screen_back.png'),
               fit: BoxFit.cover,
-            ),
-          ),
+            ),*/
+              color: myLoading.isDark ? Colors.black : Colors.white),
           child: SafeArea(
             child: SingleChildScrollView(
               controller: _scrollController,
@@ -179,13 +179,17 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                           } else {
                             notificationData = commentData.data!;
                           }
-                          return ListView.builder(
+                          return ListView.separated(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: notificationData.length,
                             itemBuilder: (context, index) {
                               return _buildNotificationData(
                                   notificationData[index], myLoading.isDark);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider();
                             },
                           );
                         }),
@@ -205,13 +209,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     // Format the DateTime
     String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
 
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: isDarkMode ? Colors.white : Colors.black, width: 0.5)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -220,6 +219,17 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
             style: GoogleFonts.poppins(
               color: isDarkMode ? Colors.white : Colors.black,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(
+            height: 3,
+          ),
+          Text(
+            model.description ?? '',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: isDarkMode ? Colors.white : Colors.black,
+              fontWeight: FontWeight.normal,
             ),
           ),
           SizedBox(

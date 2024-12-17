@@ -1,5 +1,6 @@
 class CommonRequestModel {
   String? userId;
+  String? myUserId;
   String? gender;
   String? avatarId;
   String? rewardId;
@@ -12,6 +13,7 @@ class CommonRequestModel {
 
   CommonRequestModel(
       {this.userId,
+      this.myUserId,
       this.gender,
       this.avatarId,
       this.rewardId,
@@ -24,6 +26,7 @@ class CommonRequestModel {
 
   CommonRequestModel.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
+    myUserId = json['my_user_id'];
     gender = json['gender'];
     avatarId = json['avatar_id'];
     rewardId = json['reward_id'];
@@ -38,6 +41,7 @@ class CommonRequestModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['user_id'] = userId;
+    data['my_user_id'] = myUserId;
     data['gender'] = gender;
     data['avatar_id'] = avatarId;
     data['reward_id'] = rewardId;

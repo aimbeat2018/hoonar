@@ -10,6 +10,7 @@ import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
 import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/post_list_success_model.dart';
+import 'package:hoonar/model/success_models/report_reasons_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/user_search_history_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
@@ -41,6 +42,8 @@ class HomeProvider extends ChangeNotifier {
   bool _isSearchLoading = false;
   bool _isNotificationLoading = false;
   bool _isReadNotificationLoading = false;
+  bool _isReportReasonsLoading = false;
+  bool _isReportPostLoading = false;
   String? _errorMessage;
   CategoryListSuccessModel? _categoryListSuccessModel;
   PostListSuccessModel? _postListSuccessModel;
@@ -48,6 +51,9 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _likeUnlikeModel;
   FollowUnfollowSuccessModel? _deleteCommentModel;
   FollowUnfollowSuccessModel? _videoCountModel;
+  FollowUnfollowSuccessModel? _postInterestModel;
+  FollowUnfollowSuccessModel? _reportPostModel;
+  ReportReasonsModel? _reportReasonsModel;
   NotificationListModel? _notificationListModel;
   FollowUnfollowSuccessModel? _addPostModel;
   FollowUnfollowSuccessModel? _notificationReadModel;
@@ -76,6 +82,10 @@ class HomeProvider extends ChangeNotifier {
 
   bool get isViewAllLoading => _isViewAllLoading;
 
+  bool get isReportReasonsLoading => _isReportReasonsLoading;
+
+  bool get isReportPostLoading => _isReportPostLoading;
+
   bool get isSearchLoading => _isSearchLoading;
 
   String? get errorMessage => _errorMessage;
@@ -87,6 +97,8 @@ class HomeProvider extends ChangeNotifier {
 
   PostListSuccessModel? get postListSuccessModel => _postListSuccessModel;
 
+  ReportReasonsModel? get reportReasonsModel => _reportReasonsModel;
+
   HomePostSuccessModel? get homePostSuccessModel => _homePostSuccessModel;
 
   FollowUnfollowSuccessModel? get likeUnlikeVideoModel => _likeUnlikeModel;
@@ -94,6 +106,10 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get deleteCommentModel => _deleteCommentModel;
 
   FollowUnfollowSuccessModel? get videoCountModel => _videoCountModel;
+
+  FollowUnfollowSuccessModel? get postInterestModel => _postInterestModel;
+
+  FollowUnfollowSuccessModel? get reportPostModel => _reportPostModel;
 
   FollowUnfollowSuccessModel? get notificationReadModel =>
       _notificationReadModel;
@@ -461,6 +477,22 @@ class HomeProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> postInterest(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.postInterest(requestModel, accessToken);
+      _postInterestModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<void> getNotificationList(
       ListCommonRequestModel requestModel, String accessToken) async {
     _isNotificationLoading = true;
@@ -501,6 +533,42 @@ class HomeProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isReadNotificationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getReportReasonsList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    _isReportReasonsLoading = true;
+    notifyListeners();
+
+    try {
+      ReportReasonsModel successModel =
+          await _homePageService.reportReasonsList(requestModel, accessToken);
+      _reportReasonsModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isReportReasonsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> reportPost(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _isReportPostLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.reportPost(requestModel, accessToken);
+      _reportPostModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isReportPostLoading = false;
       notifyListeners();
     }
   }

@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:detectable_text_field/detectable_text_field.dart';
+import 'package:detectable_text_field/detector/text_pattern_detector.dart';
+import 'package:detectable_text_field/widgets/detectable_text_editing_controller.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
@@ -51,11 +55,17 @@ class UploadVideoScreen extends StatefulWidget {
 class _UploadVideoScreenState extends State<UploadVideoScreen> {
   SessionManager sessionManager = SessionManager();
   TextEditingController captionController = TextEditingController();
-  TextEditingController hashTagController = TextEditingController();
+
+  // TextEditingController hashTagController = TextEditingController();
 
   List<HashTagData>? hashTagList = [];
   bool isLoading = false;
   double progressPercentage = 0.0; // To track progress
+  List<String> hashTags = [];
+
+  final hashTagController = DetectableTextEditingController(
+    regExp: detectionRegExp(atSign: false, hashtag: true, url: false),
+  );
 
   @override
   void initState() {
@@ -71,6 +81,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
       });
     }
 
+    hashTagController.addListener(() {
+      setState(() {});
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getKycStatus(context, CommonRequestModel());
     });
@@ -465,13 +478,67 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                           const SizedBox(height: 25),
 
                           // Hashtags Text Field
-                          TextFormField(
+                          // TextFormField(
+                          //   controller: hashTagController,
+                          //   style: GoogleFonts.poppins(
+                          //       color: myLoading.isDark
+                          //           ? Colors.white
+                          //           : Colors.black,
+                          //       fontSize: 14),
+                          //   decoration: InputDecoration(
+                          //     contentPadding:
+                          //         const EdgeInsets.symmetric(horizontal: 15),
+                          //     labelText: AppLocalizations.of(context)!.hashTag,
+                          //     labelStyle: GoogleFonts.poppins(
+                          //         color: myLoading.isDark
+                          //             ? Colors.white
+                          //             : Colors.black,
+                          //         fontSize: 14),
+                          //     border: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //         borderSide: BorderSide(
+                          //             color: myLoading.isDark
+                          //                 ? Colors.white
+                          //                 : Colors.black,
+                          //             width: 1)),
+                          //     enabledBorder: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //         borderSide: BorderSide(
+                          //             color: myLoading.isDark
+                          //                 ? Colors.white
+                          //                 : Colors.black,
+                          //             width: 1)),
+                          //     focusedBorder: OutlineInputBorder(
+                          //         borderRadius: BorderRadius.circular(10),
+                          //         borderSide: BorderSide(
+                          //             color: myLoading.isDark
+                          //                 ? Colors.white
+                          //                 : Colors.black,
+                          //             width: 1)),
+                          //   ),
+                          //   onChanged: (value) {
+                          //     getHashTagList(context, value);
+                          //   },
+                          // ),
+
+                          // Hashtags Text Field
+
+                          DetectableTextField(
                             controller: hashTagController,
                             style: GoogleFonts.poppins(
                                 color: myLoading.isDark
                                     ? Colors.white
                                     : Colors.black,
                                 fontSize: 14),
+                            maxLines: 1,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(175)
+                            ],
+                            enableSuggestions: false,
+                            onChanged: onChangeDetectableTextField,
+                            onTapOutside: (event) =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
                             decoration: InputDecoration(
                               contentPadding:
                                   const EdgeInsets.symmetric(horizontal: 15),
@@ -503,11 +570,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                           : Colors.black,
                                       width: 1)),
                             ),
-                            onChanged: (value) {
-                              getHashTagList(context, value);
-                            },
                           ),
-                          if (hashTagList != null || hashTagList!.isNotEmpty)
+
+                          /*  if (hashTagList != null || hashTagList!.isNotEmpty)
                             ListView.separated(
                               shrinkWrap: true,
                               padding: const EdgeInsets.only(
@@ -551,7 +616,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                       : Colors.black,
                                 );
                               },
-                            ),
+                            ),*/
                         ],
                       ),
                     ),
@@ -569,25 +634,27 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                       AddPostRequestModel requestModel =
                                           AddPostRequestModel(
                                               saveAsDraft: "1",
-                                              userId: int.parse(sessionManager
-                                                  .getString(
-                                                      SessionManager.userId)!),
+                                              userId: int
+                                                  .parse(sessionManager
+                                                      .getString(SessionManager
+                                                          .userId)!),
                                               categoryId: KeyRes
                                                           .selectedCategoryId ==
                                                       -1
                                                   ? ""
-                                                  : KeyRes.selectedCategoryId
+                                                  : KeyRes
+                                                      .selectedCategoryId
                                                       .toString(),
-                                              levelId: KeyRes.selectedLevelId ==
+                                              levelId: KeyRes
+                                                          .selectedLevelId ==
                                                       -1
                                                   ? ""
-                                                  : KeyRes.selectedLevelId
+                                                  : KeyRes
+                                                      .selectedLevelId
                                                       .toString(),
                                               postDescription:
                                                   captionController.text,
-                                              postHashTag:
-                                                  addCommaBeforeHashtags(
-                                                      hashTagController.text),
+                                              postHashTag: hashTags.join(', '),
                                               postImagePath: widget
                                                   .videoThumbnail
                                                   .replaceAll('file://', ''),
@@ -667,8 +734,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                 postDescription:
                                                     captionController.text,
                                                 postHashTag:
-                                                    addCommaBeforeHashtags(
-                                                        hashTagController.text),
+                                                    hashTags.join(', '),
                                               );
 
                                               updatePost(context, requestModel);
@@ -685,14 +751,16 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                           : KeyRes
                                                               .selectedCategoryId
                                                               .toString(),
-                                                  levelId: KeyRes.selectedLevelId == -1
-                                                      ? ""
-                                                      : KeyRes.selectedLevelId
-                                                          .toString(),
+                                                  levelId:
+                                                      KeyRes.selectedLevelId == -1
+                                                          ? ""
+                                                          : KeyRes
+                                                              .selectedLevelId
+                                                              .toString(),
                                                   postDescription:
                                                       captionController.text,
-                                                  postHashTag: addCommaBeforeHashtags(
-                                                      hashTagController.text),
+                                                  postHashTag:
+                                                      hashTags.join(', '),
                                                   postImagePath: widget
                                                       .videoThumbnail
                                                       .replaceAll('file://', ''),
@@ -742,23 +810,25 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                         sessionManager.getString(
                                                             SessionManager
                                                                 .userId)!),
-                                                    categoryId: KeyRes.selectedCategoryId == -1
-                                                        ? ""
-                                                        : KeyRes
-                                                            .selectedCategoryId
-                                                            .toString(),
-                                                    levelId: KeyRes.selectedLevelId == -1
-                                                        ? ""
-                                                        : KeyRes.selectedLevelId
-                                                            .toString(),
+                                                    categoryId:
+                                                        KeyRes.selectedCategoryId == -1
+                                                            ? ""
+                                                            : KeyRes
+                                                                .selectedCategoryId
+                                                                .toString(),
+                                                    levelId:
+                                                        KeyRes.selectedLevelId == -1
+                                                            ? ""
+                                                            : KeyRes
+                                                                .selectedLevelId
+                                                                .toString(),
                                                     postDescription:
                                                         captionController.text,
-                                                    postHashTag: addCommaBeforeHashtags(
-                                                        hashTagController.text),
+                                                    postHashTag:
+                                                        hashTags.join(', '),
                                                     postImagePath: widget
                                                         .videoThumbnail
-                                                        .replaceAll(
-                                                            'file://', ''),
+                                                        .replaceAll('file://', ''),
                                                     postVideoPath: widget.videoUrl!);
 
                                                 if (widget.selectedMusic !=
@@ -879,7 +949,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                     const SizedBox(height: 16),
                                     Text(
                                       // '${(uploadProgress * 100).toStringAsFixed(1)}%',
-                                      '${(uploadProgress).round()}%',
+                                      '${(uploadProgress * 100).round()}%',
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
@@ -897,13 +967,18 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                         ),
                       );
                     },
-                  )
+                  ),
               ],
             ),
           ),
         ),
       );
     });
+  }
+
+  void onChangeDetectableTextField(String value) {
+    hashTags = TextPatternDetector.extractDetections(value, hashTagRegExp);
+    setState(() {});
   }
 
   String addCommaBeforeHashtags(String text) {

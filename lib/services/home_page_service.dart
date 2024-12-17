@@ -24,6 +24,9 @@ import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/model/success_models/post_list_success_model.dart';
+import 'package:hoonar/model/success_models/report_reasons_model.dart';
+import 'package:hoonar/model/success_models/report_reasons_model.dart';
+import 'package:hoonar/model/success_models/report_reasons_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
@@ -263,6 +266,36 @@ class HomePageService {
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$updatePostViewCountUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> postInterest(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$postInterestUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<ReportReasonsModel> reportReasonsList(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<ReportReasonsModel>(
+      '$baseUrl$getReportReasonsUrl',
+      // method: 'POST',
+      // data: requestModel.toJson(),
+      fromJson: (data) => ReportReasonsModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> reportPost(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$reportPostUrl',
       method: 'POST',
       data: requestModel.toJson(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),

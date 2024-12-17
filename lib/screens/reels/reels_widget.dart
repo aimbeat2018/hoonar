@@ -47,12 +47,17 @@ class _ReelsWidgetState extends State<ReelsWidget>
   late Animation<double> _scaleAnimation;
   bool isMute = false;
   double _progress = 0.0;
+  String userId = "";
 
   @override
   void initState() {
     super.initState();
     initializePlayer();
     sessionManager.initPref();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      userId = sessionManager.getString(SessionManager.userId)!;
+    });
 
     _controller = AnimationController(
       vsync: this,
@@ -204,7 +209,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   }
 
   void _hideLottieAfterDelay() {
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       setState(() {
         _showLottie = false;
       });
@@ -731,17 +736,21 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             InkWell(
                               onTap: () {
-                                _moreOptionsBottomSheet(context,
-                                    myLoading.isDark, widget.model.postId!);
+                                _moreOptionsBottomSheet(
+                                    context,
+                                    myLoading.isDark,
+                                    widget.model.postId!,
+                                    widget.model.userId!,
+                                    widget.model.followOrNot!.toString());
                               },
-                              child: Column(
+                              child: const Column(
                                 children: [
                                   Icon(
                                     Icons.more_vert,
                                     size: 25,
                                     color: Colors.white,
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     height: 65,
                                   ),
                                 ],
@@ -804,8 +813,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
                       activeTrackColor: Colors.white,
                       trackHeight: 5,
                       thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: 0.0),
-                      overlayShape: RoundSliderOverlayShape(overlayRadius: 0.0),
+                          const RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 0.0),
                     ),
                     child: Builder(builder: (context) {
                       return Slider(
@@ -845,7 +855,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.black : Colors.white,
               // Adjust as per your theme
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
@@ -860,28 +870,34 @@ class _ReelsWidgetState extends State<ReelsWidget>
     );
   }
 
-  void _moreOptionsBottomSheet(
-      BuildContext context, bool isDarkMode, int postId) {
+  void _moreOptionsBottomSheet(BuildContext context, bool isDarkMode,
+      int postId, int postUserId, String followStatus) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      // isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-            decoration: BoxDecoration(
-              color: isDarkMode ? Colors.black : Colors.white,
-              // Adjust as per your theme
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: SafeArea(
-              child: MoreOptionsListScreen(
-                key: _bottomSheetKey,
-                postId: postId,
-              ),
-            ));
+        return Wrap(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  color: isDarkMode ? Colors.black : Colors.white,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: SafeArea(
+                  child: MoreOptionsListScreen(
+                    key: _bottomSheetKey,
+                    postId: postId,
+                    followStatus: followStatus,
+                    postUserId: postUserId,
+                    userId: sessionManager.getString(SessionManager.userId)!,
+                  ),
+                ))
+          ],
+        );
       },
     );
   }

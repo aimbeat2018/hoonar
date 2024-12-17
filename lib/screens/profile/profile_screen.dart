@@ -75,11 +75,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       });
 
+      String myUserId = sessionManager.getString(SessionManager.userId)!;
+
       CommonRequestModel requestModel = CommonRequestModel(userId: userId);
+      // if (widget.from != 'main') {
+      requestModel.myUserId = myUserId;
+      // }
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-      await authProvider.getProfile(requestModel);
+      await authProvider.getProfile(
+          requestModel, sessionManager.getString(SessionManager.accessToken)!);
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');

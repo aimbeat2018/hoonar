@@ -140,10 +140,12 @@ class UserService {
 
   Future<ProfileSuccessModel> getUserProfile({
     CommonRequestModel? requestModel,
+    String? accessToken
   }) async {
     return apiMethods.sendRequest<ProfileSuccessModel>(
       '$baseUrl$getProfile',
       data: requestModel?.toJson(),
+      accessToken: accessToken,
       method: 'POST',
       fromJson: (data) => ProfileSuccessModel.fromJson(data),
     );

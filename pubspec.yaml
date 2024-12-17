@@ -86,6 +86,7 @@ dependencies:
   upgrader: ^11.3.0
   retry: ^3.1.2
   lottie: ^3.2.0
+  detectable_text_field: ^3.0.2
 
 dependency_overrides:
   intl: ^0.19.0

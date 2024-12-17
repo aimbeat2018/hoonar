@@ -6,6 +6,7 @@ class ListCommonRequestModel {
   int? categoryId;
   int? toUserId;
   int? postId;
+  int? reasonId;
   String? search;
   String? type;
   String? searchTerm;
@@ -14,10 +15,13 @@ class ListCommonRequestModel {
   String? commentId;
   String? deviceId;
   String? date;
-  String? pageType;  // privacy,termsofuse,about_us,contact_us
+  String? description;
+  String? pageType; // privacy,termsofuse,about_us,contact_us
+  String? interestType; // 1: Interested, 2: Not Interested
 
   ListCommonRequestModel({
     this.userId,
+    this.reasonId,
     this.start,
     this.limit,
     this.page,
@@ -33,6 +37,8 @@ class ListCommonRequestModel {
     this.deviceId,
     this.date,
     this.pageType,
+    this.interestType,
+    this.description,
   });
 
   ListCommonRequestModel.fromJson(Map<String, dynamic> json) {
@@ -50,8 +56,11 @@ class ListCommonRequestModel {
     comment = json['comment'];
     commentId = json['comments_id'];
     pageType = json['page_type'];
+    interestType = json['interest_type'];
     deviceId = json['device_id'];
     date = json['date'];
+    reasonId = json['reason_id'];
+    description = json['description'];
   }
 
   Map<String, dynamic> toJson() {
@@ -70,8 +79,11 @@ class ListCommonRequestModel {
     data['comment'] = comment;
     data['comments_id'] = commentId;
     data['page_type'] = pageType;
+    data['interest_type'] = interestType;
     data['device_id'] = deviceId;
     data['date'] = date;
+    data['reason_id'] = reasonId;
+    data['description'] = description;
     return data;
   }
 }

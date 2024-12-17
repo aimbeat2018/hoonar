@@ -74,6 +74,9 @@ const String getNotificationListUrl = 'User/getNotificationList';
 const String markNotificationAsReadUrl = 'User/markNotificationAsRead';
 const String getPostUploadStatusUrl = 'User/getPostUploadStatus';
 const String updatePostViewCountUrl = 'Post/IncreasePostViewCount';
+const String postInterestUrl = 'Post/addUserInterest';
+const String getReportReasonsUrl = 'Post/getReportReasons';
+const String reportPostUrl = 'Post/reportPost';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
