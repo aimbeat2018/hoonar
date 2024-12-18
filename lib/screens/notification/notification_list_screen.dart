@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/my_loading/my_loading.dart';
@@ -16,6 +17,7 @@ import '../../constants/theme.dart';
 import '../../custom/data_not_found.dart';
 import '../../providers/contest_provider.dart';
 import '../../providers/home_provider.dart';
+import '../profile/profile_screen.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});
@@ -209,44 +211,100 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     // Format the DateTime
     String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            model.message ?? '',
-            style: GoogleFonts.poppins(
-              color: isDarkMode ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w500,
+    return InkWell(
+      onTap: () {
+        if (model.userId != null) {
+          Navigator.push(
+            context,
+            SlideRightRoute(
+                page: ProfileScreen(
+              from: 'profile',
+              userId: model.userId!.toString(),
+            )),
+          );
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: Row(
+          children: [
+            if (model.image != '')
+              Align(
+                alignment: Alignment.topCenter,
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor:
+                      isDarkMode ? Colors.grey.shade700 : Colors.grey.shade200,
+                  child: ClipOval(
+                    child: model.image != ""
+                        ? CachedNetworkImage(
+                            imageUrl: model.image ?? '',
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/user_avtar.png',
+                              height: 120,
+                              width: 120,
+                            ),
+                            fit: BoxFit.cover,
+                            width: 150,
+                            // Match the size of the CircleAvatar
+                            height: 150,
+                          )
+                        : Image.asset(
+                            'assets/images/user_avtar.png',
+                            height: 100,
+                            width: 100,
+                          ),
+                  ),
+                ),
+              ),
+            SizedBox(
+              width: 10,
             ),
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Text(
-            model.description ?? '',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: isDarkMode ? Colors.white : Colors.black,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          SizedBox(
-            height: 3,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              formattedDate,
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                color: isDarkMode ? Colors.white : Colors.black,
-                fontWeight: FontWeight.normal,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    model.message ?? '',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  /*Text(
+                    model.description ?? '',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),*/
+                  // SizedBox(
+                  //   height: 3,
+                  // ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: Text(
+                  //     formattedDate,
+                  //     style: GoogleFonts.poppins(
+                  //       fontSize: 12,
+                  //       color: isDarkMode ? Colors.white : Colors.black,
+                  //       fontWeight: FontWeight.normal,
+                  //     ),
+                  //   ),
+                  // )
+                ],
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

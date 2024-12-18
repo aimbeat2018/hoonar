@@ -574,8 +574,8 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                     100 * int.parse(model.fees.toString());
 
                                 var options = {
-                                  'key': 'rzp_test_sbZKuVhaj5HMeB',
-                                  // 'key': 'rzp_live_SUTM4whjgSbsHL',
+                                  // 'key': 'rzp_test_sbZKuVhaj5HMeB',
+                                  'key': 'rzp_live_SUTM4whjgSbsHL',
                                   'amount': amountPaid,
                                   'name': model.levelName,
                                   // name of the product
