@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../constants/my_loading/my_loading.dart';
 
 class DataNotFound extends StatelessWidget {
+  const DataNotFound({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer(

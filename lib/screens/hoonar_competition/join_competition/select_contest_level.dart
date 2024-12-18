@@ -1,14 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
+import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
 import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
@@ -109,6 +115,69 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     });
   }
 
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    showCustomSnackBar("Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+    Map<String, String> requestData = {};
+    requestData['UserId'] = signupSuccessModel!.data!.userId.toString();
+    requestData['razorpay_payment_id'] = response.paymentId!;
+    requestData['PackageId'] = levelListData!.levelId.toString();
+    buyPackage(requestData,);
+  }
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
+    showCustomSnackBar("External Wallet Selected${response.walletName}");
+
+  }
+
+  void buyPackage(Map<String, String> data,) {
+    storePayment(
+            context,
+            StorePaymentRequestModel(
+                userId: int.parse(data['UserId'].toString()),
+                levelId: int.parse(levelListData!.levelId.toString()),
+                categoryId: widget.categoryId,
+                amount: levelListData!.fees.toString(),
+                transactionId: data['razorpay_payment_id'],
+                paymentStatus: 'completed'))
+        .then(
+      (value) {
+        showCustomSnackBar("Payment ID: ${data['razorpay_payment_id']}");
+      },
+    );
+
+    /*(e.g., 'completed', 'pending', 'failed')*/
+  }
+
+  void showCustomSnackBar(String message, {bool isError = true}) {
+    if (message.isNotEmpty) {
+      Get.showSnackbar(GetSnackBar(
+        backgroundColor: isError ? Colors.grey : Colors.red,
+        message: message,
+        maxWidth: 1170,
+        duration: const Duration(seconds: 3),
+        snackStyle: SnackStyle.FLOATING,
+        margin: const EdgeInsets.all(5),
+        borderRadius: 10,
+        isDismissible: true,
+        dismissDirection: DismissDirection.horizontal,
+      ));
+    }
+  }
+
+  SignupSuccessModel? signupSuccessModel;
+  LevelListData? levelListData;
+
+  SignupSuccessModel? getUser() {
+    String? strUser = sessionManager.getString(KeyRes.user);
+    if (strUser != null && strUser.isNotEmpty) {
+      return SignupSuccessModel.fromJson(jsonDecode(strUser));
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final contestProvider = Provider.of<ContestProvider>(context);
@@ -193,6 +262,10 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                             0
                                         ? null
                                         : () {
+                                            signupSuccessModel = getUser();
+                                            levelListData = contestProvider
+                                                .levelListModel!.data![index];
+
                                             if (contestProvider
                                                         .levelListModel!
                                                         .data![index]
@@ -507,7 +580,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                             )
                           : InkWell(
                               onTap: () {
-                                storePayment(
+                                /* storePayment(
                                     context,
                                     StorePaymentRequestModel(
                                         userId: int.parse(sessionManager
@@ -518,7 +591,40 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                         transactionId: '123',
                                         // transactionId will change when payment gateway received
                                         paymentStatus:
-                                            'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
+                                            'completed' */ /*(e.g., 'completed', 'pending', 'failed')*/ /*));*/
+
+                                Razorpay razorpay = Razorpay();
+                                int amountPaid = 100 * int.parse(model.fees.toString()) ;
+
+
+                                // int amountPaid = 1 * 100;
+
+
+                                var options = {
+                                  'key': 'rzp_test_sbZKuVhaj5HMeB', // already changed this
+                                  // 'key': 'rzp_test_b3FGTzwr2D5k1d', // already changed this test
+                                  'amount': amountPaid,
+                                  'name': model.levelName,
+                                  // name of the product
+                                  'description': model.description,
+                                  // description of the product
+                                  'retry': {'enabled': true, 'max_count': 1},
+                                  'send_sms_hash': true,
+                                  'prefill': {
+                                    'contact': signupSuccessModel!.data!.userMobileNo,
+                                    'email': signupSuccessModel!.data!.userEmail
+                                  },
+                                  'external': {
+                                    'wallets': ['paytm']
+                                  }
+                                };
+                                razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                                    handlePaymentErrorResponse);
+                                razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                                    handlePaymentSuccessResponse);
+                                razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                                    handleExternalWalletSelected);
+                                razorpay.open(options);
                               },
                               child: Container(
                                 padding:

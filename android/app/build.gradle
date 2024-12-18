@@ -18,7 +18,8 @@ configurations.configureEach {
 
 android {
     namespace = "com.hoonar.hoonar"
-    compileSdk = flutter.compileSdkVersion
+//    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
