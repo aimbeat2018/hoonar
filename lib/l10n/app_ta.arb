@@ -244,5 +244,7 @@
   "dailyFeed": "டெய்லி ஃபீடு",
   "interested": "ஆர்வமாக இருக்கிறேன்",
   "not_interested": "ஆர்வமாக இல்லை",
-  "report": "அறிக்கை"
+  "report": "அறிக்கை",
+  "deleteVideo": "வீடியோவை நீக்கு",
+  "areYouSureYouWantToDeleteThisVideo": "இந்த வீடியோவை நீக்க விரும்புகிறீர்களா?"
 }

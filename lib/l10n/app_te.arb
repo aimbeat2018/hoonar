@@ -244,5 +244,7 @@
   "dailyFeed": "డైలీ ఫీడ్",
   "interested": "ఆసక్తి ఉంది",
   "not_interested": "ఆసక్తి లేదు",
-  "report": "నివేదిక"
+  "report": "నివేదిక",
+  "deleteVideo": "వీడియోను తొలగించండి",
+  "areYouSureYouWantToDeleteThisVideo": "మీరు ఈ వీడియోను తొలగించాలని ఖచ్చితంగా అనుకుంటున్నారా?"
 }

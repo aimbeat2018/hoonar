@@ -244,5 +244,7 @@
   "dailyFeed": "ഡെയിലി ഫീഡ്",
   "interested": "ആസക്തരാണ്",
   "not_interested": "ആസക്തരല്ല",
-  "report": "റിപ്പോർട്ട്"
+  "report": "റിപ്പോർട്ട്",
+  "deleteVideo": "വീഡിയോ നീക്കം ചെയ്യുക",
+  "areYouSureYouWantToDeleteThisVideo": "നിങ്ങൾക്ക് ഈ വീഡിയോ നീക്കം ചെയ്യണമെന്ന് ഉറപ്പാണോ?"
 }

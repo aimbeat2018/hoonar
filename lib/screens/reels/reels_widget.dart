@@ -24,8 +24,11 @@ import '../auth_screen/login_screen.dart';
 
 class ReelsWidget extends StatefulWidget {
   final PostsListData model;
+  final List<PostsListData>? postList;
+  final int index;
 
-  const ReelsWidget({super.key, required this.model});
+  const ReelsWidget(
+      {super.key, required this.model, this.postList, required this.index});
 
   @override
   State<ReelsWidget> createState() => _ReelsWidgetState();
@@ -515,8 +518,11 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                                 : Colors.white)),
                                                     child: isFollowLoading
                                                         ? const Center(
-                                                            child:
-                                                                CircularProgressIndicator())
+                                                            child: SizedBox(
+                                                                height: 15,
+                                                                width: 15,
+                                                                child:
+                                                                    CircularProgressIndicator()))
                                                         : Text(
                                                             widget.model.followOrNot ==
                                                                         1 ||
@@ -531,21 +537,22 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                             style: GoogleFonts
                                                                 .poppins(
                                                               fontSize: 12,
-                                                              color: widget.model
+                                                              color: /*widget.model
                                                                               .followOrNot ==
-                                                                          1 ||
-                                                                      followStatus ==
+                                                                          1 ||*/
+                                                                  followStatus ==
                                                                           1
-                                                                  ? (myLoading.isDark
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .white)
-                                                                  : (myLoading.isDark
-                                                                      ? Colors
-                                                                          .black
-                                                                      : Colors
-                                                                          .white),
+                                                                      ? (myLoading
+                                                                              .isDark
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .white)
+                                                                      : (myLoading.isDark
+                                                                          ? Colors
+                                                                              .black
+                                                                          : Colors
+                                                                              .black),
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -728,34 +735,44 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
+                                  sessionManager.getString(
+                                              SessionManager.userId) ==
+                                          widget.model.userId.toString()
+                                      ? SizedBox(
+                                          height: 65,
+                                        )
+                                      : SizedBox(),
                                 ],
                               ),
                             ),
                             const SizedBox(
                               height: 15,
                             ),
-                            InkWell(
-                              onTap: () {
-                                _moreOptionsBottomSheet(
-                                    context,
-                                    myLoading.isDark,
-                                    widget.model.postId!,
-                                    widget.model.userId!,
-                                    widget.model.followOrNot!.toString());
-                              },
-                              child: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.more_vert,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    height: 65,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            sessionManager.getString(SessionManager.userId) !=
+                                    widget.model.userId.toString()
+                                ? InkWell(
+                                    onTap: () {
+                                      _moreOptionsBottomSheet(
+                                          context,
+                                          myLoading.isDark,
+                                          widget.model.postId!,
+                                          widget.model.userId!,
+                                          widget.model.followOrNot!.toString());
+                                    },
+                                    child: const Column(
+                                      children: [
+                                        Icon(
+                                          Icons.more_vert,
+                                          size: 25,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          height: 65,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : SizedBox(),
                           ],
                         ),
                       ),
@@ -894,6 +911,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                     followStatus: followStatus,
                     postUserId: postUserId,
                     userId: sessionManager.getString(SessionManager.userId)!,
+                    postList: widget.postList,
+                    index: widget.index,
                   ),
                 ))
           ],

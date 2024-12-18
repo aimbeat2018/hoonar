@@ -244,5 +244,7 @@
   "dailyFeed": "ಡೇಲಿ ಫೀಡ್",
   "interested": "ಆಸಕ್ತಿ",
   "not_interested": "ಆಸಕ್ತಿ ಇಲ್ಲ",
-  "report": "ವರದಿ"
+  "report": "ವರದಿ",
+  "deleteVideo": "ವೀಡಿಯೊ ಅಳಿಸಿ",
+  "areYouSureYouWantToDeleteThisVideo": "ನೀವು ಈ ವೀಡಿಯೊ ಅಳಿಸಲು ಖಚಿತವಾ?"
 }

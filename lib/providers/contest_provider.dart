@@ -197,8 +197,7 @@ class ContestProvider extends ChangeNotifier {
   }
 
   Future<void> getGuidelines(
-      ListCommonRequestModel requestModel, String accessToken
-      ) async {
+      ListCommonRequestModel requestModel, String accessToken) async {
     _isGuidelinesLoading = true;
     _errorMessage = null;
     notifyListeners();

@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/session_manager.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/reels/report_post_screen.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +13,7 @@ import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
 import '../../model/star_category_model.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../auth_screen/login_screen.dart';
 
 class MoreOptionsListScreen extends StatefulWidget {
@@ -18,13 +21,17 @@ class MoreOptionsListScreen extends StatefulWidget {
   final int postUserId;
   final String userId;
   final String followStatus;
+  final List<PostsListData>? postList;
+  final int index;
 
   const MoreOptionsListScreen(
       {super.key,
       required this.postId,
       required this.followStatus,
       required this.postUserId,
-      required this.userId});
+      required this.userId,
+      this.postList,
+      required this.index});
 
   @override
   State<MoreOptionsListScreen> createState() => _MoreOptionsListScreenState();
@@ -36,12 +43,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
   SessionManager sessionManager = SessionManager();
 
   List<StarCategoryModel> optionsList = [];
-
-  // void updateHeight(double height) {
-  //   setState(() {
-  //     _height = height;
-  //   });
-  // }
+  String userId = "";
 
   Future<void> postInterest(
       BuildContext context, int postId, String interestType) async {
@@ -72,7 +74,97 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
     });
   }
 
-  String userId = "";
+  Future<void> deletePost(BuildContext context, int postId, int index) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(postId: postId);
+
+      await homeProvider.deletePost(
+        context,
+        requestModel,
+        sessionManager.getString(SessionManager.accessToken) ?? '',
+        /* CommonRequestModel(
+              userId: sessionManager.getString(SessionManager.userId)!,
+              myUserId: sessionManager.getString(SessionManager.userId)!)*/
+      );
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.deletePostModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deletePostModel?.message! ?? '');
+          // setState(() {
+          //   widget.postList!.removeAt(index);
+          // });
+        } else if (homeProvider.deletePostModel?.status == '401') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deletePostModel?.message! ?? '');
+        } else if (homeProvider.deletePostModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deletePostModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+    await Future.delayed(Duration(seconds: 2), () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+  }
+
+  void showDeleteDialog(
+      BuildContext context, bool isDarkMode, BuildContext context1) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.deleteAccount,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.areYouSureYouWantToDeleteThisVideo,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: GoogleFonts.poppins(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.delete,
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () async {
+                // Navigator.pop(context1);
+                deletePost(context, widget.postId, widget.index);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -93,10 +185,6 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
 
   @override
   Widget build(BuildContext context) {
-    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
-    final homeProvider = Provider.of<HomeProvider>(context);
-
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return SafeArea(
         child: Column(
@@ -259,55 +347,58 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                       ),
                     ],
                   )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5.0, horizontal: 15),
-                        child: InkWell(
-                          onTap: () {
-                            postInterest(context, widget.postId, "1");
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.delete,
-                                color: myLoading.isDark
-                                    ? Colors.white60
-                                    : Colors.grey,
+                : widget.postList![widget.index].canVote != 1
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5.0, horizontal: 15),
+                            child: InkWell(
+                              onTap: () {
+                                showDeleteDialog(
+                                    context, myLoading.isDark, context);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.delete,
+                                    color: myLoading.isDark
+                                        ? Colors.white60
+                                        : Colors.grey,
+                                  ),
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.deleteVideo,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 15,
+                                    color: myLoading.isDark
+                                        ? Colors.white60
+                                        : Colors.grey,
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(
-                                'Delete video',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                              Spacer(),
-                              Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 15,
-                                color: myLoading.isDark
-                                    ? Colors.white60
-                                    : Colors.grey,
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        ],
+                      )
+                    : SizedBox(),
           ],
         ),
       );

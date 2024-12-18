@@ -244,5 +244,7 @@
   "dailyFeed": "ଡେଲି ଫିଡ୍",
   "interested": "ରୁଚି ରଖନ୍ତି",
   "not_interested": "ରୁଚି ନାହିଁ",
-  "report": "ରିପୋର୍ଟ"
+  "report": "ରିପୋର୍ଟ",
+  "deleteVideo": "ଭିଡିଓ ବିଲୋପ କରନ୍ତୁ",
+  "areYouSureYouWantToDeleteThisVideo": "ଆପଣ ନିଶ୍ଚିତ ଯେ ଏହି ଭିଡିଓ ବିଲୋପ କରିବେ?"
 }

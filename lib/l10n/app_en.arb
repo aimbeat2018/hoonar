@@ -245,5 +245,7 @@
   "dailyFeed": "Daily Feed",
   "interested": "Interested",
   "not_interested": "Not Interested",
-  "report": "Report"
+  "report": "Report",
+  "deleteVideo": "Delete Video",
+  "areYouSureYouWantToDeleteThisVideo": "Are you sure you want to delete this video?"
 }

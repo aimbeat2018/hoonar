@@ -244,5 +244,7 @@
   "dailyFeed": "ડેઇલી ફીડ",
   "interested": "રસ ધરાવે છે",
   "not_interested": "રસ ધરાવતો નથી",
-  "report": "રિપોર્ટ"
+  "report": "રિપોર્ટ",
+  "deleteVideo": "વિડિઓ ડિલીટ કરો",
+  "areYouSureYouWantToDeleteThisVideo": "શું તમે ખરેખર આ વિડિઓ ડિલીટ કરવા માંગો છો?"
 }

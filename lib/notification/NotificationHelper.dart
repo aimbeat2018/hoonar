@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:hoonar/screens/search/search_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,6 +54,10 @@ class NotificationHelper {
           String data1 = data.replaceFirst("\"", "", data.length - 1);
 
           final body = json.decode(data1.replaceAll(r'\', ''));
+
+          Navigator.of(NotificationHelper._context!)
+              .push(MaterialPageRoute(builder: (context) => SearchScreen()));
+
           // MainNotificationModel mainNotificationModel =
           //     MainNotificationModel.fromJson(body);
           // _title = mainNotificationModel.title;
@@ -208,8 +213,8 @@ Future<void> showBigPictureNotificationHiddenLargeIcon(String title,
 
   if (Platform.isAndroid) {
     androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'Pepdeal',
-      'Pepdeal',
+      'Hoonar',
+      'Hoonar',
       largeIcon: FilePathAndroidBitmap(largeIconPath),
       priority: Priority.max,
       icon: "@mipmap/ic_launcher",
@@ -240,8 +245,8 @@ Future<void> showTextNotification(
     String title, String body, FlutterLocalNotificationsPlugin fln) async {
   const AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    'Pepdeal',
-    'Pepdeal',
+    'Hoonar',
+    'Hoonar',
     // playSound: true,
     importance: Importance.max,
     icon: "@mipmap/ic_launcher",
@@ -263,8 +268,8 @@ Future<void> showBigTextNotification(
   );
   AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
-    'Pepdeal',
-    'Pepdeal',
+    'Hoonar',
+    'Hoonar',
     importance: Importance.max,
     styleInformation: bigTextStyleInformation,
     priority: Priority.max,

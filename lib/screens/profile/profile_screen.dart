@@ -27,6 +27,7 @@ import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
+import '../../providers/home_provider.dart';
 import '../../providers/user_provider.dart';
 import '../auth_screen/login_screen.dart';
 
@@ -526,8 +527,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                       ),
                                                     ),
                                                     child: Text(
-                                                      profile.data!.isFollowing ==
-                                                                  1 ||
+                                                      // profile.data!.isFollowing ==
+                                                      //             1 ||
                                                               followStatus == 1
                                                           ? AppLocalizations.of(
                                                                   context)!
@@ -628,6 +629,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 FeedScreen(
                                   controller: controller,
                                   feedsList: profile.data!.posts ?? [],
+                                  isDarkMode: myLoading.isDark,
+                                  from: widget.from,
                                 ),
                                 HoonarStarScreen(
                                   controller: controller,
@@ -637,6 +640,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 DraftsScreen(
                                   controller: controller,
                                   draftList: profile.data!.drafts ?? [],
+                                  isDarkMode: myLoading.isDark,
+                                  from: widget.from,
                                 ),
                               ],
                             ),

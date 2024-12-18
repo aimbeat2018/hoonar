@@ -244,5 +244,7 @@
   "dailyFeed": "डेली फीड",
   "interested": "रुचि रखते हैं",
   "not_interested": "रुचि नहीं रखते",
-  "report": "रिपोर्ट"
+  "report": "रिपोर्ट",
+  "deleteVideo": "वीडियो हटाएं",
+  "areYouSureYouWantToDeleteThisVideo": "क्या आप वाकई इस वीडियो को हटाना चाहते हैं?"
 }

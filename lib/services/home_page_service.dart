@@ -282,6 +282,16 @@ class HomePageService {
     );
   }
 
+  Future<FollowUnfollowSuccessModel> deletePost(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$deletePostUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
   Future<ReportReasonsModel> reportReasonsList(
       ListCommonRequestModel requestModel, String accessToken) async {
     return apiMethods.sendRequest<ReportReasonsModel>(

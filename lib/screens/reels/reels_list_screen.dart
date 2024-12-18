@@ -46,7 +46,8 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
 
                   return ReelsWidget(
                     model: widget.postList![index],
-                    // index: currentIndex!,
+                    index: index,
+                    postList: widget.postList!,
                   );
                 },
                 itemCount: widget.postList!.length,
@@ -55,8 +56,7 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
                 onIndexChanged: (index) {
                   setState(() {
                     hasSwiped = true;
-                    currentIndex =
-                        index;
+                    currentIndex = index;
                   });
                 },
               ),

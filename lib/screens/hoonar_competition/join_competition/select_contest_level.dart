@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/text_constants.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
@@ -90,20 +88,21 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
       } else {
         if (contestProvider.storePaymentSuccessModel?.status == '200') {
           Navigator.of(context).pop();
+          if (requestModel.paymentStatus != 'failed') {
+            if (mounted) {
+              setState(() {
+                KeyRes.selectedLevelId = requestModel.levelId!;
+              });
+            }
 
-          if (mounted) {
-            setState(() {
-              KeyRes.selectedLevelId = requestModel.levelId!;
-            });
+            Navigator.push(
+              context,
+              SlideRightRoute(
+                  page: ContestJoinSuccessScreen(
+                      categoryId: widget.categoryId,
+                      levelId: requestModel.levelId.toString())),
+            );
           }
-
-          Navigator.push(
-            context,
-            SlideRightRoute(
-                page: ContestJoinSuccessScreen(
-                    categoryId: widget.categoryId,
-                    levelId: requestModel.levelId.toString())),
-          );
         } else if (contestProvider.storePaymentSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -116,55 +115,43 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
   }
 
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
-    showCustomSnackBar("Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
+    SnackbarUtil.showSnackBar(context,
+        "Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
+
+    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
+
+    storePayment(
+        context,
+        StorePaymentRequestModel(
+            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
+            levelId: levelListData!.levelId,
+            categoryId: widget.categoryId,
+            amount: amountPaid.toString(),
+            transactionId: "",
+            // transactionId will change when payment gateway received
+            paymentStatus:
+                'failed' /*(e.g., 'completed', 'pending', 'failed')*/));
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    Map<String, String> requestData = {};
-    requestData['UserId'] = signupSuccessModel!.data!.userId.toString();
-    requestData['razorpay_payment_id'] = response.paymentId!;
-    requestData['PackageId'] = levelListData!.levelId.toString();
-    buyPackage(requestData,);
+    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
+
+    storePayment(
+        context,
+        StorePaymentRequestModel(
+            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
+            levelId: levelListData!.levelId,
+            categoryId: widget.categoryId,
+            amount: amountPaid.toString(),
+            transactionId: response.paymentId,
+            // transactionId will change when payment gateway received
+            paymentStatus:
+                'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
   }
 
   void handleExternalWalletSelected(ExternalWalletResponse response) {
-    showCustomSnackBar("External Wallet Selected${response.walletName}");
-
-  }
-
-  void buyPackage(Map<String, String> data,) {
-    storePayment(
-            context,
-            StorePaymentRequestModel(
-                userId: int.parse(data['UserId'].toString()),
-                levelId: int.parse(levelListData!.levelId.toString()),
-                categoryId: widget.categoryId,
-                amount: levelListData!.fees.toString(),
-                transactionId: data['razorpay_payment_id'],
-                paymentStatus: 'completed'))
-        .then(
-      (value) {
-        showCustomSnackBar("Payment ID: ${data['razorpay_payment_id']}");
-      },
-    );
-
-    /*(e.g., 'completed', 'pending', 'failed')*/
-  }
-
-  void showCustomSnackBar(String message, {bool isError = true}) {
-    if (message.isNotEmpty) {
-      Get.showSnackbar(GetSnackBar(
-        backgroundColor: isError ? Colors.grey : Colors.red,
-        message: message,
-        maxWidth: 1170,
-        duration: const Duration(seconds: 3),
-        snackStyle: SnackStyle.FLOATING,
-        margin: const EdgeInsets.all(5),
-        borderRadius: 10,
-        isDismissible: true,
-        dismissDirection: DismissDirection.horizontal,
-      ));
-    }
+    SnackbarUtil.showSnackBar(
+        context, "External Wallet Selected${response.walletName}");
   }
 
   SignupSuccessModel? signupSuccessModel;
@@ -263,6 +250,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                         ? null
                                         : () {
                                             signupSuccessModel = getUser();
+
                                             levelListData = contestProvider
                                                 .levelListModel!.data![index];
 
@@ -580,29 +568,14 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                             )
                           : InkWell(
                               onTap: () {
-                                /* storePayment(
-                                    context,
-                                    StorePaymentRequestModel(
-                                        userId: int.parse(sessionManager
-                                            .getString(SessionManager.userId)!),
-                                        levelId: model.levelId,
-                                        categoryId: widget.categoryId,
-                                        amount: model.fees.toString(),
-                                        transactionId: '123',
-                                        // transactionId will change when payment gateway received
-                                        paymentStatus:
-                                            'completed' */ /*(e.g., 'completed', 'pending', 'failed')*/ /*));*/
-
                                 Razorpay razorpay = Razorpay();
-                                int amountPaid = 100 * int.parse(model.fees.toString()) ;
 
-
-                                // int amountPaid = 1 * 100;
-
+                                int amountPaid =
+                                    100 * int.parse(model.fees.toString());
 
                                 var options = {
-                                  'key': 'rzp_test_sbZKuVhaj5HMeB', // already changed this
-                                  // 'key': 'rzp_test_b3FGTzwr2D5k1d', // already changed this test
+                                  'key': 'rzp_test_sbZKuVhaj5HMeB',
+                                  // 'key': 'rzp_live_SUTM4whjgSbsHL',
                                   'amount': amountPaid,
                                   'name': model.levelName,
                                   // name of the product
@@ -611,7 +584,8 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                   'retry': {'enabled': true, 'max_count': 1},
                                   'send_sms_hash': true,
                                   'prefill': {
-                                    'contact': signupSuccessModel!.data!.userMobileNo,
+                                    'contact':
+                                        signupSuccessModel!.data!.userMobileNo,
                                     'email': signupSuccessModel!.data!.userEmail
                                   },
                                   'external': {
