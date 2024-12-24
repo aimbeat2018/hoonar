@@ -159,7 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refresh() async {
-    await Future.delayed(Duration(seconds: 2)); // Simulate a network request
+    await Future.delayed(
+        const Duration(seconds: 2)); // Simulate a network request
     getHomePost(context);
     getHomePageOtherPost(context);
   }
@@ -202,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  SlideRightRoute(page: NotificationListScreen()),
+                  SlideRightRoute(page: const NotificationListScreen()),
                 );
               },
               child: Padding(
@@ -222,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         top: 0,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.red, // Background color for the count
                             shape: BoxShape.circle, // Circular shape
                           ),
@@ -280,46 +281,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                     });
                                   },
                                   child: Container(
-                                    /*margin:
-                                      EdgeInsets.symmetric(horizontal: screenWidth * 0.1),*/
-                                    // 10% of the screen width for margin
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 10),
                                     decoration: _currentIndex == index
                                         ? BoxDecoration(
-                                            gradient: LinearGradient(
-                                              /* begin: Alignment(0.00, 1.00),
-                                              end: Alignment(0, -1),*/
-                                              begin: myLoading.isDark
-                                                  ? Alignment(0.00, 1.00)
-                                                  : Alignment(0, -1), // Top
-                                              end: myLoading.isDark
-                                                  ? Alignment(0, -1)
-                                                  : Alignment(0, 1), // Bottom
-                                              colors: [
-                                                myLoading.isDark
-                                                    ? Colors.black
-                                                    : greyTextColor3,
-                                                myLoading.isDark
-                                                    ? Color(0xFF313131)
-                                                    : Colors.grey.shade500,
-                                                myLoading.isDark
-                                                    ? Color(0xFF636363)
-                                                    : Colors.grey.shade100
-                                              ],
-                                            ),
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(7.96),
-                                              topRight: Radius.circular(7.96),
-                                            ),
-                                            // border: Border(
-                                            //   top: BorderSide(
-                                            //     width: 1.5,
-                                            //     color: myLoading.isDark
-                                            //         ? Colors.white
-                                            //         : Colors.grey,
-                                            //   ),
-                                            // ),
+                                            color: buttonColor,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(10)),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.15),
+                                                spreadRadius: 0,
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
                                           )
                                         : BoxDecoration(
                                             borderRadius:
@@ -333,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         textAlign: TextAlign.start,
                                         style: GoogleFonts.poppins(
                                           color: _currentIndex == index
-                                              ? Colors.white
+                                              ? Colors.black
                                               : myLoading.isDark
                                                   ? Colors.white
                                                   : Colors.black,
@@ -370,10 +349,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts ==
                                     null
-                                ? DataNotFound()
+                                ? const DataNotFound()
                                 : homeProvider.homePostSuccessModel!
                                         .data![_currentIndex].posts!.isEmpty
-                                    ? DataNotFound()
+                                    ? const DataNotFound()
                                     : SizedBox(
                                         // height: screenHeight * 0.58,
                                         child: CarouselPageView(
@@ -396,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ))*/
                           ],
                         ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Center(
