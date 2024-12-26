@@ -246,5 +246,7 @@
   "not_interested": "دلچسپی نہیں ہے",
   "report": "رپورٹ",
   "deleteVideo": "ویڈیو کو حذف کریں",
-  "areYouSureYouWantToDeleteThisVideo": "کیا آپ واقعی اس ویڈیو کو حذف کرنا چاہتے ہیں؟"
+  "areYouSureYouWantToDeleteThisVideo": "کیا آپ واقعی اس ویڈیو کو حذف کرنا چاہتے ہیں؟",
+  "enterCouponCode": "کوپن کوڈ درج کریں",
+  "apply": "لاگو کریں"
 }

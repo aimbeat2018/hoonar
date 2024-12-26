@@ -246,5 +246,7 @@
   "not_interested": "ಆಸಕ್ತಿ ಇಲ್ಲ",
   "report": "ವರದಿ",
   "deleteVideo": "ವೀಡಿಯೊ ಅಳಿಸಿ",
-  "areYouSureYouWantToDeleteThisVideo": "ನೀವು ಈ ವೀಡಿಯೊ ಅಳಿಸಲು ಖಚಿತವಾ?"
+  "areYouSureYouWantToDeleteThisVideo": "ನೀವು ಈ ವೀಡಿಯೊ ಅಳಿಸಲು ಖಚಿತವಾ?",
+  "enterCouponCode": "ಕೂಪನ್ ಕೋಡ್ ನಮೂದಿಸಿ",
+  "apply": "ಅನ್ವಯಿಸಿ"
 }

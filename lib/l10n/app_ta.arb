@@ -246,5 +246,7 @@
   "not_interested": "ஆர்வமாக இல்லை",
   "report": "அறிக்கை",
   "deleteVideo": "வீடியோவை நீக்கு",
-  "areYouSureYouWantToDeleteThisVideo": "இந்த வீடியோவை நீக்க விரும்புகிறீர்களா?"
+  "areYouSureYouWantToDeleteThisVideo": "இந்த வீடியோவை நீக்க விரும்புகிறீர்களா?",
+  "enterCouponCode": "கூப்பன் குறியீட்டை உள்ளிடவும்",
+  "apply": "பயன்படுத்து"
 }

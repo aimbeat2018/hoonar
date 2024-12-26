@@ -78,6 +78,7 @@ const String postInterestUrl = 'Post/addUserInterest';
 const String getReportReasonsUrl = 'Post/getReportReasons';
 const String reportPostUrl = 'Post/reportPost';
 const String deletePostUrl = 'Post/deletePost';
+const String applyCouponCodeUrl = 'User/applyCoupon';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;

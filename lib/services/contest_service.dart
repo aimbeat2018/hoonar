@@ -35,6 +35,7 @@ import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
 import 'package:hoonar/model/success_models/withdraw_request_list_model.dart';
 
 import '../constants/utils.dart';
+import '../model/success_models/apply_coupon_code_model.dart';
 import '../model/success_models/follow_unfollow_success_model.dart';
 import 'common_api_methods.dart';
 
@@ -72,6 +73,17 @@ class ContestService {
       data: requestModel.toJson(),
       accessToken: accessToken,
       fromJson: (data) => StorePaymentSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<ApplyCouponCodeModel> applyCouponCode(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<ApplyCouponCodeModel>(
+      '$baseUrl$applyCouponCodeUrl',
+      method: 'POST',
+      data: requestModel.toJson(),
+      accessToken: accessToken,
+      fromJson: (data) => ApplyCouponCodeModel.fromJson(data),
     );
   }
 

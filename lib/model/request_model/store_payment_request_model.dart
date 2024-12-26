@@ -3,6 +3,7 @@ class StorePaymentRequestModel {
   int? levelId;
   int? categoryId;
   String? amount;
+  String? couponCode;
   String? transactionId;
   String? paymentStatus; //(e.g., 'completed', 'pending', 'failed')
 
@@ -11,6 +12,7 @@ class StorePaymentRequestModel {
       this.levelId,
       this.categoryId,
       this.amount,
+      this.couponCode,
       this.transactionId,
       this.paymentStatus});
 
@@ -21,6 +23,7 @@ class StorePaymentRequestModel {
     amount = json['amount'];
     transactionId = json['transaction_id'];
     paymentStatus = json['payment_status'];
+    couponCode = json['coupon_code'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class StorePaymentRequestModel {
     data['amount'] = amount;
     data['transaction_id'] = transactionId;
     data['payment_status'] = paymentStatus;
+    data['coupon_code'] = couponCode;
     return data;
   }
 }

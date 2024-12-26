@@ -5,6 +5,7 @@ import 'package:hoonar/model/request_model/bank_detail_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
+import 'package:hoonar/model/success_models/apply_coupon_code_model.dart';
 import 'package:hoonar/model/success_models/bank_details_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
 import 'package:hoonar/model/success_models/guidelines_model.dart';
@@ -54,11 +55,13 @@ class ContestProvider extends ChangeNotifier {
   bool _isDraftFeedLoading = false;
   bool _isBankDetailsLoading = false;
   bool _isAddBankDetailsLoading = false;
+  bool _isApplyCouponCodeLoading = false;
   String? _errorMessage;
 
   LevelListModel? _levelListModel;
   GuidelinesModel? _guidelinesModel;
   StorePaymentSuccessModel? _storePaymentSuccessModel;
+  ApplyCouponCodeModel? _applyCouponCodeModel;
   LeaderboardListModel? _leaderboardListModel;
   UserRankSuccessModel? _userRankSuccessModel;
   HoonarStarSuccessModel? _hoonarStarSuccessModel;
@@ -98,6 +101,8 @@ class ContestProvider extends ChangeNotifier {
   bool get isDraftFeedLoading => _isDraftFeedLoading;
 
   bool get isBankDetailsLoading => _isBankDetailsLoading;
+
+  bool get isApplyCouponCodeLoading => _isApplyCouponCodeLoading;
 
   bool get isSavedSoundListLoading => _isSavedSoundListLoading;
 
@@ -173,6 +178,8 @@ class ContestProvider extends ChangeNotifier {
   StorePaymentSuccessModel? get storePaymentSuccessModel =>
       _storePaymentSuccessModel;
 
+  ApplyCouponCodeModel? get applyCouponCodeModel => _applyCouponCodeModel;
+
   List<LeaderboardListData> get leaderboardList => _leaderboardList;
 
   List<LeaderboardListData> get filteredLeaderboardList =>
@@ -233,6 +240,24 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isStorePaymentLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> applyCouponCode(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isApplyCouponCodeLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      ApplyCouponCodeModel successModel =
+          await _contestService.applyCouponCode(requestModel, accessToken);
+      _applyCouponCodeModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isApplyCouponCodeLoading = false;
       notifyListeners();
     }
   }

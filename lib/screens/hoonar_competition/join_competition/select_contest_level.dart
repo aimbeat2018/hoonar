@@ -4,16 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
+import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_payment_request_model.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/join_competition/make_level_payment_screen.dart';
 import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../../constants/color_constants.dart';
 import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/session_manager.dart';
@@ -21,6 +23,7 @@ import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../custom/upper_case_text_formatter.dart';
 import '../../../model/success_models/level_list_model.dart';
 import '../../auth_screen/login_screen.dart';
 import 'contest_join_options_screen.dart';
@@ -38,6 +41,7 @@ class SelectContestLevel extends StatefulWidget {
 
 class _SelectContestLevelState extends State<SelectContestLevel> {
   SessionManager sessionManager = SessionManager();
+  String couponCode = "";
 
   @override
   void initState() {
@@ -114,6 +118,35 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     });
   }
 
+  Future<void> applyCouponCode(
+      BuildContext context, CommonRequestModel requestModel) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      await contestProvider.applyCouponCode(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.applyCouponCodeModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.applyCouponCodeModel?.message! ?? '');
+        } else if (contestProvider.applyCouponCodeModel?.status == '404') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.applyCouponCodeModel?.message! ?? '');
+        } else if (contestProvider.applyCouponCodeModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.applyCouponCodeModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+  }
+
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
     SnackbarUtil.showSnackBar(context,
         "Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
@@ -127,6 +160,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
             levelId: levelListData!.levelId,
             categoryId: widget.categoryId,
             amount: amountPaid.toString(),
+            couponCode: couponCode,
             transactionId: "",
             // transactionId will change when payment gateway received
             paymentStatus:
@@ -143,6 +177,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
             levelId: levelListData!.levelId,
             categoryId: widget.categoryId,
             amount: amountPaid.toString(),
+            couponCode: couponCode,
             transactionId: response.paymentId,
             // transactionId will change when payment gateway received
             paymentStatus:
@@ -229,7 +264,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                       ? const LevelShimmer()
                       : contestProvider.levelListModel!.data == null ||
                               contestProvider.levelListModel!.data!.isEmpty
-                          ? DataNotFound()
+                          ? const DataNotFound()
                           : ListView.builder(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 10, horizontal: 10),
@@ -490,151 +525,11 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
         ),
       ),
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GradientText(
-                model.levelName ?? '',
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  color: isDarkMode ? Colors.black : Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.topRight,
-                    colors: [Colors.black, Colors.black, Colors.grey.shade700]),
-              ),
-              Text(
-                AppLocalizations.of(context)!.payNowToBecomeContestant,
-                textAlign: TextAlign.start,
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Text(
-                  model.description ?? '',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Text(
-                        '₹ ${model.fees}/-',
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                      child: Provider.of<ContestProvider>(context)
-                              .isStorePaymentLoading
-                          ? const Center(
-                              // Centering the progress indicator
-                              child: SizedBox(
-                                height: 40,
-                                width: 40,
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () {
-                                Razorpay razorpay = Razorpay();
-
-                                int amountPaid =
-                                    100 * int.parse(model.fees.toString());
-
-                                var options = {
-                                  // 'key': 'rzp_test_sbZKuVhaj5HMeB',
-                                  'key': 'rzp_live_SUTM4whjgSbsHL',
-                                  'amount': amountPaid,
-                                  'name': model.levelName,
-                                  // name of the product
-                                  'description': model.description,
-                                  // description of the product
-                                  'retry': {'enabled': true, 'max_count': 1},
-                                  'send_sms_hash': true,
-                                  'prefill': {
-                                    'contact':
-                                        signupSuccessModel!.data!.userMobileNo,
-                                    'email': signupSuccessModel!.data!.userEmail
-                                  },
-                                  'external': {
-                                    'wallets': ['paytm']
-                                  }
-                                };
-                                razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
-                                    handlePaymentErrorResponse);
-                                razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                                    handlePaymentSuccessResponse);
-                                razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                                    handleExternalWalletSelected);
-                                razorpay.open(options);
-                              },
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                margin: const EdgeInsets.only(right: 20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Colors.black,
-                                      Color(0xFF313131),
-                                      Color(0xFF636363)
-                                    ],
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.payNow,
-                                    textAlign: TextAlign.start,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        );
+        return MakeLevelPaymentScreen(
+            isDarkMode: isDarkMode,
+            index: index,
+            model: model,
+            categoryId: widget.categoryId!);
       },
     );
   }

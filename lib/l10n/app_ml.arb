@@ -246,5 +246,7 @@
   "not_interested": "ആസക്തരല്ല",
   "report": "റിപ്പോർട്ട്",
   "deleteVideo": "വീഡിയോ നീക്കം ചെയ്യുക",
-  "areYouSureYouWantToDeleteThisVideo": "നിങ്ങൾക്ക് ഈ വീഡിയോ നീക്കം ചെയ്യണമെന്ന് ഉറപ്പാണോ?"
+  "areYouSureYouWantToDeleteThisVideo": "നിങ്ങൾക്ക് ഈ വീഡിയോ നീക്കം ചെയ്യണമെന്ന് ഉറപ്പാണോ?",
+  "enterCouponCode": "കൂപ്പൺ കോഡ് നൽകുക",
+  "apply": "പ്രയോഗിക്കുക"
 }

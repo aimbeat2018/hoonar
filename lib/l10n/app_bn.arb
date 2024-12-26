@@ -246,5 +246,7 @@
   "not_interested": "আগ্রহী নই",
   "report": "রিপোর্ট",
   "deleteVideo": "ভিডিও মুছুন",
-  "areYouSureYouWantToDeleteThisVideo": "আপনি কি নিশ্চিত এই ভিডিওটি মুছতে চান?"
+  "areYouSureYouWantToDeleteThisVideo": "আপনি কি নিশ্চিত এই ভিডিওটি মুছতে চান?",
+  "enterCouponCode": "কুপন কোড লিখুন",
+  "apply": "প্রয়োগ করুন"
 }

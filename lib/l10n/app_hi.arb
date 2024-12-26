@@ -246,5 +246,7 @@
   "not_interested": "रुचि नहीं रखते",
   "report": "रिपोर्ट",
   "deleteVideo": "वीडियो हटाएं",
-  "areYouSureYouWantToDeleteThisVideo": "क्या आप वाकई इस वीडियो को हटाना चाहते हैं?"
+  "areYouSureYouWantToDeleteThisVideo": "क्या आप वाकई इस वीडियो को हटाना चाहते हैं?",
+  "enterCouponCode": "कूपन कोड दर्ज करें",
+  "apply": "लागू करें"
 }

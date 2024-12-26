@@ -246,5 +246,7 @@
   "not_interested": "રસ ધરાવતો નથી",
   "report": "રિપોર્ટ",
   "deleteVideo": "વિડિઓ ડિલીટ કરો",
-  "areYouSureYouWantToDeleteThisVideo": "શું તમે ખરેખર આ વિડિઓ ડિલીટ કરવા માંગો છો?"
+  "areYouSureYouWantToDeleteThisVideo": "શું તમે ખરેખર આ વિડિઓ ડિલીટ કરવા માંગો છો?",
+  "enterCouponCode": "કૂપન કોડ દાખલ કરો",
+  "apply": "લાગુ કરો"
 }

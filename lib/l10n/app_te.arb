@@ -246,5 +246,7 @@
   "not_interested": "ఆసక్తి లేదు",
   "report": "నివేదిక",
   "deleteVideo": "వీడియోను తొలగించండి",
-  "areYouSureYouWantToDeleteThisVideo": "మీరు ఈ వీడియోను తొలగించాలని ఖచ్చితంగా అనుకుంటున్నారా?"
+  "areYouSureYouWantToDeleteThisVideo": "మీరు ఈ వీడియోను తొలగించాలని ఖచ్చితంగా అనుకుంటున్నారా?",
+  "enterCouponCode": "కూపన్ కోడ్ ను నమోదు చేయండి",
+  "apply": "వర్తించు"
 }

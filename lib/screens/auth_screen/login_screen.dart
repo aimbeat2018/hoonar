@@ -429,20 +429,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.loginWith,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  // Center(
+                  //   child: Text(
+                  //     AppLocalizations.of(context)!.loginWith,
+                  //     textAlign: TextAlign.center,
+                  //     style: GoogleFonts.poppins(
+                  //       fontSize: 14,
+                  //       color: myLoading.isDark ? Colors.white : Colors.black,
+                  //       fontWeight: FontWeight.w500,
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 10,
+                  // ),
              /*     Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     // crossAxisAlignment: CrossAxisAlignment.end,
