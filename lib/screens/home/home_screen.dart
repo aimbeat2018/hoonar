@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Container(
                                     margin: const EdgeInsets.only(bottom: 10),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 10),
+                                        horizontal: 10, vertical: 0),
                                     decoration: _currentIndex == index
                                         ? BoxDecoration(
                                             color: buttonColor,

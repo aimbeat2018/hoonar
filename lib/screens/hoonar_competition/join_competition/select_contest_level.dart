@@ -15,15 +15,12 @@ import 'package:hoonar/shimmerLoaders/level_shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../../../constants/color_constants.dart';
 import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
-import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
-import '../../../custom/upper_case_text_formatter.dart';
 import '../../../model/success_models/level_list_model.dart';
 import '../../auth_screen/login_screen.dart';
 import 'contest_join_options_screen.dart';
@@ -118,88 +115,6 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     });
   }
 
-  Future<void> applyCouponCode(
-      BuildContext context, CommonRequestModel requestModel) async {
-    final contestProvider =
-        Provider.of<ContestProvider>(context, listen: false);
-
-    sessionManager.initPref().then((onValue) async {
-      await contestProvider.applyCouponCode(requestModel,
-          sessionManager.getString(SessionManager.accessToken) ?? '');
-
-      if (contestProvider.errorMessage != null) {
-        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
-      } else {
-        if (contestProvider.applyCouponCodeModel?.status == '200') {
-          SnackbarUtil.showSnackBar(
-              context, contestProvider.applyCouponCodeModel?.message! ?? '');
-        } else if (contestProvider.applyCouponCodeModel?.status == '404') {
-          SnackbarUtil.showSnackBar(
-              context, contestProvider.applyCouponCodeModel?.message! ?? '');
-        } else if (contestProvider.applyCouponCodeModel?.message ==
-            'Unauthorized Access!') {
-          SnackbarUtil.showSnackBar(
-              context, contestProvider.applyCouponCodeModel?.message! ?? '');
-          Navigator.pushAndRemoveUntil(context,
-              SlideRightRoute(page: const LoginScreen()), (route) => false);
-        }
-      }
-    });
-  }
-
-  void handlePaymentErrorResponse(PaymentFailureResponse response) {
-    SnackbarUtil.showSnackBar(context,
-        "Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
-
-    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
-
-    storePayment(
-        context,
-        StorePaymentRequestModel(
-            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
-            levelId: levelListData!.levelId,
-            categoryId: widget.categoryId,
-            amount: amountPaid.toString(),
-            couponCode: couponCode,
-            transactionId: "",
-            // transactionId will change when payment gateway received
-            paymentStatus:
-                'failed' /*(e.g., 'completed', 'pending', 'failed')*/));
-  }
-
-  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
-
-    storePayment(
-        context,
-        StorePaymentRequestModel(
-            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
-            levelId: levelListData!.levelId,
-            categoryId: widget.categoryId,
-            amount: amountPaid.toString(),
-            couponCode: couponCode,
-            transactionId: response.paymentId,
-            // transactionId will change when payment gateway received
-            paymentStatus:
-                'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
-  }
-
-  void handleExternalWalletSelected(ExternalWalletResponse response) {
-    SnackbarUtil.showSnackBar(
-        context, "External Wallet Selected${response.walletName}");
-  }
-
-  SignupSuccessModel? signupSuccessModel;
-  LevelListData? levelListData;
-
-  SignupSuccessModel? getUser() {
-    String? strUser = sessionManager.getString(KeyRes.user);
-    if (strUser != null && strUser.isNotEmpty) {
-      return SignupSuccessModel.fromJson(jsonDecode(strUser));
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final contestProvider = Provider.of<ContestProvider>(context);
@@ -284,11 +199,6 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                             0
                                         ? null
                                         : () {
-                                            signupSuccessModel = getUser();
-
-                                            levelListData = contestProvider
-                                                .levelListModel!.data![index];
-
                                             if (contestProvider
                                                         .levelListModel!
                                                         .data![index]
@@ -513,23 +423,37 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
     );
   }
 
-  showPaymentPopUp(
+  void showPaymentPopUp(
       BuildContext context, bool isDarkMode, int index, LevelListData model) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: /* isDarkMode ? Colors.black : */ Colors.white,
+      // Enables dynamic resizing
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(45.0),
         ),
       ),
       builder: (BuildContext context) {
-        return MakeLevelPaymentScreen(
-            isDarkMode: isDarkMode,
-            index: index,
-            model: model,
-            categoryId: widget.categoryId!);
+        return AnimatedPadding(
+          duration: const Duration(milliseconds: 300), // Smooth transition
+          padding: EdgeInsets.only(
+            bottom:
+                MediaQuery.of(context).viewInsets.bottom, // Adjust for keyboard
+          ),
+          child: FractionallySizedBox(
+            heightFactor: MediaQuery.of(context).viewInsets.bottom == 0
+                ? 0.45 // Original size when keyboard is closed
+                : 0.7, // Expanded size when keyboard is open
+            child: MakeLevelPaymentScreen(
+              isDarkMode: isDarkMode,
+              index: index,
+              model: model,
+              categoryId: widget.categoryId!,
+            ),
+          ),
+        );
       },
     );
   }
