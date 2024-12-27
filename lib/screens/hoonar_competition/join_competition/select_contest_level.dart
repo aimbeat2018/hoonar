@@ -444,8 +444,8 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
           ),
           child: FractionallySizedBox(
             heightFactor: MediaQuery.of(context).viewInsets.bottom == 0
-                ? 0.45 // Original size when keyboard is closed
-                : 0.7, // Expanded size when keyboard is open
+                ? 0.5
+                : 0.7,
             child: MakeLevelPaymentScreen(
               isDarkMode: isDarkMode,
               index: index,
