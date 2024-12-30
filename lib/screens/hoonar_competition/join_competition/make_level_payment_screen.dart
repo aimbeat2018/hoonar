@@ -177,12 +177,10 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   SignupSuccessModel? signupSuccessModel;
   LevelListData? levelListData;
 
-  SignupSuccessModel? getUser() {
-    String? strUser = sessionManager.getString(KeyRes.user);
-    if (strUser != null && strUser.isNotEmpty) {
-      return SignupSuccessModel.fromJson(jsonDecode(strUser));
-    }
-    return null;
+  getUser() async {
+    sessionManager.initPref().then((onValue) {
+      signupSuccessModel = sessionManager.getUser()!;
+    });
   }
 
   @override
@@ -192,6 +190,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
     setState(() {
       couponCodeController.text = '';
     });
+    getUser();
   }
 
   @override
@@ -442,7 +441,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                             setState(() {
                               couponCode = couponCodeController.text;
                             });
-                            if (discountPrice == '' || discountPrice != '0.0') {
+                            if (discountPrice == "" || discountPrice != '0.0') {
                               Razorpay razorpay = Razorpay();
 
                               int amountPaid = 100 *

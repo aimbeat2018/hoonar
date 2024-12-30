@@ -118,10 +118,13 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                 color: myLoading.isDark ? Colors.white : Colors.black,
               ),
             ),
-            content: Text(
-              AppLocalizations.of(context)!.instructions,
-              style: GoogleFonts.poppins(
-                color: myLoading.isDark ? Colors.white70 : Colors.black87,
+            content: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                AppLocalizations.of(context)!.instructions,
+                style: GoogleFonts.poppins(
+                  color: myLoading.isDark ? Colors.white70 : Colors.black87,
+                ),
               ),
             ),
             actions: [

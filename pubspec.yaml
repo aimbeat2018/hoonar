@@ -47,7 +47,7 @@ dependencies:
   camera: ^0.10.5+2
   photo_manager: ^3.5.0
   get_it: ^8.0.0
-  connectivity_plus: ^6.0.5
+#  connectivity_plus: ^6.0.5
   dio: ^5.7.0
   flutter_async_autocomplete: ^0.1.1
   gradient_borders: ^1.0.1
@@ -57,7 +57,7 @@ dependencies:
   device_info_plus: ^11.0.0
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
-  ve_sdk_flutter: ^0.7.0
+#  ve_sdk_flutter: ^0.9.0
   #  banuba_sdk: ^3.0.3
   #  face_camera: ^0.1.4
   visibility_detector: ^0.4.0+2

@@ -8,9 +8,9 @@ import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'package:ve_sdk_flutter/export_result.dart';
-import 'package:ve_sdk_flutter/features_config.dart';
-import 'package:ve_sdk_flutter/ve_sdk_flutter.dart';
+// import 'package:ve_sdk_flutter/export_result.dart';
+// import 'package:ve_sdk_flutter/features_config.dart';
+// import 'package:ve_sdk_flutter/ve_sdk_flutter.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
@@ -31,10 +31,10 @@ class _MainScreenState extends State<MainScreen> {
 
   int selectedIndex = 0;
 
-  final _veSdkFlutterPlugin = VeSdkFlutter();
-  String _errorMessage = '';
-  final _licenseToken =
-      "Qk5CIB92NbTLDkLauz8nj8BFLW78AUUKhBlysKBq4wht6dQXkwDwcqHZPqsiiXpj8wdw3TT/uCOH2l8xKvAhxFPfj2JtImGqoWfFhzRgWPVo8QioCJ5DkF1S7EzQf2+QJIBdI00zhPhuRO9SkkN82RH87e7F2jHrWz+atQ3Az4/fzaWZaIqVvetNDI8AeUBzsflnlmzXlh/YbVCqAS0HyBmb4oxGqlMfWVyv9zW8sEDJuVB01uhtwzITtplCGKT9Gq0mznZXoIYbxS74JkWhI6676WGqwks8PwqVEsqf43AQXj1Ud/1EBUe27CHNKu7RwG7HG3alX84B+2l90AkeB98ti57RzyvyChOfMKUFKXt98zokLcrsAGck/f8Vr5OPAvgoCclorMWPxA0dAxKhXGaA9JNPHzSXIFpgsTKUJy08S1k/eFoHmilPUNcyYyZJ3GREkIL9ZhUxK/VPJT1dojE8w+795wE9KRA8p5BpDC+g4oNtx+b5w5dADQT/af3V5/Y5CL4ncBZCNHTwFcm4PxDPKQ56n+HuGPMAXOGk8FwIeUaEpzshDVJQmK5uItzjEtDj4UpuYVF+U1DkAkZmxZKnVEnUecsAlB+463AF+4p9X9k/3pB5EJ84vJ6pIUTX6ZPFw7Wn74/s8ulSLrD0to76";
+  // final _veSdkFlutterPlugin = VeSdkFlutter();
+  // String _errorMessage = '';
+  // final _licenseToken =
+  //     "Qk5CIB92NbTLDkLauz8nj8BFLW78AUUKhBlysKBq4wht6dQXkwDwcqHZPqsiiXpj8wdw3TT/uCOH2l8xKvAhxFPfj2JtImGqoWfFhzRgWPVo8QioCJ5DkF1S7EzQf2+QJIBdI00zhPhuRO9SkkN82RH87e7F2jHrWz+atQ3Az4/fzaWZaIqVvetNDI8AeUBzsflnlmzXlh/YbVCqAS0HyBmb4oxGqlMfWVyv9zW8sEDJuVB01uhtwzITtplCGKT9Gq0mznZXoIYbxS74JkWhI6676WGqwks8PwqVEsqf43AQXj1Ud/1EBUe27CHNKu7RwG7HG3alX84B+2l90AkeB98ti57RzyvyChOfMKUFKXt98zokLcrsAGck/f8Vr5OPAvgoCclorMWPxA0dAxKhXGaA9JNPHzSXIFpgsTKUJy08S1k/eFoHmilPUNcyYyZJ3GREkIL9ZhUxK/VPJT1dojE8w+795wE9KRA8p5BpDC+g4oNtx+b5w5dADQT/af3V5/Y5CL4ncBZCNHTwFcm4PxDPKQ56n+HuGPMAXOGk8FwIeUaEpzshDVJQmK5uItzjEtDj4UpuYVF+U1DkAkZmxZKnVEnUecsAlB+463AF+4p9X9k/3pB5EJ84vJ6pIUTX6ZPFw7Wn74/s8ulSLrD0to76";
 
   @override
   void initState() {
@@ -240,8 +240,8 @@ class _MainScreenState extends State<MainScreen> {
       )),
     );
   }
-
-  Future<void> _startVideoEditorInCameraMode() async {
+  /*-----Banuba SDK CODE----*/
+/*  Future<void> _startVideoEditorInCameraMode() async {
     // Specify your Config params in the builder below
 
     final config = FeaturesConfigBuilder()
@@ -278,14 +278,14 @@ class _MainScreenState extends State<MainScreen> {
       return;
     }
 
-    /*   // The list of exported video file paths
+    *//*   // The list of exported video file paths
     debugPrint('Exported video files = ${result.videoSources}');
 
     // Preview as a image file taken by the user. Null - when preview screen is disabled.
     debugPrint('Exported preview file = ${result.previewFilePath}');
 
     // Meta file where you can find short data used in exported video
-    debugPrint('Exported meta file = ${result.metaFilePath}');*/
+    debugPrint('Exported meta file = ${result.metaFilePath}');*//*
 
     Navigator.push(
       context,
@@ -304,5 +304,5 @@ class _MainScreenState extends State<MainScreen> {
     debugPrint("Error: code = ${exception.code}, message = $_errorMessage");
 
     setState(() {});
-  }
+  }*/
 }

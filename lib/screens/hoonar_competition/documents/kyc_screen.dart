@@ -168,24 +168,24 @@ class _KycScreenState extends State<KycScreen> {
                             valueListenable: contestProvider.faceStatusNotifier,
                             builder: (context, faceStatus, child) {
                               return InkWell(
-                                onTap: faceStatus == 3
-                                    ? () {
+                                onTap: faceStatus == 1
+                                    ? null
+                                    : () {
                                         Navigator.push(
                                           context,
                                           SlideRightRoute(
                                               page: ScanFaceScreen()),
                                         );
-                                      }
-                                    : null,
+                                      },
                                 child: Container(
                                   margin: const EdgeInsets.only(top: 10),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 3),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5),
-                                      color: faceStatus == 0
-                                          ? Colors.white
-                                          : Colors.grey.shade400),
+                                      color: faceStatus == 1
+                                          ? Colors.grey.shade400
+                                          : Colors.white),
                                   child: contestProvider.isDocumentLoading
                                       ? const Center(
                                           child: CircularProgressIndicator(

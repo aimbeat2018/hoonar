@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -22,7 +24,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to the camera to take pictures.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need access to the microphone for recording video.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photos for the gallery</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -41,38 +57,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-    <string>We need access to the camera to take photos.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>We need access to the camera to take pictures.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>We need access to the microphone for recording video.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photos for the gallery</string>
-    <key>LSApplicationQueriesSchemes</key>
-        <array>
-            <string>fb</string>
-            <string>fb-messenger</string>
-            <string>instagram</string>
-            <string>line</string>
-            <string>linkedin</string>
-            <string>reddit</string>
-            <string>skype</string>
-            <string>slack</string>
-            <string>snapchat</string>
-            <string>tg</string>
-            <string>twitter</string>
-            <string>viber</string>
-            <string>weixin</string>
-            <string>whatsapp</string>
-        </array>
-   <key>LSApplicationQueriesSchemes</key>
-   <array>
-     <string>mailto</string>
-   </array>
 </dict>
 </plist>
