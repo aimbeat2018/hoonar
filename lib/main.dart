@@ -5,7 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+
+// import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -44,26 +45,31 @@ Future<void> main() async {
   await Upgrader.clearSavedSettings();
   // await initializeFirebase();
 
-  await Firebase.initializeApp(
-    options: Platform.isAndroid
-        ? const FirebaseOptions(
-            apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-            appId: '1:458800452771:android:a35d10f82ff6c25d279b16',
-            messagingSenderId: '458800452771',
-            projectId: 'hoonar-db73e',
-            storageBucket: 'hoonar-db73e.appspot.com',
-          )
-        : const FirebaseOptions(
-            apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-            appId: '1:458800452771:ios:2f3016d02bbef45d279b16',
-            messagingSenderId: '458800452771',
-            projectId: 'hoonar-db73e',
-            storageBucket: 'hoonar-db73e.appspot.com',
-            iosBundleId: 'com.hoonar.hoonarstar',
-          ),
-  );
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
+        appId: '1:458800452771:android:a35d10f82ff6c25d279b16',
+        messagingSenderId: '458800452771',
+        projectId: 'hoonar-db73e',
+        storageBucket: 'hoonar-db73e.appspot.com',
+      ),
+    );
+  } else {
+    await Firebase.initializeApp(
+        // name: 'hoonarstar',
+        name: 'default',
+        options: const FirebaseOptions(
+          apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
+          appId: '1:458800452771:ios:2f3016d02bbef45d279b16',
+          messagingSenderId: '458800452771',
+          projectId: 'hoonar-db73e',
+          storageBucket: 'hoonar-db73e.appspot.com',
+          iosBundleId: 'com.hoonar.hoonarstar',
+        ));
+  }
 
-  await FlutterDownloader.initialize(ignoreSsl: true);
+  // await FlutterDownloader.initialize(ignoreSsl: true);
   await sessionManager.initPref();
   selectedLanguage =
       sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
@@ -82,6 +88,7 @@ Future<void> main() async {
       //     ? int.parse(remoteMessage.notification!.titleLocKey!)
       //     : null;
     }
+
     await NotificationHelper.initialize(flutterLocalNotificationsPlugin!);
     FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
     // }

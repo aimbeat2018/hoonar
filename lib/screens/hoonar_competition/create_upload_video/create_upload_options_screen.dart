@@ -113,7 +113,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
         return Consumer<MyLoading>(builder: (context, myLoading, child) {
           return CupertinoAlertDialog(
             title: Text(
-              AppLocalizations.of(context)!.alert,
+              AppLocalizations.of(context)!.alert.toUpperCase(),
               style: GoogleFonts.poppins(
                 color: myLoading.isDark ? Colors.white : Colors.black,
               ),
@@ -160,7 +160,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
         return Consumer<MyLoading>(builder: (context, myLoading, child) {
           return CupertinoAlertDialog(
             title: Text(
-              AppLocalizations.of(context)!.alert,
+              AppLocalizations.of(context)!.alert.toUpperCase(),
               style: GoogleFonts.poppins(
                 color: myLoading.isDark ? Colors.white : Colors.black,
               ),

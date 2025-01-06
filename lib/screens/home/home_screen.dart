@@ -481,7 +481,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(
                               height: 10,
                             ),
-                            homeOtherData!.forYouPostList == null
+                          /*------------------------For Yours list-------------*/
+                          /*  homeOtherData!.forYouPostList == null
                                 ? const SizedBox.shrink()
                                 : homeOtherData!.forYouPostList!.isEmpty
                                     ? const SizedBox.shrink()
@@ -491,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         myLoading.isDark),
                             const SizedBox(
                               height: 10,
-                            ),
+                            ),*/
                             homeOtherData!.trendingNowPostList == null
                                 ? const SizedBox.shrink()
                                 : homeOtherData!.trendingNowPostList!.isNotEmpty
@@ -631,7 +632,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         type: 'my_fav',
                       )),
                     );
-                  } else if (title == AppLocalizations.of(context)!.foryours) {
+                  }/* else if (title == AppLocalizations.of(context)!.foryours) {
                     Navigator.push(
                       context,
                       SlideRightRoute(
@@ -639,7 +640,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         type: 'for_yours',
                       )),
                     );
-                  } else if (title ==
+                  } */else if (title ==
                       AppLocalizations.of(context)!.trendingNow) {
                     Navigator.push(
                       context,

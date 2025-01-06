@@ -7,6 +7,7 @@ import 'package:hoonar/screens/hoonar_competition/documents/documents_option_scr
 import 'package:hoonar/screens/hoonar_competition/guideline/guideline_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants/color_constants.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../model/star_category_model.dart';
@@ -71,6 +72,58 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: Colors.transparent,
+        floatingActionButton: TextButton(
+          onPressed: () {},
+          style: TextButton.styleFrom(
+            shape: const CircleBorder(),
+            // Circular shape
+            backgroundColor: myLoading.isDark ? Colors.white : Colors.black,
+            // Background color
+            padding: const EdgeInsets.all(
+                10), // Padding for a balanced circular button
+          ),
+          child: Icon(
+            Icons.question_mark_sharp,
+            color: myLoading.isDark ? Colors.black : Colors.white,
+          ),
+        ),
+
+        /*InkWell(
+          onTap: () {},
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                gradient: LinearGradient(
+                  colors: [
+                    myLoading.isDark ? greyTextColor5 : greyTextColor5,
+                    myLoading.isDark ? greyTextColor6 : greyTextColor6,
+                    myLoading.isDark ? greyTextColor5 : greyTextColor5,
+                  ],
+                ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2), // Shadow color with opacity
+                  blurRadius: 10, // Blur effect
+                  offset: Offset(0, 4), // Horizontal and vertical offsets
+                ),
+              ],),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Contact Us',
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),*/
         body: Container(
           width: double.infinity,
           height: MediaQuery.of(context).size.height,
@@ -160,10 +213,10 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                           elevation: 5,
                           shadowColor: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              :/* Color(0x153F3F3F)*/Colors.white,
+                              : /* Color(0x153F3F3F)*/ Colors.white,
                           color: myLoading.isDark
                               ? const Color(0xFF3F3F3F)
-                              : /*Color(0x153F3F3F)*/Colors.white,
+                              : /*Color(0x153F3F3F)*/ Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: Column(

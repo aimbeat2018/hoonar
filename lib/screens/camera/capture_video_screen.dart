@@ -593,13 +593,13 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                             onTap: () {
                               showConfirmationDialog(myLoading.isDark);
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.close,
                               color: Colors.white,
                               size: 30,
                             ),
                           ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         InkWell(
@@ -772,7 +772,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                     width: 30,
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                           // Flash Icon
                           InkWell(
                             onTap: () {
@@ -788,7 +788,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                           ),
 
                           Padding(
-                            padding: const EdgeInsets.only(right: 15.0),
+                            padding: const EdgeInsets.only(right: 28.0),
                             child: InkWell(
                               onTap: () async {
                                 _isRecording = !_isRecording;
@@ -799,7 +799,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                               child: Container(
                                 height: 55,
                                 width: 55,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                     color: Colors.white60,
                                     shape: BoxShape.circle),
                                 // padding: EdgeInsets.all(10.0),
@@ -820,11 +820,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                         ? Container(
                                             height: 55,
                                             width: 55,
-                                            decoration: BoxDecoration(
+                                            decoration: const BoxDecoration(
                                               color: Colors.white,
                                               shape: BoxShape.circle,
                                             ),
-                                            child: Icon(
+                                            child: const Icon(
                                               Icons.pause,
                                               color: Colors.blue,
                                               size: 40,
@@ -869,7 +869,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                     width: 30,
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                           /*
                           !_isRecording
                               ? InkWell(
@@ -884,10 +884,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   ),
                                 )
                               :*/
-                          SizedBox(),
+                          const SizedBox(),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       if (!_isRecording)
@@ -909,7 +909,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   title: '60 Sec',
                                 ),
                               ),
-                              SizedBox(width: 15),
+                              const SizedBox(width: 15),
                               Expanded(
                                 child: timerTabs(
                                   onTap: () {
@@ -923,7 +923,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                                   title: '90 Sec',
                                 ),
                               ),
-                              SizedBox(width: 15),
+                              const SizedBox(width: 15),
                               Expanded(
                                 child: timerTabs(
                                   onTap: () {
@@ -956,7 +956,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return FiltersScreen();
+        return const FiltersScreen();
       },
     ).then((value) {
       if (value != null) {
@@ -975,12 +975,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: isSelected! ? Colors.black : Colors.black26,
-          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
         ),
         child: Center(
           child: Text(
             title!,
-            style: TextStyle(
+            style: const TextStyle(
               color: /*isSelected ? Colors.white : Colors.black*/ Colors.white,
             ),
           ),

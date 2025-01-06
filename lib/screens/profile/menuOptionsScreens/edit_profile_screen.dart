@@ -39,7 +39,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController bioController = TextEditingController();
   TextEditingController dobController = TextEditingController();
   SessionManager sessionManager = SessionManager();
-  bool isLoading = false;
+  bool isLoading = false, isFirstTimeSet = false;
 
   @override
   void initState() {
@@ -164,29 +164,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         (route) => false);
                                   });
                                 }
+                                String initials = "";
 
-                                String initials =
-                                    profile.data?.fullName != null ||
-                                            profile.data?.fullName != ""
-                                        ? profile.data!.fullName!
-                                            .trim()
-                                            .split(' ')
-                                            .map((e) => e[0])
-                                            .take(2)
-                                            .join()
-                                            .toUpperCase()
-                                        : '';
+                                if (!isFirstTimeSet) {
+                                  initials = profile.data?.fullName != null ||
+                                          profile.data?.fullName != ""
+                                      ? profile.data!.fullName!
+                                          .trim()
+                                          .split(' ')
+                                          .map((e) => e[0])
+                                          .take(2)
+                                          .join()
+                                          .toUpperCase()
+                                      : '';
 
-                                fullNameController.text =
-                                    profile.data!.fullName ?? '';
-                                dobController.text = profile.data!.dob ?? '';
-                                bioController.text = profile.data!.bio ?? '';
-                                userNameController.text =
-                                    profile.data!.userName ?? '';
-                                emailController.text =
-                                    profile.data!.userEmail ?? '';
-                                phoneController.text =
-                                    profile.data!.userMobileNo ?? '';
+                                  fullNameController.text =
+                                      profile.data!.fullName ?? '';
+                                  dobController.text = profile.data!.dob ?? '';
+                                  bioController.text = profile.data!.bio ?? '';
+                                  userNameController.text =
+                                      profile.data!.userName ?? '';
+                                  emailController.text =
+                                      profile.data!.userEmail ?? '';
+                                  phoneController.text =
+                                      profile.data!.userMobileNo ?? '';
+                                  isFirstTimeSet = true;
+                                }
 
                                 return Column(
                                   children: [
@@ -351,7 +354,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       horizontal: 15.0),
                                               child: Text(
                                                 AppLocalizations.of(context)!
-                                                    .userName,
+                                                    .hoonarStarId,
                                                 style: GoogleFonts.poppins(
                                                   fontSize: 14,
                                                   color: myLoading.isDark
@@ -374,10 +377,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   if (v!.trim().isEmpty) {
                                                     return AppLocalizations.of(
                                                             context)!
-                                                        .enterUserName;
+                                                        .enterHoonarStarId;
                                                   }
                                                   return null;
                                                 },
+                                                readOnly: true,
                                                 maxLines: 1,
                                                 decoration: InputDecoration(
                                                     errorStyle:
@@ -876,7 +880,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                         ],
                       ),
-                      isLoading
+                  authProvider.isProfileLoading
                           ? Positioned(
                               left: 0,
                               right: 0,
@@ -896,8 +900,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> updateUserProfile(BuildContext context) async {
-    isLoading = true;
-    setState(() {});
+    setState(() {
+      isLoading = true;
+    });
+
     sessionManager.initPref().then((onValue) async {
       UpdateProfileRequestModel requestModel = UpdateProfileRequestModel(
           fullName: fullNameController.text,
@@ -911,8 +917,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-      } /*else {
+      } else {
         if (authProvider.profileSuccessModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.profileSuccessModel!.message ?? '');
         } else if (authProvider.profileSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
@@ -920,10 +928,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Navigator.pushAndRemoveUntil(
               context, SlideRightRoute(page: LoginScreen()), (route) => false);
         }
-      }*/
+      }
     });
-    isLoading = false;
-    setState(() {});
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void _openChangeProfileOptionsSheet(BuildContext context, bool isDarkMode) {

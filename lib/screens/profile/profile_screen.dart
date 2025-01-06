@@ -529,7 +529,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     child: Text(
                                                       // profile.data!.isFollowing ==
                                                       //             1 ||
-                                                              followStatus == 1
+                                                      followStatus == 1
                                                           ? AppLocalizations.of(
                                                                   context)!
                                                               .unfollow

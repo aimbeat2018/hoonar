@@ -322,6 +322,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
         body: Stack(
           // fit: StackFit.expand,
           children: [
+
             InkWell(
               onTap: _onTap,
               onDoubleTap: () {
@@ -379,6 +380,27 @@ class _ReelsWidgetState extends State<ReelsWidget>
               ),
             ),
 
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                height: 80, // Adjust the height as needed
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.1),
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.6),
+                      // Colors.black.withOpacity(0.8),
+
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+              ),
+            ),
+
             /*video player sound volume*/
             Positioned(
                 top: 10,
@@ -399,6 +421,25 @@ class _ReelsWidgetState extends State<ReelsWidget>
                     color: Colors.white,
                   ),
                 )),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 300, // Adjust the height as needed
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.8),
+                      Colors.black.withOpacity(0.6),
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.1),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+              ),
+            ),
 
             /*Reels right side options*/
             Align(
@@ -542,17 +583,10 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                                           1 ||*/
                                                                   followStatus ==
                                                                           1
-                                                                      ? (myLoading
-                                                                              .isDark
-                                                                          ? Colors
-                                                                              .white
-                                                                          : Colors
-                                                                              .white)
-                                                                      : (myLoading.isDark
-                                                                          ? Colors
-                                                                              .black
-                                                                          : Colors
-                                                                              .black),
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .white,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -654,6 +688,10 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               children: [
                                 InkWell(
                                   onTap: () {
+                                    setState(() {
+                                      _showLottie = true;
+                                      likeOrVote = 1;
+                                    });
                                     likeUnlikeVideo(
                                         context, widget.model.postId!);
 

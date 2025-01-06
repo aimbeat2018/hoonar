@@ -83,8 +83,6 @@ PODS:
   - Flutter (1.0.0)
   - flutter_audio_trimmer (0.0.5):
     - Flutter
-  - flutter_downloader (0.0.1):
-    - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
   - flutter_sound (9.17.0):
@@ -233,7 +231,6 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_audio_trimmer (from `.symlinks/plugins/flutter_audio_trimmer/ios`)
-  - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_sound (from `.symlinks/plugins/flutter_sound/ios`)
   - flutter_video_info (from `.symlinks/plugins/flutter_video_info/ios`)
@@ -306,8 +303,6 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_audio_trimmer:
     :path: ".symlinks/plugins/flutter_audio_trimmer/ios"
-  flutter_downloader:
-    :path: ".symlinks/plugins/flutter_downloader/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_sound:
@@ -370,7 +365,6 @@ SPEC CHECKSUMS:
   FirebaseMessaging: f8a160d99c2c2e5babbbcc90c4a3e15db036aee2
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_audio_trimmer: e5f3e37b74d2ead20a4b5b43ea9136af573dab9b
-  flutter_downloader: b7301ae057deadd4b1650dc7c05375f10ff12c39
   flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
   flutter_sound: ee90d437be3fb59424e195ff7f22884a6f98508c
   flutter_sound_core: 714d3f327d960314396f56018c9b63523e2960b4

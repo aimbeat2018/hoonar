@@ -81,7 +81,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
         return Consumer<MyLoading>(builder: (context, myLoading, child) {
           return CupertinoAlertDialog(
             title: Text(
-              AppLocalizations.of(context)!.alert,
+              AppLocalizations.of(context)!.alert.toUpperCase(),
               style: GoogleFonts.poppins(
                 color: myLoading.isDark ? Colors.white : Colors.black,
               ),
