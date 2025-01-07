@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:custom_social_share/custom_social_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +10,10 @@ import 'package:hoonar/custom/snackbar_util.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/color_constants.dart';
+import '../../../../constants/internet_connectivity.dart';
+import '../../../../constants/key_res.dart';
 import '../../../../constants/my_loading/my_loading.dart';
+import '../../../../constants/no_internet_screen.dart';
 import '../../../../constants/theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -27,11 +33,24 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
   var _onlyInstalled = false;
   var _installedApps = <ShareWith>[];
 
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
 
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _share.getInstalledAppsForShare().then((value) {
         debugPrint("_MyAppState.build: $value");
@@ -42,48 +61,60 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/screens_back.png'
-                  : 'assets/dark_mode_icons/white_screen_back.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 15.0, top: 30, bottom: 30),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Image.asset(
-                        'assets/images/back_image.png',
-                        height: 28,
-                        width: 28,
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/screens_back.png'
+                        : 'assets/dark_mode_icons/white_screen_back.png'),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.01), // Space from the top
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, top: 30, bottom: 30),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Image.asset(
+                              'assets/images/back_image.png',
+                              height: 28,
+                              width: 28,
+                              color: myLoading.isDark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: screenHeight * 0.01), // Space from the top
 
-                /* Container(
+                      /* Container(
                   // width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   height: screenHeight * 0.35,
@@ -95,253 +126,258 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                           image: NetworkImage(widget.videoThumbnail))),
                 ),*/
 
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  height: screenHeight * 0.35,
-                  width: screenWidth * 0.7,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    // Ensures the child respects the border radius
-                    child: CachedNetworkImage(
-                      imageUrl: widget.videoThumbnail,
-                      fit: BoxFit.fill,
-                      placeholder: (context, url) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                      errorWidget: (context, url, error) => const Center(
-                        child: Icon(
-                          Icons.error,
-                          color: Colors.red,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        height: screenHeight * 0.35,
+                        width: screenWidth * 0.7,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                Center(
-                  child: GradientText(
-                    AppLocalizations.of(context)!.shareThisVideo,
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: myLoading.isDark ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark
-                              ? greyTextColor8
-                              : Colors.grey.shade700
-                        ]),
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: myLoading.isDark
-                        ? const Color(0x603F3F3F)
-                        : const Color(0x153F3F3F),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          widget.videoUrl,
-                          textAlign: TextAlign.start,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.w500,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          // Ensures the child respects the border radius
+                          child: CachedNetworkImage(
+                            imageUrl: widget.videoThumbnail,
+                            fit: BoxFit.fill,
+                            placeholder: (context, url) => const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                            errorWidget: (context, url, error) => const Center(
+                              child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: 10,
+
+                      const SizedBox(
+                        height: 20,
                       ),
-                      InkWell(
-                        onTap: () {
-                          copyToClipboard(context);
-                        },
-                        child: Icon(
-                          Icons.copy,
-                          color: myLoading.isDark ? Colors.white : Colors.black,
+
+                      Center(
+                        child: GradientText(
+                          AppLocalizations.of(context)!.shareThisVideo,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color:
+                                myLoading.isDark ? Colors.black : Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark
+                                    ? greyTextColor8
+                                    : Colors.grey.shade700
+                              ]),
                         ),
+                      ),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: myLoading.isDark
+                              ? const Color(0x603F3F3F)
+                              : const Color(0x153F3F3F),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                widget.videoUrl,
+                                textAlign: TextAlign.start,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                copyToClipboard(context);
+                              },
+                              child: Icon(
+                                Icons.copy,
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      Text(
+                        AppLocalizations.of(context)!.shareVia,
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: myLoading.isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share
+                                        .to(ShareWith.instagram,
+                                            widget.videoUrl)
+                                        .then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/insta.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share
+                                        .to(ShareWith.whatsapp, widget.videoUrl)
+                                        .then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/whatsapp.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share
+                                        .to(ShareWith.x, widget.videoUrl)
+                                        .then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/twitter.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 25,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share
+                                        .to(ShareWith.facebook, widget.videoUrl)
+                                        .then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/fb.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share
+                                        .to(ShareWith.snapchat, widget.videoUrl)
+                                        .then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/snap.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                              Flexible(
+                                child: InkWell(
+                                  onTap: () {
+                                    _share.toAll(widget.videoUrl).then((value) {
+                                      if (value == false) {
+                                        SnackbarUtil.showSnackBar(
+                                            context, 'App not installed');
+                                      }
+                                    });
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/more_share.png',
+                                    height: 60,
+                                    width: 60,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
                       )
                     ],
                   ),
                 ),
-
-                const SizedBox(
-                  height: 30,
-                ),
-
-                Text(
-                  AppLocalizations.of(context)!.shareVia,
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: myLoading.isDark ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
-
-                Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share
-                                  .to(ShareWith.instagram, widget.videoUrl)
-                                  .then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/insta.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share
-                                  .to(ShareWith.whatsapp, widget.videoUrl)
-                                  .then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/whatsapp.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share
-                                  .to(ShareWith.x, widget.videoUrl)
-                                  .then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/twitter.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share
-                                  .to(ShareWith.facebook, widget.videoUrl)
-                                  .then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/fb.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share
-                                  .to(ShareWith.snapchat, widget.videoUrl)
-                                  .then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/snap.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                        Flexible(
-                          child: InkWell(
-                            onTap: () {
-                              _share.toAll(widget.videoUrl).then((value) {
-                                if (value == false) {
-                                  SnackbarUtil.showSnackBar(
-                                      context, 'App not installed');
-                                }
-                              });
-                            },
-                            child: Image.asset(
-                              'assets/images/more_share.png',
-                              height: 60,
-                              width: 60,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      );
+              ),
+            );
     });
   }
 

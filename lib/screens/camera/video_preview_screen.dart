@@ -41,7 +41,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   late VideoPlayerController _videoController;
   ColorFilter? _currentFilter;
   bool _isMerging = false, isThumbnailLoading = false;
-  String? _thumbnailPath;
+  String? _thumbnailPath = "";
   SoundList? _selectedMusic;
   File? _localMusic;
   File? _videoFile;
@@ -137,19 +137,40 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
     setState(() {
       isThumbnailLoading = true;
     });
+
     final tempDir = await getTemporaryDirectory();
 
-    final thumbnailPath = await VideoThumbnail.thumbnailFile(
-      video: widget.videoFile.path,
-      thumbnailPath: tempDir.path,
-      imageFormat: ImageFormat.JPEG,
-      quality: 75,
-    );
+    if (Platform.isAndroid) {
+      print(tempDir);
+      final thumbnailPath = await VideoThumbnail.thumbnailFile(
+        video: widget.videoFile.path,
+        thumbnailPath: tempDir.path,
+        imageFormat: ImageFormat.JPEG,
+        quality: 75,
+      );
 
-    setState(() {
-      _thumbnailPath = thumbnailPath;
-      isThumbnailLoading = false;
-    });
+      setState(() {
+        _thumbnailPath = thumbnailPath;
+        isThumbnailLoading = false;
+      });
+    } else if (Platform.isIOS) {
+      final convertedVideoPath = '${tempDir.path}/converted_video.mp4';
+      await FFmpegKit.execute(
+          '-i ${widget.videoFile.path} -vcodec h264 $convertedVideoPath');
+
+      // Generate thumbnail for the converted video
+      final thumbnailPath = await VideoThumbnail.thumbnailFile(
+        video: convertedVideoPath,
+        thumbnailPath: tempDir.path,
+        imageFormat: ImageFormat.JPEG,
+        quality: 75,
+      );
+
+      setState(() {
+        _thumbnailPath = thumbnailPath;
+        isThumbnailLoading = false;
+      });
+    }
   }
 
   void _onTap() {
@@ -208,8 +229,45 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                     ),
                   )
                 : const Center(child: CircularProgressIndicator()),
+            /*  Video player control seekbar  */
+            if (_videoController.value.isInitialized)
+              Positioned(
+                top: 0,
+                child: SafeArea(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: Colors.white,
+                        trackHeight: 5,
+                        thumbShape:
+                            RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                        overlayShape:
+                            RoundSliderOverlayShape(overlayRadius: 0.0),
+                      ),
+                      child: Builder(builder: (context) {
+                        return Slider(
+                          value: _progress,
+                          min: 0,
+                          max: _videoController.value.duration.inMilliseconds
+                              .toDouble(),
+                          activeColor: Colors.white,
+                          inactiveColor: Colors.grey,
+                          onChanged: (value) {
+                            setState(() {
+                              _progress = value;
+                            });
+                            _videoController
+                                .seekTo(Duration(milliseconds: value.toInt()));
+                          },
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ),
             Positioned(
-              top: 50,
+              top: Platform.isAndroid ? 50 : 80,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Row(
@@ -254,7 +312,9 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                           });
                         },
                         child: Container(
-                          // width: MediaQuery.of(context).size.width / 2,
+                          width: _selectedMusic == null
+                              ? null
+                              : MediaQuery.of(context).size.width / 2,
                           padding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 20),
                           decoration: BoxDecoration(
@@ -272,6 +332,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                                   ),
                                 )
                               : Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(4),
@@ -388,44 +449,6 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                 ],
               ),
             ),
-
-            /*  Video player control seekbar  */
-            if (_videoController.value.isInitialized)
-              Positioned(
-                top: 0,
-                child: SafeArea(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        activeTrackColor: Colors.white,
-                        trackHeight: 5,
-                        thumbShape:
-                            RoundSliderThumbShape(enabledThumbRadius: 0.0),
-                        overlayShape:
-                            RoundSliderOverlayShape(overlayRadius: 0.0),
-                      ),
-                      child: Builder(builder: (context) {
-                        return Slider(
-                          value: _progress,
-                          min: 0,
-                          max: _videoController.value.duration.inMilliseconds
-                              .toDouble(),
-                          activeColor: Colors.white,
-                          inactiveColor: Colors.grey,
-                          onChanged: (value) {
-                            setState(() {
-                              _progress = value;
-                            });
-                            _videoController
-                                .seekTo(Duration(milliseconds: value.toInt()));
-                          },
-                        );
-                      }),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       );

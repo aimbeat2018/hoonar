@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:custom_social_share/custom_social_share.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,10 @@ import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
@@ -35,9 +40,24 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
   String appVersion = '';
   bool enableNotification = false;
 
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     sessionManager.initPref();
     _getAppVersion();
   }
@@ -131,151 +151,162 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-          body: Container(
-        padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
-        width: double.infinity,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-            /*image: DecorationImage(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              body: Container(
+              padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                  /*image: DecorationImage(
           image: AssetImage('assets/images/screens_back.png'),
           // Path to your image
           fit: BoxFit.cover, // Ensures the image covers the entire container
         ),*/
-            color: myLoading.isDark ? Colors.black : Colors.white),
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildAppbar(context, myLoading.isDark),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Center(
-                      child: GradientText(
-                    AppLocalizations.of(context)!.aboutApp,
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: myLoading.isDark ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark
-                              ? greyTextColor8
-                              : Colors.grey.shade700
-                        ]),
-                  )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/notification.png',
-                      title: AppLocalizations.of(context)!.notification,
-                      subtitle:
-                          AppLocalizations.of(context)!.notificationSubTitle,
-                      trailing: _buildCustomSwitch()),
-                  _buildDivider(),
-                  _buildSection(
-                    context,
-                    myLoading.isDark,
-                    icon: 'assets/images/app_version.png',
-                    title: AppLocalizations.of(context)!.appVersion,
-                    subtitle: appVersion,
-                  ),
-                  _buildDivider(),
-                  _buildSection(
-                    context,
-                    myLoading.isDark,
-                    icon: 'assets/images/contact_email.png',
-                    title: AppLocalizations.of(context)!.contactEmail,
-                    subtitle: 'customercare@hoonarstar.com',
-                  ),
-                  _buildDivider(),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/language.png',
-                      title: AppLocalizations.of(context)!.language,
-                      subtitle: AppLocalizations.of(context)!.languageSubTitle,
-                      onTap: () {
-                    Navigator.push(
-                      context,
-                      SlideRightRoute(page: const ChangeLanguageScreen()),
-                    );
-                  }),
-                  _buildDivider(),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/change_theme.png',
-                      title: AppLocalizations.of(context)!.darkMode,
-                      subtitle: AppLocalizations.of(context)!.darkModeSubtitle,
-                      onTap: () {
-                    Navigator.push(
-                      context,
-                      SlideRightRoute(page: const ChangeThemeScreen()),
-                    );
-                  }),
-                  _buildDivider(),
-                  _buildSection(
-                    context,
-                    myLoading.isDark,
-                    icon: 'assets/images/copyright.png',
-                    title: AppLocalizations.of(context)!.copyright,
-                    subtitle: AppLocalizations.of(context)!.copyrightSubTitle,
-                  ),
-                  _buildDivider(),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/faq.png',
-                      title: AppLocalizations.of(context)!.faq,
-                      subtitle: AppLocalizations.of(context)!.faqSubTitle,
-                      onTap: () => Navigator.push(
-                          context, SlideRightRoute(page: const FaqScreen()))),
-                  _buildDivider(),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/share_app.png',
-                      title: AppLocalizations.of(context)!.share,
-                      subtitle: AppLocalizations.of(context)!.shareSubTitle,
-                      onTap: () {
-                    final message = Platform.isAndroid
-                        ? 'Check out this app on Google Play: https://play.google.com/store/apps/details?id=com.hoonar.hoonar'
-                        : 'Check out this app on the App Store: https://apps.apple.com/app/id1234567890';
+                  color: myLoading.isDark ? Colors.black : Colors.white),
+              child: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildAppbar(context, myLoading.isDark),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Center(
+                            child: GradientText(
+                          AppLocalizations.of(context)!.aboutApp,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color:
+                                myLoading.isDark ? Colors.black : Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark
+                                    ? greyTextColor8
+                                    : Colors.grey.shade700
+                              ]),
+                        )),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/notification.png',
+                            title: AppLocalizations.of(context)!.notification,
+                            subtitle: AppLocalizations.of(context)!
+                                .notificationSubTitle,
+                            trailing: _buildCustomSwitch()),
+                        _buildDivider(),
+                        _buildSection(
+                          context,
+                          myLoading.isDark,
+                          icon: 'assets/images/app_version.png',
+                          title: AppLocalizations.of(context)!.appVersion,
+                          subtitle: appVersion,
+                        ),
+                        _buildDivider(),
+                        _buildSection(
+                          context,
+                          myLoading.isDark,
+                          icon: 'assets/images/contact_email.png',
+                          title: AppLocalizations.of(context)!.contactEmail,
+                          subtitle: 'customercare@hoonarstar.com',
+                        ),
+                        _buildDivider(),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/language.png',
+                            title: AppLocalizations.of(context)!.language,
+                            subtitle: AppLocalizations.of(context)!
+                                .languageSubTitle, onTap: () {
+                          Navigator.push(
+                            context,
+                            SlideRightRoute(page: const ChangeLanguageScreen()),
+                          );
+                        }),
+                        _buildDivider(),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/change_theme.png',
+                            title: AppLocalizations.of(context)!.darkMode,
+                            subtitle: AppLocalizations.of(context)!
+                                .darkModeSubtitle, onTap: () {
+                          Navigator.push(
+                            context,
+                            SlideRightRoute(page: const ChangeThemeScreen()),
+                          );
+                        }),
+                        _buildDivider(),
+                        _buildSection(
+                          context,
+                          myLoading.isDark,
+                          icon: 'assets/images/copyright.png',
+                          title: AppLocalizations.of(context)!.copyright,
+                          subtitle:
+                              AppLocalizations.of(context)!.copyrightSubTitle,
+                        ),
+                        _buildDivider(),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/faq.png',
+                            title: AppLocalizations.of(context)!.faq,
+                            subtitle: AppLocalizations.of(context)!.faqSubTitle,
+                            onTap: () => Navigator.push(context,
+                                SlideRightRoute(page: const FaqScreen()))),
+                        _buildDivider(),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/share_app.png',
+                            title: AppLocalizations.of(context)!.share,
+                            subtitle: AppLocalizations.of(context)!
+                                .shareSubTitle, onTap: () {
+                          final message = Platform.isAndroid
+                              ? 'Check out this app on Google Play: https://play.google.com/store/apps/details?id=com.hoonar.hoonar'
+                              : 'Check out this app on the App Store: https://apps.apple.com/app/id1234567890';
 
-                    CustomSocialShare().toAll(message);
-                  }),
-                  _buildDivider(),
-                  _buildSection(context, myLoading.isDark,
-                      icon: 'assets/images/delete_account.png',
-                      title: AppLocalizations.of(context)!.deleteAccount,
-                      subtitle: AppLocalizations.of(context)!
-                          .deleteAccountSubTitle, onTap: () {
-                    showDeleteAccountDialog(context, myLoading.isDark);
-                  }),
-                ],
-              ),
-              if (authProvider.isDeleteAccountLoading)
-                Positioned.fill(
-                  top: 0,
-                  bottom: 0,
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                    // semi-transparent background
-                    child: const Center(
-                      child: CircularProgressIndicator(),
+                          CustomSocialShare().toAll(message);
+                        }),
+                        _buildDivider(),
+                        _buildSection(context, myLoading.isDark,
+                            icon: 'assets/images/delete_account.png',
+                            title: AppLocalizations.of(context)!.deleteAccount,
+                            subtitle: AppLocalizations.of(context)!
+                                .deleteAccountSubTitle, onTap: () {
+                          showDeleteAccountDialog(context, myLoading.isDark);
+                        }),
+                      ],
                     ),
-                  ),
+                    if (authProvider.isDeleteAccountLoading)
+                      Positioned.fill(
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          color: Colors.black.withOpacity(0.5),
+                          // semi-transparent background
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-            ],
-          ),
-        ),
-      ));
+              ),
+            ));
     });
   }
 

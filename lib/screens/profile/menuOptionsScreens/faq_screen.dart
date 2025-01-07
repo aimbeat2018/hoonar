@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/faq_list_model.dart';
@@ -6,7 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
@@ -24,11 +30,24 @@ class FaqScreen extends StatefulWidget {
 
 class _FaqScreenState extends State<FaqScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getFaqs(context);
     });
@@ -58,75 +77,86 @@ class _FaqScreenState extends State<FaqScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final settingProvider = Provider.of<SettingProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        body: Container(
-          padding: const EdgeInsets.only(/*top: 20,*/ left: 5, right: 5),
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              /*image: DecorationImage(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              body: Container(
+                padding: const EdgeInsets.only(/*top: 20,*/ left: 5, right: 5),
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                    /*image: DecorationImage(
                 image: AssetImage('assets/images/screens_back.png'),
                 // Path to your image
                 fit: BoxFit.cover, // Ensures the image covers the entire container
               ),*/
-              color: myLoading.isDark ? Colors.black : Colors.white),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildAppbar(context, myLoading.isDark),
-                Center(
-                    child: GradientText(
-                  AppLocalizations.of(context)!.faq,
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    color: myLoading.isDark ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w400,
+                    color: myLoading.isDark ? Colors.black : Colors.white),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildAppbar(context, myLoading.isDark),
+                      Center(
+                          child: GradientText(
+                        AppLocalizations.of(context)!.faq,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          color: myLoading.isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.topRight,
+                            colors: [
+                              myLoading.isDark ? Colors.white : Colors.black,
+                              myLoading.isDark ? Colors.white : Colors.black,
+                              myLoading.isDark
+                                  ? greyTextColor8
+                                  : Colors.grey.shade700
+                            ]),
+                      )),
+                      settingProvider.isFaqLoading ||
+                              settingProvider.faqListModel == null
+                          ? FaqListShimmer()
+                          : settingProvider.faqListModel!.data == null ||
+                                  settingProvider.faqListModel!.data!.isEmpty
+                              ? DataNotFound()
+                              : AnimatedList(
+                                  initialItemCount: settingProvider
+                                      .faqListModel!.data!.length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index, animation) {
+                                    return buildItem(
+                                        animation,
+                                        index,
+                                        myLoading.isDark,
+                                        settingProvider.faqListModel!.data![
+                                            index]); // Build each list item
+                                  },
+                                )
+                    ],
                   ),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.topRight,
-                      colors: [
-                        myLoading.isDark ? Colors.white : Colors.black,
-                        myLoading.isDark ? Colors.white : Colors.black,
-                        myLoading.isDark ? greyTextColor8 : Colors.grey.shade700
-                      ]),
-                )),
-                settingProvider.isFaqLoading ||
-                        settingProvider.faqListModel == null
-                    ? FaqListShimmer()
-                    : settingProvider.faqListModel!.data == null ||
-                            settingProvider.faqListModel!.data!.isEmpty
-                        ? DataNotFound()
-                        : AnimatedList(
-                            initialItemCount:
-                                settingProvider.faqListModel!.data!.length,
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index, animation) {
-                              return buildItem(
-                                  animation,
-                                  index,
-                                  myLoading.isDark,
-                                  settingProvider.faqListModel!
-                                      .data![index]); // Build each list item
-                            },
-                          )
-              ],
-            ),
-          ),
-        ),
-      );
+                ),
+              ),
+            );
     });
   }
 
   Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
       FaqListData model) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         setState(() {
           model.isExpanded = !model.isExpanded;
         });
@@ -158,7 +188,9 @@ class _FaqScreenState extends State<FaqScreen> {
                     ),
                   ),
                 ),
-                SizedBox(width: 5,),
+                SizedBox(
+                  width: 5,
+                ),
                 InkWell(
                   onTap: () {
                     setState(() {

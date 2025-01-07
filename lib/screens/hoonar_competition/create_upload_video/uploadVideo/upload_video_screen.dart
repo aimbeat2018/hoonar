@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:detectable_text_field/detectable_text_field.dart';
 import 'package:detectable_text_field/detector/text_pattern_detector.dart';
 import 'package:detectable_text_field/widgets/detectable_text_editing_controller.dart';
@@ -17,7 +19,9 @@ import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../constants/internet_connectivity.dart';
 import '../../../../constants/my_loading/my_loading.dart';
+import '../../../../constants/no_internet_screen.dart';
 import '../../../../constants/session_manager.dart';
 import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/snackbar_util.dart';
@@ -55,6 +59,9 @@ class UploadVideoScreen extends StatefulWidget {
 class _UploadVideoScreenState extends State<UploadVideoScreen> {
   SessionManager sessionManager = SessionManager();
   TextEditingController captionController = TextEditingController();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   // TextEditingController hashTagController = TextEditingController();
 
@@ -68,8 +75,26 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
   );
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     sessionManager.initPref();
 
     if (mounted) {
@@ -309,438 +334,350 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/screens_back.png'
-                  : 'assets/dark_mode_icons/white_screen_back.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, top: 30, bottom: 30),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            'assets/images/back_image.png',
-                            height: 28,
-                            width: 28,
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.01), // Space from the top
-
-                    // Curved Image with Edit Icon
-                    Stack(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/screens_back.png'
+                        : 'assets/dark_mode_icons/white_screen_back.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    child: Stack(
                       children: [
-                        Container(
-                          // width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          height: screenHeight * 0.50,
-                          width: screenWidth * 0.75,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: widget.from == 'feed'
-                                      ? NetworkImage(
-                                          widget.videoThumbnail ?? '')
-                                      : FileImage(File(widget.videoThumbnail
-                                          .replaceAll('file://', ''))))),
-                        ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0, top: 10, bottom: 30),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/back_image.png',
+                                    height: 28,
+                                    width: 28,
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: screenHeight * 0.01),
+                            // Space from the top
 
-                        // Edit Icon Overlay
-                        /* Positioned(
-                          bottom: 10,
-                          right: 10,
-                          child: InkWell(
-                            onTap: () async {
-                            */ /*  if (widget.from == 'feed') {
-                                try {
-                                  String? downloadedFile =
-                                      await downloadAndConvertM3U8(
-                                          widget.videoUrl!);
-                                  File outPutFile = File(downloadedFile!);
+                            // Curved Image with Edit Icon
+                            Stack(
+                              children: [
+                                Container(
+                                  // width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  height: screenHeight * 0.50,
+                                  width: screenWidth * 0.75,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: widget.from == 'feed'
+                                              ? NetworkImage(
+                                                  widget.videoThumbnail ?? '')
+                                              : FileImage(File(widget
+                                                  .videoThumbnail
+                                                  .replaceAll(
+                                                      'file://', ''))))),
+                                ),
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EditPreviewScreen(
-                                        videoFile: outPutFile,
-                                        selectedMusic: widget.selectedMusic,
+                                // Edit Icon Overlay
+                                /* Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: InkWell(
+                              onTap: () async {
+                              */ /*  if (widget.from == 'feed') {
+                                  try {
+                                    String? downloadedFile =
+                                        await downloadAndConvertM3U8(
+                                            widget.videoUrl!);
+                                    File outPutFile = File(downloadedFile!);
+
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditPreviewScreen(
+                                          videoFile: outPutFile,
+                                          selectedMusic: widget.selectedMusic,
+                                        ),
+                                      ),
+                                    );
+                                  } catch (error) {
+                                    print(
+                                        "Error during video download or conversion: $error");
+                                  }
+                                }*/ /*
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade800.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 5),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.edit,
+                                        color: Colors.white, size: 12),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.edit,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
-                                  );
-                                } catch (error) {
-                                  print(
-                                      "Error during video download or conversion: $error");
-                                }
-                              }*/ /*
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade800.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(8),
+                                  ],
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 5),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
+                            ),
+                          ),*/
+                              ],
+                            ),
+
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Column(
                                 children: [
-                                  const Icon(Icons.edit,
-                                      color: Colors.white, size: 12),
-                                  const SizedBox(width: 5),
-                                  Flexible(
+                                  const SizedBox(height: 30),
+
+                                  TextFormField(
+                                    controller: captionController,
+                                    style: GoogleFonts.poppins(
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize: 14),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                      labelText: AppLocalizations.of(context)!
+                                          .writeACaption,
+                                      labelStyle: GoogleFonts.poppins(
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 14),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 25),
+
+                                  // Hashtags Text Field
+                                  // TextFormField(
+                                  //   controller: hashTagController,
+                                  //   style: GoogleFonts.poppins(
+                                  //       color: myLoading.isDark
+                                  //           ? Colors.white
+                                  //           : Colors.black,
+                                  //       fontSize: 14),
+                                  //   decoration: InputDecoration(
+                                  //     contentPadding:
+                                  //         const EdgeInsets.symmetric(horizontal: 15),
+                                  //     labelText: AppLocalizations.of(context)!.hashTag,
+                                  //     labelStyle: GoogleFonts.poppins(
+                                  //         color: myLoading.isDark
+                                  //             ? Colors.white
+                                  //             : Colors.black,
+                                  //         fontSize: 14),
+                                  //     border: OutlineInputBorder(
+                                  //         borderRadius: BorderRadius.circular(10),
+                                  //         borderSide: BorderSide(
+                                  //             color: myLoading.isDark
+                                  //                 ? Colors.white
+                                  //                 : Colors.black,
+                                  //             width: 1)),
+                                  //     enabledBorder: OutlineInputBorder(
+                                  //         borderRadius: BorderRadius.circular(10),
+                                  //         borderSide: BorderSide(
+                                  //             color: myLoading.isDark
+                                  //                 ? Colors.white
+                                  //                 : Colors.black,
+                                  //             width: 1)),
+                                  //     focusedBorder: OutlineInputBorder(
+                                  //         borderRadius: BorderRadius.circular(10),
+                                  //         borderSide: BorderSide(
+                                  //             color: myLoading.isDark
+                                  //                 ? Colors.white
+                                  //                 : Colors.black,
+                                  //             width: 1)),
+                                  //   ),
+                                  //   onChanged: (value) {
+                                  //     getHashTagList(context, value);
+                                  //   },
+                                  // ),
+
+                                  // Hashtags Text Field
+
+                                  DetectableTextField(
+                                    controller: hashTagController,
+                                    style: GoogleFonts.poppins(
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize: 14),
+                                    maxLines: 1,
+                                    textInputAction: TextInputAction.done,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(175)
+                                    ],
+                                    enableSuggestions: false,
+                                    onChanged: onChangeDetectableTextField,
+                                    onTapOutside: (event) => FocusManager
+                                        .instance.primaryFocus
+                                        ?.unfocus(),
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                      labelText:
+                                          AppLocalizations.of(context)!.hashTag,
+                                      labelStyle: GoogleFonts.poppins(
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 14),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          borderSide: BorderSide(
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              width: 1)),
+                                    ),
+                                  ),
+
+                                  /*  if (hashTagList != null || hashTagList!.isNotEmpty)
+                              ListView.separated(
+                                shrinkWrap: true,
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 10, right: 10),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return InkWell(
+                                    onTap: () {
+                                      String hashTagAdded = hashTagController.text
+                                          .replaceAll(" ", ",");
+                                      hashTagAdded +=
+                                          "${hashTagList![index].hashTagName!},";
+                                      // Remove the last comma if it exists
+                                      if (hashTagAdded.endsWith(',')) {
+                                        hashTagAdded = hashTagAdded.substring(
+                                            0, hashTagAdded.length - 1);
+                                      }
+
+                                      setState(() {
+                                        hashTagController.text = hashTagAdded;
+                                      });
+                                    },
                                     child: Text(
-                                      AppLocalizations.of(context)!.edit,
-                                      textAlign: TextAlign.center,
+                                      hashTagList![index].hashTagName ?? '',
+                                      textAlign: TextAlign.start,
                                       style: GoogleFonts.poppins(
-                                        fontSize: 12,
+                                        fontSize: 13,
                                         color: myLoading.isDark
                                             ? Colors.white
                                             : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                  ),
+                                  );
+                                },
+                                itemCount: hashTagList!.length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Divider(
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  );
+                                },
+                              ),*/
                                 ],
                               ),
                             ),
-                          ),
-                        ),*/
-                      ],
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 30),
+                            const SizedBox(height: 30),
 
-                          TextFormField(
-                            controller: captionController,
-                            style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              labelText:
-                                  AppLocalizations.of(context)!.writeACaption,
-                              labelStyle: GoogleFonts.poppins(
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 14),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-
-                          // Hashtags Text Field
-                          // TextFormField(
-                          //   controller: hashTagController,
-                          //   style: GoogleFonts.poppins(
-                          //       color: myLoading.isDark
-                          //           ? Colors.white
-                          //           : Colors.black,
-                          //       fontSize: 14),
-                          //   decoration: InputDecoration(
-                          //     contentPadding:
-                          //         const EdgeInsets.symmetric(horizontal: 15),
-                          //     labelText: AppLocalizations.of(context)!.hashTag,
-                          //     labelStyle: GoogleFonts.poppins(
-                          //         color: myLoading.isDark
-                          //             ? Colors.white
-                          //             : Colors.black,
-                          //         fontSize: 14),
-                          //     border: OutlineInputBorder(
-                          //         borderRadius: BorderRadius.circular(10),
-                          //         borderSide: BorderSide(
-                          //             color: myLoading.isDark
-                          //                 ? Colors.white
-                          //                 : Colors.black,
-                          //             width: 1)),
-                          //     enabledBorder: OutlineInputBorder(
-                          //         borderRadius: BorderRadius.circular(10),
-                          //         borderSide: BorderSide(
-                          //             color: myLoading.isDark
-                          //                 ? Colors.white
-                          //                 : Colors.black,
-                          //             width: 1)),
-                          //     focusedBorder: OutlineInputBorder(
-                          //         borderRadius: BorderRadius.circular(10),
-                          //         borderSide: BorderSide(
-                          //             color: myLoading.isDark
-                          //                 ? Colors.white
-                          //                 : Colors.black,
-                          //             width: 1)),
-                          //   ),
-                          //   onChanged: (value) {
-                          //     getHashTagList(context, value);
-                          //   },
-                          // ),
-
-                          // Hashtags Text Field
-
-                          DetectableTextField(
-                            controller: hashTagController,
-                            style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14),
-                            maxLines: 1,
-                            textInputAction: TextInputAction.done,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(175)
-                            ],
-                            enableSuggestions: false,
-                            onChanged: onChangeDetectableTextField,
-                            onTapOutside: (event) =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              labelText: AppLocalizations.of(context)!.hashTag,
-                              labelStyle: GoogleFonts.poppins(
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 14),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      width: 1)),
-                            ),
-                          ),
-
-                          /*  if (hashTagList != null || hashTagList!.isNotEmpty)
-                            ListView.separated(
-                              shrinkWrap: true,
-                              padding: const EdgeInsets.only(
-                                  top: 10, left: 10, right: 10),
-                              itemBuilder: (BuildContext context, int index) {
-                                return InkWell(
-                                  onTap: () {
-                                    String hashTagAdded = hashTagController.text
-                                        .replaceAll(" ", ",");
-                                    hashTagAdded +=
-                                        "${hashTagList![index].hashTagName!},";
-                                    // Remove the last comma if it exists
-                                    if (hashTagAdded.endsWith(',')) {
-                                      hashTagAdded = hashTagAdded.substring(
-                                          0, hashTagAdded.length - 1);
-                                    }
-
-                                    setState(() {
-                                      hashTagController.text = hashTagAdded;
-                                    });
-                                  },
-                                  child: Text(
-                                    hashTagList![index].hashTagName ?? '',
-                                    textAlign: TextAlign.start,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 13,
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                );
-                              },
-                              itemCount: hashTagList!.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return Divider(
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                );
-                              },
-                            ),*/
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
-                        children: [
-                          widget.from != "feed"
-                              ? Expanded(
-                                  child: InkWell(
-                                    onTap: () {
-                                      AddPostRequestModel requestModel =
-                                          AddPostRequestModel(
-                                              saveAsDraft: "1",
-                                              userId: int
-                                                  .parse(sessionManager
-                                                      .getString(SessionManager
-                                                          .userId)!),
-                                              categoryId: KeyRes
-                                                          .selectedCategoryId ==
-                                                      -1
-                                                  ? ""
-                                                  : KeyRes
-                                                      .selectedCategoryId
-                                                      .toString(),
-                                              levelId: KeyRes
-                                                          .selectedLevelId ==
-                                                      -1
-                                                  ? ""
-                                                  : KeyRes
-                                                      .selectedLevelId
-                                                      .toString(),
-                                              postDescription:
-                                                  captionController.text,
-                                              postHashTag: hashTags.join(', '),
-                                              postImagePath: widget
-                                                  .videoThumbnail
-                                                  .replaceAll('file://', ''),
-                                              postVideoPath: widget.videoUrl!);
-                                      addPost(context, requestModel);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 30),
-                                      margin: const EdgeInsets.only(
-                                          top: 15, bottom: 5),
-                                      decoration: ShapeDecoration(
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                            strokeAlign:
-                                                BorderSide.strokeAlignOutside,
-                                            color: myLoading.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        AppLocalizations.of(context)!
-                                            .saveAsDraft,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          color: myLoading.isDark
-                                              ? Colors.black
-                                              : Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: ValueListenableBuilder<int?>(
-                                valueListenable:
-                                    Provider.of<ContestProvider>(context)
-                                        .userKycStatusNotifier,
-                                builder: (context, userKycStatus, child) {
-                                  return InkWell(
-                                    onTap: userKycStatus == 1 &&
-                                            widget.from != "normal"
-                                        ? () {
-                                            if (widget.from == 'feed') {
-                                              AddPostRequestModel requestModel =
-                                                  AddPostRequestModel(
-                                                postId: widget.postId!,
-                                                saveAsDraft: "0",
-                                                userId: int.parse(sessionManager
-                                                    .getString(SessionManager
-                                                        .userId)!),
-                                                categoryId:
-                                                    KeyRes.selectedCategoryId ==
-                                                            -1
-                                                        ? ""
-                                                        : KeyRes
-                                                            .selectedCategoryId
-                                                            .toString(),
-                                                levelId:
-                                                    KeyRes.selectedLevelId == -1
-                                                        ? ""
-                                                        : KeyRes.selectedLevelId
-                                                            .toString(),
-                                                postDescription:
-                                                    captionController.text,
-                                                postHashTag:
-                                                    hashTags.join(', '),
-                                              );
-
-                                              updatePost(context, requestModel);
-                                            } else {
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Row(
+                                children: [
+                                  widget.from != "feed"
+                                      ? Expanded(
+                                          child: InkWell(
+                                            onTap: () {
                                               AddPostRequestModel requestModel = AddPostRequestModel(
-                                                  saveAsDraft: "0",
+                                                  saveAsDraft: "1",
                                                   userId: int.parse(
                                                       sessionManager.getString(
                                                           SessionManager
@@ -765,214 +702,368 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                       .videoThumbnail
                                                       .replaceAll('file://', ''),
                                                   postVideoPath: widget.videoUrl!);
-
-                                              if (widget.selectedMusic !=
-                                                  null) {
-                                                if (widget.selectedMusic!
-                                                            .isLocalSong !=
-                                                        null ||
-                                                    widget.selectedMusic!
-                                                            .isLocalSong ==
-                                                        "0") {
-                                                  requestModel.isOrignalSound =
-                                                      "1";
-                                                  requestModel.postSound =
-                                                      widget.selectedMusic!
-                                                          .trimAudioPath!;
-                                                  requestModel.soundImage =
-                                                      widget.selectedMusic!
-                                                          .soundImage!;
-                                                  requestModel.soundTitle =
-                                                      widget.selectedMusic!
-                                                          .soundTitle!;
-                                                  requestModel.duration = widget
-                                                      .selectedMusic!.duration!;
-                                                  requestModel.singer = widget
-                                                      .selectedMusic!.singer!;
-                                                } else {
-                                                  requestModel.isOrignalSound =
-                                                      "0";
-                                                  // requestModel.postSound = widget.selectedMusic!.sound!;
-                                                  requestModel.soundId = widget
-                                                      .selectedMusic!.soundId!
-                                                      .toString();
-                                                }
-                                              }
-
                                               addPost(context, requestModel);
-                                            }
-                                          }
-                                        : widget.from == "normal"
-                                            ? () {
-                                                AddPostRequestModel requestModel = AddPostRequestModel(
-                                                    saveAsDraft: "0",
-                                                    userId: int.parse(
-                                                        sessionManager.getString(
-                                                            SessionManager
-                                                                .userId)!),
-                                                    categoryId:
-                                                        KeyRes.selectedCategoryId == -1
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 30),
+                                              margin: const EdgeInsets.only(
+                                                  top: 15, bottom: 5),
+                                              decoration: ShapeDecoration(
+                                                color: myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                    strokeAlign: BorderSide
+                                                        .strokeAlignOutside,
+                                                    color: myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .saveAsDraft,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  color: myLoading.isDark
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                  const SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                    child: ValueListenableBuilder<int?>(
+                                        valueListenable:
+                                            Provider.of<ContestProvider>(
+                                                    context)
+                                                .userKycStatusNotifier,
+                                        builder:
+                                            (context, userKycStatus, child) {
+                                          return InkWell(
+                                            onTap: userKycStatus == 1 &&
+                                                    widget.from != "normal"
+                                                ? () {
+                                                    if (widget.from == 'feed') {
+                                                      AddPostRequestModel
+                                                          requestModel =
+                                                          AddPostRequestModel(
+                                                        postId: widget.postId!,
+                                                        saveAsDraft: "0",
+                                                        userId: int.parse(
+                                                            sessionManager.getString(
+                                                                SessionManager
+                                                                    .userId)!),
+                                                        categoryId: KeyRes
+                                                                    .selectedCategoryId ==
+                                                                -1
                                                             ? ""
                                                             : KeyRes
                                                                 .selectedCategoryId
                                                                 .toString(),
-                                                    levelId:
-                                                        KeyRes.selectedLevelId == -1
+                                                        levelId: KeyRes
+                                                                    .selectedLevelId ==
+                                                                -1
                                                             ? ""
                                                             : KeyRes
                                                                 .selectedLevelId
                                                                 .toString(),
-                                                    postDescription:
-                                                        captionController.text,
-                                                    postHashTag:
-                                                        hashTags.join(', '),
-                                                    postImagePath: widget
-                                                        .videoThumbnail
-                                                        .replaceAll('file://', ''),
-                                                    postVideoPath: widget.videoUrl!);
+                                                        postDescription:
+                                                            captionController
+                                                                .text,
+                                                        postHashTag:
+                                                            hashTags.join(', '),
+                                                      );
 
-                                                if (widget.selectedMusic !=
-                                                    null) {
-                                                  if (widget.selectedMusic!
-                                                              .isLocalSong !=
-                                                          null ||
-                                                      widget.selectedMusic!
-                                                              .isLocalSong ==
-                                                          "0") {
-                                                    requestModel
-                                                        .isOrignalSound = "1";
-                                                    requestModel.postSound =
-                                                        widget.selectedMusic!
-                                                            .trimAudioPath!;
-                                                    requestModel.soundImage =
-                                                        widget.selectedMusic!
-                                                            .soundImage!;
-                                                    requestModel.soundTitle =
-                                                        widget.selectedMusic!
-                                                            .soundTitle!;
-                                                    requestModel.duration =
-                                                        widget.selectedMusic!
-                                                            .duration!;
-                                                    requestModel.singer = widget
-                                                        .selectedMusic!.singer!;
-                                                  } else {
-                                                    requestModel
-                                                        .isOrignalSound = "0";
-                                                    // requestModel.postSound = widget.selectedMusic!.sound!;
-                                                    requestModel.soundId =
-                                                        widget.selectedMusic!
-                                                            .soundId!
-                                                            .toString();
+                                                      updatePost(context,
+                                                          requestModel);
+                                                    } else {
+                                                      AddPostRequestModel requestModel = AddPostRequestModel(
+                                                          saveAsDraft: "0",
+                                                          userId: int.parse(
+                                                              sessionManager.getString(
+                                                                  SessionManager
+                                                                      .userId)!),
+                                                          categoryId: KeyRes.selectedCategoryId == -1
+                                                              ? ""
+                                                              : KeyRes.selectedCategoryId
+                                                                  .toString(),
+                                                          levelId: KeyRes.selectedLevelId == -1
+                                                              ? ""
+                                                              : KeyRes.selectedLevelId
+                                                                  .toString(),
+                                                          postDescription:
+                                                              captionController
+                                                                  .text,
+                                                          postHashTag: hashTags
+                                                              .join(', '),
+                                                          postImagePath: widget
+                                                              .videoThumbnail
+                                                              .replaceAll(
+                                                                  'file://', ''),
+                                                          postVideoPath: widget.videoUrl!);
+
+                                                      if (widget
+                                                              .selectedMusic !=
+                                                          null) {
+                                                        if (widget.selectedMusic!
+                                                                    .isLocalSong !=
+                                                                null ||
+                                                            widget.selectedMusic!
+                                                                    .isLocalSong ==
+                                                                "0") {
+                                                          requestModel
+                                                                  .isOrignalSound =
+                                                              "1";
+                                                          requestModel
+                                                                  .postSound =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .trimAudioPath!;
+                                                          requestModel
+                                                                  .soundImage =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .soundImage!;
+                                                          requestModel
+                                                                  .soundTitle =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .soundTitle!;
+                                                          requestModel
+                                                                  .duration =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .duration!;
+                                                          requestModel.singer =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .singer!;
+                                                        } else {
+                                                          requestModel
+                                                                  .isOrignalSound =
+                                                              "0";
+                                                          // requestModel.postSound = widget.selectedMusic!.sound!;
+                                                          requestModel.soundId =
+                                                              widget
+                                                                  .selectedMusic!
+                                                                  .soundId!
+                                                                  .toString();
+                                                        }
+                                                      }
+
+                                                      addPost(context,
+                                                          requestModel);
+                                                    }
                                                   }
-                                                }
-                                                // showProgressLoader(context);
-                                                addPost(context, requestModel);
-                                              }
-                                            : null,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 40),
-                                      margin: const EdgeInsets.only(
-                                          top: 15, bottom: 5),
-                                      decoration: ShapeDecoration(
-                                        color: userKycStatus == 1 &&
-                                                widget.from != "normal"
-                                            ? buttonBlueColor1
-                                            : widget.from == "normal"
-                                                ? buttonBlueColor1
-                                                : greyTextColor8,
-                                        shape: RoundedRectangleBorder(
-                                          side: const BorderSide(
-                                            strokeAlign:
-                                                BorderSide.strokeAlignOutside,
-                                            color: Colors.black,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.upload,
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                if (isLoading)
-                  Positioned.fill(
-                    child: ModalBarrier(
-                      dismissible: false, // Prevent closing by touch
-                      color: Colors.black
-                          .withOpacity(0.5), // Optional: Dim background
-                    ),
-                  ),
-                if (isLoading)
-                  Selector<HomeProvider, double>(
-                    selector: (_, provider) => provider.uploadProgress,
-                    builder: (_, uploadProgress, __) {
-                      return Positioned(
-                        top: 0,
-                        bottom: 0,
-                        right: 0,
-                        left: 0,
-                        child: Center(
-                          child: Wrap(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 10),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    CircularProgressIndicator(
-                                      value: uploadProgress,
-                                      backgroundColor: Colors.grey[200],
-                                      valueColor:
-                                          const AlwaysStoppedAnimation<Color>(
-                                              Colors.blue),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      // '${(uploadProgress * 100).toStringAsFixed(1)}%',
-                                      '${(uploadProgress * 100).round()}%',
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        color: myLoading.isDark
-                                            ? Colors.black
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                                : widget.from == "normal"
+                                                    ? () {
+                                                        AddPostRequestModel requestModel = AddPostRequestModel(
+                                                            saveAsDraft: "0",
+                                                            userId: int.parse(
+                                                                sessionManager.getString(
+                                                                    SessionManager
+                                                                        .userId)!),
+                                                            categoryId: KeyRes.selectedCategoryId == -1
+                                                                ? ""
+                                                                : KeyRes.selectedCategoryId
+                                                                    .toString(),
+                                                            levelId: KeyRes.selectedLevelId == -1
+                                                                ? ""
+                                                                : KeyRes
+                                                                    .selectedLevelId
+                                                                    .toString(),
+                                                            postDescription:
+                                                                captionController
+                                                                    .text,
+                                                            postHashTag: hashTags
+                                                                .join(', '),
+                                                            postImagePath: widget
+                                                                .videoThumbnail
+                                                                .replaceAll(
+                                                                    'file://', ''),
+                                                            postVideoPath: widget.videoUrl!);
+
+                                                        if (widget
+                                                                .selectedMusic !=
+                                                            null) {
+                                                          if (widget.selectedMusic!
+                                                                      .isLocalSong !=
+                                                                  null ||
+                                                              widget.selectedMusic!
+                                                                      .isLocalSong ==
+                                                                  "0") {
+                                                            requestModel
+                                                                    .isOrignalSound =
+                                                                "1";
+                                                            requestModel
+                                                                    .postSound =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .trimAudioPath!;
+                                                            requestModel
+                                                                    .soundImage =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .soundImage!;
+                                                            requestModel
+                                                                    .soundTitle =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .soundTitle!;
+                                                            requestModel
+                                                                    .duration =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .duration!;
+                                                            requestModel
+                                                                    .singer =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .singer!;
+                                                          } else {
+                                                            requestModel
+                                                                    .isOrignalSound =
+                                                                "0";
+                                                            // requestModel.postSound = widget.selectedMusic!.sound!;
+                                                            requestModel
+                                                                    .soundId =
+                                                                widget
+                                                                    .selectedMusic!
+                                                                    .soundId!
+                                                                    .toString();
+                                                          }
+                                                        }
+                                                        // showProgressLoader(context);
+                                                        addPost(context,
+                                                            requestModel);
+                                                      }
+                                                    : null,
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 40),
+                                              margin: const EdgeInsets.only(
+                                                  top: 15, bottom: 5),
+                                              decoration: ShapeDecoration(
+                                                color: userKycStatus == 1 &&
+                                                        widget.from != "normal"
+                                                    ? buttonBlueColor1
+                                                    : widget.from == "normal"
+                                                        ? buttonBlueColor1
+                                                        : greyTextColor8,
+                                                shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(
+                                                    strokeAlign: BorderSide
+                                                        .strokeAlignOutside,
+                                                    color: Colors.black,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .upload,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                        if (isLoading)
+                          Positioned.fill(
+                            child: ModalBarrier(
+                              dismissible: false, // Prevent closing by touch
+                              color: Colors.black
+                                  .withOpacity(0.5), // Optional: Dim background
+                            ),
+                          ),
+                        if (isLoading)
+                          Selector<HomeProvider, double>(
+                            selector: (_, provider) => provider.uploadProgress,
+                            builder: (_, uploadProgress, __) {
+                              return Positioned(
+                                top: 0,
+                                bottom: 0,
+                                right: 0,
+                                left: 0,
+                                child: Center(
+                                  child: Wrap(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 25, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            CircularProgressIndicator(
+                                              value: uploadProgress,
+                                              backgroundColor: Colors.grey[200],
+                                              valueColor:
+                                                  const AlwaysStoppedAnimation<
+                                                      Color>(Colors.blue),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              // '${(uploadProgress * 100).toStringAsFixed(1)}%',
+                                              '${(uploadProgress * 100).round()}%',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 13,
+                                                color: myLoading.isDark
+                                                    ? Colors.black
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
                   ),
-              ],
-            ),
-          ),
-        ),
-      );
+                ),
+              ),
+            );
     });
   }
 

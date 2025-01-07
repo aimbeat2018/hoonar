@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,10 @@ import 'package:hoonar/screens/auth_screen/state_city_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../profile/menuOptionsScreens/app_content_screen.dart';
@@ -36,6 +40,10 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   bool accept = false;
   final GlobalKey<FormState> _formKey = GlobalKey();
   TextEditingController fullNameController = TextEditingController();
@@ -52,11 +60,28 @@ class _SignupScreenState extends State<SignupScreen> {
   final Duration debounceDuration = Duration(seconds: 3);
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     _debounce?.cancel();
     scrollController.dispose();
+    _connectivitySubscription.cancel();
   }
 
   void _onEmailTextChanged() {
@@ -72,440 +97,454 @@ class _SignupScreenState extends State<SignupScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        // resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/background.png'
-                  : 'assets/images/bg_wht.png'),
-              // Path to your image
-              fit:
-                  BoxFit.cover, // Ensures the image covers the entire container
-            ),
-          ),
-          child: Scrollbar(
-            controller: scrollController,
-            // Add a ScrollController
-            thumbVisibility: true,
-            thickness: 2.5,
-            radius: const Radius.circular(10),
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildAppbar(context, myLoading.isDark),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.signup,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              // resizeToAvoidBottomInset: false,
+              body: Container(
+                padding: const EdgeInsets.only(top: 0, left: 10, right: 10),
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/background.png'
+                        : 'assets/images/bg_wht.png'),
+                    // Path to your image
+                    fit: BoxFit
+                        .cover, // Ensures the image covers the entire container
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.fullName,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterFullName;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.black,
-                                errorStyle: GoogleFonts.poppins(),
-                                border: GradientOutlineInputBorder(
-                                  width: 1,
-                                  borderRadius: BorderRadius.circular(8),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      greyTextColor4
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                              ),
-                              controller: fullNameController,
-                              cursorColor: myLoading.isDark
+                ),
+                child: Scrollbar(
+                  controller: scrollController,
+                  // Add a ScrollController
+                  thumbVisibility: true,
+                  thickness: 2.5,
+                  radius: const Radius.circular(10),
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildAppbar(context, myLoading.isDark),
+                        Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.signup,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: myLoading.isDark
                                   ? Colors.white
                                   : Colors.black,
-                              style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14,
-                              ),
-                              keyboardType: TextInputType.name,
-                              onChanged: (value) {},
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: Text(
-                              AppLocalizations.of(context)!.email,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterEmail;
-                                } else if (!Validation.isValidEmail(v)) {
-                                  return AppLocalizations.of(context)!
-                                      .enterEmail;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.black,
-                                errorStyle: GoogleFonts.poppins(),
-                                border: GradientOutlineInputBorder(
-                                  width: 1,
-                                  borderRadius: BorderRadius.circular(8),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      myLoading.isDark
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.fullName,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
                                           ? Colors.white
                                           : Colors.black,
-                                      greyTextColor4
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                              ),
-                              controller: emailController,
-                              cursorColor: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14,
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: (value) {
-                                if (Validation.isValidEmail(value)) {
-                                  _onEmailTextChanged();
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.phone,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterPhoneNumberError;
-                                } else if (v.length != 10) {
-                                  return AppLocalizations.of(context)!
-                                      .enterValidPhoneNumber;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.black,
-                                errorStyle: GoogleFonts.poppins(),
-                                border: GradientOutlineInputBorder(
-                                  width: 1,
-                                  borderRadius: BorderRadius.circular(8),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      greyTextColor4
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
+                                const SizedBox(
+                                  height: 5,
                                 ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                              ),
-                              controller: phoneController,
-                              cursorColor: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14,
-                              ),
-                              keyboardType: TextInputType.text,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              onChanged: (value) {
-                                if (value.length == 10) {
-                                  checkEmailAndMobile("", value);
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.dob,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!.enterDob;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              readOnly: true,
-                              onTap: () async {
-                                _selectDate(context, myLoading.isDark);
-                              },
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.black,
-                                errorStyle: GoogleFonts.poppins(),
-                                border: GradientOutlineInputBorder(
-                                  width: 1,
-                                  borderRadius: BorderRadius.circular(8),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      greyTextColor4
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                              ),
-                              controller: dobController,
-                              cursorColor: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14,
-                              ),
-                              keyboardType: TextInputType.text,
-                              onChanged: (value) {},
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.pinCode,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterPincode;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              controller: pinCodeController,
-                              cursorColor: myLoading.isDark
-                                  ? Colors.white
-                                  : Colors.black,
-                              style: GoogleFonts.poppins(
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 14,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(6),
-                              ],
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.black,
-                                errorStyle: GoogleFonts.poppins(),
-                                border: GradientOutlineInputBorder(
-                                  width: 1,
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      greyTextColor4
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                ),
-                                // hintText: enterPhoneNumber,
-                                hintStyle: GoogleFonts.poppins(
-                                  color: hintGreyColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
-                              ),
-                              keyboardType: TextInputType.number,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15.0),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.state,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterFullName;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.black,
+                                      errorStyle: GoogleFonts.poppins(),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
                                         ),
                                       ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
                                     ),
-                                    const SizedBox(
-                                      height: 5,
+                                    controller: fullNameController,
+                                    cursorColor: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
                                     ),
-                                    /* Padding(
+                                    keyboardType: TextInputType.name,
+                                    onChanged: (value) {},
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.email,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterEmail;
+                                      } else if (!Validation.isValidEmail(v)) {
+                                        return AppLocalizations.of(context)!
+                                            .enterEmail;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.black,
+                                      errorStyle: GoogleFonts.poppins(),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                    ),
+                                    controller: emailController,
+                                    cursorColor: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    keyboardType: TextInputType.emailAddress,
+                                    onChanged: (value) {
+                                      if (Validation.isValidEmail(value)) {
+                                        _onEmailTextChanged();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.phone,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterPhoneNumberError;
+                                      } else if (v.length != 10) {
+                                        return AppLocalizations.of(context)!
+                                            .enterValidPhoneNumber;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.black,
+                                      errorStyle: GoogleFonts.poppins(),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                    ),
+                                    controller: phoneController,
+                                    cursorColor: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
+                                    onChanged: (value) {
+                                      if (value.length == 10) {
+                                        checkEmailAndMobile("", value);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.dob,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterDob;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      _selectDate(context, myLoading.isDark);
+                                    },
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.black,
+                                      errorStyle: GoogleFonts.poppins(),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                    ),
+                                    controller: dobController,
+                                    cursorColor: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (value) {},
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.pinCode,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterPincode;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    controller: pinCodeController,
+                                    cursorColor: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(6),
+                                    ],
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors.black,
+                                      errorStyle: GoogleFonts.poppins(),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      // hintText: enterPhoneNumber,
+                                      hintStyle: GoogleFonts.poppins(
+                                        color: hintGreyColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 3),
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15.0),
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .state,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          /* Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 15.0),
                                       child: AsyncAutocomplete<StateListData>(
@@ -588,86 +627,93 @@ class _SignupScreenState extends State<SignupScreen> {
                                       ),
                                     ),*/
 
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15.0),
-                                      child: TextFormField(
-                                        validator: (v) {
-                                          if (v!.trim().isEmpty) {
-                                            return AppLocalizations.of(context)!
-                                                .selectState;
-                                          }
-                                          return null;
-                                        },
-                                        maxLines: 1,
-                                        readOnly: true,
-                                        onTap: () => _showStateBottomSheet(
-                                            context, myLoading.isDark, true),
-                                        controller: stateController,
-                                        cursorColor: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        style: GoogleFonts.poppins(
-                                          color: myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 14,
-                                        ),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.black,
-                                          errorStyle: GoogleFonts.poppins(),
-                                          border: GradientOutlineInputBorder(
-                                            width: 1,
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                myLoading.isDark
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15.0),
+                                            child: TextFormField(
+                                              validator: (v) {
+                                                if (v!.trim().isEmpty) {
+                                                  return AppLocalizations.of(
+                                                          context)!
+                                                      .selectState;
+                                                }
+                                                return null;
+                                              },
+                                              maxLines: 1,
+                                              readOnly: true,
+                                              onTap: () =>
+                                                  _showStateBottomSheet(context,
+                                                      myLoading.isDark, true),
+                                              controller: stateController,
+                                              cursorColor: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              style: GoogleFonts.poppins(
+                                                color: myLoading.isDark
                                                     ? Colors.white
                                                     : Colors.black,
-                                                greyTextColor4
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
+                                                fontSize: 14,
+                                              ),
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.black,
+                                                errorStyle:
+                                                    GoogleFonts.poppins(),
+                                                border:
+                                                    GradientOutlineInputBorder(
+                                                  width: 1,
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      greyTextColor4
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  ),
+                                                ),
+                                                // hintText: enterPhoneNumber,
+                                                hintStyle: GoogleFonts.poppins(
+                                                  color: hintGreyColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                ),
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 3),
+                                              ),
+                                              keyboardType: TextInputType.text,
                                             ),
                                           ),
-                                          // hintText: enterPhoneNumber,
-                                          hintStyle: GoogleFonts.poppins(
-                                            color: hintGreyColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15.0),
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .city,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: myLoading.isDark
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 3),
-                                        ),
-                                        keyboardType: TextInputType.text,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15.0),
-                                      child: Text(
-                                        AppLocalizations.of(context)!.city,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    /* Padding(
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          /* Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: AsyncAutocomplete<CityListData>(
@@ -746,136 +792,107 @@ class _SignupScreenState extends State<SignupScreen> {
                                         ),
                                       ),
                                     ),*/
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15.0),
-                                      child: TextFormField(
-                                        validator: (v) {
-                                          if (v!.trim().isEmpty) {
-                                            return AppLocalizations.of(context)!
-                                                .selectCity;
-                                          }
-                                          return null;
-                                        },
-                                        maxLines: 1,
-                                        readOnly: true,
-                                        onTap: () {
-                                          if (selectedStateId.isNotEmpty) {
-                                            _showStateBottomSheet(context,
-                                                myLoading.isDark, false);
-                                          } else {
-                                            SnackbarUtil.showSnackBar(
-                                                context,
-                                                AppLocalizations.of(context)!
-                                                    .selectState);
-                                          }
-                                        },
-                                        controller: cityController,
-                                        cursorColor: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        style: GoogleFonts.poppins(
-                                          color: myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontSize: 14,
-                                        ),
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.black,
-                                          errorStyle: GoogleFonts.poppins(),
-                                          border: GradientOutlineInputBorder(
-                                            width: 1,
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                myLoading.isDark
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15.0),
+                                            child: TextFormField(
+                                              validator: (v) {
+                                                if (v!.trim().isEmpty) {
+                                                  return AppLocalizations.of(
+                                                          context)!
+                                                      .selectCity;
+                                                }
+                                                return null;
+                                              },
+                                              maxLines: 1,
+                                              readOnly: true,
+                                              onTap: () {
+                                                if (selectedStateId
+                                                    .isNotEmpty) {
+                                                  _showStateBottomSheet(context,
+                                                      myLoading.isDark, false);
+                                                } else {
+                                                  SnackbarUtil.showSnackBar(
+                                                      context,
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .selectState);
+                                                }
+                                              },
+                                              controller: cityController,
+                                              cursorColor: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              style: GoogleFonts.poppins(
+                                                color: myLoading.isDark
                                                     ? Colors.white
                                                     : Colors.black,
-                                                greyTextColor4
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
+                                                fontSize: 14,
+                                              ),
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.black,
+                                                errorStyle:
+                                                    GoogleFonts.poppins(),
+                                                border:
+                                                    GradientOutlineInputBorder(
+                                                  width: 1,
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      greyTextColor4
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  ),
+                                                ),
+                                                // hintText: enterPhoneNumber,
+                                                hintStyle: GoogleFonts.poppins(
+                                                  color: hintGreyColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                ),
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 3),
+                                              ),
+                                              keyboardType: TextInputType.text,
                                             ),
                                           ),
-                                          // hintText: enterPhoneNumber,
-                                          hintStyle: GoogleFonts.poppins(
-                                            color: hintGreyColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13,
-                                          ),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 3),
-                                        ),
-                                        keyboardType: TextInputType.text,
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.school,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(1),
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                colors: [
-                                  myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  greyTextColor4
-                                ],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              ),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                // Background color for TextFormField
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: TextFormField(
-                                maxLines: 1,
-                                controller: schoolController,
-                                cursorColor: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                style: GoogleFonts.poppins(
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontSize: 14,
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.black,
-                                  errorStyle: GoogleFonts.poppins(),
-                                  border: GradientOutlineInputBorder(
-                                    width: 1,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.school,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(1),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
                                     gradient: LinearGradient(
                                       colors: [
                                         myLoading.isDark
@@ -887,142 +904,188 @@ class _SignupScreenState extends State<SignupScreen> {
                                       end: Alignment.bottomCenter,
                                     ),
                                   ),
-                                  // hintText: enterPhoneNumber,
-                                  hintStyle: GoogleFonts.poppins(
-                                    color: hintGreyColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 20),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: const BorderSide(
-                                      color: textFieldGreyColor,
-                                      width: 1.0,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black,
+                                      // Background color for TextFormField
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
-                                    borderSide: const BorderSide(
-                                      color: textFieldGreyColor,
-                                      width: 1.0,
+                                    child: TextFormField(
+                                      maxLines: 1,
+                                      controller: schoolController,
+                                      cursorColor: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      style: GoogleFonts.poppins(
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontSize: 14,
+                                      ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.black,
+                                        errorStyle: GoogleFonts.poppins(),
+                                        border: GradientOutlineInputBorder(
+                                          width: 1,
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              greyTextColor4
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                        ),
+                                        // hintText: enterPhoneNumber,
+                                        hintStyle: GoogleFonts.poppins(
+                                          color: hintGreyColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 20),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: const BorderSide(
+                                            color: textFieldGreyColor,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                          borderSide: const BorderSide(
+                                            color: textFieldGreyColor,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                      ),
+                                      keyboardType: TextInputType.text,
                                     ),
                                   ),
                                 ),
-                                keyboardType: TextInputType.text,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                    side: const BorderSide(color: Colors.white),
-                                    checkColor: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    focusColor: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    activeColor: Colors.grey,
-                                    value: accept,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        accept = !accept;
-                                      });
-                                    }),
-                                Expanded(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: AppLocalizations.of(context)!
-                                              .acceptTer,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                          side: const BorderSide(
+                                              color: Colors.white),
+                                          checkColor: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          focusColor: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          activeColor: Colors.grey,
+                                          value: accept,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              accept = !accept;
+                                            });
+                                          }),
+                                      Expanded(
+                                        child: Text.rich(
+                                          TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: AppLocalizations.of(
+                                                        context)!
+                                                    .acceptTer,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                  text: AppLocalizations.of(
+                                                          context)!
+                                                      .privacyPolicy,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color:
+                                                        const Color(0xFFFFCDB3),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                  recognizer:
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          Navigator.push(
+                                                              context,
+                                                              SlideRightRoute(
+                                                                  page:
+                                                                      const AppContentScreen(
+                                                                from: 'privacy',
+                                                              )));
+                                                        }),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                authProvider.isSignUpLoading
+                                    ? const Center(
+                                        child: CircularProgressIndicator(),
+                                      )
+                                    : InkWell(
+                                        onTap: () {
+                                          callRegisterApi();
+                                        },
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
+                                          margin: const EdgeInsets.only(
+                                              top: 15,
+                                              left: 60,
+                                              right: 60,
+                                              bottom: 10),
+                                          decoration: ShapeDecoration(
                                             color: myLoading.isDark
                                                 ? Colors.white
                                                 : Colors.black,
-                                            fontWeight: FontWeight.w500,
+                                            shape: RoundedRectangleBorder(
+                                              side: const BorderSide(
+                                                strokeAlign: BorderSide
+                                                    .strokeAlignOutside,
+                                                color: Colors.black,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(80),
+                                            ),
                                           ),
-                                        ),
-                                        TextSpan(
-                                            text: AppLocalizations.of(context)!
-                                                .privacyPolicy,
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .createAcc,
+                                            textAlign: TextAlign.center,
                                             style: GoogleFonts.poppins(
                                               fontSize: 14,
-                                              color: const Color(0xFFFFCDB3),
-                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap = () {
-                                                Navigator.push(
-                                                    context,
-                                                    SlideRightRoute(
-                                                        page:
-                                                            const AppContentScreen(
-                                                      from: 'privacy',
-                                                    )));
-                                              }),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          authProvider.isSignUpLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                              : InkWell(
-                                  onTap: () {
-                                    callRegisterApi();
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    margin: const EdgeInsets.only(
-                                        top: 15,
-                                        left: 60,
-                                        right: 60,
-                                        bottom: 10),
-                                    decoration: ShapeDecoration(
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                          strokeAlign:
-                                              BorderSide.strokeAlignOutside,
-                                          color: Colors.black,
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(80),
                                       ),
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(context)!.createAcc,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                        ],
-                      )),
-                ],
+                              ],
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
     });
   }
 

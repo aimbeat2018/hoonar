@@ -47,7 +47,7 @@ dependencies:
   camera: ^0.10.5+2
   photo_manager: ^3.5.0
   get_it: ^8.0.0
-#  connectivity_plus: ^6.0.5
+  connectivity_plus: ^6.1.1
   dio: ^5.7.0
   flutter_async_autocomplete: ^0.1.1
   gradient_borders: ^1.0.1

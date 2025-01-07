@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -23,7 +26,10 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../constants/common_widgets.dart';
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
@@ -56,10 +62,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   SessionManager sessionManager = SessionManager();
   bool isFollow = false, isFollowLoading = false;
   String userId = "";
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     sessionManager.initPref();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserProfile(context);
@@ -108,6 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     super.dispose();
     controller.dispose();
+    _connectivitySubscription.cancel();
   }
 
   Future<void> followUnFollowUser(BuildContext context) async {
@@ -147,35 +168,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return DefaultTabController(
         length: 3,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-                /* image: DecorationImage(
+        child: _connectionStatus == KeyRes.connectivityCheck
+            ? const NoInternetScreen()
+            : Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Container(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                      /* image: DecorationImage(
                       image: AssetImage('assets/images/screens_back.png'),
                       fit: BoxFit.cover,
                     ),*/
-                color: myLoading.isDark ? Colors.black : Colors.white),
-            child: CustomScrollView(
-              controller: controller,
-              physics: NeverScrollableScrollPhysics(),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 50),
-                    child: ValueListenableBuilder<ProfileSuccessModel?>(
-                        valueListenable: authProvider.profileNotifier,
-                        builder: (context, profile, child) {
-                          if (profile == null ||
-                              authProvider.isProfileLoading) {
-                            return const ProfileContentShimmer();
-                          }
-                          /*else if (profile.data != null) {
+                      color: myLoading.isDark ? Colors.black : Colors.white),
+                  child: CustomScrollView(
+                    controller: controller,
+                    physics: NeverScrollableScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                          child: ValueListenableBuilder<ProfileSuccessModel?>(
+                              valueListenable: authProvider.profileNotifier,
+                              builder: (context, profile, child) {
+                                if (profile == null ||
+                                    authProvider.isProfileLoading) {
+                                  return const ProfileContentShimmer();
+                                }
+                                /*else if (profile.data != null) {
                             return SizedBox();
                           }*/
-                          /* else if (profile.message == 'Unauthorized Access!') {
+                                /* else if (profile.message == 'Unauthorized Access!') {
                             Future.microtask(() {
                               Navigator.pushAndRemoveUntil(
                                   context,
@@ -184,436 +207,491 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           }*/
 
-                          return Column(
-                            children: [
-                              Column(
-                                children: [
-                                  Stack(
-                                    children: [
-                                      widget.from != 'main'
-                                          ? Positioned(
-                                              left: 5,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 13),
-                                                  child: Image.asset(
-                                                    'assets/images/back_image.png',
-                                                    height: 28,
-                                                    width: 28,
-                                                    color: myLoading.isDark
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          : const SizedBox(),
-                                      LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          // Use the smaller dimension (width or height) for CircleAvatar's size
-                                          double avatarSize =
-                                              constraints.maxWidth <
-                                                      constraints.maxHeight
-                                                  ? constraints.maxWidth
-                                                  : constraints.maxHeight;
-
-                                          String initials =
-                                              profile.data?.fullName != null ||
-                                                      profile.data?.fullName !=
-                                                          ""
-                                                  ? profile.data!.fullName!
-                                                      .trim()
-                                                      .split(' ')
-                                                      .map((e) => e[0])
-                                                      .take(2)
-                                                      .join()
-                                                      .toUpperCase()
-                                                  : '';
-
-                                          return Center(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Hero(
-                                                  tag: 'profileImage',
-                                                  child: CircleAvatar(
-                                                    radius: avatarSize / 7,
-                                                    backgroundColor: myLoading
-                                                            .isDark
-                                                        ? Colors.grey.shade700
-                                                        : Colors.grey.shade200,
-                                                    child: ClipOval(
-                                                      child: profile.data
-                                                                  ?.userProfile !=
-                                                              ""
-                                                          ? CachedNetworkImage(
-                                                              imageUrl: profile
-                                                                  .data!
-                                                                  .userProfile!,
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  const CircularProgressIndicator(),
-                                                              errorWidget: (context,
-                                                                      url,
-                                                                      error) =>
-                                                                  buildInitialsAvatar(
-                                                                      initials),
-                                                              fit: BoxFit.cover,
-                                                              // width: 80,
-                                                              // // Match the size of the CircleAvatar
-                                                              // height: 80,
-                                                            )
-                                                          : buildInitialsAvatar(
-                                                              initials),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  profile.data?.fullName ??
-                                                      'No Name',
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 18,
-                                                    color: myLoading.isDark
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  profile.data?.userName ?? '',
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 14,
-                                                    color: myLoading.isDark
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      widget.from == 'main'
-                                          ? Positioned(
-                                              right: 5,
-                                              child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: menuItemsWidget(
-                                                      myLoading.isDark)),
-                                            )
-                                          : SizedBox()
-                                    ],
-                                  ),
-                                  if (profile.data?.bio != "")
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0, vertical: 3),
-                                        child: Text(
-                                          profile.data?.bio ?? '',
-                                          textAlign: TextAlign.start,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: myLoading.isDark
-                                                ? Colors.white60
-                                                : Colors.grey,
-                                            fontWeight: FontWeight.normal,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                          child: InkWell(
-                                        onTap: () => Navigator.push(
-                                          context,
-                                          SlideRightRoute(
-                                              page: FollowersTabScreen(
-                                            currentTabFrom: 0,
-                                            userId: widget.userId,
-                                          )),
-                                        ),
-                                        child: Column(
+                                return Column(
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Stack(
                                           children: [
-                                            Text(
-                                              profile.data?.followersCount
-                                                      .toString() ??
-                                                  '0',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 16,
-                                                color: myLoading.isDark
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              AppLocalizations.of(context)!
-                                                  .followers,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: orangeColor,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                      Expanded(
-                                        child: InkWell(
-                                          onTap: () => Navigator.push(
-                                            context,
-                                            SlideRightRoute(
-                                                page: FollowersTabScreen(
-                                              currentTabFrom: 1,
-                                              userId: userId,
-                                            )),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                profile.data?.totalVotes
-                                                        .toString() ??
-                                                    '0',
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 16,
-                                                  color: myLoading.isDark
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              Text(
-                                                AppLocalizations.of(context)!
-                                                    .votes,
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  color: orangeColor,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                          child: InkWell(
-                                        onTap: () => Navigator.push(
-                                          context,
-                                          SlideRightRoute(
-                                              page: FollowersTabScreen(
-                                            currentTabFrom: 2,
-                                            userId: userId,
-                                          )),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              profile.data?.followingCount
-                                                      .toString() ??
-                                                  '0',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 16,
-                                                color: myLoading.isDark
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              AppLocalizations.of(context)!
-                                                  .following,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: orangeColor,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 15,
-                                  ),
-                                  if (widget.from != 'main')
-                                    ValueListenableBuilder<int?>(
-                                        valueListenable:
-                                            Provider.of<UserProvider>(context)
-                                                .followStatusNotifier,
-                                        builder:
-                                            (context, followStatus, child) {
-                                          return isFollowLoading
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : InkWell(
-                                                  onTap: () {
-                                                    followUnFollowUser(context)
-                                                        .then((onValue) {
-                                                      setState(() {
-                                                        if (followStatus == 0) {
-                                                          profile.data!
-                                                              .followersCount = profile
-                                                                  .data!
-                                                                  .followersCount! +
-                                                              1;
-                                                        } else {
-                                                          profile.data!
-                                                              .followersCount = profile
-                                                                  .data!
-                                                                  .followersCount! -
-                                                              1;
-                                                        }
-                                                      });
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(vertical: 8),
-                                                    margin: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 15.0),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      gradient: LinearGradient(
-                                                        colors: [
-                                                          myLoading.isDark
+                                            widget.from != 'main'
+                                                ? Positioned(
+                                                    left: 5,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(left: 13),
+                                                        child: Image.asset(
+                                                          'assets/images/back_image.png',
+                                                          height: 28,
+                                                          width: 28,
+                                                          color: myLoading
+                                                                  .isDark
                                                               ? Colors.white
-                                                              : greyTextColor4,
-                                                          myLoading.isDark
-                                                              ? greyTextColor8
-                                                              : greyTextColor6
-                                                        ],
-                                                        begin:
-                                                            Alignment.topCenter,
-                                                        end: Alignment
-                                                            .bottomCenter,
+                                                              : Colors.black,
+                                                        ),
                                                       ),
                                                     ),
-                                                    child: Text(
-                                                      // profile.data!.isFollowing ==
-                                                      //             1 ||
-                                                      followStatus == 1
-                                                          ? AppLocalizations.of(
-                                                                  context)!
-                                                              .unfollow
-                                                          : AppLocalizations.of(
-                                                                  context)!
-                                                              .follow,
+                                                  )
+                                                : const SizedBox(),
+                                            LayoutBuilder(
+                                              builder: (context, constraints) {
+                                                // Use the smaller dimension (width or height) for CircleAvatar's size
+                                                double avatarSize = constraints
+                                                            .maxWidth <
+                                                        constraints.maxHeight
+                                                    ? constraints.maxWidth
+                                                    : constraints.maxHeight;
+
+                                                String initials = profile.data
+                                                                ?.fullName !=
+                                                            null ||
+                                                        profile.data
+                                                                ?.fullName !=
+                                                            ""
+                                                    ? profile.data!.fullName!
+                                                        .trim()
+                                                        .split(' ')
+                                                        .map((e) => e[0])
+                                                        .take(2)
+                                                        .join()
+                                                        .toUpperCase()
+                                                    : '';
+
+                                                return Center(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Hero(
+                                                        tag: 'profileImage',
+                                                        child: CircleAvatar(
+                                                          radius:
+                                                              avatarSize / 7,
+                                                          backgroundColor:
+                                                              myLoading.isDark
+                                                                  ? Colors.grey
+                                                                      .shade700
+                                                                  : Colors.grey
+                                                                      .shade200,
+                                                          child: ClipOval(
+                                                            child: profile.data
+                                                                        ?.userProfile !=
+                                                                    ""
+                                                                ? CachedNetworkImage(
+                                                                    imageUrl: profile
+                                                                        .data!
+                                                                        .userProfile!,
+                                                                    placeholder:
+                                                                        (context,
+                                                                                url) =>
+                                                                            const CircularProgressIndicator(),
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        buildInitialsAvatar(
+                                                                            initials),
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    // width: 80,
+                                                                    // // Match the size of the CircleAvatar
+                                                                    // height: 80,
+                                                                  )
+                                                                : buildInitialsAvatar(
+                                                                    initials),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      Text(
+                                                        profile.data
+                                                                ?.fullName ??
+                                                            'No Name',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 18,
+                                                          color: myLoading
+                                                                  .isDark
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        profile.data
+                                                                ?.userName ??
+                                                            '',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 14,
+                                                          color: myLoading
+                                                                  .isDark
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            widget.from == 'main'
+                                                ? Positioned(
+                                                    right: 5,
+                                                    child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                right: 8.0),
+                                                        child: menuItemsWidget(
+                                                            myLoading.isDark)),
+                                                  )
+                                                : SizedBox()
+                                          ],
+                                        ),
+                                        if (profile.data?.bio != "")
+                                          Align(
+                                            alignment: Alignment.center,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 3),
+                                              child: Text(
+                                                profile.data?.bio ?? '',
+                                                textAlign: TextAlign.start,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white60
+                                                      : Colors.grey,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                                child: InkWell(
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                SlideRightRoute(
+                                                    page: FollowersTabScreen(
+                                                  currentTabFrom: 0,
+                                                  userId: widget.userId,
+                                                )),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    profile.data?.followersCount
+                                                            .toString() ??
+                                                        '0',
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 16,
+                                                      color: myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .followers,
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: orangeColor,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )),
+                                            Expanded(
+                                              child: InkWell(
+                                                onTap: () => Navigator.push(
+                                                  context,
+                                                  SlideRightRoute(
+                                                      page: FollowersTabScreen(
+                                                    currentTabFrom: 1,
+                                                    userId: userId,
+                                                  )),
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      profile.data?.totalVotes
+                                                              .toString() ??
+                                                          '0',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 16,
+                                                        color: myLoading.isDark
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .votes,
                                                       textAlign:
                                                           TextAlign.center,
                                                       style:
                                                           GoogleFonts.poppins(
                                                         fontSize: 14,
-                                                        color: myLoading.isDark
-                                                            ? Colors.black
-                                                            : Colors.white,
+                                                        color: orangeColor,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
                                                     ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                                child: InkWell(
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                SlideRightRoute(
+                                                    page: FollowersTabScreen(
+                                                  currentTabFrom: 2,
+                                                  userId: userId,
+                                                )),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    profile.data?.followingCount
+                                                            .toString() ??
+                                                        '0',
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 16,
+                                                      color: myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
-                                                );
-                                        }),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                color: myLoading.isDark
-                                    ? const Color(0x403F3F3F)
-                                    : Colors.grey,
-                                // padding: EdgeInsets.symmetric(vertical: 5),
-                                child: TabBar(
-                                  labelColor: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.white,
-                                  // Color for selected tab label
-                                  unselectedLabelColor: myLoading.isDark
-                                      ? Colors.white60
-                                      : Colors.white60,
-                                  // Color for unselected tab labels
-                                  labelStyle: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  unselectedLabelStyle: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  dividerColor: Colors.transparent,
-                                  indicatorColor: orangeColor,
-                                  // Color of the selected tab indicator
-                                  indicatorWeight: 4,
-                                  // Thickness of the indicator
-                                  indicatorSize: TabBarIndicatorSize.label,
-                                  // Indicator under the label only
-                                  tabs: [
-                                    Tab(
-                                        text: AppLocalizations.of(context)!
-                                            .feeds),
-                                    Tab(
-                                        text: AppLocalizations.of(context)!
-                                            .hoonar_star),
-                                    Tab(
-                                        text: AppLocalizations.of(context)!
-                                            .drafts),
+                                                  Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .following,
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: orangeColor,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ))
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        if (widget.from != 'main')
+                                          ValueListenableBuilder<int?>(
+                                              valueListenable:
+                                                  Provider.of<UserProvider>(
+                                                          context)
+                                                      .followStatusNotifier,
+                                              builder: (context, followStatus,
+                                                  child) {
+                                                return isFollowLoading
+                                                    ? const Center(
+                                                        child:
+                                                            CircularProgressIndicator())
+                                                    : InkWell(
+                                                        onTap: () {
+                                                          followUnFollowUser(
+                                                                  context)
+                                                              .then((onValue) {
+                                                            setState(() {
+                                                              if (followStatus ==
+                                                                  0) {
+                                                                profile.data!
+                                                                    .followersCount = profile
+                                                                        .data!
+                                                                        .followersCount! +
+                                                                    1;
+                                                              } else {
+                                                                profile.data!
+                                                                    .followersCount = profile
+                                                                        .data!
+                                                                        .followersCount! -
+                                                                    1;
+                                                              }
+                                                            });
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical: 8),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      15.0),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            gradient:
+                                                                LinearGradient(
+                                                              colors: [
+                                                                myLoading.isDark
+                                                                    ? Colors
+                                                                        .white
+                                                                    : greyTextColor4,
+                                                                myLoading.isDark
+                                                                    ? greyTextColor8
+                                                                    : greyTextColor6
+                                                              ],
+                                                              begin: Alignment
+                                                                  .topCenter,
+                                                              end: Alignment
+                                                                  .bottomCenter,
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            // profile.data!.isFollowing ==
+                                                            //             1 ||
+                                                            followStatus == 1
+                                                                ? AppLocalizations.of(
+                                                                        context)!
+                                                                    .unfollow
+                                                                : AppLocalizations.of(
+                                                                        context)!
+                                                                    .follow,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 14,
+                                                              color: myLoading
+                                                                      .isDark
+                                                                  ? Colors.black
+                                                                  : Colors
+                                                                      .white,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                              }),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      color: myLoading.isDark
+                                          ? const Color(0x403F3F3F)
+                                          : Colors.grey,
+                                      // padding: EdgeInsets.symmetric(vertical: 5),
+                                      child: TabBar(
+                                        labelColor: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.white,
+                                        // Color for selected tab label
+                                        unselectedLabelColor: myLoading.isDark
+                                            ? Colors.white60
+                                            : Colors.white60,
+                                        // Color for unselected tab labels
+                                        labelStyle: GoogleFonts.montserrat(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        unselectedLabelStyle:
+                                            GoogleFonts.montserrat(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        dividerColor: Colors.transparent,
+                                        indicatorColor: orangeColor,
+                                        // Color of the selected tab indicator
+                                        indicatorWeight: 4,
+                                        // Thickness of the indicator
+                                        indicatorSize:
+                                            TabBarIndicatorSize.label,
+                                        // Indicator under the label only
+                                        tabs: [
+                                          Tab(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .feeds),
+                                          Tab(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .hoonar_star),
+                                          Tab(
+                                              text:
+                                                  AppLocalizations.of(context)!
+                                                      .drafts),
+                                        ],
+                                      ),
+                                    ),
                                   ],
-                                ),
-                              ),
-                            ],
-                          );
-                        }),
-                  ),
-                ),
-                SliverFillRemaining(
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: ValueListenableBuilder<ProfileSuccessModel?>(
-                        valueListenable: authProvider.profileNotifier,
-                        builder: (context, profile, child) {
-                          if (profile == null ||
-                              authProvider.isProfileLoading) {
-                            return GridShimmer();
-                          }
-                          /* else if (profile.message ==
+                                );
+                              }),
+                        ),
+                      ),
+                      SliverFillRemaining(
+                        child: Padding(
+                          padding: EdgeInsets.zero,
+                          child: ValueListenableBuilder<ProfileSuccessModel?>(
+                              valueListenable: authProvider.profileNotifier,
+                              builder: (context, profile, child) {
+                                if (profile == null ||
+                                    authProvider.isProfileLoading) {
+                                  return GridShimmer();
+                                }
+                                /* else if (profile.message ==
                               'Unauthorized Access!') {
                             Future.microtask(() {
                               Navigator.pushAndRemoveUntil(
@@ -622,37 +700,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   (route) => false);
                             });
                           }*/
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height,
-                            child: TabBarView(
-                              children: [
-                                FeedScreen(
-                                  controller: controller,
-                                  feedsList: profile.data!.posts ?? [],
-                                  isDarkMode: myLoading.isDark,
-                                  from: widget.from,
-                                ),
-                                HoonarStarScreen(
-                                  controller: controller,
-                                  hoonarStarList:
-                                      profile.data!.hoonarStar ?? [],
-                                ),
-                                DraftsScreen(
-                                  controller: controller,
-                                  draftList: profile.data!.drafts ?? [],
-                                  isDarkMode: myLoading.isDark,
-                                  from: widget.from,
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
+                                return SizedBox(
+                                  height: MediaQuery.of(context).size.height,
+                                  child: TabBarView(
+                                    children: [
+                                      FeedScreen(
+                                        controller: controller,
+                                        feedsList: profile.data!.posts ?? [],
+                                        isDarkMode: myLoading.isDark,
+                                        from: widget.from,
+                                      ),
+                                      HoonarStarScreen(
+                                        controller: controller,
+                                        hoonarStarList:
+                                            profile.data!.hoonarStar ?? [],
+                                      ),
+                                      DraftsScreen(
+                                        controller: controller,
+                                        draftList: profile.data!.drafts ?? [],
+                                        isDarkMode: myLoading.isDark,
+                                        from: widget.from,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
+                ),
+              ),
       );
     });
   }

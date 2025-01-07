@@ -250,5 +250,6 @@
   "deleteVideo": "वीडियो हटाएं",
   "areYouSureYouWantToDeleteThisVideo": "क्या आप वाकई इस वीडियो को हटाना चाहते हैं?",
   "enterCouponCode": "कूपन कोड दर्ज करें",
-  "apply": "लागू करें"
+  "apply": "लागू करें",
+  "emailUsOn": "यदि आपके कोई प्रश्न हैं या सहायता की आवश्यकता है, तो कृपया हमें {emailId} पर ईमेल करें"
 }

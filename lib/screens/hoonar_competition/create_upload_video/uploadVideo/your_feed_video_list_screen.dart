@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/common_widgets.dart';
+import '../../../../constants/internet_connectivity.dart';
 import '../../../../constants/key_res.dart';
 import '../../../../constants/my_loading/my_loading.dart';
+import '../../../../constants/no_internet_screen.dart';
 import '../../../../constants/session_manager.dart';
 import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/data_not_found.dart';
@@ -29,10 +34,23 @@ class YourFeedVideoListScreen extends StatefulWidget {
 
 class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getDraftFeedList(context);
@@ -68,6 +86,7 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
   @override
   void dispose() {
     super.dispose();
+    _connectivitySubscription.cancel();
   }
 
   @override
@@ -79,121 +98,149 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
     final contestProvider = Provider.of<ContestProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
-        body: contestProvider.isDraftFeedLoading ||
-                contestProvider.draftFeedListModel == null
-            ? GridShimmer()
-            : contestProvider.draftFeedListModel!.data == null ||
-                    contestProvider.draftFeedListModel!.data!.yourFeed ==
-                        null ||
-                    contestProvider.draftFeedListModel!.data!.yourFeed!.isEmpty
-                ? DataNotFound()
-                : GridView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(8),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      crossAxisSpacing: 0,
-                      mainAxisSpacing: 2,
-                      childAspectRatio:
-                          0.6, // Adjust according to image dimensions
-                    ),
-                    itemCount: contestProvider
-                        .draftFeedListModel!.data!.yourFeed!.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          if (widget.from == 'share') {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: ConnectShareScreen(
-                                videoUrl: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postVideo ??
-                                    '',
-                                videoThumbnail: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postImage ??
-                                    '',
-                              )),
-                            );
-                          } else {
-                            SoundList soundListModel = SoundList(
-                                soundTitle: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].soundTitle ??
-                                    '',
-                                duration: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].duration ??
-                                    '',
-                                soundImage: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].soundImage ??
-                                    '',
-                                soundId: contestProvider.draftFeedListModel!
-                                            .data!.yourFeed![index].soundId !=
-                                        ""
-                                    ? int.parse(contestProvider.draftFeedListModel!.data!.yourFeed![index].soundId!)
-                                    : -1,
-                                sound: contestProvider.draftFeedListModel!.data!.yourFeed![index].sound ?? '');
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: UploadVideoScreen(
-                                videoThumbnail: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postImage ??
-                                    '',
-                                postId: contestProvider.draftFeedListModel!
-                                    .data!.yourFeed![index].postId,
-                                from: "feed",
-                                selectedMusic: contestProvider
-                                            .draftFeedListModel!
-                                            .data!
-                                            .yourFeed![index]
-                                            .soundTitle ==
-                                        ""
-                                    ? null
-                                    : soundListModel,
-                                videoUrl: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postVideo ??
-                                    '',
-                                caption: contestProvider
-                                        .draftFeedListModel!
-                                        .data!
-                                        .yourFeed![index]
-                                        .postDescription ??
-                                    '',
-                                hashTag: contestProvider.draftFeedListModel!
-                                        .data!.yourFeed![index].postHashTag ??
-                                    '',
-                              )),
-                            );
-                          }
-                        },
-                        child: CachedNetworkImage(
-                          imageUrl: contestProvider.draftFeedListModel!.data!
-                                  .yourFeed![index].postImage ??
-                              '',
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(
-                            child: SizedBox(
-                                height: 30,
-                                width: 30,
-                                child: CircularProgressIndicator()),
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+              body: contestProvider.isDraftFeedLoading ||
+                      contestProvider.draftFeedListModel == null
+                  ? GridShimmer()
+                  : contestProvider.draftFeedListModel!.data == null ||
+                          contestProvider.draftFeedListModel!.data!.yourFeed ==
+                              null ||
+                          contestProvider
+                              .draftFeedListModel!.data!.yourFeed!.isEmpty
+                      ? DataNotFound()
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            crossAxisSpacing: 0,
+                            mainAxisSpacing: 2,
+                            childAspectRatio:
+                                0.6, // Adjust according to image dimensions
                           ),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error, color: Colors.red),
+                          itemCount: contestProvider
+                              .draftFeedListModel!.data!.yourFeed!.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                if (widget.from == 'share') {
+                                  Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: ConnectShareScreen(
+                                      videoUrl: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postVideo ??
+                                          '',
+                                      videoThumbnail: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postImage ??
+                                          '',
+                                    )),
+                                  );
+                                } else {
+                                  SoundList soundListModel = SoundList(
+                                      soundTitle: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .soundTitle ??
+                                          '',
+                                      duration: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .duration ??
+                                          '',
+                                      soundImage: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .soundImage ??
+                                          '',
+                                      soundId: contestProvider
+                                                  .draftFeedListModel!
+                                                  .data!
+                                                  .yourFeed![index]
+                                                  .soundId !=
+                                              ""
+                                          ? int.parse(contestProvider.draftFeedListModel!.data!.yourFeed![index].soundId!)
+                                          : -1,
+                                      sound: contestProvider.draftFeedListModel!.data!.yourFeed![index].sound ?? '');
+                                  Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: UploadVideoScreen(
+                                      videoThumbnail: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postImage ??
+                                          '',
+                                      postId: contestProvider
+                                          .draftFeedListModel!
+                                          .data!
+                                          .yourFeed![index]
+                                          .postId,
+                                      from: "feed",
+                                      selectedMusic: contestProvider
+                                                  .draftFeedListModel!
+                                                  .data!
+                                                  .yourFeed![index]
+                                                  .soundTitle ==
+                                              ""
+                                          ? null
+                                          : soundListModel,
+                                      videoUrl: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postVideo ??
+                                          '',
+                                      caption: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postDescription ??
+                                          '',
+                                      hashTag: contestProvider
+                                              .draftFeedListModel!
+                                              .data!
+                                              .yourFeed![index]
+                                              .postHashTag ??
+                                          '',
+                                    )),
+                                  );
+                                }
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl: contestProvider.draftFeedListModel!
+                                        .data!.yourFeed![index].postImage ??
+                                    '',
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: CircularProgressIndicator()),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error, color: Colors.red),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-      );
+            );
     });
   }
 }

@@ -250,5 +250,6 @@
   "deleteVideo": "ವೀಡಿಯೊ ಅಳಿಸಿ",
   "areYouSureYouWantToDeleteThisVideo": "ನೀವು ಈ ವೀಡಿಯೊ ಅಳಿಸಲು ಖಚಿತವಾ?",
   "enterCouponCode": "ಕೂಪನ್ ಕೋಡ್ ನಮೂದಿಸಿ",
-  "apply": "ಅನ್ವಯಿಸಿ"
+  "apply": "ಅನ್ವಯಿಸಿ",
+  "emailUsOn": "ನಿಮಗೆ ಯಾವುದೇ ಪ್ರಶ್ನೆಗಳಿದ್ದರೆ ಅಥವಾ ಸಹಾಯ ಅಗತ್ಯವಿದ್ದರೆ, ದಯವಿಟ್ಟು ನಮಗೆ {emailId} ಗೆ ಇಮೇಲ್ ಮಾಡಿ"
 }

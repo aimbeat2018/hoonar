@@ -251,5 +251,6 @@
   "deleteVideo": "Delete Video",
   "areYouSureYouWantToDeleteThisVideo": "Are you sure you want to delete this video?",
   "enterCouponCode": "Enter coupon code",
-  "apply": "Apply"
+  "apply": "Apply",
+  "emailUsOn": "If you have any questions or need assistance, please email us at {emailId}"
 }

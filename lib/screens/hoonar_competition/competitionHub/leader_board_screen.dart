@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +10,10 @@ import 'package:hoonar/shimmerLoaders/leaderboard_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
@@ -27,11 +33,25 @@ class LeaderBoardScreen extends StatefulWidget {
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getLeaderboardList(context);
     });
@@ -66,203 +86,222 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(16.0),
-                child: TextField(
-                  onChanged: (value) {
-                    contestProvider.filterLeaderboard(value);
-                  },
-                  style: GoogleFonts.poppins(
-                      color: myLoading.isDark ? Colors.white : Colors.black,
-                      fontSize: 14),
-                  decoration: InputDecoration(
-                    filled: true,
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    fillColor:
-                        myLoading.isDark ? Color(0xFF2A2A2A) : Colors.white70,
-                    hintText: AppLocalizations.of(context)!.searchContestant,
-                    hintStyle: GoogleFonts.poppins(
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                        fontSize: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
-                    ),
-                    suffixIcon: Icon(
-                      Icons.search,
-                      color: myLoading.isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    SlideRightRoute(
-                        page: YourRankScreen(
-                      levelId: widget.levelId,
-                      categoryId: widget.categoryId,
-                    )),
-                  );
-                },
-                child: Hero(
-                  tag: 'your_rank',
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: contBlueColor1),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          'assets/images/rank.png',
-                          height: 28,
-                          width: 28,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Flexible(
-                          child: Text(
-                            AppLocalizations.of(context)!.yourRank,
-                            style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500),
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: TextField(
+                        onChanged: (value) {
+                          contestProvider.filterLeaderboard(value);
+                        },
+                        style: GoogleFonts.poppins(
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
+                            fontSize: 14),
+                        decoration: InputDecoration(
+                          filled: true,
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          fillColor: myLoading.isDark
+                              ? Color(0xFF2A2A2A)
+                              : Colors.white70,
+                          hintText:
+                              AppLocalizations.of(context)!.searchContestant,
+                          hintStyle: GoogleFonts.poppins(
+                              color: myLoading.isDark
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontSize: 14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
                           ),
-                        )
+                          suffixIcon: Icon(
+                            Icons.search,
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          SlideRightRoute(
+                              page: YourRankScreen(
+                            levelId: widget.levelId,
+                            categoryId: widget.categoryId,
+                          )),
+                        );
+                      },
+                      child: Hero(
+                        tag: 'your_rank',
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: contBlueColor1),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                'assets/images/rank.png',
+                                height: 28,
+                                width: 28,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  AppLocalizations.of(context)!.yourRank,
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                          AppLocalizations.of(context)!.rank,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: myLoading.isDark
+                                  ? Colors.white70
+                                  : Colors.grey.shade900,
+                              fontWeight: FontWeight.normal),
+                        )),
+                        Expanded(
+                            flex: 3,
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              AppLocalizations.of(context)!.contestantName,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: myLoading.isDark
+                                      ? Colors.white70
+                                      : Colors.grey.shade900,
+                                  fontWeight: FontWeight.normal),
+                            )),
+                        Expanded(
+                            child: Text(
+                          textAlign: TextAlign.center,
+                          AppLocalizations.of(context)!.votes,
+                          style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: myLoading.isDark
+                                  ? Colors.white70
+                                  : Colors.grey.shade900,
+                              fontWeight: FontWeight.normal),
+                        ))
                       ],
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                      child: Text(
-                    AppLocalizations.of(context)!.rank,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: myLoading.isDark
-                            ? Colors.white70
-                            : Colors.grey.shade900,
-                        fontWeight: FontWeight.normal),
-                  )),
-                  Expanded(
-                      flex: 3,
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        AppLocalizations.of(context)!.contestantName,
-                        style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: myLoading.isDark
-                                ? Colors.white70
-                                : Colors.grey.shade900,
-                            fontWeight: FontWeight.normal),
-                      )),
-                  Expanded(
-                      child: Text(
-                    textAlign: TextAlign.center,
-                    AppLocalizations.of(context)!.votes,
-                    style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: myLoading.isDark
-                            ? Colors.white70
-                            : Colors.grey.shade900,
-                        fontWeight: FontWeight.normal),
-                  ))
-                ],
-              ),
-              contestProvider.isLeaderboardLoading ||
-                      contestProvider.leaderboardListModel == null
-                  ? LeaderboardListShimmer()
-                  : contestProvider.filteredLeaderboardList.isEmpty
-                      ? DataNotFound()
-                      : ListView.builder(
-                          itemCount: /* contestProvider
+                    contestProvider.isLeaderboardLoading ||
+                            contestProvider.leaderboardListModel == null
+                        ? LeaderboardListShimmer()
+                        : contestProvider.filteredLeaderboardList.isEmpty
+                            ? DataNotFound()
+                            : ListView.builder(
+                                itemCount: /* contestProvider
                               .leaderboardListModel!.data!.length*/
-                              contestProvider.filteredLeaderboardList.length,
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final contestant =
-                                contestProvider.filteredLeaderboardList[index];
-                            return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                      child: (contestant.rank == 1 ||
-                                              contestant.rank == 2 ||
-                                              contestant.rank == 3)
-                                          ? Image.asset(
-                                              contestant.rank == 1
-                                                  ? 'assets/images/1st.png'
-                                                  : contestant.rank == 2
-                                                      ? 'assets/images/2nd.png'
-                                                      : 'assets/images/3rd.png',
-                                              height: 20,
-                                              width: 20,
-                                            )
-                                          : Text(
-                                              contestant.rank.toString(),
+                                    contestProvider
+                                        .filteredLeaderboardList.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final contestant = contestProvider
+                                      .filteredLeaderboardList[index];
+                                  return Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: (contestant.rank == 1 ||
+                                                    contestant.rank == 2 ||
+                                                    contestant.rank == 3)
+                                                ? Image.asset(
+                                                    contestant.rank == 1
+                                                        ? 'assets/images/1st.png'
+                                                        : contestant.rank == 2
+                                                            ? 'assets/images/2nd.png'
+                                                            : 'assets/images/3rd.png',
+                                                    height: 20,
+                                                    width: 20,
+                                                  )
+                                                : Text(
+                                                    contestant.rank.toString(),
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 13,
+                                                        color: myLoading.isDark
+                                                            ? Colors.white70
+                                                            : Colors
+                                                                .grey.shade900,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  )),
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text(
                                               textAlign: TextAlign.center,
+                                              contestant.fullName ?? '',
                                               style: GoogleFonts.poppins(
                                                   fontSize: 13,
                                                   color: myLoading.isDark
-                                                      ? Colors.white70
-                                                      : Colors.grey.shade900,
+                                                      ? Colors.white
+                                                      : Colors.black,
                                                   fontWeight:
                                                       FontWeight.normal),
                                             )),
-                                  Expanded(
-                                      flex: 3,
-                                      child: Text(
-                                        textAlign: TextAlign.center,
-                                        contestant.fullName ?? '',
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            color: myLoading.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.normal),
-                                      )),
-                                  Expanded(
-                                      child: Text(
-                                    textAlign: TextAlign.center,
-                                    contestant.totalVotes.toString(),
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.normal),
-                                  ))
-                                ],
-                              ),
-                            );
-                          },
-                        )
-            ],
-          ),
-        ),
-      );
+                                        Expanded(
+                                            child: Text(
+                                          textAlign: TextAlign.center,
+                                          contestant.totalVotes.toString(),
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.normal),
+                                        ))
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                  ],
+                ),
+              ),
+            );
     });
   }
 }

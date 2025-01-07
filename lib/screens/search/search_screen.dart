@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +13,10 @@ import 'package:hoonar/shimmerLoaders/search_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/common_widgets.dart';
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/data_not_found.dart';
 import '../../custom/snackbar_util.dart';
@@ -29,10 +35,23 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController searchNameController = TextEditingController();
   List<UserSearchHistory>? userSearchHistoryList = [];
-
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   @override
   void initState() {
     super.initState();
+
+    CheckInternet.initConnectivity().then((value) => setState(() {
+      _connectionStatus = value;
+    }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+        _connectionStatus = value;
+      }));
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       userSearchHistory(context);
@@ -132,10 +151,19 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final homeProvider = Provider.of<HomeProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Container(

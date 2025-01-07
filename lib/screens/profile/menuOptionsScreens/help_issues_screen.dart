@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +9,7 @@ import 'package:hoonar/providers/setting_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
+import '../../../constants/internet_connectivity.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
@@ -26,10 +30,22 @@ class HelpIssuesScreen extends StatefulWidget {
 
 class _HelpIssuesScreenState extends State<HelpIssuesScreen> {
   SessionManager sessionManager = SessionManager();
-
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+      _connectionStatus = value;
+    }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+        _connectionStatus = value;
+      }));
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getHelpIssues(context);
     });
@@ -57,6 +73,13 @@ class _HelpIssuesScreenState extends State<HelpIssuesScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+
+  }
   @override
   Widget build(BuildContext context) {
     double halfScreenHeight = MediaQuery.of(context).size.height * 0.7;

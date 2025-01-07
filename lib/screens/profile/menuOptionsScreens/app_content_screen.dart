@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -7,7 +10,10 @@ import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
@@ -29,11 +35,26 @@ class _AppContentScreenState extends State<AppContentScreen> {
   ScrollController scrollController = ScrollController();
 
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+      _connectionStatus = value;
+    }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+        _connectionStatus = value;
+      }));
+    });
+
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getPageContent(context);
     });
@@ -66,10 +87,18 @@ class _AppContentScreenState extends State<AppContentScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+  @override
   Widget build(BuildContext context) {
     final settingProvider = Provider.of<SettingProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
         body: Container(
           padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
           width: double.infinity,

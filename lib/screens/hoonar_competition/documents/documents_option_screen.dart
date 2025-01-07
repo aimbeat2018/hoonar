@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,7 +10,10 @@ import 'package:hoonar/screens/hoonar_competition/documents/upload_documents_scr
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
@@ -28,10 +34,25 @@ class DocumentsOptionScreen extends StatefulWidget {
 class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
   List<StarCategoryModel> optionsList = [];
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       optionsList = [
         StarCategoryModel(
@@ -115,6 +136,13 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount = screenWidth < 600 ? 2 : 3;
@@ -122,208 +150,218 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
     final contestProvider = Provider.of<ContestProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/screens_back.png'
-                  : 'assets/dark_mode_icons/white_screen_back.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 15.0, top: 10, bottom: 0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Image.asset(
-                          'assets/images/back_image.png',
-                          height: 28,
-                          width: 28,
-                          color: myLoading.isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/screens_back.png'
+                        : 'assets/dark_mode_icons/white_screen_back.png'),
+                    fit: BoxFit.cover,
                   ),
-                  Center(
-                      child: GradientText(
-                    AppLocalizations.of(context)!.documentsAndKyc,
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: myLoading.isDark ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark
-                              ? greyTextColor8
-                              : Colors.grey.shade700
-                        ]),
-                  )),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  ValueListenableBuilder<int?>(
-                      valueListenable: contestProvider.userKycStatusNotifier,
-                      builder: (context, userKycStatus, child) {
-                        return Column(
-                          children: [
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 25),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                crossAxisSpacing: 25,
-                                mainAxisSpacing: 20,
-                                childAspectRatio:
-                                    1.1, // Adjust according to image dimensions
+                ),
+                child: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15.0, top: 10, bottom: 0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Image.asset(
+                                'assets/images/back_image.png',
+                                height: 28,
+                                width: 28,
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
-                              itemCount: optionsList.length,
-                              itemBuilder: (context, index) {
-                                return InkWell(
-                                  onTap: () {
-                                    /*  if (userKycStatus == 1) {
+                            ),
+                          ),
+                        ),
+                        Center(
+                            child: GradientText(
+                          AppLocalizations.of(context)!.documentsAndKyc,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
+                            color:
+                                myLoading.isDark ? Colors.black : Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark
+                                    ? greyTextColor8
+                                    : Colors.grey.shade700
+                              ]),
+                        )),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        ValueListenableBuilder<int?>(
+                            valueListenable:
+                                contestProvider.userKycStatusNotifier,
+                            builder: (context, userKycStatus, child) {
+                              return Column(
+                                children: [
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 25,
+                                      mainAxisSpacing: 20,
+                                      childAspectRatio:
+                                          1.1, // Adjust according to image dimensions
+                                    ),
+                                    itemCount: optionsList.length,
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          /*  if (userKycStatus == 1) {
                                       showInfoDialog(context);
                                     } else {*/
-                                    if (index == 0) {
-                                      Navigator.push(
-                                        context,
-                                        SlideRightRoute(
-                                            page: UploadDocumentsScreen()),
-                                      );
-                                    } else if (index == 1) {
-                                      Navigator.push(
-                                        context,
-                                        SlideRightRoute(page: KycScreen()),
-                                      );
-                                    }
-                                    // }
-                                  },
-                                  child: Card(
-                                    elevation: 5,
-                                    shadowColor:
-                                        userKycStatus == 0 || userKycStatus == 2
-                                            ? (myLoading.isDark
-                                                ? const Color(0xFF3F3F3F)
-                                                : /*Color(0x153F3F3F)*/ Colors
-                                                    .white)
-                                            : (myLoading.isDark
-                                                ? const Color(0xFF3F3F3F)
-                                                : /* Color(0x153F3F3F)*/ Colors
-                                                    .white),
-                                    color:
-                                        userKycStatus == 0 || userKycStatus == 2
-                                            ? (myLoading.isDark
-                                                ? Colors.grey.shade700
-                                                : Colors.grey.shade500)
-                                            : (myLoading.isDark
-                                                ? const Color(0xFF3F3F3F)
-                                                : /*Color(0x153F3F3F)*/ Colors
-                                                    .white),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          myLoading.isDark
-                                              ? optionsList[index]
-                                                  .darkModeImage!
-                                              : optionsList[index]
-                                                  .lightModeImage!,
-                                          height: 50,
-                                          width: 50,
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          optionsList[index].name!,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: myLoading.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.w500,
+                                          if (index == 0) {
+                                            Navigator.push(
+                                              context,
+                                              SlideRightRoute(
+                                                  page:
+                                                      UploadDocumentsScreen()),
+                                            );
+                                          } else if (index == 1) {
+                                            Navigator.push(
+                                              context,
+                                              SlideRightRoute(
+                                                  page: KycScreen()),
+                                            );
+                                          }
+                                          // }
+                                        },
+                                        child: Card(
+                                          elevation: 5,
+                                          shadowColor: userKycStatus == 0 ||
+                                                  userKycStatus == 2
+                                              ? (myLoading.isDark
+                                                  ? const Color(0xFF3F3F3F)
+                                                  : /*Color(0x153F3F3F)*/ Colors
+                                                      .white)
+                                              : (myLoading.isDark
+                                                  ? const Color(0xFF3F3F3F)
+                                                  : /* Color(0x153F3F3F)*/ Colors
+                                                      .white),
+                                          color: userKycStatus == 0 ||
+                                                  userKycStatus == 2
+                                              ? (myLoading.isDark
+                                                  ? Colors.grey.shade700
+                                                  : Colors.grey.shade500)
+                                              : (myLoading.isDark
+                                                  ? const Color(0xFF3F3F3F)
+                                                  : /*Color(0x153F3F3F)*/ Colors
+                                                      .white),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                myLoading.isDark
+                                                    ? optionsList[index]
+                                                        .darkModeImage!
+                                                    : optionsList[index]
+                                                        .lightModeImage!,
+                                                height: 50,
+                                                width: 50,
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Text(
+                                                optionsList[index].name!,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: 50,
-                            ),
-                            userKycStatus == 1
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0),
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .kycApprovedMessage,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  )
-                                : userKycStatus == 2
-                                    ? Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        child: Text(
-                                          AppLocalizations.of(context)!
-                                              .kycRejectedMessage,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: myLoading.isDark
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight: FontWeight.w500,
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  userKycStatus == 1
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .kycApprovedMessage,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    : SizedBox()
-                          ],
-                        );
-                      }),
-                ],
+                                        )
+                                      : userKycStatus == 2
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .kycRejectedMessage,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox()
+                                ],
+                              );
+                            }),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
     });
   }
 }

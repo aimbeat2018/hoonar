@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:carousel_slider/carousel_slider.dart' as CS;
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,7 +17,6 @@ import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/home/category_wise_videos_list_screen.dart';
 import 'package:hoonar/screens/home/view_all_screen.dart';
 import 'package:hoonar/screens/home/widgets/carousel_page_view.dart';
-import 'package:hoonar/screens/home/widgets/slider_page_view.dart';
 import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:hoonar/shimmerLoaders/home_slider_shimmers.dart';
@@ -23,7 +25,10 @@ import 'package:provider/provider.dart';
 
 import '../../constants/color_constants.dart';
 import '../../constants/common_widgets.dart';
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../constants/session_manager.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/success_models/home_post_success_model.dart';
@@ -37,6 +42,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   int _currentIndex = 0;
   final CS.CarouselSliderController _carouselController =
       CS.CarouselSliderController();
@@ -51,8 +60,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     sessionManager.initPref();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getHomePost(context);
@@ -155,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     controller.dispose();
     videoSwiperController.dispose();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -171,199 +192,216 @@ class _HomeScreenState extends State<HomeScreen> {
     final homeProvider = Provider.of<HomeProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: false,
-          backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
-          title: Row(
-            children: [
-              InkWell(
-                child: Image.asset(
-                  'assets/images/small_logo.png',
-                  height: 30,
-                  width: 30,
-                  color: myLoading.isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              sizedBoxW10,
-              Text(
-                AppLocalizations.of(context)!.appName.toUpperCase(),
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: myLoading.isDark ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  SlideRightRoute(page: const NotificationListScreen()),
-                );
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-                child: Stack(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                centerTitle: false,
+                backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+                title: Row(
                   children: [
-                    Icon(
-                      Icons.notifications,
-                      color: myLoading.isDark ? Colors.white : Colors.black,
-                      size: 25, // Adjust size as needed
-                    ),
-                    // Notification count
-                    if (homeProvider.notificationCountNotifier.value != "0")
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red, // Background color for the count
-                            shape: BoxShape.circle, // Circular shape
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 14,
-                            minHeight: 14,
-                          ),
-                          child: Center(
-                            child: Text(
-                              homeProvider.notificationCountNotifier.value,
-                              style: const TextStyle(
-                                color: Colors.white, // Text color
-                                fontSize: 12, // Font size
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
+                    InkWell(
+                      child: Image.asset(
+                        'assets/images/small_logo.png',
+                        height: 30,
+                        width: 30,
+                        color: myLoading.isDark ? Colors.white : Colors.black,
                       ),
+                    ),
+                    sizedBoxW10,
+                    Text(
+                      AppLocalizations.of(context)!.appName.toUpperCase(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: myLoading.isDark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: _refresh,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  homeProvider.isHomeLoading ||
-                          homeProvider.homePostSuccessModel == null ||
-                          homeProvider.homePostSuccessModel!.data == null
-                      ? HomeSliderShimmers()
-                      : Column(
-                          children: [
-                            CS.CarouselSlider.builder(
-                              carouselController: _carouselController,
-                              itemCount: homeProvider
-                                  .homePostSuccessModel!.data!.length,
-                              itemBuilder: (BuildContext context, int index,
-                                  int realIndex) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    // On tap, go to the next slide
-                                    setState(() {
-                                      _currentIndex = index;
-                                      _carouselController.animateToPage(
-                                          index); // Jump to the tapped item
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 10),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 0),
-                                    decoration: _currentIndex == index
-                                        ? BoxDecoration(
-                                            color: buttonColor,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.15),
-                                                spreadRadius: 0,
-                                                blurRadius: 2,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          )
-                                        : BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                    child: Center(
-                                      child: Text(
-                                        homeProvider.homePostSuccessModel!
-                                                .data![index].categoryName ??
-                                            '',
-                                        textAlign: TextAlign.start,
-                                        style: GoogleFonts.poppins(
-                                          color: _currentIndex == index
-                                              ? Colors.black
-                                              : myLoading.isDark
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                          fontWeight: _currentIndex == index
-                                              ? FontWeight.bold
-                                              : FontWeight.w500,
-                                          fontSize:
-                                              _currentIndex == index ? 15 : 13,
-                                        ),
-                                      ),
+                actions: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        SlideRightRoute(page: const NotificationListScreen()),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10),
+                      child: Stack(
+                        children: [
+                          Icon(
+                            Icons.notifications,
+                            color:
+                                myLoading.isDark ? Colors.white : Colors.black,
+                            size: 25, // Adjust size as needed
+                          ),
+                          // Notification count
+                          if (homeProvider.notificationCountNotifier.value !=
+                              "0")
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors
+                                      .red, // Background color for the count
+                                  shape: BoxShape.circle, // Circular shape
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 14,
+                                  minHeight: 14,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    homeProvider
+                                        .notificationCountNotifier.value,
+                                    style: const TextStyle(
+                                      color: Colors.white, // Text color
+                                      fontSize: 12, // Font size
+                                      fontWeight: FontWeight.bold,
                                     ),
+                                    textAlign: TextAlign.center,
                                   ),
-                                );
-                              },
-                              options: CS.CarouselOptions(
-                                height: 50.0,
-                                autoPlay: false,
-                                enlargeCenterPage: true,
-                                aspectRatio: 4 / 3,
-                                autoPlayInterval: const Duration(seconds: 3),
-                                enableInfiniteScroll: true,
-                                viewportFraction: 0.3,
-                                onPageChanged: (index, reason) {
-                                  setState(() {
-                                    _currentIndex =
-                                        index; // Update the current index
-                                  });
-                                },
+                                ),
                               ),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            homeProvider.homePostSuccessModel!
-                                        .data![_currentIndex].posts ==
-                                    null
-                                ? const DataNotFound()
-                                : homeProvider.homePostSuccessModel!
-                                        .data![_currentIndex].posts!.isEmpty
-                                    ? const DataNotFound()
-                                    : SizedBox(
-                                        // height: screenHeight * 0.58,
-                                        child: CarouselPageView(
-                                        sliderModelList: homeProvider
-                                                .homePostSuccessModel!
-                                                .data![_currentIndex]
-                                                .posts ??
-                                            [],
-                                        isDarkMode: myLoading.isDark,
-                                      ))
-                            /* SizedBox(
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              body: SafeArea(
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        homeProvider.isHomeLoading ||
+                                homeProvider.homePostSuccessModel == null ||
+                                homeProvider.homePostSuccessModel!.data == null
+                            ? HomeSliderShimmers()
+                            : Column(
+                                children: [
+                                  CS.CarouselSlider.builder(
+                                    carouselController: _carouselController,
+                                    itemCount: homeProvider
+                                        .homePostSuccessModel!.data!.length,
+                                    itemBuilder: (BuildContext context,
+                                        int index, int realIndex) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // On tap, go to the next slide
+                                          setState(() {
+                                            _currentIndex = index;
+                                            _carouselController.animateToPage(
+                                                index); // Jump to the tapped item
+                                          });
+                                        },
+                                        child: Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 10),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 0),
+                                          decoration: _currentIndex == index
+                                              ? BoxDecoration(
+                                                  color: buttonColor,
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(10)),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.15),
+                                                      spreadRadius: 0,
+                                                      blurRadius: 2,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                    ),
+                                                  ],
+                                                )
+                                              : BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                          child: Center(
+                                            child: Text(
+                                              homeProvider
+                                                      .homePostSuccessModel!
+                                                      .data![index]
+                                                      .categoryName ??
+                                                  '',
+                                              textAlign: TextAlign.start,
+                                              style: GoogleFonts.poppins(
+                                                color: _currentIndex == index
+                                                    ? Colors.black
+                                                    : myLoading.isDark
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                fontWeight:
+                                                    _currentIndex == index
+                                                        ? FontWeight.bold
+                                                        : FontWeight.w500,
+                                                fontSize: _currentIndex == index
+                                                    ? 15
+                                                    : 13,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    options: CS.CarouselOptions(
+                                      height: 50.0,
+                                      autoPlay: false,
+                                      enlargeCenterPage: true,
+                                      aspectRatio: 4 / 3,
+                                      autoPlayInterval:
+                                          const Duration(seconds: 3),
+                                      enableInfiniteScroll: true,
+                                      viewportFraction: 0.3,
+                                      onPageChanged: (index, reason) {
+                                        setState(() {
+                                          _currentIndex =
+                                              index; // Update the current index
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  homeProvider.homePostSuccessModel!
+                                              .data![_currentIndex].posts ==
+                                          null
+                                      ? const DataNotFound()
+                                      : homeProvider
+                                              .homePostSuccessModel!
+                                              .data![_currentIndex]
+                                              .posts!
+                                              .isEmpty
+                                          ? const DataNotFound()
+                                          : SizedBox(
+                                              // height: screenHeight * 0.58,
+                                              child: CarouselPageView(
+                                              sliderModelList: homeProvider
+                                                      .homePostSuccessModel!
+                                                      .data![_currentIndex]
+                                                      .posts ??
+                                                  [],
+                                              isDarkMode: myLoading.isDark,
+                                            ))
+                                  /* SizedBox(
                                         height: screenHeight * 0.58,
                                         child: SliderPageView(
                                           sliderModelList: homeProvider
@@ -373,64 +411,64 @@ class _HomeScreenState extends State<HomeScreen> {
                                               [],
                                           isDarkMode: myLoading.isDark,
                                         ))*/
-                          ],
+                                ],
+                              ),
+                        const SizedBox(
+                          height: 15,
                         ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          SlideRightRoute(
-                              page: const CategoryWiseVideosListScreen()),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            gradient: LinearGradient(
-                              colors: [
-                                myLoading.isDark
-                                    ? greyTextColor5
-                                    : greyTextColor3,
-                                myLoading.isDark
-                                    ? greyTextColor6
-                                    : greyTextColor8,
-                                myLoading.isDark
-                                    ? greyTextColor5
-                                    : greyTextColor4,
-                              ],
-                            )),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.arrow_drop_down_sharp,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.viewMore,
-                              textAlign: TextAlign.start,
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                        Center(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                    page: const CategoryWiseVideosListScreen()),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      myLoading.isDark
+                                          ? greyTextColor5
+                                          : greyTextColor3,
+                                      myLoading.isDark
+                                          ? greyTextColor6
+                                          : greyTextColor8,
+                                      myLoading.isDark
+                                          ? greyTextColor5
+                                          : greyTextColor4,
+                                    ],
+                                  )),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.arrow_drop_down_sharp,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!.viewMore,
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  homeProvider.isOtherHomeLoading
-                      ? const ListHorizontalShimmer()
-                      : Column(
-                          children: [
-                            /* homeOtherData!.judgesChoicePostList == null
+                        homeProvider.isOtherHomeLoading
+                            ? const ListHorizontalShimmer()
+                            : Column(
+                                children: [
+                                  /* homeOtherData!.judgesChoicePostList == null
                                 ? const SizedBox.shrink()
                                 : homeOtherData!.judgesChoicePostList!.isEmpty
                                     ? const SizedBox.shrink()
@@ -446,43 +484,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),*/
 
-                            homeOtherData!.dailyFeedPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.dailyFeedPostList!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : Column(
-                                        children: [
-                                          otherListWidget(
-                                              AppLocalizations.of(context)!
-                                                  .dailyFeed,
-                                              homeOtherData!
-                                                      .dailyFeedPostList ??
-                                                  [],
-                                              myLoading.isDark),
-                                        ],
-                                      ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            homeOtherData!.myFavPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.myFavPostList!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : Column(
-                                        children: [
-                                          otherListWidget(
-                                              AppLocalizations.of(context)!
-                                                  .favrite,
-                                              homeOtherData!.myFavPostList ??
-                                                  [],
-                                              myLoading.isDark),
-                                        ],
-                                      ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                          /*------------------------For Yours list-------------*/
-                          /*  homeOtherData!.forYouPostList == null
+                                  homeOtherData!.dailyFeedPostList == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .dailyFeedPostList!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : Column(
+                                              children: [
+                                                otherListWidget(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .dailyFeed,
+                                                    homeOtherData!
+                                                            .dailyFeedPostList ??
+                                                        [],
+                                                    myLoading.isDark),
+                                              ],
+                                            ),
+                                  homeOtherData!.myFavPostList == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!.myFavPostList!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : Column(
+                                              children: [
+                                                otherListWidget(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .favrite,
+                                                    homeOtherData!
+                                                            .myFavPostList ??
+                                                        [],
+                                                    myLoading.isDark),
+                                              ],
+                                            ),
+                                  /*------------------------For Yours list-------------*/
+                                  /*  homeOtherData!.forYouPostList == null
                                 ? const SizedBox.shrink()
                                 : homeOtherData!.forYouPostList!.isEmpty
                                     ? const SizedBox.shrink()
@@ -493,73 +529,71 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(
                               height: 10,
                             ),*/
-                            homeOtherData!.trendingNowPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.trendingNowPostList!.isNotEmpty
-                                    ? otherListWidget(
-                                        AppLocalizations.of(context)!
-                                            .trendingNow,
-                                        homeOtherData!.trendingNowPostList ??
-                                            [],
-                                        myLoading.isDark)
-                                    : const SizedBox.shrink(),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            homeOtherData!.hoonarHighlightsPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!
-                                        .hoonarHighlightsPostList!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : otherListWidget(
-                                        AppLocalizations.of(context)!
-                                            .hoonarHighlights,
-                                        homeOtherData!
-                                                .hoonarHighlightsPostList ??
-                                            [],
-                                        myLoading.isDark),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            homeOtherData!.featuredTalentPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.featuredTalentPostList!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : otherListWidget(
-                                        AppLocalizations.of(context)!
-                                            .featuredTalents,
-                                        homeOtherData!.featuredTalentPostList ??
-                                            [],
-                                        myLoading.isDark),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            homeOtherData!.hoonarStarsPostList == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.hoonarStarsPostList!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : otherListWidget(
-                                        AppLocalizations.of(context)!
-                                            .hoonarStar,
-                                        homeOtherData!.hoonarStarsPostList ??
-                                            [],
-                                        myLoading.isDark),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            homeOtherData!.hoonarStarOfMonths == null
-                                ? const SizedBox.shrink()
-                                : homeOtherData!.hoonarStarOfMonths!.isEmpty
-                                    ? const SizedBox.shrink()
-                                    : otherListWidget(
-                                        AppLocalizations.of(context)!
-                                            .hoonarStarOfTheMonth,
-                                        homeOtherData!.hoonarStarOfMonths ?? [],
-                                        myLoading.isDark),
-                          ],
-                        ),
+                                  homeOtherData!.trendingNowPostList == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .trendingNowPostList!.isNotEmpty
+                                          ? otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .trendingNow,
+                                              homeOtherData!
+                                                      .trendingNowPostList ??
+                                                  [],
+                                              myLoading.isDark)
+                                          : const SizedBox.shrink(),
+                                  homeOtherData!.hoonarHighlightsPostList ==
+                                          null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .hoonarHighlightsPostList!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .hoonarHighlights,
+                                              homeOtherData!
+                                                      .hoonarHighlightsPostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                  homeOtherData!.featuredTalentPostList == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .featuredTalentPostList!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .featuredTalents,
+                                              homeOtherData!
+                                                      .featuredTalentPostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                  homeOtherData!.hoonarStarsPostList == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .hoonarStarsPostList!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .hoonarStar,
+                                              homeOtherData!
+                                                      .hoonarStarsPostList ??
+                                                  [],
+                                              myLoading.isDark),
+                                  homeOtherData!.hoonarStarOfMonths == null
+                                      ? const SizedBox.shrink()
+                                      : homeOtherData!
+                                              .hoonarStarOfMonths!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : otherListWidget(
+                                              AppLocalizations.of(context)!
+                                                  .hoonarStarOfTheMonth,
+                                              homeOtherData!
+                                                      .hoonarStarOfMonths ??
+                                                  [],
+                                              myLoading.isDark),
+                                ],
+                              ),
 
-                  /*ListView.builder(
+                        /*ListView.builder(
                     itemCount: otherList.length,
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -567,22 +601,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       return otherListWidget(otherList[index], myLoading.isDark);
                     },
                   ),*/
-                  const SizedBox(
-                    height: 50,
-                  )
-                ],
+                        const SizedBox(
+                          height: 50,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
     });
   }
 
   Widget otherListWidget(
       String title, List<PostsListData> postData, bool isDarkMode) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 15, right: 15, bottom: 0),
+      padding: const EdgeInsets.only(top: 30, left: 15, right: 15, bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -632,7 +666,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         type: 'my_fav',
                       )),
                     );
-                  }/* else if (title == AppLocalizations.of(context)!.foryours) {
+                  }
+                  /* else if (title == AppLocalizations.of(context)!.foryours) {
                     Navigator.push(
                       context,
                       SlideRightRoute(
@@ -640,8 +675,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         type: 'for_yours',
                       )),
                     );
-                  } */else if (title ==
-                      AppLocalizations.of(context)!.trendingNow) {
+                  } */
+                  else if (title == AppLocalizations.of(context)!.trendingNow) {
                     Navigator.push(
                       context,
                       SlideRightRoute(

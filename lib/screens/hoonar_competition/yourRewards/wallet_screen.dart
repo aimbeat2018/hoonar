@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +13,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../constants/color_constants.dart';
 import '../../../../constants/my_loading/my_loading.dart';
 import '../../../../constants/theme.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
@@ -27,11 +33,26 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getWalletTransaction(context);
     });
@@ -52,9 +73,7 @@ class _WalletScreenState extends State<WalletScreen> {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
         if (contestProvider.walletTransactionListModel?.status == '200') {
-          setState(() {
-
-          });
+          setState(() {});
         } else if (contestProvider.walletTransactionListModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -78,12 +97,20 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+  @override
   Widget build(BuildContext context) {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
         backgroundColor: Colors.transparent,
         bottomNavigationBar: contestProvider
                         .walletTransactionListModel!.walletBalance ==

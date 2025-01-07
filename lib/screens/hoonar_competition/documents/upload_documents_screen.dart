@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -11,7 +13,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/color_constants.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
@@ -31,11 +36,23 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   XFile? _pickedFile;
   bool isIdProofClick = false, isLoading = false;
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
 
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getKycStatus(context, CommonRequestModel());
     });
@@ -281,248 +298,274 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final contestProvider = Provider.of<ContestProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/screens_back.png'
-                  : 'assets/dark_mode_icons/white_screen_back.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 15.0, top: 30, bottom: 0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Image.asset(
-                          'assets/images/back_image.png',
-                          height: 28,
-                          width: 28,
-                          color: myLoading.isDark ? Colors.white : Colors.black,
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/screens_back.png'
+                        : 'assets/dark_mode_icons/white_screen_back.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15.0, top: 30, bottom: 0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Image.asset(
+                                'assets/images/back_image.png',
+                                height: 28,
+                                width: 28,
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Center(
-                      child: GradientText(
-                    AppLocalizations.of(context)!.documents,
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: myLoading.isDark ? Colors.black : Colors.white,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark ? Colors.white : Colors.black,
-                          myLoading.isDark
-                              ? greyTextColor8
-                              : Colors.grey.shade700
-                        ]),
-                  )),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                        border: Border.all(
+                        Center(
+                            child: GradientText(
+                          AppLocalizations.of(context)!.documents,
+                          style: GoogleFonts.poppins(
+                            fontSize: 20,
                             color:
+                                myLoading.isDark ? Colors.black : Colors.white,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.topRight,
+                              colors: [
                                 myLoading.isDark ? Colors.white : Colors.black,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.uploadIdProof,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.uploadIdProofDesc,
-                              textAlign: TextAlign.start,
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
+                                myLoading.isDark ? Colors.white : Colors.black,
+                                myLoading.isDark
+                                    ? greyTextColor8
+                                    : Colors.grey.shade700
+                              ]),
                         )),
-                        ValueListenableBuilder<int?>(
-                            valueListenable:
-                                contestProvider.idProofStatusNotifier,
-                            builder: (context, idProofStatus, child) {
-                              return InkWell(
-                                onTap: idProofStatus == 0
-                                    ? () {
-                                        setState(() {
-                                          isIdProofClick = true;
-                                        });
-                                        selectImageDialog(context);
-                                      }
-                                    : null,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 10),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 3),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: idProofStatus == 0
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!.uploadIdProof,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
                                           ? Colors.white
-                                          : Colors.grey.shade400),
-                                  child: isIdProofClick &&
-                                          contestProvider.isDocumentLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.black,
-                                          ),
-                                        )
-                                      : Text(
-                                          AppLocalizations.of(context)!.upload,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .uploadIdProofDesc,
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                              ValueListenableBuilder<int?>(
+                                  valueListenable:
+                                      contestProvider.idProofStatusNotifier,
+                                  builder: (context, idProofStatus, child) {
+                                    return InkWell(
+                                      onTap: idProofStatus == 0
+                                          ? () {
+                                              setState(() {
+                                                isIdProofClick = true;
+                                              });
+                                              selectImageDialog(context);
+                                            }
+                                          : null,
+                                      child: Container(
+                                        margin: const EdgeInsets.only(top: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 3),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
                                             color: idProofStatus == 0
-                                                ? Colors.black
-                                                : Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                ),
-                              );
-                            }),
+                                                ? Colors.white
+                                                : Colors.grey.shade400),
+                                        child: isIdProofClick &&
+                                                contestProvider
+                                                    .isDocumentLoading
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                ),
+                                              )
+                                            : Text(
+                                                AppLocalizations.of(context)!
+                                                    .upload,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: idProofStatus == 0
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .residenceProof,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .residenceProofDesc,
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                              ValueListenableBuilder<int?>(
+                                  valueListenable: contestProvider
+                                      .addressProofStatusNotifier,
+                                  builder:
+                                      (context, addressProofStatus, child) {
+                                    return InkWell(
+                                      onTap: addressProofStatus == 0
+                                          ? () {
+                                              setState(() {
+                                                isIdProofClick = false;
+                                              });
+                                              selectImageDialog(context);
+                                            }
+                                          : null,
+                                      child: Container(
+                                        margin: const EdgeInsets.only(top: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 3),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: addressProofStatus == 0
+                                                ? Colors.white
+                                                : Colors.grey.shade400),
+                                        child: isIdProofClick &&
+                                                contestProvider
+                                                    .isDocumentLoading
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  color: Colors.black,
+                                                ),
+                                              )
+                                            : Text(
+                                                AppLocalizations.of(context)!
+                                                    .upload,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: addressProofStatus == 0
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                      ),
+                                    );
+                                  }),
+                            ],
+                          ),
+                        )
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color:
-                                myLoading.isDark ? Colors.white : Colors.black,
-                            width: 1),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.residenceProof,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.residenceProofDesc,
-                              textAlign: TextAlign.start,
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                          ],
-                        )),
-                        ValueListenableBuilder<int?>(
-                            valueListenable:
-                                contestProvider.addressProofStatusNotifier,
-                            builder: (context, addressProofStatus, child) {
-                              return InkWell(
-                                onTap: addressProofStatus == 0
-                                    ? () {
-                                        setState(() {
-                                          isIdProofClick = false;
-                                        });
-                                        selectImageDialog(context);
-                                      }
-                                    : null,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 10),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 3),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: addressProofStatus == 0
-                                          ? Colors.white
-                                          : Colors.grey.shade400),
-                                  child: isIdProofClick &&
-                                          contestProvider.isDocumentLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                            color: Colors.black,
-                                          ),
-                                        )
-                                      : Text(
-                                          AppLocalizations.of(context)!.upload,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 14,
-                                            color: addressProofStatus == 0
-                                                ? Colors.black
-                                                : Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                ),
-                              );
-                            }),
-                      ],
-                    ),
-                  )
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
     });
   }
 }

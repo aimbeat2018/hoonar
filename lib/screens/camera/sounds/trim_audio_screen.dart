@@ -51,6 +51,10 @@ class _TrimAudioScreenState extends State<TrimAudioScreen> {
   }
 
   _saveAudio() {
+    // _trimmer.audioPlayer!.pause();
+    if (_isPlaying) {
+      _trimmer.audioPlayer!.stop();
+    }
     setState(() {
       _progressVisibility = true;
     });
@@ -59,9 +63,11 @@ class _TrimAudioScreenState extends State<TrimAudioScreen> {
       endValue: _endValue,
       audioFileName: DateTime.now().millisecondsSinceEpoch.toString(),
       onSave: (outputPath) {
-        setState(() {
-          _progressVisibility = false;
-        });
+        if (mounted) {
+          setState(() {
+            _progressVisibility = false;
+          });
+        }
         Navigator.pop(context, outputPath);
         // debugPrint('OUTPUT PATH: $outputPath');
       },

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
@@ -13,6 +15,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../auth_screen/login_screen.dart';
 
@@ -31,10 +36,24 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   bool isLoading = false;
   SessionManager sessionManager = SessionManager();
   bool _isCameraInitialized = false;
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     // _initializeCamera();
     _initializeCamera();
 
@@ -62,11 +81,16 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   // Initialize camera asynchronously
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
-    final camera =
-        cameras.last; // Use the first available camera (or select as needed)
+
+    // Find the back camera
+    final backCamera = cameras.firstWhere(
+      (camera) => camera.lensDirection == CameraLensDirection.front,
+      orElse: () =>
+          cameras.first, // Fallback in case no back camera is available
+    );
 
     _cameraController = CameraController(
-      camera,
+      backCamera,
       ResolutionPreset.medium,
     );
 
@@ -171,7 +195,6 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
             '401') {
           SnackbarUtil.showSnackBar(context,
               contestProvider.uploadDocumentSuccessModel?.message! ?? '');
-
         } else if (contestProvider.uploadDocumentSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -191,54 +214,63 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   void dispose() {
     _cameraController.dispose();
     _faceDetector.close();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<void>(
-        future: _isCameraInitialized ? _initializeControllerFuture : Future.value(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SafeArea(
-              child: Stack(
-                children: [
-                  if (isLoading) ...[
-                    Opacity(
-                      opacity: 0.5,
-                      child:
-                          ModalBarrier(dismissible: false, color: Colors.black),
-                    ),
-                    const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                  Column(
-                    children: [
-                      Expanded(
-                        child: CameraPreview(_cameraController),
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: _captureAndProcessFace,
-                            child: _isProcessing
-                                ? CircularProgressIndicator(
-                                    color: Colors.black,
-                                  )
-                                : Text(
-                                    AppLocalizations.of(context)!.capture,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                          )
-                          /* InkWell(
+    return _connectionStatus == KeyRes.connectivityCheck
+        ? const NoInternetScreen()
+        : Scaffold(
+            backgroundColor: Colors.black,
+            body: FutureBuilder<void>(
+              future: _isCameraInitialized
+                  ? _initializeControllerFuture
+                  : Future.value(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return SafeArea(
+                    child: Stack(
+                      children: [
+                        if (isLoading) ...[
+                          Opacity(
+                            opacity: 0.5,
+                            child: ModalBarrier(
+                                dismissible: false, color: Colors.black),
+                          ),
+                          const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CameraPreview(_cameraController),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: _captureAndProcessFace,
+                                  child: _isProcessing
+                                      ? CircularProgressIndicator(
+                                          color: Colors.black,
+                                        )
+                                      : Text(
+                                          AppLocalizations.of(context)!.capture,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                )
+                                /* InkWell(
                           onTap: _captureAndProcessFace,
                           child: Container(
                             margin: EdgeInsets.only(top: 10),
@@ -261,26 +293,26 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                                   ),
                           ),
                         ),*/
+                                ),
+                          ],
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: buildAppbar(context, true),
                           ),
-                    ],
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: buildAppbar(context, false),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-    );
+                  );
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          );
   }
 }

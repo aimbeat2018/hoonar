@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/capture_video_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
@@ -14,7 +13,6 @@ import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
-import '../hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 // import '../camera/camera_screen.dart';
 
 class MainScreen extends StatefulWidget {

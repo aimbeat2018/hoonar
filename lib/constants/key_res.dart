@@ -17,6 +17,8 @@ class KeyRes {
   static const String liveStreamProfile = 'liveStreamProfile';
   static const String favouriteMusic = 'favouriteMusic';
 
+  static String connectivityCheck = "ConnectivityResult.none";
+
   static  int selectedCategoryId = -1;
   static  int selectedLevelId = -1;
 }

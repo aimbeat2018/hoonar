@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,7 +13,10 @@ import 'package:hoonar/custom/snackbar_util.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../model/request_model/check_user_request_model.dart';
 import '../../model/request_model/signup_request_model.dart';
 import '../../providers/auth_provider.dart';
@@ -28,6 +34,10 @@ class CreatePasswordScreen extends StatefulWidget {
 }
 
 class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   TextEditingController newpassController = TextEditingController();
   TextEditingController conpassController = TextEditingController();
   ScrollController scrollController = ScrollController();
@@ -35,267 +45,303 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(myLoading.isDark
-                  ? 'assets/images/background.png'
-                  : 'assets/images/bg_wht.png'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Scrollbar(
-            controller: scrollController,
-            // Add a ScrollController
-            thumbVisibility: true,
-            thickness: 2.5,
-            radius: const Radius.circular(10),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildAppbar(context, myLoading.isDark),
-                  const SizedBox(
-                    height: 30,
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              resizeToAvoidBottomInset: false,
+              body: Container(
+                padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(myLoading.isDark
+                        ? 'assets/images/background.png'
+                        : 'assets/images/bg_wht.png'),
+                    fit: BoxFit.cover,
                   ),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.createPass,
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: myLoading.isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 35,
-                  ),
-                  Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.newPassword,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
+                ),
+                child: Scrollbar(
+                  controller: scrollController,
+                  // Add a ScrollController
+                  thumbVisibility: true,
+                  thickness: 2.5,
+                  radius: const Radius.circular(10),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildAppbar(context, myLoading.isDark),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.createPass,
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: myLoading.isDark
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterNewPassword;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              obscureText: newPasswordVisibility,
-                              controller: newpassController,
-                              cursorColor: Colors.white,
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.black,
-                                  errorStyle: GoogleFonts.poppins(),
-                                  border: GradientOutlineInputBorder(
-                                    width: 1,
-                                    borderRadius: BorderRadius.circular(8),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        greyTextColor4
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                  ),
-                                  hintStyle: GoogleFonts.poppins(
-                                    color: hintGreyColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 20),
-                                  suffixIcon: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        newPasswordVisibility =
-                                            !newPasswordVisibility;
-                                      });
-                                    },
-                                    child: Icon(
-                                      newPasswordVisibility
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: textFieldGreyColor,
-                                    ),
-                                  )),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: Text(
-                              AppLocalizations.of(context)!.confirmPassword,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 15.0),
-                            child: TextFormField(
-                              validator: (v) {
-                                if (v!.trim().isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .enterConfirmNewPassword;
-                                } else if (v != newpassController.text) {
-                                  return AppLocalizations.of(context)!
-                                      .newPasswordAndConfirmPasswordShouldMatch;
-                                }
-                                return null;
-                              },
-                              maxLines: 1,
-                              obscureText: confirmNewPasswordVisibility,
-                              controller: conpassController,
-                              cursorColor: Colors.white,
-                              style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                              decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors.black,
-                                  errorStyle: GoogleFonts.poppins(),
-                                  border: GradientOutlineInputBorder(
-                                    width: 1,
-                                    borderRadius: BorderRadius.circular(8),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        greyTextColor4
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    ),
-                                  ),
-                                  // hintText: enterPhoneNumber,
-                                  hintStyle: GoogleFonts.poppins(
-                                    color: hintGreyColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 20),
-                                  suffixIcon: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        confirmNewPasswordVisibility =
-                                            !confirmNewPasswordVisibility;
-                                      });
-                                    },
-                                    child: Icon(
-                                      confirmNewPasswordVisibility
-                                          ? Icons.visibility_off
-                                          : Icons.visibility,
-                                      color: textFieldGreyColor,
-                                    ),
-                                  )),
-                              keyboardType: TextInputType.text,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 40,
-                          ),
-                          authProvider.isSignUpLoading
-                              ? const Center(
-                                  child:
-                                      CircularProgressIndicator()) // Show loader when signing up
-                              : InkWell(
-                                  onTap: () => widget.from == 'forgot'
-                                      ? changePassword(context)
-                                      : callRegisterApi(context),
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    margin: const EdgeInsets.only(
-                                        top: 15,
-                                        left: 60,
-                                        right: 60,
-                                        bottom: 5),
-                                    decoration: ShapeDecoration(
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                          strokeAlign:
-                                              BorderSide.strokeAlignOutside,
-                                          color: Colors.black,
-                                        ),
-                                        borderRadius: BorderRadius.circular(80),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      AppLocalizations.of(context)!.letsGo,
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                        ),
+                        const SizedBox(
+                          height: 35,
+                        ),
+                        Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.newPassword,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                 ),
-                        ],
-                      ))
-                ],
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterNewPassword;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    obscureText: newPasswordVisibility,
+                                    controller: newpassController,
+                                    cursorColor: Colors.white,
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.black,
+                                        errorStyle: GoogleFonts.poppins(),
+                                        border: GradientOutlineInputBorder(
+                                          width: 1,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              greyTextColor4
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                        ),
+                                        hintStyle: GoogleFonts.poppins(
+                                          color: hintGreyColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 20),
+                                        suffixIcon: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              newPasswordVisibility =
+                                                  !newPasswordVisibility;
+                                            });
+                                          },
+                                          child: Icon(
+                                            newPasswordVisibility
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: textFieldGreyColor,
+                                          ),
+                                        )),
+                                    keyboardType: TextInputType.text,
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .confirmPassword,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    validator: (v) {
+                                      if (v!.trim().isEmpty) {
+                                        return AppLocalizations.of(context)!
+                                            .enterConfirmNewPassword;
+                                      } else if (v != newpassController.text) {
+                                        return AppLocalizations.of(context)!
+                                            .newPasswordAndConfirmPasswordShouldMatch;
+                                      }
+                                      return null;
+                                    },
+                                    maxLines: 1,
+                                    obscureText: confirmNewPasswordVisibility,
+                                    controller: conpassController,
+                                    cursorColor: Colors.white,
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                    decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: Colors.black,
+                                        errorStyle: GoogleFonts.poppins(),
+                                        border: GradientOutlineInputBorder(
+                                          width: 1,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              greyTextColor4
+                                            ],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                          ),
+                                        ),
+                                        // hintText: enterPhoneNumber,
+                                        hintStyle: GoogleFonts.poppins(
+                                          color: hintGreyColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 12, horizontal: 20),
+                                        suffixIcon: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              confirmNewPasswordVisibility =
+                                                  !confirmNewPasswordVisibility;
+                                            });
+                                          },
+                                          child: Icon(
+                                            confirmNewPasswordVisibility
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                            color: textFieldGreyColor,
+                                          ),
+                                        )),
+                                    keyboardType: TextInputType.text,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 40,
+                                ),
+                                authProvider.isSignUpLoading
+                                    ? const Center(
+                                        child:
+                                            CircularProgressIndicator()) // Show loader when signing up
+                                    : InkWell(
+                                        onTap: () => widget.from == 'forgot'
+                                            ? changePassword(context)
+                                            : callRegisterApi(context),
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
+                                          margin: const EdgeInsets.only(
+                                              top: 15,
+                                              left: 60,
+                                              right: 60,
+                                              bottom: 5),
+                                          decoration: ShapeDecoration(
+                                            color: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                              side: const BorderSide(
+                                                strokeAlign: BorderSide
+                                                    .strokeAlignOutside,
+                                                color: Colors.black,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(80),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .letsGo,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                              ],
+                            ))
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
     });
   }
 

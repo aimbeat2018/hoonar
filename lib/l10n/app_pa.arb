@@ -249,5 +249,6 @@
   "deleteVideo": "ਵੀਡੀਓ ਮਿਟਾਓ",
   "areYouSureYouWantToDeleteThisVideo": "ਕੀ ਤੁਸੀਂ ਪੱਕਾ ਇਹ ਵੀਡੀਓ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
   "enterCouponCode": "ਕੂਪਨ ਕੋਡ ਦਰਜ ਕਰੋ",
-  "apply": "ਲਾਗੂ ਕਰੋ"
+  "apply": "ਲਾਗੂ ਕਰੋ",
+  "emailUsOn": "ਜੇ ਤੁਹਾਡੇ ਕੋਈ ਸਵਾਲ ਹਨ ਜਾਂ ਮਦਦ ਦੀ ਲੋੜ ਹੈ, ਤਾਂ ਕਿਰਪਾ ਕਰਕੇ ਸਾਨੂੰ {emailId} 'ਤੇ ਈਮੇਲ ਕਰੋ"
 }

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
@@ -11,6 +14,9 @@ import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:hoonar/shimmerLoaders/grid_shimmer.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/internet_connectivity.dart';
+import '../../constants/key_res.dart';
+import '../../constants/no_internet_screen.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/success_models/home_post_success_model.dart';
@@ -28,6 +34,10 @@ class CategoryWiseVideosListScreen extends StatefulWidget {
 
 class _CategoryWiseVideosListScreenState
     extends State<CategoryWiseVideosListScreen> {
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
   String selectedCategory = 'Dance';
   int selectedCategoryId = -1;
   List<String> categories = [];
@@ -42,6 +52,17 @@ class _CategoryWiseVideosListScreenState
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCategoryList(context);
     });
@@ -161,6 +182,7 @@ class _CategoryWiseVideosListScreenState
     scrollController.dispose();
     gridScrollController.removeListener(loadMore);
     gridScrollController.dispose();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -178,223 +200,236 @@ class _CategoryWiseVideosListScreenState
     final homeProvider = Provider.of<HomeProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
-        appBar: buildAppbar(context, myLoading.isDark),
-        body: SingleChildScrollView(
-          controller: gridScrollController,
-          // height: MediaQuery.of(context).size.height,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
+              appBar: buildAppbar(context, myLoading.isDark),
+              body: SingleChildScrollView(
+                controller: gridScrollController,
+                // height: MediaQuery.of(context).size.height,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Stack(
+                    children: [
+                      Column(
                         children: [
-                          const SizedBox(
-                            width: 20,
-                            child: Divider(color: greyTextColor7),
-                          ),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: InkWell(
-                              onTap: _toggleAnimation,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    selectedCategory,
-                                    textAlign: TextAlign.start,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
+                            child: Row(
+                              children: [
+                                const SizedBox(
+                                  width: 20,
+                                  child: Divider(color: greyTextColor7),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: InkWell(
+                                    onTap: _toggleAnimation,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          selectedCategory,
+                                          textAlign: TextAlign.start,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            color: myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Icon(
+                                          Icons.keyboard_arrow_down_sharp,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Icon(
-                                    Icons.keyboard_arrow_down_sharp,
-                                    color: myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                  )
-                                ],
-                              ),
+                                ),
+                                const Expanded(
+                                  child: Divider(color: greyTextColor7),
+                                ),
+                              ],
                             ),
                           ),
-                          const Expanded(
-                            child: Divider(color: greyTextColor7),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    isLoading && postListData.isEmpty
-                        ? GridShimmer()
-                        : /*homeProvider.postListSuccessModel!.data == null ||
+                          const SizedBox(height: 5),
+                          isLoading && postListData.isEmpty
+                              ? GridShimmer()
+                              : /*homeProvider.postListSuccessModel!.data == null ||
                             homeProvider
                                 .postListSuccessModel!.data!.isEmpty*/
-                        postListData.isEmpty
-                            ? DataNotFound()
-                            : Column(
-                                children: [
-                                  GridView.builder(
-                                    shrinkWrap: true,
-                                    // controller: gridScrollController,
-                                    padding: const EdgeInsets.all(8),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: crossAxisCount,
-                                      crossAxisSpacing: 0,
-                                      mainAxisSpacing: 2,
-                                      childAspectRatio: 0.6,
-                                    ),
-                                    itemCount: /*homeProvider
+                              postListData.isEmpty
+                                  ? DataNotFound()
+                                  : Column(
+                                      children: [
+                                        GridView.builder(
+                                          shrinkWrap: true,
+                                          // controller: gridScrollController,
+                                          padding: const EdgeInsets.all(8),
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: crossAxisCount,
+                                            crossAxisSpacing: 0,
+                                            mainAxisSpacing: 2,
+                                            childAspectRatio: 0.6,
+                                          ),
+                                          itemCount: /*homeProvider
                                         .postListSuccessModel!.data!*/
-                                        postListData.length,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            SlideRightRoute(
-                                              page: ReelsListScreen(
-                                                postList: /* homeProvider
+                                              postListData.length,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemBuilder: (context, index) {
+                                            return InkWell(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  SlideRightRoute(
+                                                    page: ReelsListScreen(
+                                                      postList: /* homeProvider
                                                         .postListSuccessModel!
                                                         .data*/
-                                                    postListData ?? [],
-                                                index: index,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: CachedNetworkImage(
-                                          imageUrl: /*homeProvider
+                                                          postListData ?? [],
+                                                      index: index,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              child: CachedNetworkImage(
+                                                imageUrl: /*homeProvider
                                                   .postListSuccessModel!
                                                   .data!*/
-                                              postListData[index].postImage ??
-                                                  '',
-                                          placeholder: (context, url) => Center(
-                                            child:
-                                                const CircularProgressIndicator(),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              buildInitialsAvatar('No Image',
-                                                  fontSize: 12),
-                                          fit: BoxFit.cover,
+                                                    postListData[index]
+                                                            .postImage ??
+                                                        '',
+                                                placeholder: (context, url) =>
+                                                    Center(
+                                                  child:
+                                                      const CircularProgressIndicator(),
+                                                ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        buildInitialsAvatar(
+                                                            'No Image',
+                                                            fontSize: 12),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
-                                  ),
-                                  if (isMoreLoading)
-                                    Center(
-                                      child: CircularProgressIndicator(),
-                                    )
-                                ],
-                              ),
-                  ],
-                ),
-                Positioned(
-                  top: 25,
-                  left: 10,
-                  right: 150,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    height: _isVisible
-                        ? homeProvider.isCategoryLoading
-                            ? 5 * 50
-                            : (homeProvider.categoryListSuccessModel!.data!
-                                        .length *
-                                    40)
-                                .clamp(200, 400)
-                                .toDouble() // Convert to double
-                        : 0,
-                    child: Card(
-                      color: Colors.white,
-                      child: homeProvider.isCategoryLoading
-                          ? CategoryShimmer()
-                          : Padding(
-                              padding:
-                                  EdgeInsets.only(right: 2, top: 3, bottom: 3),
-                              child: ScrollbarTheme(
-                                data: ScrollbarThemeData(
-                                  thumbColor:
-                                      WidgetStateProperty.all(Colors.grey),
-                                  // Thumb color
-                                  trackColor:
-                                      WidgetStateProperty.all(Colors.grey),
-                                  // Track color
-                                  trackBorderColor:
-                                      WidgetStateProperty.all(Colors.grey),
-                                ),
-                                child: Scrollbar(
-                                  interactive: true,
-                                  // Allows interactive scrolling
-                                  thumbVisibility: true,
-                                  // Always shows the scrollbar thumb
-                                  thickness: 1.8,
+                                        if (isMoreLoading)
+                                          Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                      ],
+                                    ),
+                        ],
+                      ),
+                      Positioned(
+                        top: 25,
+                        left: 10,
+                        right: 150,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                          height: _isVisible
+                              ? homeProvider.isCategoryLoading
+                                  ? 5 * 50
+                                  : (homeProvider.categoryListSuccessModel!
+                                              .data!.length *
+                                          40)
+                                      .clamp(200, 400)
+                                      .toDouble() // Convert to double
+                              : 0,
+                          child: Card(
+                            color: Colors.white,
+                            child: homeProvider.isCategoryLoading
+                                ? CategoryShimmer()
+                                : Padding(
+                                    padding: EdgeInsets.only(
+                                        right: 2, top: 3, bottom: 3),
+                                    child: ScrollbarTheme(
+                                      data: ScrollbarThemeData(
+                                        thumbColor: WidgetStateProperty.all(
+                                            Colors.grey),
+                                        // Thumb color
+                                        trackColor: WidgetStateProperty.all(
+                                            Colors.grey),
+                                        // Track color
+                                        trackBorderColor:
+                                            WidgetStateProperty.all(
+                                                Colors.grey),
+                                      ),
+                                      child: Scrollbar(
+                                        interactive: true,
+                                        // Allows interactive scrolling
+                                        thumbVisibility: true,
+                                        // Always shows the scrollbar thumb
+                                        thickness: 1.8,
 
-                                  child: ListView.builder(
-                                    controller: scrollController,
-                                    padding: const EdgeInsets.all(10),
-                                    physics: const BouncingScrollPhysics(),
-                                    itemCount: homeProvider
-                                        .categoryListSuccessModel!.data!.length,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedCategory = homeProvider
-                                                    .categoryListSuccessModel!
-                                                    .data![index]
-                                                    .categoryName ??
-                                                '';
-                                            selectedCategoryId = homeProvider
-                                                    .categoryListSuccessModel!
-                                                    .data![index]
-                                                    .categoryId ??
-                                                -1;
-                                            page = 1;
-                                            getPostByCategory(context);
-                                          });
-                                          _toggleAnimation();
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Text(
-                                            homeProvider
-                                                    .categoryListSuccessModel!
-                                                    .data![index]
-                                                    .categoryName ??
-                                                '',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 17,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                        child: ListView.builder(
+                                          controller: scrollController,
+                                          padding: const EdgeInsets.all(10),
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          itemCount: homeProvider
+                                              .categoryListSuccessModel!
+                                              .data!
+                                              .length,
+                                          itemBuilder: (context, index) {
+                                            return InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedCategory = homeProvider
+                                                          .categoryListSuccessModel!
+                                                          .data![index]
+                                                          .categoryName ??
+                                                      '';
+                                                  selectedCategoryId = homeProvider
+                                                          .categoryListSuccessModel!
+                                                          .data![index]
+                                                          .categoryId ??
+                                                      -1;
+                                                  page = 1;
+                                                  getPostByCategory(context);
+                                                });
+                                                _toggleAnimation();
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  homeProvider
+                                                          .categoryListSuccessModel!
+                                                          .data![index]
+                                                          .categoryName ??
+                                                      '',
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 17,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ),
-                    ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      );
+              ),
+            );
     });
   }
 }

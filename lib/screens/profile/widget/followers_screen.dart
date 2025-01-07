@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +9,10 @@ import 'package:hoonar/custom/data_not_found.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/common_widgets.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/utils.dart';
@@ -35,11 +41,25 @@ class _FollowersScreenState extends State<FollowersScreen>
   bool isLoading = false;
 
   bool isFollowLoading = false;
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     sessionManager.initPref();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     _scrollController.addListener(
       () {
         if (_scrollController.position.maxScrollExtent ==
@@ -107,56 +127,69 @@ class _FollowersScreenState extends State<FollowersScreen>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     final userProvider = Provider.of<UserProvider>(context);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: isLoading == true
-            ? FollowingListShimmer()
-            : followersList.isEmpty
-                ? DataNotFound()
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      ValueListenableBuilder<String?>(
-                          valueListenable: userProvider.followersCountNotifier,
-                          builder: (context, followersCount, child) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 15.0),
-                              child: Text(
-                                '$followersCount ${AppLocalizations.of(context)!.followers}',
-                                textAlign: TextAlign.end,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            );
-                          }),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      AnimatedList(
-                        shrinkWrap: true,
-                        initialItemCount: followersList.length,
-                        controller: _scrollController,
-                        itemBuilder: (context, index, animation) {
-                          return buildItem(animation, index, myLoading.isDark,
-                              userProvider); // Build each list item
-                        },
-                      ),
-                    ],
-                  ),
-      );
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: isLoading == true
+                  ? FollowingListShimmer()
+                  : followersList.isEmpty
+                      ? DataNotFound()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ValueListenableBuilder<String?>(
+                                valueListenable:
+                                    userProvider.followersCountNotifier,
+                                builder: (context, followersCount, child) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 15.0),
+                                    child: Text(
+                                      '$followersCount ${AppLocalizations.of(context)!.followers}',
+                                      textAlign: TextAlign.end,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        color: myLoading.isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            AnimatedList(
+                              shrinkWrap: true,
+                              initialItemCount: followersList.length,
+                              controller: _scrollController,
+                              itemBuilder: (context, index, animation) {
+                                return buildItem(
+                                    animation,
+                                    index,
+                                    myLoading.isDark,
+                                    userProvider); // Build each list item
+                              },
+                            ),
+                          ],
+                        ),
+            );
     });
   }
 

@@ -19,6 +19,7 @@ import 'package:hoonar/screens/camera/widget/confirmation_dialog.dart';
 // import 'package:video_record_demo/sound_list_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -152,8 +153,8 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     // if (!_isRecording) return;
 
     try {
-      final file = await _controller.stopVideoRecording();
-      _videoSegments.add(file.path); // Save segment
+      final file = await _controller.pauseVideoRecording();
+      // _videoSegments.add(file.path); // Save segment
       setState(() {
         _isPaused = true;
       });
@@ -243,7 +244,8 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
     try {
       final tempDir = await getTemporaryDirectory();
-      final outputFilePath = '${tempDir.path}/merged_video.mp4';
+      String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final outputFilePath = '${tempDir.path}/merged_video_$timestamp.mp4';
 
       final mergeCommand =
           '-y -i "${_mergedVideoPath}" -i "${_localMusic!.path}" -map 0:v -map 1:a -c:v copy -shortest "$outputFilePath"';
@@ -587,6 +589,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         if (!_isRecording)
                           InkWell(
@@ -628,7 +631,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                               });
                             },
                             child: Container(
-                              // width: MediaQuery.of(context).size.width / 2,
+                              width: _selectedMusic == null?null:MediaQuery.of(context).size.width / 2,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 20),
                               decoration: BoxDecoration(
@@ -716,9 +719,9 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
               if (!_isRecording || !_isPaused)
                 Positioned(
-                  top: 50,
+                  top: 55,
                   // left: 0,
-                  right: 20,
+                  right: 15,
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -729,13 +732,20 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                         if (_mergedVideoPath != null) {
                           _mergeAudioWithVideo();
                         } else {
-                          _stopRecording(true).then((onValue) {
+                         /* if(_isPaused){
                             _mergeAudioWithVideo();
-                          });
+                          }else {*/
+                            _stopRecording(true).then((onValue) {
+                              _mergeAudioWithVideo();
+                            });
+                          // }
                         }
                       } else {
                         // if (_mergedVideoPath == null) {
-                        _mergeVideoSegments(true);
+                        _stopRecording(true).then((onValue) {
+                          _mergeVideoSegments(true);
+                        });
+
                         // }
                         // _goToPreviewScreen(File(_mergedVideoPath!));
                       }

@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../constants/common_widgets.dart';
+import '../../constants/internet_connectivity.dart';
 import '../../constants/session_manager.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/data_not_found.dart';
@@ -34,6 +38,9 @@ class DraftsScreen extends StatefulWidget {
 
 class _DraftsScreenState extends State<DraftsScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   Future<void> deletePost(BuildContext context, int postId, int index) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
@@ -123,6 +130,31 @@ class _DraftsScreenState extends State<DraftsScreen> {
       },
     );
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+      _connectionStatus = value;
+    }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+        _connectionStatus = value;
+      }));
+    });
+
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
 
   @override
   Widget build(BuildContext context) {

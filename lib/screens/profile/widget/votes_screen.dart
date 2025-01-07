@@ -1,10 +1,16 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/shimmerLoaders/vote_list_shimmer.dart';
 import 'package:provider/provider.dart';
 
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/data_not_found.dart';
@@ -16,6 +22,7 @@ import '../../auth_screen/login_screen.dart';
 
 class VotesScreen extends StatefulWidget {
   final String? userId;
+
   const VotesScreen({super.key, this.userId});
 
   @override
@@ -26,10 +33,23 @@ class _VotesScreenState extends State<VotesScreen> {
   SessionManager sessionManager = SessionManager();
   List<UserWiseVoteList> voteList = [];
   bool isLoading = false;
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getVotesList(context);
@@ -39,10 +59,11 @@ class _VotesScreenState extends State<VotesScreen> {
   Future<void> getVotesList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
       String userId = sessionManager.getString(SessionManager.userId)!;
-       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(userId),
+      ListCommonRequestModel requestModel = ListCommonRequestModel(
+        userId: int.parse(userId),
         /*  start: followingList.length == 10 ? followingList.length : 0,
-          limit: paginationLimit*/);
+          limit: paginationLimit*/
+      );
 
       isLoading = true;
       setState(() {});
@@ -69,23 +90,32 @@ class _VotesScreenState extends State<VotesScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        backgroundColor: Colors.transparent,
-        body: isLoading == true
-            ? VoteListShimmer()
-            : voteList.isEmpty
-                ? DataNotFound()
-                : AnimatedList(
-                    initialItemCount: voteList.length,
-                    // controller: _scrollController,
-                    itemBuilder: (context, index, animation) {
-                      return buildItem(animation, index,
-                          myLoading.isDark); // Build each list item
-                    },
-                  ),
-      );
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              backgroundColor: Colors.transparent,
+              body: isLoading == true
+                  ? VoteListShimmer()
+                  : voteList.isEmpty
+                      ? DataNotFound()
+                      : AnimatedList(
+                          initialItemCount: voteList.length,
+                          // controller: _scrollController,
+                          itemBuilder: (context, index, animation) {
+                            return buildItem(animation, index,
+                                myLoading.isDark); // Build each list item
+                          },
+                        ),
+            );
     });
   }
 

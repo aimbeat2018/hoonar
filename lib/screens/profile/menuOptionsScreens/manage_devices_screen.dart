@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,7 +13,10 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constants/color_constants.dart';
 import '../../../constants/common_widgets.dart';
+import '../../../constants/internet_connectivity.dart';
+import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
+import '../../../constants/no_internet_screen.dart';
 import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
@@ -28,11 +34,25 @@ class ManageDevicesScreen extends StatefulWidget {
 
 class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   SessionManager sessionManager = SessionManager();
+  String _connectionStatus = 'unKnown';
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    CheckInternet.initConnectivity().then((value) => setState(() {
+          _connectionStatus = value;
+        }));
+
+    _connectivitySubscription = _connectivity.onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      CheckInternet.updateConnectionStatus(result).then((value) => setState(() {
+            _connectionStatus = value;
+          }));
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getLoginDevices(context);
     });
@@ -93,77 +113,89 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _connectivitySubscription.cancel();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final settingProvider = Provider.of<SettingProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
-      return Scaffold(
-        body: Container(
-          padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              /*image: DecorationImage(
+      return _connectionStatus == KeyRes.connectivityCheck
+          ? const NoInternetScreen()
+          : Scaffold(
+              body: Container(
+                padding: const EdgeInsets.only(top: 20, left: 5, right: 5),
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                    /*image: DecorationImage(
                 image: AssetImage('assets/images/screens_back.png'),
                 // Path to your image
                 fit: BoxFit.cover, // Ensures the image covers the entire container
               ),*/
-              color: myLoading.isDark ? Colors.black : Colors.white),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildAppbar(context, myLoading.isDark),
-                const SizedBox(
-                  height: 10,
-                ),
-                Center(
-                    child: GradientText(
-                  AppLocalizations.of(context)!.manageDevices,
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    color: myLoading.isDark ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.topRight,
-                      colors: [
-                        myLoading.isDark ? Colors.white : Colors.black,
-                        myLoading.isDark ? Colors.white : Colors.black,
-                        myLoading.isDark ? greyTextColor8 : Colors.grey.shade700
-                      ]),
-                )),
-                settingProvider.isDevicesLoading ||
-                        settingProvider.devicesListModel == null ||
-                        settingProvider.devicesListModel!.data == null
-                    ? DevicesListShimmer()
-                    : ValueListenableBuilder<DevicesListModel?>(
-                        valueListenable: settingProvider.deviceListNotifier,
-                        builder: (context, deviceData, child) {
-                          if (deviceData == null) {
-                            return DevicesListShimmer();
-                          } else if (deviceData.data!.isEmpty) {
-                            return DataNotFound();
-                          }
+                    color: myLoading.isDark ? Colors.black : Colors.white),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildAppbar(context, myLoading.isDark),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Center(
+                          child: GradientText(
+                        AppLocalizations.of(context)!.manageDevices,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          color: myLoading.isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.topRight,
+                            colors: [
+                              myLoading.isDark ? Colors.white : Colors.black,
+                              myLoading.isDark ? Colors.white : Colors.black,
+                              myLoading.isDark
+                                  ? greyTextColor8
+                                  : Colors.grey.shade700
+                            ]),
+                      )),
+                      settingProvider.isDevicesLoading ||
+                              settingProvider.devicesListModel == null ||
+                              settingProvider.devicesListModel!.data == null
+                          ? DevicesListShimmer()
+                          : ValueListenableBuilder<DevicesListModel?>(
+                              valueListenable:
+                                  settingProvider.deviceListNotifier,
+                              builder: (context, deviceData, child) {
+                                if (deviceData == null) {
+                                  return DevicesListShimmer();
+                                } else if (deviceData.data!.isEmpty) {
+                                  return DataNotFound();
+                                }
 
-                          return AnimatedList(
-                            initialItemCount: deviceData.data!.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index, animation) {
-                              return buildItem(
-                                  animation,
-                                  index,
-                                  myLoading.isDark,
-                                  deviceData
-                                      .data![index]); // Build each list item
-                            },
-                          );
-                        })
-              ],
-            ),
-          ),
-        ),
-      );
+                                return AnimatedList(
+                                  initialItemCount: deviceData.data!.length,
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index, animation) {
+                                    return buildItem(
+                                        animation,
+                                        index,
+                                        myLoading.isDark,
+                                        deviceData.data![
+                                            index]); // Build each list item
+                                  },
+                                );
+                              })
+                    ],
+                  ),
+                ),
+              ),
+            );
     });
   }
 
