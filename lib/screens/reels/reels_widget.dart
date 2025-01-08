@@ -1,17 +1,24 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_social_share/custom_social_share.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/more_options_list_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
+import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../constants/common_widgets.dart';
+import '../../constants/location_service.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
 import '../../constants/slide_right_route.dart';
@@ -37,7 +44,8 @@ class ReelsWidget extends StatefulWidget {
 class _ReelsWidgetState extends State<ReelsWidget>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
-  bool isFollow = false, isFollowLoading = false;
+  bool isFollow = false, isFollowLoading = false, isAddVoteLoading = false;
+
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
   bool _showLikeAnimation = false, _showLottie = false;
@@ -51,6 +59,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
   bool isMute = false;
   double _progress = 0.0;
   String userId = "";
+
+  // Location
+  final LocationService _locationService = LocationService();
+  String? _locationMessage;
+  String city = 'Fetching...';
+  String state = 'Fetching...';
 
   @override
   void initState() {
@@ -149,13 +163,18 @@ class _ReelsWidgetState extends State<ReelsWidget>
     });
   }
 
-  Future<void> addVote(BuildContext context, int postId) async {
+  Future<void> addVote(BuildContext context, int postId, String city,
+      String state, String ipAddress, String mobileId) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel = ListCommonRequestModel(
           postId: postId,
-          userId: int.parse(sessionManager.getString(SessionManager.userId)!));
+          userId: int.parse(sessionManager.getString(SessionManager.userId)!),
+          location: state,
+          city: city,
+          ipAddress: ipAddress,
+          mobileId: mobileId);
 
       await homeProvider.addVote(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -183,6 +202,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
               SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
+    });
+    setState(() {
+      isAddVoteLoading = false;
     });
   }
 
@@ -217,6 +239,23 @@ class _ReelsWidgetState extends State<ReelsWidget>
         _showLottie = false;
       });
     });
+  }
+
+  // Capture location, IP address, device id, and pass encrypted data
+  void _getLocation(int postId) async {
+    setState(() {
+      isAddVoteLoading = true;
+    });
+    Map<String, String> encryptedData =
+        await _locationService.getEncryptedDeviceData();
+
+    String encryptedCity = encryptedData['encryptedCity']!;
+    String encryptedState = encryptedData['encryptedState']!;
+    String encryptedIpAddress = encryptedData['encryptedIpAddress']!;
+    String encryptedDeviceId = encryptedData['encryptedDeviceId']!;
+
+    await addVote(context, postId, encryptedCity, encryptedState,
+        encryptedIpAddress, encryptedDeviceId);
   }
 
   @override
@@ -322,7 +361,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
         body: Stack(
           // fit: StackFit.expand,
           children: [
-
             InkWell(
               onTap: _onTap,
               onDoubleTap: () {
@@ -379,7 +417,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
                 ),
               ),
             ),
-
             Align(
               alignment: Alignment.topCenter,
               child: Container(
@@ -392,7 +429,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
                       Colors.black.withOpacity(0.3),
                       Colors.black.withOpacity(0.6),
                       // Colors.black.withOpacity(0.8),
-
                     ],
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
@@ -578,15 +614,14 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                             style: GoogleFonts
                                                                 .poppins(
                                                               fontSize: 12,
-                                                              color: /*widget.model
+                                                              color: widget.model
                                                                               .followOrNot ==
-                                                                          1 ||*/
-                                                                  followStatus ==
+                                                                          1 ||
+                                                                      followStatus ==
                                                                           1
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .white,
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
@@ -636,37 +671,29 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             if (widget.model.canVote == 1)
                               Column(
                                 children: [
-                                  /* SwipeTo(
-                                    onRightSwipe: (details) {
-                                      if (widget.model.hasVoted == 0) {
-                                        addVote(context, widget.model.postId!);
-                                      }
-                                    },
-                                    iconSize: 5,
-                                    iconOnRightSwipe:
-                                        CupertinoIcons.arrow_2_circlepath,
-                                    onLeftSwipe: (details) {},
-                                    iconOnLeftSwipe:
-                                        CupertinoIcons.arrow_2_circlepath,
-                                    child: Image.asset(
-                                        widget.model.hasVoted == 0
-                                            ? 'assets/images/vote_not_given.png'
-                                            : 'assets/images/vote_given.png',
-                                        width: 33,
-                                        height: 33),
-                                  ),*/
                                   InkWell(
                                     onTap: () {
-                                      if (widget.model.hasVoted == 0) {
-                                        addVote(context, widget.model.postId!);
-                                      }
+                                      //  if (widget.model.hasVoted == 0) {
+                                      //  /* addVote(context, widget.model.postId!);*/
+                                      //    _getLocation(widget.model.postId!);
+                                      // }
+
+                                      _getLocation(widget.model.postId!);
                                     },
-                                    child: Image.asset(
-                                        widget.model.hasVoted == 0
-                                            ? 'assets/images/vote_not_given.png'
-                                            : 'assets/images/vote_given.png',
-                                        width: 33,
-                                        height: 33),
+                                    child: isAddVoteLoading
+                                        ? Center(
+                                            child: SizedBox(
+                                                height: 25,
+                                                width: 25,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          )
+                                        : Image.asset(
+                                            widget.model.hasVoted == 0
+                                                ? 'assets/images/vote_not_given.png'
+                                                : 'assets/images/vote_given.png',
+                                            width: 33,
+                                            height: 33),
                                   ),
                                   const SizedBox(
                                     height: 5,
@@ -874,7 +901,11 @@ class _ReelsWidgetState extends State<ReelsWidget>
                     ),
                     child: Builder(builder: (context) {
                       return Slider(
-                        value: _progress,
+                        // value: _progress,
+                        value: _progress.clamp(
+                            0,
+                            _videoPlayerController.value.duration.inMilliseconds
+                                .toDouble()),
                         min: 0,
                         max: _videoPlayerController
                             .value.duration.inMilliseconds

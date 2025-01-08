@@ -83,7 +83,7 @@ class _FeedScreenState extends State<FeedScreen> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Text(
-            AppLocalizations.of(context)!.deleteAccount,
+            AppLocalizations.of(context)!.deleteVideo,
             style: GoogleFonts.poppins(
               color: isDarkMode ? Colors.white : Colors.black,
             ),

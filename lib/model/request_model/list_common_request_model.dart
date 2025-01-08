@@ -1,5 +1,6 @@
 class ListCommonRequestModel {
   int? userId;
+  int? notificationId;
   int? start;
   int? limit;
   int? page;
@@ -8,6 +9,10 @@ class ListCommonRequestModel {
   int? postId;
   int? reasonId;
   String? search;
+  String? ipAddress;
+  String? mobileId;
+  String? location;
+  String? city;
   String? type;
   String? searchTerm;
   String? searchId;
@@ -22,6 +27,7 @@ class ListCommonRequestModel {
   ListCommonRequestModel({
     this.userId,
     this.reasonId,
+    this.notificationId,
     this.start,
     this.limit,
     this.page,
@@ -39,6 +45,10 @@ class ListCommonRequestModel {
     this.pageType,
     this.interestType,
     this.description,
+    this.ipAddress,
+    this.mobileId,
+    this.location,
+    this.city,
   });
 
   ListCommonRequestModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +71,11 @@ class ListCommonRequestModel {
     date = json['date'];
     reasonId = json['reason_id'];
     description = json['description'];
+    ipAddress = json['ip_address'];
+    mobileId = json['mobile_id'];
+    location = json['location'];
+    city = json['city'];
+    notificationId = json['notification_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -84,6 +99,11 @@ class ListCommonRequestModel {
     data['date'] = date;
     data['reason_id'] = reasonId;
     data['description'] = description;
+    data['ip_address'] = ipAddress;
+    data['mobile_id'] = mobileId;
+    data['location'] = location;
+    data['city'] = city;
+    data['notification_id'] = notificationId;
     return data;
   }
 }

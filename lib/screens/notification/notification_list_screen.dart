@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -227,7 +228,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                                   itemBuilder: (context, index) {
                                     return _buildNotificationData(
                                         notificationData[index],
-                                        myLoading.isDark);
+                                        myLoading.isDark,
+                                        index);
                                   },
                                   separatorBuilder:
                                       (BuildContext context, int index) {
@@ -245,30 +247,112 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     });
   }
 
-  Widget _buildNotificationData(NotificationData model, bool isDarkMode) {
+  void showDeleteDialog(
+      BuildContext context, bool isDarkMode, int notificationId, int index) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.alert.toUpperCase(),
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+          ),
+          content: Text(
+            AppLocalizations.of(context)!.areYouSureYouWantToDelete,
+            style: GoogleFonts.poppins(
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: GoogleFonts.poppins(
+                  color: isDarkMode ? Colors.white70 : Colors.black54,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text(
+                AppLocalizations.of(context)!.delete,
+                style: GoogleFonts.poppins(
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () async {
+                // Navigator.pop(context1);
+                deleteNotification(context, notificationId, index);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteNotification(
+      BuildContext context, int notificationId, int index) async {
+    final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      ListCommonRequestModel requestModel =
+          ListCommonRequestModel(notificationId: notificationId);
+
+      await homeProvider.deleteNotification(
+        context,
+        requestModel,
+        sessionManager.getString(SessionManager.accessToken) ?? '',
+      );
+
+      if (homeProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+      } else {
+        if (homeProvider.deleteNotificationModel?.status == '200') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deleteNotificationModel?.message! ?? '');
+          setState(() {
+            notificationData.removeAt(index);
+          });
+        } else if (homeProvider.deleteNotificationModel?.status == '401') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deleteNotificationModel?.message! ?? '');
+        } else if (homeProvider.deleteNotificationModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.deleteNotificationModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+    await Future.delayed(Duration(seconds: 2), () {
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+      Navigator.pop(context);
+    });
+  }
+
+  Widget _buildNotificationData(
+      NotificationData model, bool isDarkMode, int index) {
     DateTime dateTime = DateTime.parse(model.createdAt!);
 
     // Format the DateTime
     String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
 
     return InkWell(
-      onTap: () {
-        if (model.userId != null) {
-          Navigator.push(
-            context,
-            SlideRightRoute(
-                page: ProfileScreen(
-              from: 'profile',
-              userId: model.userId!.toString(),
-            )),
-          );
-        }
+      onLongPress: () {
+        showDeleteDialog(context, isDarkMode, model.notificationId!, index);
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
         child: Row(
           children: [
-            if (model.image != '')
+            if (model.image != null /*|| model.image != ''*/)
               Align(
                 alignment: Alignment.topCenter,
                 child: CircleAvatar(

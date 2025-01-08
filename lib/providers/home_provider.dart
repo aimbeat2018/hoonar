@@ -49,6 +49,7 @@ class HomeProvider extends ChangeNotifier {
   bool _isReportReasonsLoading = false;
   bool _isReportPostLoading = false;
   bool _isDeletePostLoading = false;
+  bool _isDeleteNotificationLoading = false;
   String? _errorMessage;
   CategoryListSuccessModel? _categoryListSuccessModel;
   PostListSuccessModel? _postListSuccessModel;
@@ -58,6 +59,7 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? _videoCountModel;
   FollowUnfollowSuccessModel? _postInterestModel;
   FollowUnfollowSuccessModel? _deletePostModel;
+  FollowUnfollowSuccessModel? _deleteNotificationModel;
   FollowUnfollowSuccessModel? _reportPostModel;
   ReportReasonsModel? _reportReasonsModel;
   NotificationListModel? _notificationListModel;
@@ -94,6 +96,8 @@ class HomeProvider extends ChangeNotifier {
 
   bool get isDeletePostLoading => _isDeletePostLoading;
 
+  bool get isDeleteNotificationLoading => _isDeleteNotificationLoading;
+
   bool get isSearchLoading => _isSearchLoading;
 
   String? get errorMessage => _errorMessage;
@@ -118,6 +122,9 @@ class HomeProvider extends ChangeNotifier {
   FollowUnfollowSuccessModel? get postInterestModel => _postInterestModel;
 
   FollowUnfollowSuccessModel? get deletePostModel => _deletePostModel;
+
+  FollowUnfollowSuccessModel? get deleteNotificationModel =>
+      _deleteNotificationModel;
 
   FollowUnfollowSuccessModel? get reportPostModel => _reportPostModel;
 
@@ -521,6 +528,28 @@ class HomeProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isDeletePostLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteNotification(BuildContext context,
+      ListCommonRequestModel requestModel, String accessToken) async {
+    _errorMessage = null;
+    _isDeleteNotificationLoading = true;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _homePageService.deleteNotification(requestModel, accessToken);
+      _deleteNotificationModel = successModel;
+      // if(_deletePostModel!.status == "200"){
+      //   await Provider.of<AuthProvider>(context, listen: false).getProfile(CommonRequestModel(),accessToken);
+      //
+      // }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isDeleteNotificationLoading = false;
       notifyListeners();
     }
   }

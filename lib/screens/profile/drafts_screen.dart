@@ -90,7 +90,7 @@ class _DraftsScreenState extends State<DraftsScreen> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: Text(
-            AppLocalizations.of(context)!.deleteAccount,
+            AppLocalizations.of(context)!.deleteVideo.toUpperCase(),
             style: GoogleFonts.poppins(
               color: isDarkMode ? Colors.white : Colors.black,
             ),
