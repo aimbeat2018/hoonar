@@ -673,12 +673,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      //  if (widget.model.hasVoted == 0) {
-                                      //  /* addVote(context, widget.model.postId!);*/
-                                      //    _getLocation(widget.model.postId!);
-                                      // }
+                                      if (widget.model.hasVoted == 0) {
+                                        /* addVote(context, widget.model.postId!);*/
+                                        _getLocation(widget.model.postId!);
+                                      }
 
-                                      _getLocation(widget.model.postId!);
+                                      // _getLocation(widget.model.postId!);
                                     },
                                     child: isAddVoteLoading
                                         ? Center(
@@ -850,7 +850,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
             /*Like and vote animation*/
             if (_showLikeAnimation)
               Positioned.fill(
-                child: likeOrVote == 1 && _showLottie
+                child: /*likeOrVote == 1 && */ _showLottie
                     ? Opacity(
                         opacity: 0.5,
                         child: Lottie.asset(
