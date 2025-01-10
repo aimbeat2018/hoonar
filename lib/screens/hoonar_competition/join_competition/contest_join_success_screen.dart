@@ -88,8 +88,7 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                       Column(
                         children: [
                           Padding(
-                            padding:
-                                const EdgeInsets.only(left: 15.0, top: 10),
+                            padding: const EdgeInsets.only(left: 15.0, top: 10),
                             child: Align(
                               alignment: Alignment.topLeft,
                               child: InkWell(
@@ -151,7 +150,7 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                               ),
                             ),
                           ),*/
-                         /* InkWell(
+                          /* InkWell(
                             onTap: () => Navigator.push(
                                 context,
                                 SlideRightRoute(
