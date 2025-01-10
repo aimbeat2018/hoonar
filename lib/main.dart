@@ -15,6 +15,7 @@ import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/setting_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
+import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
@@ -174,7 +175,7 @@ class MyApp extends StatelessWidget {
                 'EditProfileScreen': (context) => EditProfileScreen()
               },
               home: SplashScreens(),
-              // home: MainScreen(),
+              // home: ContestJoinSuccessScreen(),
             ),
           );
         },

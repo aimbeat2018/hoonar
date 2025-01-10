@@ -144,13 +144,13 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
     SnackbarUtil.showSnackBar(context,
         "Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
 
-    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
+    int amountPaid = 100 * int.parse(widget.model.fees.toString());
 
     storePayment(
         context,
         StorePaymentRequestModel(
-            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
-            levelId: levelListData!.levelId,
+            userId: signupSuccessModel!.data!.userId!,
+            levelId: widget.model.levelId,
             categoryId: widget.categoryId,
             amount: amountPaid.toString(),
             couponCode: couponCode,
@@ -161,13 +161,14 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    int amountPaid = 100 * int.parse(levelListData!.fees.toString());
+    int amountPaid = 100 * int.parse(widget.model.fees.toString());
 
     storePayment(
         context,
         StorePaymentRequestModel(
-            userId: int.parse(sessionManager.getString(SessionManager.userId)!),
-            levelId: levelListData!.levelId,
+            userId:  signupSuccessModel!
+                .data!.userId!,
+            levelId: widget.model.levelId,
             categoryId: widget.categoryId,
             amount: amountPaid.toString(),
             couponCode: couponCode,
@@ -183,7 +184,6 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   }
 
   SignupSuccessModel? signupSuccessModel;
-  LevelListData? levelListData;
 
   getUser() async {
     sessionManager.initPref().then((onValue) {
@@ -224,352 +224,356 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   Widget build(BuildContext context) {
     return _connectionStatus == KeyRes.connectivityCheck
         ? const NoInternetScreen()
-        : Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GradientText(
-                  widget.model.levelName ?? '',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    color: widget.isDarkMode ? Colors.black : Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.topRight,
-                      colors: [
-                        Colors.black,
-                        Colors.black,
-                        Colors.grey.shade700
-                      ]),
-                ),
-                Text(
-                  AppLocalizations.of(context)!.payNowToBecomeContestant,
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Text(
-                    widget.model.description ?? '',
-                    textAlign: TextAlign.center,
+        : SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GradientText(
+                    widget.model.levelName ?? '',
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Colors.grey,
+                      fontSize: 20,
+                      color: widget.isDarkMode ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.topRight,
+                        colors: [
+                          Colors.black,
+                          Colors.black,
+                          Colors.grey.shade700
+                        ]),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.payNowToBecomeContestant,
+                    textAlign: TextAlign.start,
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      color: Colors.black,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      gradient: const LinearGradient(
-                        colors: [Colors.black, greyTextColor4],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Text(
+                      widget.model.description ?? '',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(1), // Width of the border
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          // Background color of the inner container
-                          borderRadius: BorderRadius.circular(8),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: const LinearGradient(
+                          colors: [Colors.black, greyTextColor4],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                validator: (v) {
-                                  if (v!.trim().isEmpty) {
-                                    return AppLocalizations.of(context)!
-                                        .enterCouponCode;
-                                  }
-                                  return null;
-                                },
-                                maxLines: 1,
-                                decoration: InputDecoration(
-                                  errorStyle: GoogleFonts.poppins(),
-                                  border: InputBorder.none,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 3),
-                                  hintText: AppLocalizations.of(context)!
-                                      .enterCouponCode,
-                                  hintStyle: GoogleFonts.poppins(
-                                    color: Colors.grey,
-                                    fontSize: 12,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(1), // Width of the border
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // Background color of the inner container
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  validator: (v) {
+                                    if (v!.trim().isEmpty) {
+                                      return AppLocalizations.of(context)!
+                                          .enterCouponCode;
+                                    }
+                                    return null;
+                                  },
+                                  maxLines: 1,
+                                  decoration: InputDecoration(
+                                    errorStyle: GoogleFonts.poppins(),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 3),
+                                    hintText: AppLocalizations.of(context)!
+                                        .enterCouponCode,
+                                    hintStyle: GoogleFonts.poppins(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
                                   ),
+                                  controller: couponCodeController,
+                                  cursorColor: Colors.black,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                  ),
+                                  inputFormatters: [
+                                    UpperCaseTextFormatter(),
+                                    // Custom Uppercase TextFormatter
+                                  ],
+                                  keyboardType: TextInputType.text,
+                                  onChanged: (value) {
+                                    if (value.isEmpty) {
+                                      setState(() {
+                                        discountPrice = '';
+                                        couponApply = false;
+                                        couponErrorMsg = "";
+                                      });
+                                    }
+                                  },
                                 ),
-                                controller: couponCodeController,
-                                cursorColor: Colors.black,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                ),
-                                inputFormatters: [
-                                  UpperCaseTextFormatter(),
-                                  // Custom Uppercase TextFormatter
-                                ],
-                                keyboardType: TextInputType.text,
-                                onChanged: (value) {
-                                  if (value.isEmpty) {
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  if (couponCodeController.text.isEmpty) {
+                                    setState(() {
+                                      couponErrorMsg =
+                                          AppLocalizations.of(context)!
+                                              .enterCouponCode;
+                                    });
+                                  } else if (couponApply) {
                                     setState(() {
                                       discountPrice = '';
                                       couponApply = false;
-                                      couponErrorMsg = "";
+                                      couponCodeController.text = "";
                                     });
+                                  } else {
+                                    applyCouponCode(
+                                        context,
+                                        CommonRequestModel(
+                                            couponCode:
+                                                couponCodeController.text));
                                   }
                                 },
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                if (couponCodeController.text.isEmpty) {
-                                  setState(() {
-                                    couponErrorMsg =
-                                        AppLocalizations.of(context)!
-                                            .enterCouponCode;
-                                  });
-                                } else if (couponApply) {
-                                  setState(() {
-                                    discountPrice = '';
-                                    couponApply = false;
-                                    couponCodeController.text = "";
-                                  });
-                                } else {
-                                  applyCouponCode(
-                                      context,
-                                      CommonRequestModel(
-                                          couponCode:
-                                              couponCodeController.text));
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                child: Provider.of<ContestProvider>(context)
-                                        .isApplyCouponCodeLoading
-                                    ? const SizedBox(
-                                        height: 15,
-                                        width: 15,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: Provider.of<ContestProvider>(context)
+                                          .isApplyCouponCodeLoading
+                                      ? const SizedBox(
+                                          height: 15,
+                                          width: 15,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          couponApply
+                                              ? AppLocalizations.of(context)!
+                                                  .remove
+                                              : AppLocalizations.of(context)!
+                                                  .apply,
+                                          style: GoogleFonts.poppins(
                                             color: Colors.black,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      )
-                                    : Text(
-                                        couponApply
-                                            ? AppLocalizations.of(context)!
-                                                .remove
-                                            : AppLocalizations.of(context)!
-                                                .apply,
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (couponErrorMsg != '')
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              couponErrorMsg,
+                              textAlign: TextAlign.start,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: Colors.red,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            if (couponApply)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 25.0, right: 10),
+                                child: Text(
+                                  discountPrice == '0.0'
+                                      ? '₹ 0/-'
+                                      : '₹ ${discountPrice}/-',
+                                  textAlign: TextAlign.start,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: couponApply ? 0.0 : 25.0),
+                              child: Text(
+                                '₹ ${widget.model.fees}/-',
+                                textAlign: TextAlign.start,
+                                style: GoogleFonts.poppins(
+                                    fontSize: couponApply ? 16 : 18,
+                                    color: Colors.black,
+                                    fontWeight: couponApply
+                                        ? FontWeight.normal
+                                        : FontWeight.bold,
+                                    decoration: couponApply
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                if (couponErrorMsg != '')
-                  Column(
-                    children: [
-                      const SizedBox(
-                        height: 3,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            couponErrorMsg,
-                            textAlign: TextAlign.start,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: Colors.red,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          if (couponApply)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 25.0, right: 10),
-                              child: Text(
-                                discountPrice == '0.0'
-                                    ? '₹ 0/-'
-                                    : '₹ ${discountPrice}/-',
-                                textAlign: TextAlign.start,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: couponApply ? 0.0 : 25.0),
-                            child: Text(
-                              '₹ ${widget.model.fees}/-',
-                              textAlign: TextAlign.start,
-                              style: GoogleFonts.poppins(
-                                  fontSize: couponApply ? 16 : 18,
-                                  color: Colors.black,
-                                  fontWeight: couponApply
-                                      ? FontWeight.normal
-                                      : FontWeight.bold,
-                                  decoration: couponApply
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                        child: Provider.of<ContestProvider>(context)
-                                .isStorePaymentLoading
-                            ? const Center(
-                                // Centering the progress indicator
-                                child: SizedBox(
-                                  height: 40,
-                                  width: 40,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              )
-                            : InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    couponCode = couponCodeController.text;
-                                  });
-                                  if (discountPrice == "" ||
-                                      discountPrice != '0.0') {
-                                    Razorpay razorpay = Razorpay();
-
-                                    int amountPaid = 100 *
-                                        int.parse(discountPrice == ''
-                                            ? widget.model.fees.toString()
-                                            : discountPrice);
-
-                                    var options = {
-                                      // 'key': 'rzp_test_sbZKuVhaj5HMeB',
-                                      'key': 'rzp_live_SUTM4whjgSbsHL',
-                                      'amount': amountPaid,
-                                      'name': widget.model.levelName,
-                                      // name of the product
-                                      'description': widget.model.description,
-                                      // description of the product
-                                      'retry': {
-                                        'enabled': true,
-                                        'max_count': 1
-                                      },
-                                      'send_sms_hash': true,
-                                      'prefill': {
-                                        'contact': signupSuccessModel!
-                                            .data!.userMobileNo,
-                                        'email':
-                                            signupSuccessModel!.data!.userEmail
-                                      },
-                                      'external': {
-                                        'wallets': ['paytm']
-                                      }
-                                    };
-                                    razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
-                                        handlePaymentErrorResponse);
-                                    razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
-                                        handlePaymentSuccessResponse);
-                                    razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
-                                        handleExternalWalletSelected);
-                                    razorpay.open(options);
-                                  } else {
-                                    storePayment(
-                                        context,
-                                        StorePaymentRequestModel(
-                                            userId: int.parse(
-                                                sessionManager.getString(
-                                                    SessionManager.userId)!),
-                                            levelId: levelListData!.levelId,
-                                            categoryId: widget.categoryId,
-                                            amount: discountPrice,
-                                            couponCode:
-                                                couponCodeController.text,
-                                            transactionId: '',
-                                            // transactionId will change when payment gateway received
-                                            paymentStatus:
-                                                'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
-                                  }
-                                },
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  margin: const EdgeInsets.only(right: 20),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    gradient: const LinearGradient(
-                                      colors: [
-                                        Colors.black,
-                                        Color(0xFF313131),
-                                        Color(0xFF636363)
-                                      ],
+                      Expanded(
+                          child: Provider.of<ContestProvider>(context)
+                                  .isStorePaymentLoading
+                              ? const Center(
+                                  // Centering the progress indicator
+                                  child: SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.black,
                                     ),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalizations.of(context)!.payNow,
-                                      textAlign: TextAlign.start,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
+                                )
+                              : InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      couponCode = couponCodeController.text;
+                                    });
+
+                                    if (discountPrice == "" ||
+                                        discountPrice != '0.0') {
+                                      Razorpay razorpay = Razorpay();
+
+                                      int amountPaid = 100 *
+                                          int.parse(discountPrice == ''
+                                              ? widget.model.fees.toString()
+                                              : discountPrice);
+
+                                      var options = {
+                                        // 'key': 'rzp_test_sbZKuVhaj5HMeB',
+                                        'key': 'rzp_live_SUTM4whjgSbsHL',
+                                        'amount': amountPaid,
+                                        'name': widget.model.levelName,
+                                        // name of the product
+                                        'description': widget.model.description,
+                                        // description of the product
+                                        'retry': {
+                                          'enabled': true,
+                                          'max_count': 1
+                                        },
+                                        'send_sms_hash': true,
+                                        'prefill': {
+                                          'contact': signupSuccessModel!
+                                              .data!.userMobileNo,
+                                          'email': signupSuccessModel!
+                                              .data!.userEmail
+                                        },
+                                        'external': {
+                                          'wallets': ['paytm']
+                                        }
+                                      };
+                                      razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                                          handlePaymentErrorResponse);
+                                      razorpay.on(
+                                          Razorpay.EVENT_PAYMENT_SUCCESS,
+                                          handlePaymentSuccessResponse);
+                                      razorpay.on(
+                                          Razorpay.EVENT_EXTERNAL_WALLET,
+                                          handleExternalWalletSelected);
+                                      razorpay.open(options);
+                                    } else {
+                                      storePayment(
+                                          context,
+                                          StorePaymentRequestModel(
+                                              userId: signupSuccessModel!
+                                                  .data!.userId!,
+                                              levelId: widget.model.levelId,
+                                              categoryId: widget.categoryId,
+                                              amount: discountPrice,
+                                              couponCode:
+                                                  couponCodeController.text,
+                                              transactionId: '',
+                                              // transactionId will change when payment gateway received
+                                              paymentStatus:
+                                                  'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    margin: const EdgeInsets.only(right: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Colors.black,
+                                          Color(0xFF313131),
+                                          Color(0xFF636363)
+                                        ],
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        AppLocalizations.of(context)!.payNow,
+                                        textAlign: TextAlign.start,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ))
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
+                                ))
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
             ),
           );
   }

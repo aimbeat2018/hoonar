@@ -92,6 +92,7 @@ dependencies:
   geocoding: ^3.0.0
   network_info_plus: ^6.1.2
   encrypt: ^5.0.3
+  gif: ^2.3.0
 
 
 dependency_overrides:

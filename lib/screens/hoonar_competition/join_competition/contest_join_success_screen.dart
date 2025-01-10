@@ -71,73 +71,133 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: SingleChildScrollView(
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0, top: 30),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Image.asset(
-                                'assets/images/back_image.png',
-                                height: 28,
-                                width: 28,
-                                color: myLoading.isDark
-                                    ? Colors.white
-                                    : Colors.black,
+                child: SafeArea(
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 30.0),
+                        child: Center(
+                          child: Image.asset(
+                            // 'assets/images/capture.gif',
+                            'assets/images/congrats.gif',
+                            // Replace with your URL
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 15.0, top: 10),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Image.asset(
+                                  'assets/images/back_image.png',
+                                  height: 28,
+                                  width: 28,
+                                  color: myLoading.isDark
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Center(
-                          child: GradientText(
-                            AppLocalizations.of(context)!.congratulations,
-                            style: GoogleFonts.poppins(
-                              fontSize: 20,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.topRight,
-                                colors: [
-                                  myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  myLoading.isDark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  myLoading.isDark
-                                      ? greyTextColor8
-                                      : Colors.grey.shade700
-                                ]),
+                          const SizedBox(
+                            height: 10,
                           ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 50.0, horizontal: 20),
-                          child: Center(
-                            child: Image.asset(
-                              'assets/images/capture.gif',
-                              // Replace with your URL
-                              fit: BoxFit.cover,
+                          Center(
+                            child: GradientText(
+                              AppLocalizations.of(context)!.congratulations,
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.topRight,
+                                  colors: [
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                    myLoading.isDark
+                                        ? greyTextColor8
+                                        : Colors.grey.shade700
+                                  ]),
                             ),
                           ),
-                        ),
-                        InkWell(
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          /*Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 50.0, horizontal: 0),
+                            child: Center(
+                              child: Image.asset(
+                                // 'assets/images/capture.gif',
+                                'assets/images/congrats.gif',
+                                // Replace with your URL
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),*/
+                         /* InkWell(
+                            onTap: () => Navigator.push(
+                                context,
+                                SlideRightRoute(
+                                    page: ContestJoinOptionsScreen(
+                                  levelId: widget.levelId,
+                                  categoryId: widget.categoryId,
+                                ))),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 12),
+                              margin: const EdgeInsets.only(
+                                  top: 15, left: 60, right: 60, bottom: 5),
+                              decoration: ShapeDecoration(
+                                color: myLoading.isDark
+                                    ? Colors.white
+                                    : Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    strokeAlign:
+                                        BorderSide.strokeAlignOutside,
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius: BorderRadius.circular(80),
+                                ),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.letsGo,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),*/
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 10,
+                        left: 0,
+                        right: 0,
+                        child: InkWell(
                           onTap: () => Navigator.push(
                               context,
                               SlideRightRoute(
@@ -175,8 +235,8 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

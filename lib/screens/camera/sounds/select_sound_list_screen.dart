@@ -250,13 +250,13 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                                         contestProvider
                                             .soundListModel!.data!.isEmpty
                                     ? DataNotFound()
-                                    : AnimatedList(
+                                    : ListView.builder(
                                         shrinkWrap: true,
-                                        initialItemCount: contestProvider
+                                        itemCount: contestProvider
                                             .soundListModel!.data!.length,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemBuilder:
-                                            (context, index, animation) {
+                                        physics:
+                                            NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
                                           return buildSoundItem(
                                             contestProvider
                                                 .soundListModel!.data![index],
@@ -467,6 +467,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
           ListView.builder(
               shrinkWrap: true,
               itemCount: model.soundList!.length,
+              physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index1) {
                 return soundItem(
                     model.soundList![index1], index1, isDarkMode, index);
