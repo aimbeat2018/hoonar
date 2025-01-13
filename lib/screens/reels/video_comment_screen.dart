@@ -92,9 +92,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          limit: paginationLimit,
-          start: commentDataList.length == 10 ? commentDataList.length : 0,
-          postId: widget.postId);
+          limit: paginationLimit, start: page, postId: widget.postId);
 
       await homeProvider.getCommentList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -120,12 +118,13 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
 
   Future<void> addComment(BuildContext context, String comment) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
-
+    page = 1;
     ListCommonRequestModel requestModel = ListCommonRequestModel(
         limit: paginationLimit,
-        start: commentDataList.length == 10 ? commentDataList.length : 0,
+        start: page,
         postId: widget.postId,
         comment: comment);
+
     await homeProvider.addComment(requestModel,
         sessionManager.getString(SessionManager.accessToken) ?? '');
 
@@ -149,7 +148,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
       ListCommonRequestModel requestModel = ListCommonRequestModel(
         commentId: commentId,
         limit: paginationLimit,
-        start: commentDataList.length == 10 ? commentDataList.length : 0,
+        start: page,
         postId: widget.postId,
       );
 
@@ -244,6 +243,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                         List<VideoCommentListData> tempList = [
                           ...commentDataList
                         ];
+
                         if (page == 1) {
                           tempList = commentData.data!;
                         } else {
@@ -252,8 +252,8 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                               .where((item) => !tempList.contains(item)));
                         }
                         commentDataList = tempList;
-
-                        /* if (page == 1) {
+                        /*
+                        if (page == 1) {
                           commentDataList = commentData.data!;
                         } else {
                           newCommentDataList = [];
