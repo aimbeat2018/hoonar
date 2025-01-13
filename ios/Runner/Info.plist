@@ -35,11 +35,11 @@
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to the camera to take pictures.</string>
+	<string>We need access to the camera to take pictures and it helps users to create video from camera without camera permission video making process will be failed.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to the microphone for recording video.</string>
+	<string>We need access to the microphone to record video and it helps users to record video without microphone permission video making process will be failed</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photos for the gallery</string>
+	<string>We need access to the photo library to take pictures and it helps users to upload video from gallery without photo library permission video making process will be failed.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -69,10 +69,10 @@
       <true/>
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to provide app functionality.</string>
+    <string>We need your location to capture user location when they votes to any video.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location to provide app functionality.</string>
+    <string>We need your location to capture user location when they votes to any video.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>We need your location to provide app functionality.</string>
+    <string>We need your location to capture user location when they votes to any video.</string>
 </dict>
 </plist>

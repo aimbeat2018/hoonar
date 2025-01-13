@@ -44,7 +44,7 @@ class _SplashScreensState extends State<SplashScreens>
     //   }
     // });
     // animation.forward();
-    //
+
     Future.delayed(const Duration(seconds: 5), () {
       // _controller.reset();
       initSession();
@@ -105,20 +105,24 @@ class _SplashScreensState extends State<SplashScreens>
               //  height: 180,
               // width: 180,
             ),*/
-            child: Gif(
-              image: AssetImage("assets/light_mode_icons/splash_dark.gif"),
-              controller: _controller,
-              // if duration and fps is null, original gif fps will be used.
-              fps: 15,
-              // Reduce FPS to speed up loading time
-              // duration: Duration(seconds: 3), // Adjust the duration as needed
-              autostart: Autostart.no,
-              // placeholder: (context) => const Text('Loading...'),
-              onFetchCompleted: () {
-                _controller.reset();
-                _controller.forward();
-                // initSession();
-              },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Gif(
+                image: AssetImage("assets/light_mode_icons/splash_dark.gif"),
+                controller: _controller,
+                // if duration and fps is null, original gif fps will be used.
+                // fps: 15,
+                // Reduce FPS to speed up loading time
+                duration: Duration(seconds: 3),
+                // Adjust the duration as needed
+                autostart: Autostart.no,
+                // placeholder: (context) => const Text('Loading...'),
+                onFetchCompleted: () {
+                  _controller.reset();
+                  _controller.forward();
+                  // initSession();
+                },
+              ),
             ),
           ),
         ),
