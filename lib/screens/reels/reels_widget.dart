@@ -44,14 +44,11 @@ class ReelsWidget extends StatefulWidget {
 class _ReelsWidgetState extends State<ReelsWidget>
     with SingleTickerProviderStateMixin {
   late VideoPlayerController _videoPlayerController;
-  bool isFollow = false,
-      isFollowLoading = false,
-      isAddVoteLoading = false;
+  bool isFollow = false, isFollowLoading = false, isAddVoteLoading = false;
 
   List<bool> isDismissed = [false, false];
   final GlobalKey<VideoCommentScreenState> _bottomSheetKey = GlobalKey();
-  bool _showLikeAnimation = false,
-      _showLottie = false;
+  bool _showLikeAnimation = false, _showLottie = false;
   SessionManager sessionManager = SessionManager();
   int likeOrVote = -1;
   int modelLikeStatus = 0;
@@ -102,7 +99,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel =
-      ListCommonRequestModel(postId: postId);
+          ListCommonRequestModel(postId: postId);
 
       await homeProvider.updatePostViewCount(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -110,8 +107,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else {
-        if (homeProvider.videoCountModel?.status == '200') {} else
-        if (homeProvider.videoCountModel?.message ==
+        if (homeProvider.videoCountModel?.status == '200') {
+        } else if (homeProvider.videoCountModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, homeProvider.videoCountModel?.message! ?? '');
@@ -127,7 +124,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel =
-      ListCommonRequestModel(postId: postId);
+          ListCommonRequestModel(postId: postId);
 
       await homeProvider.likeUnlikeVideo(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
@@ -140,19 +137,20 @@ class _ReelsWidgetState extends State<ReelsWidget>
               'Post Unlike Successful') {
             setState(() {
               widget.model.videoLikesOrNot = 0;
-              _showLikeAnimation = false; // No animation for unlike
+              _showLottie = false; // No animation for unlike
             });
           } else {
             setState(() {
               widget.model.videoLikesOrNot = 1;
               likeOrVote = 1;
-              _showLikeAnimation = true; // Trigger animation for like
-              _controller.forward().then((_) {
+              _showLottie = true;
+              // _showLottie = true; // Trigger animation for like
+              /*_controller.forward().then((_) {
                 Future.delayed(const Duration(milliseconds: 300), () {
                   _controller.reverse();
-                  _showLikeAnimation = false;
+                  // _showLottie = false;
                 });
-              });
+              });*/
             });
           }
         } else if (homeProvider.likeUnlikeVideoModel?.message ==
@@ -250,7 +248,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
       isAddVoteLoading = true;
     });
     Map<String, String> encryptedData =
-    await _locationService.getEncryptedDeviceData();
+        await _locationService.getEncryptedDeviceData();
 
     String encryptedCity = encryptedData['encryptedCity']!;
     String encryptedState = encryptedData['encryptedState']!;
@@ -283,15 +281,15 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       String initials =
-      widget.model.fullName != null || widget.model.fullName != ""
-          ? widget.model.fullName!
-          .trim()
-          .split(' ')
-          .map((e) => e[0])
-          .take(2)
-          .join()
-          .toUpperCase()
-          : '';
+          widget.model.fullName != null || widget.model.fullName != ""
+              ? widget.model.fullName!
+                  .trim()
+                  .split(' ')
+                  .map((e) => e[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
+              : '';
 
       return Scaffold(
         backgroundColor: Colors.black,
@@ -399,7 +397,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                 child: SizedBox.expand(
                   child: FittedBox(
                     fit: (_videoPlayerController.value.size.width ?? 0) <
-                        (_videoPlayerController.value.size.height ?? 0)
+                            (_videoPlayerController.value.size.height ?? 0)
                         ? BoxFit.cover
                         : BoxFit.fitWidth,
                     child: SizedBox(
@@ -408,13 +406,13 @@ class _ReelsWidgetState extends State<ReelsWidget>
                       child: _videoPlayerController != null
                           ? VideoPlayer(_videoPlayerController)
                           : const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(),
-                          SizedBox(height: 10),
-                          Text('Loading...')
-                        ],
-                      ),
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(height: 10),
+                                Text('Loading...')
+                              ],
+                            ),
                     ),
                   ),
                 ),
@@ -500,9 +498,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                   context,
                                   SlideRightRoute(
                                       page: ProfileScreen(
-                                        from: 'profile',
-                                        userId: widget.model.userId.toString(),
-                                      )),
+                                    from: 'profile',
+                                    userId: widget.model.userId.toString(),
+                                  )),
                                 );
                               },
                               child: Row(
@@ -515,18 +513,18 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     child: ClipOval(
                                       child: widget.model.userProfile != ""
                                           ? CachedNetworkImage(
-                                        imageUrl:
-                                        widget.model.userProfile!,
-                                        placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                        errorWidget: (context, url,
-                                            error) =>
-                                            buildInitialsAvatar(initials,
-                                                fontSize: 14),
-                                        fit: BoxFit.cover,
-                                      )
+                                              imageUrl:
+                                                  widget.model.userProfile!,
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget: (context, url,
+                                                      error) =>
+                                                  buildInitialsAvatar(initials,
+                                                      fontSize: 14),
+                                              fit: BoxFit.cover,
+                                            )
                                           : buildInitialsAvatar(initials,
-                                          fontSize: 14),
+                                              fontSize: 14),
                                     ),
                                   ),
                                   const SizedBox(
@@ -564,75 +562,72 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                   },
                                                   child: Container(
                                                     margin:
-                                                    const EdgeInsets.only(
-                                                        left: 10),
+                                                        const EdgeInsets.only(
+                                                            left: 10),
                                                     padding: const EdgeInsets
                                                         .symmetric(
                                                         horizontal: 15,
                                                         vertical: 5),
                                                     decoration: BoxDecoration(
                                                         borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
+                                                            BorderRadius.circular(
+                                                                15),
                                                         border: Border.all(
-                                                            color: widget.model
-                                                                .followOrNot ==
-                                                                1 ||
-                                                                followStatus ==
-                                                                    1
-                                                                ? (myLoading
-                                                                .isDark
-                                                                ? Colors
-                                                                .white
+                                                            color: widget.model.followOrNot ==
+                                                                        1 ||
+                                                                    followStatus ==
+                                                                        1
+                                                                ? (myLoading.isDark
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .white)
                                                                 : Colors
-                                                                .white)
-                                                                : Colors
-                                                                .transparent,
+                                                                    .transparent,
                                                             width: 1),
                                                         color: widget.model
-                                                            .followOrNot ==
-                                                            1 ||
-                                                            followStatus ==
-                                                                1
+                                                                        .followOrNot ==
+                                                                    1 ||
+                                                                followStatus ==
+                                                                    1
                                                             ? Colors.transparent
                                                             : (myLoading.isDark
-                                                            ? Colors.white
-                                                            : Colors.white)),
+                                                                ? Colors.white
+                                                                : Colors.white)),
                                                     child: isFollowLoading
                                                         ? const Center(
-                                                        child: SizedBox(
-                                                            height: 15,
-                                                            width: 15,
-                                                            child:
-                                                            CircularProgressIndicator()))
+                                                            child: SizedBox(
+                                                                height: 15,
+                                                                width: 15,
+                                                                child:
+                                                                    CircularProgressIndicator()))
                                                         : Text(
-                                                      widget.model
-                                                          .followOrNot ==
-                                                          1 ||
-                                                          followStatus ==
-                                                              1
-                                                          ? AppLocalizations.of(
-                                                          context)!
-                                                          .unfollow
-                                                          : AppLocalizations.of(
-                                                          context)!
-                                                          .follow,
-                                                      style: GoogleFonts
-                                                          .poppins(
-                                                        fontSize: 12,
-                                                        color: widget.model
-                                                            .followOrNot ==
-                                                            1 ||
-                                                            followStatus ==
-                                                                1
-                                                            ? Colors.white
-                                                            : Colors
-                                                            .black,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w600,
-                                                      ),
-                                                    ),
+                                                            widget.model.followOrNot ==
+                                                                        1 ||
+                                                                    followStatus ==
+                                                                        1
+                                                                ? AppLocalizations.of(
+                                                                        context)!
+                                                                    .unfollow
+                                                                : AppLocalizations.of(
+                                                                        context)!
+                                                                    .follow,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 12,
+                                                              color: widget.model
+                                                                              .followOrNot ==
+                                                                          1 ||
+                                                                      followStatus ==
+                                                                          1
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
                                                   ),
                                                 );
                                               }),
@@ -688,18 +683,18 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     },
                                     child: isAddVoteLoading
                                         ? Center(
-                                      child: SizedBox(
-                                          height: 25,
-                                          width: 25,
-                                          child:
-                                          CircularProgressIndicator()),
-                                    )
+                                            child: SizedBox(
+                                                height: 25,
+                                                width: 25,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          )
                                         : Image.asset(
-                                        widget.model.hasVoted == 0
-                                            ? 'assets/images/vote_not_given.png'
-                                            : 'assets/images/vote_given.png',
-                                        width: 33,
-                                        height: 33),
+                                            widget.model.hasVoted == 0
+                                                ? 'assets/images/vote_not_given.png'
+                                                : 'assets/images/vote_given.png',
+                                            width: 33,
+                                            height: 33),
                                   ),
                                   const SizedBox(
                                     height: 5,
@@ -721,10 +716,10 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               children: [
                                 InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      _showLottie = true;
-                                      likeOrVote = 1;
-                                    });
+                                    // setState(() {
+                                    //   _showLottie = true;
+                                    //   likeOrVote = 1;
+                                    // });
                                     likeUnlikeVideo(
                                         context, widget.model.postId!);
 
@@ -807,11 +802,11 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     ),
                                   ),
                                   sessionManager.getString(
-                                      SessionManager.userId) ==
-                                      widget.model.userId.toString()
+                                              SessionManager.userId) ==
+                                          widget.model.userId.toString()
                                       ? SizedBox(
-                                    height: 65,
-                                  )
+                                          height: 65,
+                                        )
                                       : SizedBox(),
                                 ],
                               ),
@@ -820,29 +815,29 @@ class _ReelsWidgetState extends State<ReelsWidget>
                               height: 15,
                             ),
                             sessionManager.getString(SessionManager.userId) !=
-                                widget.model.userId.toString()
+                                    widget.model.userId.toString()
                                 ? InkWell(
-                              onTap: () {
-                                _moreOptionsBottomSheet(
-                                    context,
-                                    myLoading.isDark,
-                                    widget.model.postId!,
-                                    widget.model.userId!,
-                                    widget.model.followOrNot!.toString());
-                              },
-                              child: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.more_vert,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    height: 65,
-                                  ),
-                                ],
-                              ),
-                            )
+                                    onTap: () {
+                                      _moreOptionsBottomSheet(
+                                          context,
+                                          myLoading.isDark,
+                                          widget.model.postId!,
+                                          widget.model.userId!,
+                                          widget.model.followOrNot!.toString());
+                                    },
+                                    child: const Column(
+                                      children: [
+                                        Icon(
+                                          Icons.more_vert,
+                                          size: 25,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          height: 65,
+                                        ),
+                                      ],
+                                    ),
+                                  )
                                 : SizedBox(),
                           ],
                         ),
@@ -853,34 +848,29 @@ class _ReelsWidgetState extends State<ReelsWidget>
               ),
             ),
 
-            /*Like and vote animation*/
-            if (_showLikeAnimation)
+            /*Like animation*/
+            if (_showLottie)
               Positioned.fill(
-                child: /*likeOrVote == 1 && */ _showLottie
-                    ? Opacity(
+                child: Opacity(
                   opacity: 0.5,
                   child: Lottie.asset(
                     'assets/lottie_json/like_anim.json',
                     /*  width: 50,
                           height: 50,*/
                   ),
-                )
-                    : FadeTransition(
+                ),
+              ),
+
+            /*Like and vote animation*/
+            if (_showLikeAnimation)
+              Positioned.fill(
+                child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: ScaleTransition(
                     scale: _scaleAnimation,
-                    child: /*Icon(
-                      Icons.favorite,
-                      color: Colors.red.withOpacity(0.8),
-                      // Slightly transparent
-                      size: 100,
-                    )*/
-                    Opacity(
+                    child: Opacity(
                       opacity: 0.5,
                       child: Image.asset(
-                        /* likeOrVote == 1
-                            ? 'assets/images/like.png'
-                            :*/
                         'assets/images/vote_given.png',
                         width: 100,
                         height: 100,
@@ -895,18 +885,15 @@ class _ReelsWidgetState extends State<ReelsWidget>
               Positioned(
                 top: 0,
                 child: SizedBox(
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  width: MediaQuery.of(context).size.width,
                   child: SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: Colors.white,
                       trackHeight: 5,
                       thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                          const RoundSliderThumbShape(enabledThumbRadius: 0.0),
                       overlayShape:
-                      const RoundSliderOverlayShape(overlayRadius: 0.0),
+                          const RoundSliderOverlayShape(overlayRadius: 0.0),
                     ),
                     child: Builder(builder: (context) {
                       return Slider(
@@ -939,8 +926,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
     });
   }
 
-  void _openCommentBottomSheet(BuildContext context, bool isDarkMode,
-      int postId) {
+  void _openCommentBottomSheet(
+      BuildContext context, bool isDarkMode, int postId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

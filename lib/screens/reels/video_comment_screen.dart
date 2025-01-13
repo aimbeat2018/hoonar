@@ -37,28 +37,36 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
   final TextEditingController _commentController = TextEditingController();
   int? _selectedCommentIndex;
   List<VideoCommentListData> commentDataList = [];
+  List<VideoCommentListData> newCommentDataList = [];
   double _height = 450;
   SessionManager sessionManager = SessionManager();
-  bool isLoading = false;
+  bool isLoading = false, isMoreLoading = false;
+  int page = 1;
 
   @override
   void initState() {
     super.initState();
     sessionManager.initPref();
-    _scrollController.addListener(
-      () {
-        if (_scrollController.position.maxScrollExtent ==
-            _scrollController.position.pixels) {
-          if (!isLoading) {
-            getCommentList(context);
-          }
-        }
-      },
-    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCommentList(context);
     });
+
+    _scrollController.addListener(loadMore);
+  }
+
+  loadMore() {
+    if (_scrollController.position.maxScrollExtent ==
+        _scrollController.position.pixels) {
+      if (!isLoading) {
+        setState(() {
+          isMoreLoading = true;
+          page++;
+        });
+
+        getCommentList(context);
+      }
+    }
   }
 
   void updateHeight(double height) {
@@ -68,7 +76,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
   }
 
   void _addReply(int commentIndex, String replyText) {
-   /* setState(() {
+    /* setState(() {
       commentList[commentIndex].replies.add(Reply(
           username: 'CurrentUser', replyText: replyText, time: 'Just now'));
       _selectedCommentIndex = null; // Reset reply input focus
@@ -170,7 +178,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
       ListCommonRequestModel requestModel = ListCommonRequestModel(
         commentId: commentId,
         limit: paginationLimit,
-        start: commentDataList.length == 10 ? commentDataList.length : 0,
+        start: page,
         postId: widget.postId,
       );
 
@@ -229,7 +237,33 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                       if (commentData == null) {
                         return VoteListShimmer();
                       } else {
-                        commentDataList = commentData.data!;
+                        /* if (commentData.data!.isNotEmpty) {
+                          commentDataList += commentData.data!;
+                        }*/
+
+                        List<VideoCommentListData> tempList = [
+                          ...commentDataList
+                        ];
+                        if (page == 1) {
+                          tempList = commentData.data!;
+                        } else {
+                          newCommentDataList = List.from(commentData.data!);
+                          tempList.addAll(newCommentDataList
+                              .where((item) => !tempList.contains(item)));
+                        }
+                        commentDataList = tempList;
+
+                        /* if (page == 1) {
+                          commentDataList = commentData.data!;
+                        } else {
+                          newCommentDataList = [];
+                          newCommentDataList = commentData.data!;
+
+                          if (newCommentDataList.isNotEmpty) {
+                            commentDataList.addAll(newCommentDataList);
+                            commentDataList = commentDataList.toSet().toList();
+                          }
+                        }*/
                       }
                       return ListView.builder(
                         controller: _scrollController,
