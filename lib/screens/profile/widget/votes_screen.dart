@@ -58,7 +58,13 @@ class _VotesScreenState extends State<VotesScreen> {
 
   Future<void> getVotesList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
-      String userId = sessionManager.getString(SessionManager.userId)!;
+      String userId = "";
+      if (widget.userId == "") {
+        userId = sessionManager.getString(SessionManager.userId)!;
+      } else {
+        userId = widget.userId!;
+      }
+
       ListCommonRequestModel requestModel = ListCommonRequestModel(
         userId: int.parse(userId),
         /*  start: followingList.length == 10 ? followingList.length : 0,

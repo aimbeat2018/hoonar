@@ -78,9 +78,15 @@ class _FollowersScreenState extends State<FollowersScreen>
 
   Future<void> getFollowerList(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
-      // String userId = sessionManager.getString(SessionManager.userId)!;
+      String userId = "";
+      if (widget.userId == "") {
+        userId = sessionManager.getString(SessionManager.userId)!;
+      } else {
+        userId = widget.userId!;
+      }
+
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(widget.userId!),
+          userId: int.parse(userId),
           start: followersList.length,
           limit: paginationLimit);
 

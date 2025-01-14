@@ -414,6 +414,20 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     setState(() {});
   }
 
+  void requestPermissions() async {
+    // Request camera and microphone permissions
+    PermissionStatus cameraStatus = await Permission.camera.request();
+    PermissionStatus microphoneStatus = await Permission.microphone.request();
+
+    if (cameraStatus.isGranted && microphoneStatus.isGranted) {
+      // Both permissions granted, initialize the camera
+      print('Permissions Granted');
+
+      _initializeCameras();
+    } else {}
+    setState(() {});
+  }
+
   // Recording
   void startProgress() async {
     if (timer == null) {
@@ -561,11 +575,76 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_isCameraInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      // return const Center(child: CircularProgressIndicator());
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
+                style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () async {
+                  await openAppSettings().then((onValue) {
+                    requestPermissions();
+                  });
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.only(
+                      top: 15, left: 60, right: 60, bottom: 5),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(80),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.openSettings,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
     }
 
     final size = MediaQuery.of(context).size;
-    final scale = 1 / (_controller.value.aspectRatio * size.aspectRatio);
+    // final scale = 1 / (_controller.value.aspectRatio * size.aspectRatio);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return WillPopScope(
@@ -575,7 +654,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
             children: [
               // Fullscreen camera preview
               Transform.scale(
-                scale: scale,
+                scale: 1 / (_controller.value.aspectRatio * size.aspectRatio),
                 child: Center(
                   child: ColorFiltered(
                       colorFilter: selectedFilter['filter'],
@@ -631,7 +710,9 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                               });
                             },
                             child: Container(
-                              width: _selectedMusic == null?null:MediaQuery.of(context).size.width / 2,
+                              width: _selectedMusic == null
+                                  ? null
+                                  : MediaQuery.of(context).size.width / 2,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 5, horizontal: 20),
                               decoration: BoxDecoration(
@@ -732,12 +813,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                         if (_mergedVideoPath != null) {
                           _mergeAudioWithVideo();
                         } else {
-                         /* if(_isPaused){
+                          /* if(_isPaused){
                             _mergeAudioWithVideo();
                           }else {*/
-                            _stopRecording(true).then((onValue) {
-                              _mergeAudioWithVideo();
-                            });
+                          _stopRecording(true).then((onValue) {
+                            _mergeAudioWithVideo();
+                          });
                           // }
                         }
                       } else {

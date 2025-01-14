@@ -162,7 +162,7 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                         ))
                   ],
                 ),
-           /*     Padding(
+                /*     Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 10),
                     child: Align(
@@ -205,10 +205,16 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
                     )),*/
                 Expanded(
                   child: currentTab == 0
-                      ? FollowersScreen(userId: widget.userId!,)
+                      ? FollowersScreen(
+                          userId: widget.userId ?? '',
+                        )
                       : currentTab == 1
-                          ? VotesScreen(userId: widget.userId!,)
-                          : FollowingScreen(userId: widget.userId!,),
+                          ? VotesScreen(
+                              userId: widget.userId ?? '',
+                            )
+                          : FollowingScreen(
+                              userId: widget.userId ?? '',
+                            ),
                 )
               ],
             ),
