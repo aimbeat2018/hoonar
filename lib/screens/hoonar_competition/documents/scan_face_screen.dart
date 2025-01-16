@@ -125,8 +125,6 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     setState(() {});
   }
 
-
-
   Future<void> _captureAndProcessFace() async {
     if (_isProcessing) return;
     setState(() {
@@ -136,21 +134,21 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     try {
       await _initializeControllerFuture;
       final image = await _cameraController.takePicture();
-      if(Platform.isAndroid) {
+      if (Platform.isAndroid) {
         final faceImagePath = await _detectAndCropFace(image.path);
         if (faceImagePath != null) {
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(content: Text("Face saved at $faceImagePath")),
           // );
           UploadKycDocumentRequestModel requestModel =
-          UploadKycDocumentRequestModel(
-              document: File(faceImagePath), documentName: 'Face');
+              UploadKycDocumentRequestModel(
+                  document: File(faceImagePath), documentName: 'Face');
           uploadFace(context, requestModel);
         }
-      }else{
+      } else {
         UploadKycDocumentRequestModel requestModel =
-        UploadKycDocumentRequestModel(
-            document: File(image.path), documentName: 'Face');
+            UploadKycDocumentRequestModel(
+                document: File(image.path), documentName: 'Face');
         uploadFace(context, requestModel);
       }
     } catch (e) {
