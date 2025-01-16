@@ -39,6 +39,7 @@ class Data {
   int? isVerify;
   int? isNotification;
   int? myWallet;
+  int? isBlock;
   String? bio;
   String? profileCategory;
   String? fbUrl;
@@ -74,6 +75,7 @@ class Data {
       this.platform,
       this.deviceToken,
       this.isVerify,
+      this.isBlock,
       this.isNotification,
       this.myWallet,
       this.bio,
@@ -113,6 +115,7 @@ class Data {
     isVerify = json['is_verify'];
     isNotification = json['is_notification'];
     myWallet = json['my_wallet'];
+    isBlock = json['is_block'];
     bio = json['bio'];
     profileCategory = json['profile_category'];
     fbUrl = json['fb_url'];
@@ -167,6 +170,7 @@ class Data {
     data['is_verify'] = isVerify;
     data['is_notification'] = isNotification;
     data['my_wallet'] = myWallet;
+    data['is_block'] = isBlock;
     data['bio'] = bio;
     data['profile_category'] = profileCategory;
     data['fb_url'] = fbUrl;

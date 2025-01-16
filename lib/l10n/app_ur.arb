@@ -252,5 +252,7 @@
   "enterCouponCode": "کوپن کوڈ درج کریں",
   "apply": "لاگو کریں",
   "emailUsOn": "اگر آپ کے کوئی سوالات ہیں یا مدد کی ضرورت ہے، تو براہ کرم ہمیں {emailId} پر ای میل کریں",
-  "areYouSureYouWantToDelete": "کیا آپ واقعی اسے حذف کرنا چاہتے ہیں؟"
+  "areYouSureYouWantToDelete": "کیا آپ واقعی اسے حذف کرنا چاہتے ہیں؟",
+  "block": "بلاک",
+  "unBlock": "ان بلاک"
 }

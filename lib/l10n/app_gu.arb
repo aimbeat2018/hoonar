@@ -252,5 +252,7 @@
   "enterCouponCode": "કૂપન કોડ દાખલ કરો",
   "apply": "લાગુ કરો",
   "emailUsOn": "તમારા પાસે કોઈ પ્રશ્નો હોય અથવા મદદની જરૂર હોય, તો કૃપા કરીને અમને {emailId} પર ઈમેલ કરો",
-  "areYouSureYouWantToDelete": "શું તમે ખરેખર આ ડિલીટ કરવા માંગો છો?"
+  "areYouSureYouWantToDelete": "શું તમે ખરેખર આ ડિલીટ કરવા માંગો છો?",
+  "block": "બ્લોક",
+  "unBlock": "અનબ્લોક"
 }

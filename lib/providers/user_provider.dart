@@ -113,7 +113,6 @@ class UserProvider extends ChangeNotifier {
       FollowUnfollowSuccessModel successModel =
           await _userService.followUnfollowUser(requestModel: requestModel);
       followStatusNotifier.value = successModel.followStatus ?? 0;
-
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -121,6 +120,8 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
 
   Future<void> getVotes() async {
     _isLoading = true;

@@ -75,9 +75,10 @@ Future<void> main() async {
   selectedLanguage =
       sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
 
-  NotificationPermissions.requestNotificationPermissions(
+  /*NotificationPermissions.requestNotificationPermissions(
       iosSettings:
-          const NotificationSettingsIos(sound: true, badge: true, alert: true));
+          const NotificationSettingsIos(sound: true, badge: true, alert: true));*/
+  // requestNotificationPermission();
 
   try {
     // if (!kIsWeb) {
@@ -98,34 +99,15 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-Future<void> initializeFirebase() async {
-  if (Firebase.apps.isEmpty) {
-    if (Platform.isAndroid) {
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-          appId: '1:458800452771:android:a35d10f82ff6c25d279b16',
-          messagingSenderId: '458800452771',
-          projectId: 'hoonar-db73e',
-          storageBucket: 'hoonar-db73e.appspot.com',
-        ),
-      );
-    } else if (Platform.isIOS) {
-      await Firebase.initializeApp(
-        name: 'hoonar-db73e',
-        options: const FirebaseOptions(
-          apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-          appId: '1:458800452771:ios:2f3016d02bbef45d279b16',
-          messagingSenderId: '458800452771',
-          projectId: 'hoonar-db73e',
-          storageBucket: 'hoonar-db73e.appspot.com',
-          iosBundleId: 'com.hoonar.hoonarstar',
-        ),
-      );
-
-      print("Firebase apps: ${Firebase.apps}");
-    }
-  }
+void requestNotificationPermission() async {
+  PermissionStatus status =
+      await NotificationPermissions.requestNotificationPermissions(
+    iosSettings: const NotificationSettingsIos(
+      sound: true,
+      badge: true,
+      alert: true,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

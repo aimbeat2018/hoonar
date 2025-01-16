@@ -18,6 +18,7 @@ const String getCategoryData = 'User/getPostCategoryList';
 const String getFollowerListUrl = 'Post/getFollowerList';
 const String getFollowingListUrl = 'Post/getFollowingList';
 const String followUnfollow = 'Post/followUnfollowPost';
+const String blockUnBlockUserUrl = 'User/blockUnblockUser';
 const String getUsersVotes = 'Post/getLevelWiseVotes';
 const String getPostList = 'Post/getPostListByCategory';
 const String getHomePostList = 'Post/getPostList';

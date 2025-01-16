@@ -13,6 +13,7 @@ import 'package:hoonar/providers/contest_provider.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../../constants/internet_connectivity.dart';
@@ -110,6 +111,22 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     }
   }
 
+  void requestPermissions() async {
+    // Request camera and microphone permissions
+    PermissionStatus cameraStatus = await Permission.camera.request();
+    PermissionStatus microphoneStatus = await Permission.microphone.request();
+
+    if (cameraStatus.isGranted && microphoneStatus.isGranted) {
+      // Both permissions granted, initialize the camera
+      print('Permissions Granted');
+
+      _initializeCamera();
+    } else {}
+    setState(() {});
+  }
+
+
+
   Future<void> _captureAndProcessFace() async {
     if (_isProcessing) return;
     setState(() {
@@ -119,14 +136,21 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     try {
       await _initializeControllerFuture;
       final image = await _cameraController.takePicture();
-      final faceImagePath = await _detectAndCropFace(image.path);
-      if (faceImagePath != null) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text("Face saved at $faceImagePath")),
-        // );
+      if(Platform.isAndroid) {
+        final faceImagePath = await _detectAndCropFace(image.path);
+        if (faceImagePath != null) {
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text("Face saved at $faceImagePath")),
+          // );
+          UploadKycDocumentRequestModel requestModel =
+          UploadKycDocumentRequestModel(
+              document: File(faceImagePath), documentName: 'Face');
+          uploadFace(context, requestModel);
+        }
+      }else{
         UploadKycDocumentRequestModel requestModel =
-            UploadKycDocumentRequestModel(
-                document: File(faceImagePath), documentName: 'Face');
+        UploadKycDocumentRequestModel(
+            document: File(image.path), documentName: 'Face');
         uploadFace(context, requestModel);
       }
     } catch (e) {
@@ -220,6 +244,74 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_isCameraInitialized) {
+      // return const Center(child: CircularProgressIndicator());
+      return Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
+                style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () async {
+                  await openAppSettings().then((onValue) {
+                    requestPermissions();
+                  });
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  margin: const EdgeInsets.only(
+                      top: 15, left: 60, right: 60, bottom: 5),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        strokeAlign: BorderSide.strokeAlignOutside,
+                        color: Colors.black,
+                      ),
+                      borderRadius: BorderRadius.circular(80),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.openSettings,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    }
     return _connectionStatus == KeyRes.connectivityCheck
         ? const NoInternetScreen()
         : Scaffold(

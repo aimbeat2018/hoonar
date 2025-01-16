@@ -12,6 +12,7 @@ import 'package:hoonar/model/success_models/logout_success_model.dart';
 import 'package:hoonar/model/success_models/profile_success_model.dart';
 import 'package:hoonar/model/success_models/signup_success_model.dart';
 import 'package:hoonar/services/user_service.dart';
+import '../model/request_model/list_common_request_model.dart';
 import '../model/success_models/follow_unfollow_success_model.dart';
 import '../model/success_models/send_otp_success_model.dart';
 import '../model/success_models/state_list_model.dart';
@@ -32,6 +33,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isUpdateProfileImageLoading = false;
   bool _isChangePasswordLoading = false;
   bool _isDeleteAccountLoading = false;
+  bool _isLoading = false;
   String? _errorMessage;
   List<StateListData>? _stateList;
   List<CityListData>? _cityList;
@@ -41,6 +43,7 @@ class AuthProvider extends ChangeNotifier {
   CheckUserSuccessModel? _checkUserSuccessModel;
   SendOtpSuccessModel? _sendOtpSuccessModel;
   ProfileSuccessModel? _profileSuccessModel;
+  FollowUnfollowSuccessModel? _userBlockUnblockedModel;
   LogoutSuccessModel? _logoutSuccessModel;
   FollowUnfollowSuccessModel? _updateAvatarModel;
   FollowUnfollowSuccessModel? _changePasswordModel;
@@ -68,6 +71,9 @@ class AuthProvider extends ChangeNotifier {
 
   FollowUnfollowSuccessModel? get updateAvatarModel => _updateAvatarModel;
 
+  FollowUnfollowSuccessModel? get userBlockUnblockedModel =>
+      _userBlockUnblockedModel;
+
   FollowUnfollowSuccessModel? get changePasswordModel => _changePasswordModel;
 
   FollowUnfollowSuccessModel? get deleteAccountModel => _deleteAccountModel;
@@ -79,6 +85,8 @@ class AuthProvider extends ChangeNotifier {
       _updateProfileImageModel;
 
   bool get isStateLoading => _isStateLoading;
+
+  bool get isLoading => _isLoading;
 
   bool get isCityLoading => _isCityLoading;
 
@@ -309,6 +317,27 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> blockUnBlockUser(
+      ListCommonRequestModel requestModel, int blockStatus) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      FollowUnfollowSuccessModel successModel =
+          await _userService.blockUnblockUser(requestModel: requestModel);
+      _userBlockUnblockedModel = successModel;
+      if (successModel.status == "200") {
+        profileNotifier.value!.data!.isBlock = blockStatus;
+      }
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> updateProfile(UpdateProfileRequestModel requestModel) async {
     _isProfileLoading = true;
     _errorMessage = null;
@@ -339,7 +368,7 @@ class AuthProvider extends ChangeNotifier {
               requestModel: requestModel, accessToken: accessToken);
       _updateAvatarModel = successModel;
       if (successModel.status == '200') {
-        getProfile(requestModel,accessToken);
+        getProfile(requestModel, accessToken);
       }
     } catch (e) {
       _errorMessage = e.toString();
@@ -377,7 +406,7 @@ class AuthProvider extends ChangeNotifier {
           await _userService.updateProfileImage(requestModel, accessToken);
       _updateProfileImageModel = successModel;
       if (successModel.status == '200') {
-        getProfile(profileRequest,accessToken);
+        getProfile(profileRequest, accessToken);
       }
     } catch (e) {
       _errorMessage = e.toString();

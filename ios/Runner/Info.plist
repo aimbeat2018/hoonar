@@ -35,11 +35,11 @@
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to the camera to take pictures and it helps users to create video from camera without camera permission video making process will be failed.</string>
+	<string>This app requires access to the camera to capture photos and videos for use within the app.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>We need access to the microphone to record video and it helps users to record video without microphone permission video making process will be failed</string>
+	<string>This app requires access to the microphone to record audio during video capture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to the photo library to take pictures and it helps users to upload video from gallery without photo library permission video making process will be failed.</string>
+	<string>This app requires access to your photo library to select and upload photos or videos.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -69,10 +69,10 @@
       <true/>
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to capture user location when they votes to any video.</string>
+    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>We need your location to capture user location when they votes to any video.</string>
+    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>We need your location to capture user location when they votes to any video.</string>
+    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
 </dict>
 </plist>

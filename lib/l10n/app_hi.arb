@@ -252,5 +252,7 @@
   "enterCouponCode": "कूपन कोड दर्ज करें",
   "apply": "लागू करें",
   "emailUsOn": "यदि आपके कोई प्रश्न हैं या सहायता की आवश्यकता है, तो कृपया हमें {emailId} पर ईमेल करें",
-  "areYouSureYouWantToDelete": "क्या आप वाकई इसे हटाना चाहते हैं?"
+  "areYouSureYouWantToDelete": "क्या आप वाकई इसे हटाना चाहते हैं?",
+  "block": "ब्लॉक",
+  "unBlock": "अनब्लॉक"
 }

@@ -1,16 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/capture_video_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/select_category_screen.dart';
+import 'package:hoonar/screens/main_screen/enable_notification_screen.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/search/search_screen.dart';
+import 'package:notification_permissions/notification_permissions.dart' as np;
+
+// import 'package:notification_permissions/notification_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:ve_sdk_flutter/export_result.dart';
 // import 'package:ve_sdk_flutter/features_config.dart';
 // import 'package:ve_sdk_flutter/ve_sdk_flutter.dart';
 
+import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 // import '../camera/camera_screen.dart';
@@ -26,7 +35,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Widget? screen1, screen2, screen3, screen4;
-
   int selectedIndex = 0;
 
   // final _veSdkFlutterPlugin = VeSdkFlutter();
@@ -37,6 +45,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+
+    checkNotificationPermission();
+
     if (widget.fromIndex != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
@@ -49,6 +60,46 @@ class _MainScreenState extends State<MainScreen> {
     screen1 = const HomeScreen();
     screen2 = const SearchScreen();
     screen3 = const ProfileScreen(from: 'main');
+  }
+
+  // Function to check the notification permission status
+  void checkNotificationPermission() async {
+    if (KeyRes.hasCheckedPermission) return; // Skip if already checked
+
+    np.PermissionStatus status =
+        await np.NotificationPermissions.getNotificationPermissionStatus();
+
+    if (status == np.PermissionStatus.denied) {
+      _openBottomSheet(context);
+    } else if (status == np.PermissionStatus.granted) {
+      // Permission granted, proceed as normal
+      print('Notification permissions granted');
+    } else {
+      // Permission not requested or undetermined, request permission
+      _openBottomSheet(context);
+    }
+
+    KeyRes.hasCheckedPermission = true; // Mark permission check as done
+  }
+
+  void _openBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      // isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SafeArea(child: EnableNotificationScreen());
+      },
+    );
+  }
+
+  // Open app settings using url_launcher
+  void openIosAppSettings() async {
+    if (await canLaunch('app-settings:')) {
+      await launch('app-settings:');
+    } else {
+      print('Could not open app settings');
+    }
   }
 
   Widget getBody() {
@@ -238,7 +289,7 @@ class _MainScreenState extends State<MainScreen> {
       )),
     );
   }
-  /*-----Banuba SDK CODE----*/
+/*-----Banuba SDK CODE----*/
 /*  Future<void> _startVideoEditorInCameraMode() async {
     // Specify your Config params in the builder below
 
@@ -276,14 +327,14 @@ class _MainScreenState extends State<MainScreen> {
       return;
     }
 
-    *//*   // The list of exported video file paths
+    */ /*   // The list of exported video file paths
     debugPrint('Exported video files = ${result.videoSources}');
 
     // Preview as a image file taken by the user. Null - when preview screen is disabled.
     debugPrint('Exported preview file = ${result.previewFilePath}');
 
     // Meta file where you can find short data used in exported video
-    debugPrint('Exported meta file = ${result.metaFilePath}');*//*
+    debugPrint('Exported meta file = ${result.metaFilePath}');*/ /*
 
     Navigator.push(
       context,

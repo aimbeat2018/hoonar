@@ -1009,7 +1009,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                               TextSpan(
                                                   text: AppLocalizations.of(
                                                           context)!
-                                                      .privacyPolicy,
+                                                      .termsConditions,
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 14,
                                                     color:
@@ -1024,7 +1024,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                               SlideRightRoute(
                                                                   page:
                                                                       const AppContentScreen(
-                                                                from: 'privacy',
+                                                                from:
+                                                                    'termsofuse',
                                                               )));
                                                         }),
                                             ],

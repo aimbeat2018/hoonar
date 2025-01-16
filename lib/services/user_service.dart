@@ -138,10 +138,8 @@ class UserService {
     );
   }
 
-  Future<ProfileSuccessModel> getUserProfile({
-    CommonRequestModel? requestModel,
-    String? accessToken
-  }) async {
+  Future<ProfileSuccessModel> getUserProfile(
+      {CommonRequestModel? requestModel, String? accessToken}) async {
     return apiMethods.sendRequest<ProfileSuccessModel>(
       '$baseUrl$getProfile',
       data: requestModel?.toJson(),
@@ -217,6 +215,17 @@ class UserService {
   }) async {
     return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$followUnfollow',
+      data: requestModel?.toJson(),
+      method: 'POST',
+      fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
+    );
+  }
+
+  Future<FollowUnfollowSuccessModel> blockUnblockUser({
+    ListCommonRequestModel? requestModel,
+  }) async {
+    return apiMethods.sendRequest<FollowUnfollowSuccessModel>(
+      '$baseUrl$blockUnBlockUserUrl',
       data: requestModel?.toJson(),
       method: 'POST',
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
