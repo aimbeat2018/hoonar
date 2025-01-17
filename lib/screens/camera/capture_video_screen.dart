@@ -38,6 +38,8 @@ class CaptureVideoScreen extends StatefulWidget {
 class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   late CameraController _controller;
   late List<CameraDescription> cameras;
+  double _currentZoom = 1.0;
+  double _lastScale = 1.0;
   bool _isCameraInitialized = false;
   bool _isRecording = false;
   bool _isFlashOn = false;
@@ -53,7 +55,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   Timer? timer;
   double currentSecond = 0;
   double currentPercentage = 0;
-  bool _permissionNotGranted = true;
+  bool _permissionNotGranted = false;
   List<String> _videoSegments = []; // Stores paths of video segments
   String? _mergedVideoPath;
   bool _isMerging = false;
@@ -73,8 +75,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeCameras();
-    _audioPlayer = AudioPlayer();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      initPermission();
+
+    });
   }
 
   @override
@@ -116,15 +122,34 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
       try {
         await _controller.initialize();
-        setState(() {
-          _isCameraInitialized = true;
-        });
+        // _minZoom = await _controller.getMinZoomLevel();
+        // _maxZoom = await _controller.getMaxZoomLevel();
+
+        _isCameraInitialized = true;
+        setState(() {});
       } catch (e) {
         print('Error initializing camera: $e');
       }
     } else {
       print('No cameras available');
     }
+  }
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    setState(() {
+      _currentZoom = _lastScale * details.scale;
+      if (_currentZoom < 1.0) _currentZoom = 1.0;
+      if (_currentZoom > 10.0) _currentZoom = 10.0; // Change max zoom if needed
+      _controller.setZoomLevel(_currentZoom);
+    });
+  }
+
+  // Method to update zoom level
+  void _setZoom(double zoom) {
+    setState(() {
+      _currentZoom = zoom;
+      _controller.setZoomLevel(zoom);
+    });
   }
 
   Future<void> _startRecording() async {
@@ -180,6 +205,11 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     // if (!_isRecording) return;
 
     try {
+      if (_controller.value.isRecordingPaused) {
+        await _controller.resumeVideoRecording();
+        await Future.delayed(
+            Duration(milliseconds: 500)); // Small delay to stabilize
+      }
       final file = await _controller.stopVideoRecording();
       _videoSegments.add(file.path); // Save the final segment
       setState(() {
@@ -407,6 +437,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         statuses[Permission.microphone]!.isGranted) {
       print('Granted');
       _permissionNotGranted = true;
+
+      _initializeCameras();
+      _audioPlayer = AudioPlayer();
+
     } else {
       _permissionNotGranted = false;
       print('Not Granted');
@@ -574,7 +608,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isCameraInitialized) {
+    if (!_permissionNotGranted) {
       // return const Center(child: CircularProgressIndicator());
       return Scaffold(
         body: Padding(
@@ -641,6 +675,10 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
           ),
         ),
       );
+    } else if (!_isCameraInitialized) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
     final size = MediaQuery.of(context).size;
@@ -658,7 +696,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                 child: Center(
                   child: ColorFiltered(
                       colorFilter: selectedFilter['filter'],
-                      child: CameraPreview(_controller)),
+                      child: GestureDetector(
+                          onScaleUpdate: _onScaleUpdate,
+                          onScaleEnd: (_) {
+                            _lastScale = _currentZoom;
+                          },
+                          child: CameraPreview(_controller))),
                 ),
               ),
 
@@ -800,7 +843,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
               if (!_isRecording || !_isPaused)
                 Positioned(
-                  top: 55,
+                  top: 50,
                   // left: 0,
                   right: 15,
                   child: InkWell(

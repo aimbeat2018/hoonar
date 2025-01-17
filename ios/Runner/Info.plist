@@ -35,11 +35,14 @@
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera to capture photos and videos for use within the app.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to the microphone to record audio during video capture.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app requires access to your photo library to select and upload photos or videos.</string>
+    <string>This app requires access to the camera to allow users to capture photos for profile and videos for participating in competitions and uploading media content.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>his app requires access to the microphone to record audio when capturing videos for competitions and media uploads.</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
+
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

@@ -312,13 +312,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                       horizontal: 15.0),
                                   child: TextFormField(
                                     validator: (v) {
-                                      if (v!.trim().isEmpty) {
+                                      /*if (v!.trim().isEmpty) {
                                         return AppLocalizations.of(context)!
                                             .enterPhoneNumberError;
                                       } else if (v.length != 10) {
                                         return AppLocalizations.of(context)!
                                             .enterValidPhoneNumber;
-                                      }
+                                      }*/
                                       return null;
                                     },
                                     maxLines: 1,
