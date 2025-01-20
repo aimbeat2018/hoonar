@@ -16,6 +16,7 @@ import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/setting_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
+import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
@@ -27,6 +28,7 @@ import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 
 import 'constants/const_res.dart';
+import 'constants/global_key.dart';
 import 'constants/key_res.dart';
 import 'constants/my_loading/my_loading.dart';
 import 'constants/session_manager.dart';
@@ -69,31 +71,18 @@ Future<void> main() async {
           iosBundleId: 'com.hoonar.hoonarstar',
         ));
   }
-
-  // await FlutterDownloader.initialize(ignoreSsl: true);
   await sessionManager.initPref();
   selectedLanguage =
       sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
 
-  /*NotificationPermissions.requestNotificationPermissions(
-      iosSettings:
-          const NotificationSettingsIos(sound: true, badge: true, alert: true));*/
-  // requestNotificationPermission();
-
   try {
-    // if (!kIsWeb) {
     final RemoteMessage? remoteMessage =
         await FirebaseMessaging.instance.getInitialMessage();
 
-    if (remoteMessage != null) {
-      // _orderID = remoteMessage.notification!.titleLocKey != null
-      //     ? int.parse(remoteMessage.notification!.titleLocKey!)
-      //     : null;
-    }
+    if (remoteMessage != null) {}
 
     await NotificationHelper.initialize(flutterLocalNotificationsPlugin!);
     FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
-    // }
   } catch (e) {}
 
   runApp(const MyApp());
@@ -115,6 +104,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    NotificationHelper.setContext(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MyLoading()),
@@ -138,6 +128,7 @@ class MyApp extends StatelessWidget {
               durationUntilAlertAgain: const Duration(microseconds: 5),
             ),
             child: MaterialApp(
+              navigatorKey: GlobalVariable.navKey,
               debugShowCheckedModeBanner: false,
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,

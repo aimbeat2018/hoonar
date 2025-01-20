@@ -158,6 +158,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
           setState(() {
             KeyRes.selectedLevelId = -1;
             KeyRes.selectedCategoryId = -1;
+            KeyRes.selectedCategoryName = '';
           });
         }
 
@@ -202,6 +203,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
           setState(() {
             KeyRes.selectedLevelId = -1;
             KeyRes.selectedCategoryId = -1;
+            KeyRes.selectedCategoryName = '';
           });
         }
 
@@ -952,7 +954,11 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                         addPost(context,
                                                             requestModel);
                                                       }
-                                                    : null,
+                                                    : () {
+                                                        SnackbarUtil.showSnackBar(
+                                                            context,
+                                                            'Your KYC not completed');
+                                                      },
                                             child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(

@@ -1,3 +1,6 @@
+import 'package:hoonar/model/success_models/home_post_success_model.dart';
+import 'package:hoonar/model/success_models/post_list_success_model.dart';
+
 class NotificationListModel {
   String? status;
   String? message;
@@ -14,7 +17,7 @@ class NotificationListModel {
     if (json['data'] != null) {
       data = <NotificationData>[];
       json['data'].forEach((v) {
-        data!.add(new NotificationData.fromJson(v));
+        data!.add(NotificationData.fromJson(v));
       });
     }
   }
@@ -32,50 +35,65 @@ class NotificationListModel {
 }
 
 class NotificationData {
-  int? notificationId;
-
   int? userId;
-  String? image;
-  int? notificationType;
+  int? notificationId;
   String? message;
-  String? createdAt;
-  String? updatedAt;
+  String? image;
   String? description;
+  String? createdAt;
   int? isRead;
+  String? type;
+  int? itemId;
+  String? userDetails;
+  List<PostsListData>? postDetails;
 
   NotificationData(
-      {this.notificationId,
-      this.userId,
-      this.image,
-      this.notificationType,
+      {this.userId,
+      this.notificationId,
       this.message,
+      this.image,
+      this.description,
       this.createdAt,
-      this.updatedAt,
-      this.isRead});
+      this.isRead,
+      this.type,
+      this.itemId,
+      this.userDetails,
+      this.postDetails});
 
   NotificationData.fromJson(Map<String, dynamic> json) {
-    notificationId = json['notification_id'];
     userId = json['user_id'];
-    image = json['image'];
-    notificationType = json['notification_type'];
+    notificationId = json['notification_id'];
     message = json['message'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    isRead = json['is_read'];
+    image = json['image'];
     description = json['description'];
+    createdAt = json['created_at'];
+    isRead = json['is_read'];
+    type = json['type'];
+    itemId = json['item_id'];
+    userDetails = json['user_details'];
+    if (json['post_details'] != null) {
+      postDetails = <PostsListData>[];
+      json['post_details'].forEach((v) {
+        postDetails!.add(PostsListData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['notification_id'] = notificationId;
     data['user_id'] = userId;
-    data['image'] = image;
-    data['notification_type'] = notificationType;
+    data['notification_id'] = notificationId;
     data['message'] = message;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['is_read'] = isRead;
+    data['image'] = image;
     data['description'] = description;
+    data['created_at'] = createdAt;
+    data['is_read'] = isRead;
+    data['type'] = type;
+    data['item_id'] = itemId;
+    data['user_details'] = userDetails;
+    if (postDetails != null) {
+      data['post_details'] = postDetails!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }

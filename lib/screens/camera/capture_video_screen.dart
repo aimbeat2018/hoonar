@@ -9,6 +9,7 @@ import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/camera/filters_screen.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
@@ -77,9 +78,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-
       initPermission();
-
     });
   }
 
@@ -436,13 +435,21 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     if (statuses[Permission.camera]!.isGranted &&
         statuses[Permission.microphone]!.isGranted) {
       print('Granted');
-      _permissionNotGranted = true;
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = true;
+        });
+      }
 
       _initializeCameras();
       _audioPlayer = AudioPlayer();
-
     } else {
-      _permissionNotGranted = false;
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = false;
+        });
+      }
+
       print('Not Granted');
     }
     setState(() {});
@@ -455,10 +462,15 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
 
     if (cameraStatus.isGranted && microphoneStatus.isGranted) {
       // Both permissions granted, initialize the camera
-      print('Permissions Granted');
-
+      setState(() {
+        _permissionNotGranted = true;
+      });
       _initializeCameras();
-    } else {}
+    } else {
+      setState(() {
+        _permissionNotGranted = false;
+      });
+    }
     setState(() {});
   }
 
@@ -606,83 +618,86 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     return false; // Allow back navigation
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (!_permissionNotGranted) {
-      // return const Center(child: CircularProgressIndicator());
-      return Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
-                style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                AppLocalizations.of(context)!
-                    .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
-                style: GoogleFonts.poppins(
+  Widget permissionNotGranted() {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
+              style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
+                  fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              AppLocalizations.of(context)!
+                  .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.white,
               ),
-              SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                onTap: () async {
-                  await openAppSettings().then((onValue) {
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () async {
+                /* await openAppSettings().then((onValue) {
+                  requestPermissions();
+                });*/
+                bool opened = await openAppSettings();
+                if (opened) {
+                  Future.delayed(const Duration(seconds: 2), () {
                     requestPermissions();
                   });
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  margin: const EdgeInsets.only(
-                      top: 15, left: 60, right: 60, bottom: 5),
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(80),
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.openSettings,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
+                }
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                margin: const EdgeInsets.only(
+                    top: 15, left: 60, right: 60, bottom: 5),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      strokeAlign: BorderSide.strokeAlignOutside,
                       color: Colors.black,
-                      fontWeight: FontWeight.w600,
                     ),
+                    borderRadius: BorderRadius.circular(80),
                   ),
                 ),
-              )
-            ],
-          ),
+                child: Text(
+                  AppLocalizations.of(context)!.openSettings,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
-      );
-    } else if (!_isCameraInitialized) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+      ),
+    );
+  }
 
+  Widget cameraNotInitialize() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget cameraInitializeAndPemissionGranted() {
     final size = MediaQuery.of(context).size;
-    // final scale = 1 / (_controller.value.aspectRatio * size.aspectRatio);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return WillPopScope(
@@ -894,19 +909,60 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Gallery Icon
-                          !_isRecording
-                              ? InkWell(
-                                  onTap: () {
-                                    print('data');
-                                    _selectVideoFromGallery();
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/reel_gallery.png',
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                )
-                              : const SizedBox(),
+
+                          /*  widget.from == 'normal'
+                              ? !_isRecording
+                                  ? InkWell(
+                                      onTap: () {
+                                        print('data');
+                                        _selectVideoFromGallery();
+                                      },
+                                      child: Image.asset(
+                                        'assets/images/reel_gallery.png',
+                                        height: 30,
+                                        width: 30,
+                                      ),
+                                    )
+                                  : const SizedBox()
+                              : widget.from == 'level'
+                                  ? KeyRes.selectedCategoryName.toLowerCase() ==
+                                              'modelling' ||
+                                          KeyRes.selectedCategoryName
+                                                  .toLowerCase() ==
+                                              'show skills'
+                                      ? !_isRecording
+                                          ? InkWell(
+                                              onTap: () {
+                                                print('data');
+                                                _selectVideoFromGallery();
+                                              },
+                                              child: Image.asset(
+                                                'assets/images/reel_gallery.png',
+                                                height: 30,
+                                                width: 30,
+                                              ),
+                                            )
+                                          : const SizedBox()
+                                      : const SizedBox(
+                                          height: 30,
+                                          width: 30,
+                                        )
+                                  : !_isRecording
+                                      ? InkWell(
+                                          onTap: () {
+                                            print('data');
+                                            _selectVideoFromGallery();
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/reel_gallery.png',
+                                            height: 30,
+                                            width: 30,
+                                          ),
+                                        )
+                                      : const SizedBox(),*/
+
+                          _buildGalleryIcon(),
+
                           // Flash Icon
                           InkWell(
                             onTap: () {
@@ -1083,6 +1139,37 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         ),
       );
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return !_permissionNotGranted
+        ? permissionNotGranted()
+        : !_isCameraInitialized
+            ? cameraNotInitialize()
+            : cameraInitializeAndPemissionGranted();
+  }
+
+  Widget _buildGalleryIcon() {
+    if (_isRecording) return const SizedBox(); // Hide when recording
+
+    bool shouldShowGallery = widget.from == 'normal' ||
+        (widget.from == 'level' &&
+            (KeyRes.selectedCategoryName.toLowerCase() == 'modelling' ||
+                KeyRes.selectedCategoryName.toLowerCase() == 'show skills'));
+
+    return shouldShowGallery
+        ? InkWell(
+            onTap: () {
+              _selectVideoFromGallery();
+            },
+            child: Image.asset(
+              'assets/images/reel_gallery.png',
+              height: 30,
+              width: 30,
+            ),
+          )
+        : const SizedBox(height: 30, width: 30);
   }
 
   void _openFilterOptionsSheet(BuildContext context, bool isDarkMode) {

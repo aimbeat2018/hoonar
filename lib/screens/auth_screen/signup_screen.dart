@@ -33,7 +33,9 @@ import '../profile/menuOptionsScreens/app_content_screen.dart';
 import 'create_password_screen.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  final String? mobileNumber;
+
+  const SignupScreen({super.key, this.mobileNumber});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -73,6 +75,12 @@ class _SignupScreenState extends State<SignupScreen> {
             _connectionStatus = value;
           }));
     });
+
+    if (mounted) {
+      setState(() {
+        phoneController.text = widget.mobileNumber ?? '';
+      });
+    }
   }
 
   @override
@@ -312,13 +320,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                       horizontal: 15.0),
                                   child: TextFormField(
                                     validator: (v) {
-                                      /*if (v!.trim().isEmpty) {
+                                      if (v!.trim().isEmpty) {
                                         return AppLocalizations.of(context)!
                                             .enterPhoneNumberError;
                                       } else if (v.length != 10) {
                                         return AppLocalizations.of(context)!
                                             .enterValidPhoneNumber;
-                                      }*/
+                                      }
                                       return null;
                                     },
                                     maxLines: 1,
@@ -345,6 +353,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                               horizontal: 10, vertical: 3),
                                     ),
                                     controller: phoneController,
+                                    readOnly: true,
                                     cursorColor: myLoading.isDark
                                         ? Colors.white
                                         : Colors.black,

@@ -5,6 +5,7 @@ const String getState = 'User/getStateList';
 const String getCity = 'User/getCityListByState/';
 const String checkUserMobileAndEmail = 'User/checkUserEmailOrMobile';
 const String register = 'User/Registration';
+const String checkMobile = 'User/checkUserMobile';
 const String login = 'login';
 const String sendForgetOtp = 'User/sendOtp';
 const String verifyForgetOtp = 'User/verifyOtp';
@@ -84,5 +85,3 @@ const String deleteNotificationUrl = 'User/deleteNotification';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
-
-

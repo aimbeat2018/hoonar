@@ -40,6 +40,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  bool _permissionNotGranted = false;
 
   @override
   void initState() {
@@ -56,7 +57,9 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     });
 
     // _initializeCamera();
-    _initializeCamera();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initPermission();
+    });
 
     _faceDetector = FaceDetector(
       options: FaceDetectorOptions(
@@ -64,6 +67,35 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
         enableLandmarks: true,
       ),
     );
+  }
+
+  void initPermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+    print(statuses[Permission.camera]!.isGranted);
+    print(statuses[Permission.microphone]!.isGranted);
+    if (statuses[Permission.camera]!.isGranted &&
+        statuses[Permission.microphone]!.isGranted) {
+      print('Granted');
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = true;
+        });
+      }
+
+      _initializeCamera();
+    } else {
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = false;
+        });
+      }
+
+      print('Not Granted');
+    }
+    setState(() {});
   }
 
   /*Future<void> _initializeCamera() async {
@@ -119,9 +151,15 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     if (cameraStatus.isGranted && microphoneStatus.isGranted) {
       // Both permissions granted, initialize the camera
       print('Permissions Granted');
-
+      setState(() {
+        _permissionNotGranted = true;
+      });
       _initializeCamera();
-    } else {}
+    } else {
+      setState(() {
+        _permissionNotGranted = false;
+      });
+    }
     setState(() {});
   }
 
@@ -240,76 +278,85 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (!_isCameraInitialized) {
-      // return const Center(child: CircularProgressIndicator());
-      return Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
-                style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                AppLocalizations.of(context)!
-                    .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
-                style: GoogleFonts.poppins(
+  Widget permissionNotGranted() {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.toAccessYourCameraAndMicrophone,
+              style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
+                  fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              AppLocalizations.of(context)!
+                  .ifAppearsThatCameraPermissionHasNotBeenGrantedEtc,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.white,
               ),
-              SizedBox(
-                height: 20,
-              ),
-              InkWell(
-                onTap: () async {
-                  await openAppSettings().then((onValue) {
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () async {
+                /* await openAppSettings().then((onValue) {
+                  requestPermissions();
+                });*/
+                bool opened = await openAppSettings();
+                if (opened) {
+                  Future.delayed(const Duration(seconds: 2), () {
                     requestPermissions();
                   });
-                },
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  margin: const EdgeInsets.only(
-                      top: 15, left: 60, right: 60, bottom: 5),
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        strokeAlign: BorderSide.strokeAlignOutside,
-                        color: Colors.black,
-                      ),
-                      borderRadius: BorderRadius.circular(80),
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.openSettings,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
+                }
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                margin: const EdgeInsets.only(
+                    top: 15, left: 60, right: 60, bottom: 5),
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      strokeAlign: BorderSide.strokeAlignOutside,
                       color: Colors.black,
-                      fontWeight: FontWeight.w600,
                     ),
+                    borderRadius: BorderRadius.circular(80),
                   ),
                 ),
-              )
-            ],
-          ),
+                child: Text(
+                  AppLocalizations.of(context)!.openSettings,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
+
+  Widget cameraNotInitialize() {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget cameraInitializeAndPemissionGranted() {
     return _connectionStatus == KeyRes.connectivityCheck
         ? const NoInternetScreen()
         : Scaffold(
@@ -404,5 +451,14 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
               },
             ),
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return !_permissionNotGranted
+        ? permissionNotGranted()
+        : !_isCameraInitialized
+            ? cameraNotInitialize()
+            : cameraInitializeAndPemissionGranted();
   }
 }

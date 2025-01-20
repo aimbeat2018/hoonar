@@ -1,6 +1,6 @@
 class SendOtpSuccessModel {
   String? status;
-  int? otp;
+  String? otp;
   String? message;
 
   SendOtpSuccessModel({this.status, this.otp, this.message});

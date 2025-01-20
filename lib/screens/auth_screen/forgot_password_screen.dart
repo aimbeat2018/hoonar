@@ -437,8 +437,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         if (authProvider.sendOtpSuccessModel?.status == "200") {
           SnackbarUtil.showSnackBar(
               context, authProvider.sendOtpSuccessModel?.message! ?? '');
-          SnackbarUtil.showSnackBar(
-              context, authProvider.sendOtpSuccessModel?.otp!.toString() ?? '');
+        /*  SnackbarUtil.showSnackBar(
+              context, authProvider.sendOtpSuccessModel?.otp!.toString() ?? '');*/
 
           setState(() {
             otpVisible = !otpVisible;

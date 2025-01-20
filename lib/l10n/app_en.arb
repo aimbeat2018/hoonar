@@ -233,6 +233,7 @@
   "other": "Other",
   "kycApprovedMessage": "Congratulations! Your KYC has been successfully approved. You can now enjoy full access to all our services.",
   "kycRejectedMessage": "Unfortunately, your KYC verification has been rejected. Please review your details and try submitting the required documents again. If you need assistance, feel free to reach out to our support team.",
+  "kycPendingMessage": "Your details are currently under review.",
   "areYouSureYouWantToDeleteAccount": "Are you sure you want to delete the account?",
   "areYouSureYouWantToDeleteAccountMsg": "This action is permanent and cannot be undone. All your data will be erased.",
   "alert": "Alert",
@@ -255,5 +256,6 @@
   "emailUsOn": "If you have any questions or need assistance, please email us at {emailId}",
   "areYouSureYouWantToDelete": "Are you sure you want to delete?",
   "block": "Block",
-  "unBlock": "Unblock"
+  "unBlock": "Unblock",
+  "enterValidOtp": "Enter Valid Otp"
 }

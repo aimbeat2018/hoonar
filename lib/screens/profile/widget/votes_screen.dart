@@ -75,7 +75,7 @@ class _VotesScreenState extends State<VotesScreen> {
       setState(() {});
       final authProvider = Provider.of<UserProvider>(context, listen: false);
 
-      await authProvider.getVotes();
+      await authProvider.getVotes(requestModel);
 
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');

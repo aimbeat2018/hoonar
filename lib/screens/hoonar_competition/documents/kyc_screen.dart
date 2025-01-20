@@ -17,7 +17,6 @@ import '../../../constants/session_manager.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/snackbar_util.dart';
-import '../../../model/request_model/upload_kyc_document_request_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../auth_screen/login_screen.dart';
 
@@ -203,16 +202,15 @@ class _KycScreenState extends State<KycScreen> {
                                       contestProvider.faceStatusNotifier,
                                   builder: (context, faceStatus, child) {
                                     return InkWell(
-                                      onTap:
-                                          faceStatus == 1 /*|| faceStatus == 3*/
-                                              ? null
-                                              : () {
-                                                  Navigator.push(
-                                                    context,
-                                                    SlideRightRoute(
-                                                        page: ScanFaceScreen()),
-                                                  );
-                                                },
+                                      onTap: faceStatus == 1 || faceStatus == 3
+                                          ? null
+                                          : () {
+                                              Navigator.push(
+                                                context,
+                                                SlideRightRoute(
+                                                    page: ScanFaceScreen()),
+                                              );
+                                            },
                                       child: Container(
                                         margin: const EdgeInsets.only(top: 10),
                                         padding: const EdgeInsets.symmetric(
@@ -246,6 +244,7 @@ class _KycScreenState extends State<KycScreen> {
                                       ),
                                     );
                                   }),
+
                               // InkWell(
                               //   onTap: () {},
                               //   child: Container(
@@ -267,7 +266,74 @@ class _KycScreenState extends State<KycScreen> {
                               // )
                             ],
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        ValueListenableBuilder<int?>(
+                            valueListenable: contestProvider.faceStatusNotifier,
+                            builder: (context, faceStatus, child) {
+                              return Column(
+                                children: [
+                                  faceStatus == 1
+                                      ? Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: Text(
+                                            AppLocalizations.of(context)!
+                                                .kycApprovedMessage,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        )
+                                      : faceStatus == 3
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Text(
+                                                AppLocalizations.of(context)!
+                                                    .kycPendingMessage,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: myLoading.isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            )
+                                          : faceStatus == 2
+                                              ? Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .kycRejectedMessage,
+                                                    textAlign: TextAlign.center,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: myLoading.isDark
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox()
+                                ],
+                              );
+                            }),
                       ],
                     ),
                   ),

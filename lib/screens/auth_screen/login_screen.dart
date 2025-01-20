@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/model/request_model/sign_in_request_model.dart';
+import 'package:hoonar/screens/auth_screen/check_mobile_number_screen.dart';
 import 'package:hoonar/screens/auth_screen/forgot_password_screen.dart';
 import 'package:hoonar/screens/auth_screen/signup_screen.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
@@ -436,7 +437,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 InkWell(
                                   onTap: () => Navigator.push(
                                     context,
-                                    SlideRightRoute(page: SignupScreen()),
+                                    SlideRightRoute(
+                                        page: CheckMobileNumberScreen()),
                                   ),
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,

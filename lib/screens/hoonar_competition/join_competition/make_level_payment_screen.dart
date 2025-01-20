@@ -166,8 +166,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
     storePayment(
         context,
         StorePaymentRequestModel(
-            userId:  signupSuccessModel!
-                .data!.userId!,
+            userId: signupSuccessModel!.data!.userId!,
             levelId: widget.model.levelId,
             categoryId: widget.categoryId,
             amount: amountPaid.toString(),

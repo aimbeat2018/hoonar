@@ -457,11 +457,14 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                             return InkWell(
                               onTap: () {
                                 if (index == 0) {
-                                  /*  Navigator.push(
-                              context,
-                              SlideRightRoute(page: UploadVideoOptionsScreen()),
-                            );*/
-                                  if (contestProvider.uploadVideoStatusModel !=
+                                  Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: const CaptureVideoScreen(
+                                          from: "level",
+                                        )),
+                                  );
+                                  /*if (contestProvider.uploadVideoStatusModel !=
                                           null &&
                                       contestProvider
                                               .uploadVideoStatusModel!.status ==
@@ -478,37 +481,8 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                         context,
                                         contestProvider
                                             .uploadVideoStatusModel!.data!);
-                                  }
-                                }
-                                /*else if (index == 1) {
-                            if (contestProvider.uploadVideoStatusModel !=
-                                    null &&
-                                contestProvider
-                                        .uploadVideoStatusModel!.status ==
-                                    "200") {
-                              _selectVideoFromGallery();
-                            } else {
-                              showCompetitionDateDialog(
-                                  context,
-                                  contestProvider
-                                      .uploadVideoStatusModel!.data!);
-                            }
-                          }*/
-                                /*else if (index == 2) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(
-                                  page: const CaptureVideoScreen(
-                                from: "level",
-                              )),
-                            );
-                          } else if (index == 3) {
-                            Navigator.push(
-                              context,
-                              SlideRightRoute(page: UploadVideoOptionsScreen()),
-                            );
-                          }*/
-                                else if (index == 1) {
+                                  }*/
+                                } else if (index == 1) {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

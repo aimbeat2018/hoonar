@@ -12,6 +12,8 @@ import 'package:hoonar/custom/snackbar_util.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/notification_list_model.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/join_competition/select_category_screen.dart';
+import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/shimmerLoaders/news_event_list_shimmer.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +26,7 @@ import '../../constants/session_manager.dart';
 import '../../constants/theme.dart';
 import '../../custom/data_not_found.dart';
 import '../../providers/home_provider.dart';
-import '../profile/profile_screen.dart';
+import '../reels/reels_list_screen.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});
@@ -347,6 +349,33 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     return InkWell(
       onLongPress: () {
         showDeleteDialog(context, isDarkMode, model.notificationId!, index);
+      },
+      onTap: () {
+        if (model.type == 'competition') {
+          Navigator.push(
+            context,
+            SlideRightRoute(page: SelectCategoryScreen()),
+          );
+        } else if (model.type == 'follow') {
+          Navigator.push(
+            context,
+            SlideRightRoute(
+                page: ProfileScreen(
+              from: 'profile',
+              userId: model.userDetails!.toString(),
+            )),
+          );
+        } else if (model.type == 'post') {
+          Navigator.push(
+            context,
+            SlideRightRoute(
+              page: ReelsListScreen(
+                postList: model.postDetails ?? [],
+                index: index,
+              ),
+            ),
+          );
+        }
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),

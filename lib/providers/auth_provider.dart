@@ -25,6 +25,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isStateLoading = false;
   bool _isCityLoading = false;
   bool _isSignUpLoading = false;
+  bool _isSendRegisterOtpLoading = false;
   bool _isCheckUserLoading = false;
   bool _isSendOtpLoading = false;
   bool _isProfileLoading = false;
@@ -40,6 +41,7 @@ class AuthProvider extends ChangeNotifier {
   List<StateListData>? _filteredStateList;
   List<CityListData>? _filteredCityList;
   SignupSuccessModel? _signupSuccessModel;
+  SendOtpSuccessModel? _sendRegisterOtpSuccessModel;
   CheckUserSuccessModel? _checkUserSuccessModel;
   SendOtpSuccessModel? _sendOtpSuccessModel;
   ProfileSuccessModel? _profileSuccessModel;
@@ -64,6 +66,9 @@ class AuthProvider extends ChangeNotifier {
   CheckUserSuccessModel? get checkUserSuccessModel => _checkUserSuccessModel;
 
   SendOtpSuccessModel? get sendOtpSuccessModel => _sendOtpSuccessModel;
+
+  SendOtpSuccessModel? get sendRegisterOtpSuccessModel =>
+      _sendRegisterOtpSuccessModel;
 
   ProfileSuccessModel? get profileSuccessModel => _profileSuccessModel;
 
@@ -99,6 +104,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isCheckUserLoading => _isCheckUserLoading;
 
   bool get isSendOtpLoading => _isSendOtpLoading;
+
+  bool get isSendRegisterOtpLoading => _isSendRegisterOtpLoading;
 
   bool get isProfileLoading => _isProfileLoading;
 
@@ -208,6 +215,23 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isSignUpLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> checkUserMobile(SignupRequestModel requestModel) async {
+    _isSendRegisterOtpLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SendOtpSuccessModel successModel =
+          await _userService.checkUserMobile(requestModel: requestModel);
+      _sendRegisterOtpSuccessModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSendRegisterOtpLoading = false;
       notifyListeners();
     }
   }

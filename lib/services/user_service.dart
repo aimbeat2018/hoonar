@@ -74,6 +74,26 @@ class UserService {
     return userModel;
   }
 
+  Future<SendOtpSuccessModel> checkUserMobile({
+    SignupRequestModel? requestModel,
+  }) async {
+    final userModel = await apiMethods.sendRequest<SendOtpSuccessModel>(
+      '$baseUrl$checkMobile',
+      data: requestModel?.toJson(),
+      method: 'POST',
+      fromJson: (data) => SendOtpSuccessModel.fromJson(data),
+    );
+
+    // Save user details if successful
+    if (userModel.status == '200') {
+      SessionManager sessionManager = SessionManager();
+      await sessionManager.initPref();
+      sessionManager.saveUser(jsonEncode(userModel));
+    }
+
+    return userModel;
+  }
+
   Future<SignupSuccessModel> signInUser({
     SignInRequestModel? requestModel,
   }) async {
@@ -232,9 +252,11 @@ class UserService {
     );
   }
 
-  Future<UserWiseVoteListModel> getVotes() async {
+  Future<UserWiseVoteListModel> getVotes(ListCommonRequestModel request) async {
     return apiMethods.sendRequest<UserWiseVoteListModel>(
       '$baseUrl$getUsersVotes',
+      data: request.toJson(),
+      method: 'POST',
       fromJson: (data) => UserWiseVoteListModel.fromJson(data),
     );
   }

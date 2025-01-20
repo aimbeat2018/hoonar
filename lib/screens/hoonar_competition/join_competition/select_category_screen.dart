@@ -175,6 +175,12 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                                                       .categoryListSuccessModel!
                                                       .data![index]
                                                       .categoryId!;
+                                              KeyRes.selectedCategoryName =
+                                                  homeProvider
+                                                          .categoryListSuccessModel!
+                                                          .data![index]
+                                                          .categoryName ??
+                                                      '';
                                             });
                                           }
                                           Navigator.push(

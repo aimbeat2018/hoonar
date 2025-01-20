@@ -20,6 +20,7 @@ class KeyRes {
   static String connectivityCheck = "ConnectivityResult.none";
 
   static int selectedCategoryId = -1;
+  static String selectedCategoryName = '';
   static int selectedLevelId = -1;
   static bool hasCheckedPermission = false;
 }

@@ -121,15 +121,13 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
-
-
-  Future<void> getVotes() async {
+  Future<void> getVotes(ListCommonRequestModel request) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      UserWiseVoteListModel successModel = await _userService.getVotes();
+      UserWiseVoteListModel successModel = await _userService.getVotes(request);
       _userWiseVoteListModel = successModel;
       _userWiseVoteList = successModel.data;
       userWiseVotesNotifier.value = successModel;
