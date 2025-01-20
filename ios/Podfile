@@ -4,7 +4,6 @@ platform :ios, '15.5.0'
 
 $iOSVersion = '15.5.0'
 
-
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -36,28 +35,38 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
 end
 
 post_install do |installer|
-#   installer.pods_project.targets.each do |target|
-#     flutter_additional_ios_build_settings(target)
-#   end
-   installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=*]"] = "armv7"
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
-   end
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings["EXCLUDED_ARCHS[sdk=*]"] = "armv7"
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
+  end
 
-   installer.pods_project.targets.each do |target|
-     flutter_additional_ios_build_settings(target)
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
 
-    # add these lines:
+    # Ensuring compatibility with iOS version
     target.build_configurations.each do |config|
       if Gem::Version.new($iOSVersion) > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
       end
     end
-   end
+
+    # Enable permissions for permission_handler package
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+        '$(inherited)',
+        'PERMISSION_CAMERA=1',
+        'PERMISSION_MICROPHONE=1',
+        'PERMISSION_LOCATION=1',
+        'PERMISSION_LOCATION_ALWAYS=1',
+        'PERMISSION_LOCATION_WHEN_IN_USE=1'
+      ]
+    end
+  end
 end
