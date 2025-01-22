@@ -85,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
   void _openBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      // isScrollControlled: true,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return SafeArea(child: EnableNotificationScreen());

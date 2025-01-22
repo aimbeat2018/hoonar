@@ -56,10 +56,10 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(
       builder: (context, myLoading, child) {
-        return Wrap(
-          children: [
-            SingleChildScrollView(
-              child: Center(
+        return SingleChildScrollView(
+          child: Wrap(
+            children: [
+              Center(
                 child: Container(
                   color: myLoading.isDark ? Colors.black : Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
@@ -158,8 +158,8 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
