@@ -70,9 +70,14 @@ class _CarouselPageViewState extends State<CarouselPageView>
               child: SizedBox(
                 width: 250,
                 height: 250,
-                child: Image.network(
-                  data.postImage!,
-                  fit: BoxFit.fill,
+                child: CachedNetworkImage(
+                  imageUrl: data.postImage!,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) =>
+                      buildInitialsAvatar('No Image', fontSize: 12),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

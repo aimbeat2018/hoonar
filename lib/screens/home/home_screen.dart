@@ -30,6 +30,7 @@ import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/no_internet_screen.dart';
 import '../../constants/session_manager.dart';
+import '../../custom/image_loader_widget.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/success_models/home_post_success_model.dart';
 import '../auth_screen/login_screen.dart';
@@ -283,7 +284,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-
                         const SizedBox(
                           height: 10,
                         ),
@@ -778,7 +778,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Stack(
                         children: [
                           // Background Image
-                          Container(
+                        /*  Container(
                             width: MediaQuery.of(context).size.width * 0.4,
                             // height: 23.06,
                             decoration: BoxDecoration(
@@ -787,7 +787,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          ),
+                          ),*/
+                          ImageLoaderWidget(imageUrl: postData[index].postImage!),
+
                           // Gradient overlay at bottom
                           Positioned(
                             bottom: 0,

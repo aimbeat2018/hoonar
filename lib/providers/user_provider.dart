@@ -112,6 +112,7 @@ class UserProvider extends ChangeNotifier {
     try {
       FollowUnfollowSuccessModel successModel =
           await _userService.followUnfollowUser(requestModel: requestModel);
+
       followStatusNotifier.value = successModel.followStatus ?? 0;
     } catch (e) {
       _errorMessage = e.toString();

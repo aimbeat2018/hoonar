@@ -116,7 +116,8 @@ class _FollowingScreenState extends State<FollowingScreen>
     });
   }
 
-  Future<void> followUnFollowUser(BuildContext context, int userId) async {
+  Future<void> followUnFollowUser(
+      BuildContext context, int userId, int index) async {
     ListCommonRequestModel requestModel = ListCommonRequestModel(
       toUserId: userId,
     );
@@ -128,6 +129,12 @@ class _FollowingScreenState extends State<FollowingScreen>
 
     if (authProvider.errorMessage != null) {
       SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+    } else if (authProvider.getFollowingListModel!.status == "200") {
+      SnackbarUtil.showSnackBar(
+          context, authProvider.getFollowingListModel!.message ?? '');
+      setState(() {
+        followingList.removeAt(index);
+      });
     }
 
     isFollowLoading = false;
@@ -289,7 +296,7 @@ class _FollowingScreenState extends State<FollowingScreen>
                   onTap: () {
                     setState(() {
                       followUnFollowUser(
-                          context, followingList[index].fromUserId ?? 0);
+                          context, followingList[index].toUserId ?? 0, index);
                     });
                   },
                   child: Container(

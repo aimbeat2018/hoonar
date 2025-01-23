@@ -59,6 +59,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   bool isMute = false;
   double _progress = 0.0;
   String userId = "";
+  bool _isLoading = true;
 
   // Location
   final LocationService _locationService = LocationService();
@@ -212,7 +213,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
   Future initializePlayer() async {
     _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(widget.model.postVideo ?? ''));
-    await Future.wait([_videoPlayerController.initialize()]).then((_) {});
+    await Future.wait([_videoPlayerController.initialize()]).then((_) {
+      _isLoading = false;
+    });
     setState(() {});
   }
 
@@ -221,7 +224,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
       toUserId: widget.model.userId,
     );
 
-    isFollowLoading = true;
+    setState(() {
+      isFollowLoading = true;
+    });
     final authProvider = Provider.of<UserProvider>(context, listen: false);
 
     await authProvider.followUnfollowUser(requestModel);
@@ -293,72 +298,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
 
       return Scaffold(
         backgroundColor: Colors.black,
-        /* bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Custom slider container
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 2),
-              height: 10,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(2.5),
-              ),
-              child: Stack(
-                children: [
-                  // Active progress
-                  FractionallySizedBox(
-                    widthFactor: _videoPlayerController.value.isInitialized
-                        ? _progress /
-                            _videoPlayerController.value.duration.inMilliseconds
-                                .toDouble()
-                        : 0.0,
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      height: 2,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(2.5),
-                      ),
-                    ),
-                  ),
-                  // Draggable thumb
-                  Positioned(
-                    left: (_videoPlayerController.value.isInitialized
-                            ? _progress /
-                                _videoPlayerController
-                                    .value.duration.inMilliseconds
-                                    .toDouble()
-                            : 0.0) *
-                        MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      onHorizontalDragUpdate: (details) {
-                        final newPosition = (details.localPosition.dx /
-                                MediaQuery.of(context).size.width) *
-                            _videoPlayerController
-                                .value.duration.inMilliseconds;
-                        _videoPlayerController.seekTo(Duration(
-                            milliseconds: newPosition.toInt().clamp(
-                                0,
-                                _videoPlayerController
-                                    .value.duration.inMilliseconds)));
-                      },
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),*/
         body: Stack(
           // fit: StackFit.expand,
           children: [
@@ -570,18 +509,15 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                         vertical: 5),
                                                     decoration: BoxDecoration(
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                15),
+                                                            BorderRadius
+                                                                .circular(15),
                                                         border: Border.all(
-                                                            color: widget.model.followOrNot ==
+                                                            color: widget.model
+                                                                            .followOrNot ==
                                                                         1 ||
                                                                     followStatus ==
                                                                         1
-                                                                ? (myLoading.isDark
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .white)
+                                                                ? Colors.white
                                                                 : Colors
                                                                     .transparent,
                                                             width: 1),
@@ -591,16 +527,23 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                                                 followStatus ==
                                                                     1
                                                             ? Colors.transparent
-                                                            : (myLoading.isDark
-                                                                ? Colors.white
-                                                                : Colors.white)),
+                                                            : Colors.white),
                                                     child: isFollowLoading
-                                                        ? const Center(
+                                                        ? Center(
                                                             child: SizedBox(
                                                                 height: 15,
                                                                 width: 15,
                                                                 child:
-                                                                    CircularProgressIndicator()))
+                                                                    CircularProgressIndicator(
+                                                                  color: widget.model.followOrNot ==
+                                                                              1 ||
+                                                                          followStatus ==
+                                                                              1
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                                )))
                                                         : Text(
                                                             widget.model.followOrNot ==
                                                                         1 ||
@@ -917,6 +860,17 @@ class _ReelsWidgetState extends State<ReelsWidget>
                         },
                       );
                     }),
+                  ),
+                ),
+              ),
+
+            // Show loader while the video is loading
+            if (_isLoading)
+              Container(
+                color: Colors.black.withAlpha(77), // Optional dim background
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white, // White loader like Instagram
                   ),
                 ),
               ),
