@@ -149,14 +149,30 @@ class _CarouselPageViewState extends State<CarouselPageView>
               ),
               const SizedBox(width: 5),
               Flexible(
-                child: Text(
-                  data.userName ?? '',
-                  style: GoogleFonts.poppins(
-                    fontSize: 10,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis, // Ensure text truncation
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      data.fullName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      data.userName ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      overflow: TextOverflow.ellipsis, // Ensure text truncation
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 3),

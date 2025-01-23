@@ -778,7 +778,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Stack(
                         children: [
                           // Background Image
-                        /*  Container(
+                          /*  Container(
                             width: MediaQuery.of(context).size.width * 0.4,
                             // height: 23.06,
                             decoration: BoxDecoration(
@@ -788,7 +788,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),*/
-                          ImageLoaderWidget(imageUrl: postData[index].postImage!),
+                          ImageLoaderWidget(
+                              imageUrl: postData[index].postImage!),
 
                           // Gradient overlay at bottom
                           Positioned(
@@ -842,15 +843,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 const SizedBox(width: 5),
                                 Expanded(
-                                  child: Text(
-                                    postData[index].userName ?? '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 10,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        postData[index].fullName ?? '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 10,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Text(
+                                        postData[index].userName ?? '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 8,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

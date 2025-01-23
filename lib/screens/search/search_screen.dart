@@ -493,7 +493,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         homeProvider
                                                                 .searchListModel!
                                                                 .data![index]
-                                                                .userName ??
+                                                                .fullName ??
                                                             '',
                                                         style:
                                                             GoogleFonts.poppins(
@@ -503,18 +503,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               ? Colors.white
                                                               : Colors.black,
                                                           fontWeight:
-                                                              FontWeight.normal,
+                                                              FontWeight.w500,
                                                         ),
                                                       ),
                                                       Text(
                                                         homeProvider
                                                                 .searchListModel!
                                                                 .data![index]
-                                                                .fullName ??
+                                                                .userName ??
                                                             '',
                                                         style:
                                                             GoogleFonts.poppins(
-                                                          fontSize: 13,
+                                                          fontSize: 12,
                                                           color: myLoading
                                                                   .isDark
                                                               ? Colors.white60
