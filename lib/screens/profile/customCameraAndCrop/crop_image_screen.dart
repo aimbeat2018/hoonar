@@ -63,7 +63,9 @@ class _CropImageScreenState extends State<CropImageScreen> {
             requestModel,
             sessionManager.getString(SessionManager.accessToken) ?? '',
             CommonRequestModel(
-                userId: sessionManager.getString(SessionManager.userId) ?? ''));
+                userId: sessionManager.getString(SessionManager.userId) ?? '',
+                myUserId:
+                    sessionManager.getString(SessionManager.userId) ?? ''));
 
         if (authProvider.errorMessage != null) {
           SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');

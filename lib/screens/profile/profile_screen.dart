@@ -88,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> getUserProfile(BuildContext context) async {
     sessionManager.initPref().then((onValue) async {
+      CommonRequestModel requestModel = CommonRequestModel();
       setState(() {
         if (widget.from == 'main') {
           userId = sessionManager.getString(SessionManager.userId)!;
@@ -98,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       String myUserId = sessionManager.getString(SessionManager.userId)!;
 
-      CommonRequestModel requestModel = CommonRequestModel(userId: userId);
+      requestModel.userId = userId;
       // if (widget.from != 'main') {
       requestModel.myUserId = myUserId;
       // }
@@ -208,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return DefaultTabController(
-        length: 3,
+        length: widget.from == 'main' ? 3 : 2,
         child: _connectionStatus == KeyRes.connectivityCheck
             ? const NoInternetScreen()
             : Scaffold(
@@ -761,20 +762,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             indicatorSize:
                                                 TabBarIndicatorSize.label,
                                             // Indicator under the label only
-                                            tabs: [
-                                              Tab(
-                                                  text: AppLocalizations.of(
-                                                          context)!
-                                                      .feeds),
-                                              Tab(
-                                                  text: AppLocalizations.of(
-                                                          context)!
-                                                      .hoonar_star),
-                                              Tab(
-                                                  text: AppLocalizations.of(
-                                                          context)!
-                                                      .drafts),
-                                            ],
+                                            tabs: widget.from == 'main'
+                                                ? [
+                                                    Tab(
+                                                        text:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .feeds),
+                                                    Tab(
+                                                        text:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .hoonar_star),
+                                                    Tab(
+                                                        text:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .drafts),
+                                                  ]
+                                                : [
+                                                    Tab(
+                                                        text:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .feeds),
+                                                    Tab(
+                                                        text:
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .hoonar_star),
+                                                  ],
                                           ),
                                         ),
                                       ],

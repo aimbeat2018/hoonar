@@ -20,6 +20,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   int _selectedCameraIndex = 0; // Index to switch between front and rear camera
   XFile? _capturedImage; // Store the captured image here
   FlashMode _flashMode = FlashMode.off; // Default flash mode
+  bool cameraInit = false;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
     _cameras = await availableCameras();
     controller = CameraController(_cameras[cameraIndex], ResolutionPreset.max);
     _initializeControllerFuture = controller.initialize();
+    cameraInit = true;
     setState(() {});
   }
 
@@ -51,7 +53,10 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
       _capturedImage = image;
       Navigator.push(
         context,
-        SlideRightRoute(page: CropImageScreen(selectedImageFile: _capturedImage,)),
+        SlideRightRoute(
+            page: CropImageScreen(
+          selectedImageFile: _capturedImage,
+        )),
       );
       print("Captured image: ${_capturedImage?.path}");
     } catch (e) {
@@ -99,6 +104,14 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!cameraInit) {
+      return Scaffold(
+        body: Center(
+          child: SizedBox(
+              height: 30, width: 30, child: CircularProgressIndicator()),
+        ),
+      );
+    }
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
         backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
@@ -154,7 +167,6 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                               ],
                             ),
                           ),
-
                           Positioned(
                             bottom: 10,
                             right: 0,
@@ -164,7 +176,8 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                                   size: 60,
                                   color: /*myLoading.isDark
                                   ? Colors.white
-                                  : Colors.black*/Colors.white),
+                                  : Colors.black*/
+                                      Colors.white),
                               onPressed: captureImage,
                             ),
                           ),
@@ -175,9 +188,9 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                         child: IconButton(
                           icon: Icon(Icons.camera,
                               size: 60,
-                              color: *//*myLoading.isDark
+                              color: */ /*myLoading.isDark
                                   ? Colors.white
-                                  : Colors.black*//*Colors.white),
+                                  : Colors.black*/ /*Colors.white),
                           onPressed: captureImage,
                         ),
                       ),*/
