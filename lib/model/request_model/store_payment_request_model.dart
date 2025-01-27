@@ -2,7 +2,7 @@ class StorePaymentRequestModel {
   int? userId;
   int? levelId;
   int? categoryId;
-  String? amount;
+  double? amount;
   String? couponCode;
   String? transactionId;
   String? paymentStatus; //(e.g., 'completed', 'pending', 'failed')

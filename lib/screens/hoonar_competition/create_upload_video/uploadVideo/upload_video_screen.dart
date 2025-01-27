@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:detectable_text_field/detectable_text_field.dart';
-import 'package:detectable_text_field/detector/text_pattern_detector.dart';
-import 'package:detectable_text_field/widgets/detectable_text_editing_controller.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +24,6 @@ import '../../../../constants/session_manager.dart';
 import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/snackbar_util.dart';
 import '../../../../model/request_model/list_common_request_model.dart';
-import '../../../../model/request_model/upload_kyc_document_request_model.dart';
 import '../../../../model/success_models/hash_tag_list_model.dart';
 import '../../../../model/success_models/sound_list_model.dart';
 import '../../../../providers/contest_provider.dart';

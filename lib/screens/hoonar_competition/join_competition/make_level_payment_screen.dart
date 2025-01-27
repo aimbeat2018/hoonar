@@ -152,7 +152,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             userId: signupSuccessModel!.data!.userId!,
             levelId: widget.model.levelId,
             categoryId: widget.categoryId,
-            amount: amountPaid.toString(),
+            amount: amountPaid.toDouble(),
             couponCode: couponCode,
             transactionId: "",
             // transactionId will change when payment gateway received
@@ -162,6 +162,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
     int amountPaid = 100 * int.parse(widget.model.fees.toString());
+    // int amountPaid = 100 * 1;
 
     storePayment(
         context,
@@ -169,7 +170,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             userId: signupSuccessModel!.data!.userId!,
             levelId: widget.model.levelId,
             categoryId: widget.categoryId,
-            amount: amountPaid.toString(),
+            amount: amountPaid.toDouble(),
             couponCode: couponCode,
             transactionId: response.paymentId,
             // transactionId will change when payment gateway received
@@ -490,6 +491,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                               ? widget.model.fees.toString()
                                               : discountPrice);
 
+                                      // int amountPaid = 100 * 1;
+
                                       var options = {
                                         // 'key': 'rzp_test_sbZKuVhaj5HMeB',
                                         'key': 'rzp_live_SUTM4whjgSbsHL',
@@ -513,6 +516,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                           'wallets': ['paytm']
                                         }
                                       };
+
                                       razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
                                           handlePaymentErrorResponse);
                                       razorpay.on(
@@ -530,7 +534,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                                   .data!.userId!,
                                               levelId: widget.model.levelId,
                                               categoryId: widget.categoryId,
-                                              amount: discountPrice,
+                                              amount: double.parse(discountPrice),
                                               couponCode:
                                                   couponCodeController.text,
                                               transactionId: '',
