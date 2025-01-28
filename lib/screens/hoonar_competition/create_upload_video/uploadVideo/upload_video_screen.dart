@@ -186,16 +186,40 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
     setState(() {
       isLoading = true;
+      progressPercentage = 0.0; // Reset progress
     });
 
     try {
+      // Simulate initialization progress
+      for (int i = 1; i <= 3; i++) {
+        await Future.delayed(const Duration(milliseconds: 200), () {
+          setState(() {
+            progressPercentage = i * 0.1; // Increment by 10% per step
+          });
+        });
+      }
+
       await sessionManager.initPref();
+      setState(() {
+        progressPercentage = 0.4; // Set progress to 40%
+      });
+
+      // Simulate API call progress
       await homeProvider.updatePost(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
 
+      setState(() {
+        progressPercentage = 0.8; // Set progress to 80%
+      });
+
+      // Handle API response
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else if (homeProvider.addPostModel?.status == '200') {
+        setState(() {
+          progressPercentage = 1.0; // Set progress to 100%
+        });
+
         if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
@@ -220,6 +244,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     } finally {
       setState(() {
         isLoading = false; // Stop loading indicator
+        progressPercentage = 0.0; // Reset progress
       });
     }
   }
@@ -742,9 +767,10 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                           ),
                                         )
                                       : const SizedBox(),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
+                                  if (widget.from != 'feed')
+                                    const SizedBox(
+                                      width: 15,
+                                    ),
                                   Expanded(
                                     child: ValueListenableBuilder<int?>(
                                         valueListenable:

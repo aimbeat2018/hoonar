@@ -223,24 +223,32 @@ class _DraftsScreenState extends State<DraftsScreen> {
                         child: InkWell(
                           onTap: () {
                             // SoundList soundListModel = SoundList(
-                            //   soundTitle: widget.draftList[index].soundTitle ?? '',
-                            //   duration: widget.draftList[index].duration ?? '',
-                            //   soundImage: widget.draftList[index].soundImage ?? '',
-                            //   soundId: int.parse(widget.draftList[index].soundId!),
-                            //   sound: widget.draftList[index].sound ?? '',
-                            // );
+                            //     soundTitle:
+                            //         widget.draftList[index].soundTitle ?? '',
+                            //     duration:
+                            //         widget.draftList[index].duration ?? '',
+                            //     soundImage:
+                            //         widget.draftList[index].soundImage ?? '',
+                            //     soundId:
+                            //         int.parse(widget.draftList[index].soundId!),
+                            //     sound: widget.draftList[index].sound ?? '');
 
                             Navigator.push(
                               context,
                               SlideRightRoute(
                                 page: UploadVideoScreen(
-                                  videoThumbnail: widget.draftList[index].postImage ?? '',
+                                  videoThumbnail:
+                                      widget.draftList[index].postImage ?? '',
                                   postId: widget.draftList[index].postId,
                                   from: "feed",
                                   selectedMusic: null,
-                                  videoUrl: widget.draftList[index].postVideo ?? '',
-                                  caption: widget.draftList[index].postDescription ?? '',
-                                  hashTag: widget.draftList[index].postHashTag ?? '',
+                                  videoUrl:
+                                      widget.draftList[index].postVideo ?? '',
+                                  caption:
+                                      widget.draftList[index].postDescription ??
+                                          '',
+                                  hashTag:
+                                      widget.draftList[index].postHashTag ?? '',
                                 ),
                               ),
                             );

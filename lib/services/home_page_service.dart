@@ -130,7 +130,7 @@ class HomePageService {
 
   Future<FollowUnfollowSuccessModel> updatePost(
       AddPostRequestModel requestModel, String accessToken) async {
-    final r = RetryOptions(maxAttempts: 3, delayFactor: Duration(seconds: 2));
+    /* final r = RetryOptions(maxAttempts: 3, delayFactor: Duration(seconds: 2));
 
     return await r.retry(
       () async {
@@ -144,13 +144,13 @@ class HomePageService {
         );
       },
       retryIf: (e) => e is DioException || e is SocketException,
-    );
-    /*  return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
+    );*/
+    return apiMethods.sendMultipartRequest<FollowUnfollowSuccessModel>(
       '$baseUrl$updatePostUrl',
       method: 'POST',
       data: requestModel.toFormData(),
       fromJson: (data) => FollowUnfollowSuccessModel.fromJson(data),
-    );*/
+    );
   }
 
   Future<HashTagListModel> getHashTagList(

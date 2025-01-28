@@ -88,7 +88,7 @@ class CommonApiMethods {
     try {
       final formData = await data; // Await here to get the FormData
 
-      final response = await dio.request(
+      final response = await  dio.request(
         url,
         data: formData,
         options: _dioOptions(
