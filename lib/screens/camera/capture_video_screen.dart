@@ -1158,8 +1158,8 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
             (KeyRes.selectedCategoryName.toLowerCase() == 'modelling' ||
                 KeyRes.selectedCategoryName.toLowerCase() == 'show skills'));
 
-    return shouldShowGallery
-        ? InkWell(
+    return /*shouldShowGallery
+        ? */InkWell(
             onTap: () {
               _selectVideoFromGallery();
             },
@@ -1169,7 +1169,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
               width: 30,
             ),
           )
-        : const SizedBox(height: 30, width: 30);
+        /*: const SizedBox(height: 30, width: 30)*/;
   }
 
   void _openFilterOptionsSheet(BuildContext context, bool isDarkMode) {
