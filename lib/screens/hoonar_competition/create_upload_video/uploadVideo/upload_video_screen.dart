@@ -171,6 +171,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
             context, homeProvider.addPostModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(context,
             SlideRightRoute(page: const LoginScreen()), (route) => false);
+      } else if (homeProvider.addPostModel?.status == '201') {
+        SnackbarUtil.showSnackBar(
+            context, homeProvider.addPostModel?.message! ?? '');
       }
     } finally {
       setState(() {
@@ -240,6 +243,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
             context, homeProvider.addPostModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(context,
             SlideRightRoute(page: const LoginScreen()), (route) => false);
+      } else if (homeProvider.addPostModel?.status == '201') {
+        SnackbarUtil.showSnackBar(
+            context, homeProvider.addPostModel?.message! ?? '');
       }
     } finally {
       setState(() {
