@@ -404,7 +404,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     await _audioPlayer!.pause();
   }
 
-  //
+  // gallery option
   Future<void> _selectVideoFromGallery() async {
     final pickedFile =
         await ImagePicker().pickVideo(source: ImageSource.gallery);
@@ -429,11 +429,13 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
       Permission.microphone,
+      Permission.photos,
     ].request();
     print(statuses[Permission.camera]!.isGranted);
     print(statuses[Permission.microphone]!.isGranted);
     if (statuses[Permission.camera]!.isGranted &&
-        statuses[Permission.microphone]!.isGranted) {
+        statuses[Permission.microphone]!.isGranted&&
+        statuses[Permission.photos]!.isGranted) {
       print('Granted');
       if (mounted) {
         setState(() {

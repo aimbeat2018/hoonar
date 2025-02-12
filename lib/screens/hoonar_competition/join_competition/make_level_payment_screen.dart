@@ -154,6 +154,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             categoryId: widget.categoryId,
             amount: amountPaid.toDouble(),
             couponCode: couponCode,
+            isCouponApply: "0",
+            actualAmount: widget.model.fees.toString(),
             transactionId: "",
             // transactionId will change when payment gateway received
             paymentStatus:
@@ -172,6 +174,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             categoryId: widget.categoryId,
             amount: amountPaid.toDouble(),
             couponCode: couponCode,
+            isCouponApply: couponApply ? "1" : "0",
+            actualAmount: widget.model.fees.toString(),
             transactionId: response.paymentId,
             // transactionId will change when payment gateway received
             paymentStatus:
@@ -527,6 +531,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                           handleExternalWalletSelected);
                                       razorpay.open(options);
                                     } else {
+                                      /*When coupon apply*/
                                       storePayment(
                                           context,
                                           StorePaymentRequestModel(
@@ -534,10 +539,15 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                                   .data!.userId!,
                                               levelId: widget.model.levelId,
                                               categoryId: widget.categoryId,
-                                              amount: double.parse(discountPrice),
+                                              amount:
+                                                  double.parse(discountPrice),
                                               couponCode:
                                                   couponCodeController.text,
                                               transactionId: '',
+                                              isCouponApply:
+                                                  couponApply ? "1" : "0",
+                                              actualAmount:
+                                                  widget.model.fees.toString(),
                                               // transactionId will change when payment gateway received
                                               paymentStatus:
                                                   'completed' /*(e.g., 'completed', 'pending', 'failed')*/));

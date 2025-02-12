@@ -1,16 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
+
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart'; // No alias needed for geocoding package
+import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart' as loc;
 import 'package:network_info_plus/network_info_plus.dart'; // Alias 'loc' for location package
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationService {
-  final loc.Location _location = loc.Location(); // Use alias 'loc' here
+  final loc.Location _location = loc.Location();
   final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
 
+  /// ✅ Check if location services are enabled
   Future<bool> checkLocationService() async {
     bool serviceEnabled = await _location.serviceEnabled();
     if (!serviceEnabled) {
@@ -19,27 +24,87 @@ class LocationService {
     return serviceEnabled;
   }
 
-  Future<bool> checkPermissions() async {
+  /// ✅ Check and request location permission
+  Future<bool> checkPermissions(BuildContext context) async {
     loc.PermissionStatus permissionGranted = await _location.hasPermission();
     if (permissionGranted == loc.PermissionStatus.denied) {
       permissionGranted = await _location.requestPermission();
     }
+
+    if (permissionGranted == loc.PermissionStatus.deniedForever) {
+      _showPermissionDialog(context);
+      return false;
+    }
+
     return permissionGranted == loc.PermissionStatus.granted;
   }
 
-  Future<loc.LocationData?> getLocation() async {
-    if (await checkLocationService() && await checkPermissions()) {
-      return await _location.getLocation();
+  /// ✅ Show Cupertino dialog if location permission is permanently denied
+  void _showPermissionDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            'Location Permission Required',
+            style:
+                GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          content: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              'Location access is required to fetch city and state. Please enable it in settings.',
+              style: GoogleFonts.poppins(fontSize: 14),
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.poppins(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+            CupertinoDialogAction(
+              onPressed: () async {
+                bool opened = await openAppSettings();
+                if (opened) {
+                  Future.delayed(const Duration(seconds: 2), () {
+                    checkPermissions(context);
+                  });
+                }
+              },
+              child: Text(
+                'Go to Settings',
+                style: GoogleFonts.poppins(
+                    fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// ✅ Fetch user location (if permission is granted)
+  Future<loc.LocationData?> getLocation(BuildContext context) async {
+    if (await checkLocationService() && await checkPermissions(context)) {
+      try {
+        return await _location.getLocation();
+      } catch (e) {
+        print('Error getting location: $e');
+      }
     }
     return null;
   }
 
-  Future<Map<String, String>> getCityAndState() async {
+  /// ✅ Get city and state based on user’s location
+  Future<Map<String, String>?> getCityAndState(BuildContext context) async {
     try {
-      if (await checkLocationService() && await checkPermissions()) {
+      if (await checkLocationService() && await checkPermissions(context)) {
         loc.LocationData locationData = await _location.getLocation();
 
-        // Get placemarks from latitude and longitude
         List<Placemark> placemarks = await placemarkFromCoordinates(
           locationData.latitude!,
           locationData.longitude!,
@@ -54,94 +119,84 @@ class LocationService {
         }
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error fetching city/state: $e');
     }
-    return {'city': 'Unknown', 'state': 'Unknown'};
+    return null; // Return null instead of defaulting to 'Unknown'
   }
 
+  /// ✅ AES Encryption
   String encryptData(String data, String base64Key) {
-    // Decode the base64 key into bytes
     final keyBytes = encrypt.Key.fromBase64(base64Key);
-
-    // Generate a random initialization vector (IV) of length 16
     final iv = encrypt.IV.fromLength(16);
+    final encrypter =
+        encrypt.Encrypter(encrypt.AES(keyBytes, mode: encrypt.AESMode.cbc));
+    final encrypted = encrypter.encrypt(data, iv: iv);
 
-    // Initialize AES encrypter in CBC mode with PKCS7 padding
+    return json.encode({
+      'iv': base64.encode(iv.bytes),
+      'value': encrypted.base64,
+    });
+  }
+
+  /// ✅ AES Decryption
+  String decryptData(String encryptedData, String base64Key) {
+    final keyBytes = encrypt.Key.fromBase64(base64Key);
+    final decryptedData = json.decode(encryptedData);
+    final iv = encrypt.IV.fromBase64(decryptedData['iv']);
+    final encryptedValue = decryptedData['value'];
     final encrypter =
         encrypt.Encrypter(encrypt.AES(keyBytes, mode: encrypt.AESMode.cbc));
 
-    // Encrypt the data
-    final encrypted = encrypter.encrypt(data, iv: iv);
-
-    // Create a JSON object similar to Laravel's format
-    final encryptedData = {
-      'iv': base64.encode(iv.bytes), // IV in base64
-      'value': encrypted.base64, // Encrypted value in base64
-    };
-
-    // Return the encrypted data as a JSON string
-    return json.encode(encryptedData);
+    return encrypter.decrypt64(encryptedValue, iv: iv);
   }
 
-  String decryptData(String encryptedData, String base64Key) {
-    // Decode the base64 key into bytes
-    final keyBytes = encrypt.Key.fromBase64(base64Key);
-
-    // Parse the encrypted data (it is a JSON string)
-    final decryptedData = json.decode(encryptedData);
-
-    // Extract the IV and the encrypted value from the decrypted JSON
-    final iv = encrypt.IV.fromBase64(decryptedData['iv']);
-    final encryptedValue = decryptedData['value'];
-
-    // Initialize the encrypter with AES in CBC mode
-    final encrypter = encrypt.Encrypter(encrypt.AES(keyBytes, mode: encrypt.AESMode.cbc));
-
-    // Decrypt the data
-    final decrypted = encrypter.decrypt64(encryptedValue, iv: iv);
-
-    return decrypted;
-  }
-
+  /// ✅ Get IP Address
   Future<String> getIpAddress() async {
     final info = NetworkInfo();
-    final wifiIP = await info.getWifiIP();
-    return wifiIP ?? 'Unable to fetch IP';
-  }
-
-  Future<String> getDeviceId() async {
-    String deviceId = 'Not available';
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await _deviceInfoPlugin.androidInfo;
-      deviceId = androidInfo.id ?? 'Not available';
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await _deviceInfoPlugin.iosInfo;
-      deviceId = iosInfo.identifierForVendor ?? 'Not available';
+    try {
+      final wifiIP = await info.getWifiIP();
+      return wifiIP ?? 'Unable to fetch IP';
+    } catch (e) {
+      print('Error fetching IP: $e');
+      return 'Error';
     }
-    return deviceId;
   }
 
-  Future<Map<String, String>> getEncryptedDeviceData() async {
-    // Combine all the data to encrypt
-    Map<String, String> locationData = await getCityAndState();
+  /// ✅ Get Device ID
+  Future<String> getDeviceId() async {
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await _deviceInfoPlugin.androidInfo;
+        return androidInfo.id ?? 'Not available';
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await _deviceInfoPlugin.iosInfo;
+        return iosInfo.identifierForVendor ?? 'Not available';
+      }
+    } catch (e) {
+      print('Error fetching device ID: $e');
+    }
+    return 'Error';
+  }
+
+  /// ✅ Fetch and Encrypt Device Data
+  Future<Map<String, String>> getEncryptedDeviceData(
+      BuildContext context) async {
+    // Check location first
+    Map<String, String>? locationData = await getCityAndState(context);
+    if (locationData == null) {
+      print('Location permission denied or unavailable');
+      return {};
+    }
+
     String ipAddress = await getIpAddress();
     String deviceId = await getDeviceId();
+    String staticKey = 'D+mc1VUA4d0lRblC5SiLvCDwRdLxr6+oXEWQF9DaBVs=';
 
-    String staticKey =
-        'D+mc1VUA4d0lRblC5SiLvCDwRdLxr6+oXEWQF9DaBVs='; // Static key
-
-    // Encrypt each data piece separately
-    String encryptedCity = encryptData(locationData['city']!, staticKey);
-    String encryptedState = encryptData(locationData['state']!, staticKey);
-    String encryptedIpAddress = encryptData(ipAddress, staticKey);
-    String encryptedDeviceId = encryptData(deviceId, staticKey);
-
-    // Return a map containing each encrypted value separately
     return {
-      'encryptedCity': encryptedCity,
-      'encryptedState': encryptedState,
-      'encryptedIpAddress': encryptedIpAddress,
-      'encryptedDeviceId': encryptedDeviceId,
+      'encryptedCity': encryptData(locationData['city']!, staticKey),
+      'encryptedState': encryptData(locationData['state']!, staticKey),
+      'encryptedIpAddress': encryptData(ipAddress, staticKey),
+      'encryptedDeviceId': encryptData(deviceId, staticKey),
     };
   }
 }

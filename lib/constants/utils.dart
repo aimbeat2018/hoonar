@@ -1,4 +1,3 @@
-// const String baseUrl = 'https://atrussama.com/hoonar_backend/api/';
 const String baseUrl = 'https://hoonarstar.com/hoonar_backend/api/';
 
 const String getState = 'User/getStateList';
@@ -35,7 +34,6 @@ const String updatePostUrl = 'Post/updatePost';
 const String getHashTagListUrl = 'Post/getHashtagList';
 const String getHomePageViewAllPostUrl = 'Post/getHomePageViewAllPost';
 const String getLevelUrl = 'User/getLevelLists';
-// const String getLevelNewUrl = 'User/getLevelLists_new';
 const String searchUserUrl = 'User/searchUsers';
 const String storeSearchHistoryUrl = 'User/storeSearchHistory';
 const String userSearchHistoryUrl = 'User/userSearchHistory';

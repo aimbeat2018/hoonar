@@ -89,7 +89,7 @@ const replies = 'replies';
 const searchHint = 'Search Name, Id';
 const videoIsToShort = 'videoIsToShort';
 const allow = 'allow';
-const toAccessYourCameraAndMicrophone = 'to access your camera and microphone';
+const toAccessYourCameraAndMicrophone = 'to access your camera,photos and microphone';
 const ifAppearsThatCameraPermissionHasNotBeenGrantedEtc =
     'If appears that camera permission has not been granted. To the App, you\'ll need to allow access to the camera from the settings';
 const openSettings = 'Open Settings';

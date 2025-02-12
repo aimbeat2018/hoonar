@@ -1,18 +1,12 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_social_share/custom_social_share.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/more_options_list_screen.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
-import 'package:location/location.dart';
 import 'package:lottie/lottie.dart';
-import 'package:network_info_plus/network_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -169,6 +163,10 @@ class _ReelsWidgetState extends State<ReelsWidget>
       String state, String ipAddress, String mobileId) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
+    setState(() {
+      isAddVoteLoading = false;
+    });
+
     sessionManager.initPref().then((onValue) async {
       ListCommonRequestModel requestModel = ListCommonRequestModel(
           postId: postId,
@@ -202,6 +200,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
               context, homeProvider.likeUnlikeVideoModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(context,
               SlideRightRoute(page: const LoginScreen()), (route) => false);
+        } else {
+          SnackbarUtil.showSnackBar(
+              context, homeProvider.likeUnlikeVideoModel!.message! ?? '');
         }
       }
     });
@@ -252,16 +253,23 @@ class _ReelsWidgetState extends State<ReelsWidget>
     setState(() {
       isAddVoteLoading = true;
     });
+
     Map<String, String> encryptedData =
-        await _locationService.getEncryptedDeviceData();
+        await _locationService.getEncryptedDeviceData(context);
 
-    String encryptedCity = encryptedData['encryptedCity']!;
-    String encryptedState = encryptedData['encryptedState']!;
-    String encryptedIpAddress = encryptedData['encryptedIpAddress']!;
-    String encryptedDeviceId = encryptedData['encryptedDeviceId']!;
+    if (encryptedData.isNotEmpty) {
+      String encryptedCity = encryptedData['encryptedCity']!;
+      String encryptedState = encryptedData['encryptedState']!;
+      String encryptedIpAddress = encryptedData['encryptedIpAddress']!;
+      String encryptedDeviceId = encryptedData['encryptedDeviceId']!;
 
-    await addVote(context, postId, encryptedCity, encryptedState,
-        encryptedIpAddress, encryptedDeviceId);
+      await addVote(context, postId, encryptedCity, encryptedState,
+          encryptedIpAddress, encryptedDeviceId);
+    }
+
+    setState(() {
+      isAddVoteLoading = false;
+    });
   }
 
   @override
@@ -332,17 +340,17 @@ class _ReelsWidgetState extends State<ReelsWidget>
                     _videoPlayerController.pause();
                   }*/
                 },
-                key: Key('ke1' + widget.model.postId!.toString()),
+                key: Key('ke1${widget.model.postId!}'),
                 child: SizedBox.expand(
                   child: FittedBox(
-                    fit: (_videoPlayerController.value.size.width ?? 0) <
-                            (_videoPlayerController.value.size.height ?? 0)
+                    fit: (_videoPlayerController.value.size.width) <
+                            (_videoPlayerController.value.size.height)
                         ? BoxFit.cover
                         : BoxFit.fitWidth,
                     child: SizedBox(
-                      width: _videoPlayerController.value.size.width ?? 0,
-                      height: _videoPlayerController.value.size.height ?? 0,
-                      child: _videoPlayerController != null
+                      width: _videoPlayerController.value.size.width,
+                      height: _videoPlayerController.value.size.height,
+                      child: _videoPlayerController.value.isInitialized
                           ? VideoPlayer(_videoPlayerController)
                           : const Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -477,7 +485,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                           flex: 1,
                                           child: Column(
                                             crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(

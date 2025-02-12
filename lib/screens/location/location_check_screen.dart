@@ -21,12 +21,12 @@ class _LocationCheckScreenState extends State<LocationCheckScreen> {
 
   Future<void> _checkLocation() async {
     bool serviceEnabled = await _locationService.checkLocationService();
-    bool permissionsGranted = await _locationService.checkPermissions();
+    bool permissionsGranted = await _locationService.checkPermissions(context);
 
     if (!serviceEnabled || !permissionsGranted) {
       _showLocationAlert();
     } else {
-      final locationData = await _locationService.getLocation();
+      final locationData = await _locationService.getLocation(context);
       print(
           "Current Location: ${locationData?.latitude}, ${locationData?.longitude}");
     }

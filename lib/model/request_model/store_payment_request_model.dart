@@ -4,6 +4,8 @@ class StorePaymentRequestModel {
   int? categoryId;
   double? amount;
   String? couponCode;
+  String? isCouponApply;
+  String? actualAmount;
   String? transactionId;
   String? paymentStatus; //(e.g., 'completed', 'pending', 'failed')
 
@@ -13,6 +15,8 @@ class StorePaymentRequestModel {
       this.categoryId,
       this.amount,
       this.couponCode,
+      this.isCouponApply,
+      this.actualAmount,
       this.transactionId,
       this.paymentStatus});
 
@@ -23,6 +27,8 @@ class StorePaymentRequestModel {
     amount = json['amount'];
     transactionId = json['transaction_id'];
     paymentStatus = json['payment_status'];
+    isCouponApply = json['coupon_code_applied'];
+    actualAmount = json['mrp'];
     couponCode = json['coupon_code'];
   }
 
@@ -34,6 +40,8 @@ class StorePaymentRequestModel {
     data['amount'] = amount;
     data['transaction_id'] = transactionId;
     data['payment_status'] = paymentStatus;
+    data['coupon_code_applied'] = isCouponApply;
+    data['mrp'] = actualAmount;
     data['coupon_code'] = couponCode;
     return data;
   }

@@ -65,6 +65,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    scrollController.dispose();
     _connectivitySubscription.cancel();
   }
 
@@ -96,6 +97,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
                   thickness: 2.5,
                   radius: const Radius.circular(10),
                   child: SingleChildScrollView(
+                    controller: scrollController,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

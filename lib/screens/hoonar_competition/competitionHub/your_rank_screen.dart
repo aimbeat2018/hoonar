@@ -262,7 +262,7 @@ class _YourRankScreenState extends State<YourRankScreen> {
                                                 color: orangeColor,
                                                 fontWeight: FontWeight.w500),
                                           ),
-                                          Padding(
+                                          /* Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 20.0),
                                             child: Text(
@@ -280,7 +280,7 @@ class _YourRankScreenState extends State<YourRankScreen> {
                                                   fontWeight:
                                                       FontWeight.normal),
                                             ),
-                                          ),
+                                          ),*/
                                         ],
                                       ),
                             const SizedBox(
