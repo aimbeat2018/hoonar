@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,6 +48,12 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
+  /*---- kyc check-----*/
+  int? isVerified;
+  int? iDProof;
+  int? addressProof;
+  int? face;
+
   @override
   void initState() {
     super.initState();
@@ -88,8 +96,10 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             AppLocalizations.of(context)!.connectShare,
             'assets/dark_mode_icons/connect_share_dark.png'),
       ];
-      setState(() {});
-
+      if (mounted) {
+        setState(() {});
+      }
+      getKycStatus(context, CommonRequestModel());
       getUploadVideoStatus(context);
       showInfoDialog(context);
     });
@@ -120,6 +130,40 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
       }
     });
     setState(() {});
+  }
+
+  Future<void> getKycStatus(
+      BuildContext context, CommonRequestModel requestModel) async {
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    try {
+      sessionManager.initPref().then((onValue) async {
+        await contestProvider.getKycStatus(requestModel,
+            sessionManager.getString(SessionManager.accessToken) ?? '');
+
+        if (contestProvider.errorMessage != null) {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.errorMessage ?? '');
+        } else if (contestProvider.kycStatusModel?.status == '200') {
+          setState(() {
+            isVerified = contestProvider.kycStatusModel!.data!.isVerified;
+            iDProof = contestProvider.kycStatusModel!.data!.iDProof;
+            addressProof = contestProvider.kycStatusModel!.data!.addressProof;
+            face = contestProvider.kycStatusModel!.data!.face;
+          });
+        } else if (contestProvider.kycStatusModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.kycStatusModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        } else {
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.kycStatusModel?.message! ?? '');
+        }
+      });
+    } finally {}
   }
 
   void showInfoDialog(BuildContext context) {
@@ -158,6 +202,118 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             ],
           );
         });
+      },
+    );
+  }
+
+/*  void showKycDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Consumer<MyLoading>(builder: (context, myLoading, child) {
+          return CupertinoAlertDialog(
+            title: Text(
+              AppLocalizations.of(context)!.alert.toUpperCase(),
+              style: GoogleFonts.poppins(
+                color: myLoading.isDark ? Colors.white : Colors.black,
+              ),
+            ),
+            content: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                AppLocalizations.of(context)!.instructions,
+                style: GoogleFonts.poppins(
+                  color: myLoading.isDark ? Colors.white70 : Colors.black87,
+                ),
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                child: Text(
+                  AppLocalizations.of(context)!.okay,
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                  ),
+                ),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }*/
+
+  void checkKYCStatus(
+      BuildContext context, int? iDProof, int? addressProof, int? face) {
+    String title = "KYC Status";
+    List<String> pending = [];
+    List<String> rejected = [];
+
+    // Identify pending and rejected KYC sections
+    if (iDProof == 3) pending.add("ID Proof");
+    if (addressProof == 3) pending.add("Address Proof");
+    if (face == 3) pending.add("Face Verification");
+
+    if (iDProof == 2) rejected.add("ID Proof");
+    if (addressProof == 2) rejected.add("Address Proof");
+    if (face == 2) rejected.add("Face Verification");
+
+    String message = "";
+
+    if (pending.isNotEmpty) {
+      message += "Your KYC is pending for: ${pending.join(", ")}.\n\n"
+          "Please submit the required documents to complete verification.\n\n";
+    }
+
+    if (rejected.isNotEmpty) {
+      message += "Your KYC verification failed for: ${rejected.join(", ")}.\n\n"
+          "Please re-upload the correct documents to proceed.\n\n";
+    }
+
+    if (message.isEmpty) {
+      message = "Congratulations! Your KYC has been successfully approved.";
+    }
+
+    // Show CupertinoDialog with styled text
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          content: Text(
+            message,
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                "OK",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -457,13 +613,18 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                             return InkWell(
                               onTap: () {
                                 if (index == 0) {
-                                  Navigator.push(
-                                    context,
-                                    SlideRightRoute(
-                                        page: const CaptureVideoScreen(
-                                          from: "level",
-                                        )),
-                                  );
+                                  if (isVerified == 1) {
+                                    Navigator.push(
+                                      context,
+                                      SlideRightRoute(
+                                          page: const CaptureVideoScreen(
+                                        from: "level",
+                                      )),
+                                    );
+                                  } else {
+                                    checkKYCStatus(
+                                        context, iDProof, addressProof, face);
+                                  }
                                   /*if (contestProvider.uploadVideoStatusModel !=
                                           null &&
                                       contestProvider

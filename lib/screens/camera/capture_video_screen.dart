@@ -426,15 +426,33 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   }
 
   void initPermission() async {
-    Map<Permission, PermissionStatus> statuses = await [
+    Map<Permission, PermissionStatus> statuses;
+
+    if (Platform.isIOS) {
+      // Request necessary permissions for iOS
+      statuses = await [
+        Permission.camera,
+        Permission.microphone,
+        Permission.photos,
+      ].request();
+    } else {
+      // Request necessary permissions for Android
+      statuses = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
+    }
+
+    /*Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
       Permission.microphone,
       Permission.photos,
-    ].request();
+    ].request();*/
+
     print(statuses[Permission.camera]!.isGranted);
     print(statuses[Permission.microphone]!.isGranted);
     if (statuses[Permission.camera]!.isGranted &&
-        statuses[Permission.microphone]!.isGranted&&
+        statuses[Permission.microphone]!.isGranted &&
         statuses[Permission.photos]!.isGranted) {
       print('Granted');
       if (mounted) {
@@ -1161,17 +1179,17 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                 KeyRes.selectedCategoryName.toLowerCase() == 'show skills'));
 
     return /*shouldShowGallery
-        ? */InkWell(
-            onTap: () {
-              _selectVideoFromGallery();
-            },
-            child: Image.asset(
-              'assets/images/reel_gallery.png',
-              height: 30,
-              width: 30,
-            ),
-          )
-        /*: const SizedBox(height: 30, width: 30)*/;
+        ? */
+        InkWell(
+      onTap: () {
+        _selectVideoFromGallery();
+      },
+      child: Image.asset(
+        'assets/images/reel_gallery.png',
+        height: 30,
+        width: 30,
+      ),
+    ) /*: const SizedBox(height: 30, width: 30)*/;
   }
 
   void _openFilterOptionsSheet(BuildContext context, bool isDarkMode) {
