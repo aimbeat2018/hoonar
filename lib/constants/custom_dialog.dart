@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CupertinoCustomDialog extends StatelessWidget {
@@ -11,14 +10,14 @@ class CupertinoCustomDialog extends StatelessWidget {
   final VoidCallback? onCancel;
 
   const CupertinoCustomDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.message,
     this.confirmButtonText = 'Confirm',
     this.cancelButtonText = 'Cancel',
     this.onConfirm,
     this.onCancel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

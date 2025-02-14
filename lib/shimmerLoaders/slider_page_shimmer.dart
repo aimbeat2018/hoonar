@@ -1,24 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/customSlider/carousel_item.dart';
 import 'package:hoonar/screens/customSlider/carousel_slider.dart';
 import 'package:hoonar/screens/customSlider/enums.dart';
 import 'package:hoonar/screens/customSlider/models.dart';
-import 'package:hoonar/screens/home/widgets/options_screen.dart';
-import 'package:hoonar/screens/reels/reels_list_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../../constants/common_widgets.dart';
 import '../../../constants/my_loading/my_loading.dart';
-import '../../../model/success_models/home_post_success_model.dart';
-import '../../../providers/user_provider.dart';
 
 class SliderPageShimmer extends StatefulWidget {
   final bool isDarkMode;
@@ -37,7 +25,7 @@ class _SliderPageShimmerState extends State<SliderPageShimmer>
   late AnimationController controller;
   SwiperController controllerS = SwiperController();
   List<Widget> children = [];
-  bool _isPaused = false;
+  final bool _isPaused = false;
   bool isLoading = false;
   bool isFollow = false, isFollowLoading = false;
 
@@ -90,7 +78,7 @@ class _SliderPageShimmerState extends State<SliderPageShimmer>
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return isLoading
-          ? Center(
+          ? const Center(
               child: SizedBox(
                   height: 30, width: 30, child: CircularProgressIndicator()))
           : SizedBox(

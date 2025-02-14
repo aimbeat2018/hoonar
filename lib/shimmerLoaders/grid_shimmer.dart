@@ -5,6 +5,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../constants/my_loading/my_loading.dart';
 
 class GridShimmer extends StatelessWidget {
+  const GridShimmer({super.key});
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -21,7 +23,7 @@ class GridShimmer extends StatelessWidget {
         child: GridView.builder(
           shrinkWrap: true,
           padding: const EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             crossAxisSpacing: 1,
             mainAxisSpacing: 2,

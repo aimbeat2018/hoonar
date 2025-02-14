@@ -230,7 +230,7 @@ class _WithdrawRequestListScreenState extends State<WithdrawRequestListScreen> {
                                         : Colors.grey.shade700
                                   ]),
                             )),
-                            SizedBox(
+                            const SizedBox(
                               height: 20,
                             ),
                             contestProvider.isWithdrawTransactionLoading ||
@@ -244,7 +244,7 @@ class _WithdrawRequestListScreenState extends State<WithdrawRequestListScreen> {
                                             .withdrawRequestListModel!
                                             .data!
                                             .isEmpty
-                                    ? DataNotFound()
+                                    ? const DataNotFound()
                                     : ListView.builder(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 15),
@@ -259,7 +259,7 @@ class _WithdrawRequestListScreenState extends State<WithdrawRequestListScreen> {
                                                   .withdrawRequestListModel!
                                                   .data![index];
                                           return Container(
-                                            margin: EdgeInsets.symmetric(
+                                            margin: const EdgeInsets.symmetric(
                                                 vertical: 10),
                                             decoration: BoxDecoration(
                                                 borderRadius:
@@ -339,7 +339,7 @@ class _WithdrawRequestListScreenState extends State<WithdrawRequestListScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 3,
                                                   ),
                                                   Text(
@@ -368,7 +368,7 @@ class _WithdrawRequestListScreenState extends State<WithdrawRequestListScreen> {
                             child: Container(
                               color: Colors.black.withOpacity(0.5),
                               // semi-transparent background
-                              child: Center(
+                              child: const Center(
                                 child: CircularProgressIndicator(),
                               ),
                             ),

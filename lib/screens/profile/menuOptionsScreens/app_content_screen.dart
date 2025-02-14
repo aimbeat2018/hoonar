@@ -80,7 +80,7 @@ class _AppContentScreenState extends State<AppContentScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.pageContentModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -154,7 +154,7 @@ class _AppContentScreenState extends State<AppContentScreen> {
                   settingProvider.isPageLoading ||
                           settingProvider.pageContentModel == null ||
                           settingProvider.pageContentModel!.data == null
-                      ? PageContentShimmer()
+                      ? const PageContentShimmer()
                       : Html(
                           data: settingProvider.pageContentModel!.data!.content,
                           style: {

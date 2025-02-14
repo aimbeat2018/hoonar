@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -19,7 +18,7 @@ class PageContentShimmer extends StatelessWidget {
         child: AnimatedList(
           shrinkWrap: true,
           initialItemCount: 10,
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           itemBuilder: (context, index, animation) {
             return buildItem(animation, index, myLoading.isDark,
                 context); // Build each list item
@@ -33,7 +32,7 @@ class PageContentShimmer extends StatelessWidget {
       BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10),
       height: 15,
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.black : Colors.white,

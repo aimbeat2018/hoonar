@@ -14,7 +14,6 @@ import '../../../../constants/session_manager.dart';
 import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/data_not_found.dart';
 import '../../../../custom/snackbar_util.dart';
-import '../../../../shimmerLoaders/grid_shimmer.dart';
 import '../../../auth_screen/login_screen.dart';
 
 class AvatarListScreen extends StatefulWidget {
@@ -57,7 +56,7 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
           SnackbarUtil.showSnackBar(
               context, userProvider.avatarListModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -84,7 +83,7 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
           SnackbarUtil.showSnackBar(
               context, userProvider.updateAvatarModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -107,11 +106,11 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
           child: Container(
             height: 55,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: buttonBlueColor1,
             ),
             child: Provider.of<AuthProvider>(context).isUpdateAvatarLoading
-                ? Center(
+                ? const Center(
                     child: SizedBox(
                       height: 30,
                       width: 30,
@@ -143,10 +142,10 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
                   children: [
                     userProvider.isAvatarLoading ||
                             userProvider.avatarListModel == null
-                        ? AvatarListShimmer()
+                        ? const AvatarListShimmer()
                         : userProvider.avatarListModel!.data == null ||
                                 userProvider.avatarListModel!.data!.isEmpty
-                            ? DataNotFound()
+                            ? const DataNotFound()
                             : GridView.builder(
                                 shrinkWrap: true,
                                 padding: const EdgeInsets.all(8),
@@ -232,12 +231,12 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
                                               imageUrl: avatarUrl,
                                               fit: BoxFit.fitHeight,
                                               placeholder: (context, url) =>
-                                                  Center(
+                                                  const Center(
                                                 child: SizedBox(
                                                   height: 15,
                                                   width: 15,
                                                   child:
-                                                      const CircularProgressIndicator(),
+                                                      CircularProgressIndicator(),
                                                 ),
                                               ),
                                               errorWidget:
@@ -269,7 +268,7 @@ class _AvatarListScreenState extends State<AvatarListScreen> {
                                                     : Colors.black,
                                                 shape: BoxShape.circle,
                                               ),
-                                              padding: EdgeInsets.all(4),
+                                              padding: const EdgeInsets.all(4),
                                               child: Icon(
                                                 Icons.check,
                                                 color: myLoading.isDark

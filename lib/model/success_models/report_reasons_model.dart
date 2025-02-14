@@ -9,7 +9,7 @@ class ReportReasonsModel {
     if (json['data'] != null) {
       data = <ReportReasonsData>[];
       json['data'].forEach((v) {
-        data!.add(new ReportReasonsData.fromJson(v));
+        data!.add(ReportReasonsData.fromJson(v));
       });
     }
   }

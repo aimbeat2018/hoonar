@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -207,7 +206,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 ),
                                 const SizedBox(height: 68),
                                 authProvider.isSendOtpLoading
-                                    ? Center(
+                                    ? const Center(
                                         child: CircularProgressIndicator(),
                                       )
                                     : InkWell(
@@ -290,7 +289,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                             otpVisible = !otpVisible;
                                           });
                                         },
-                                        child: Icon(
+                                        child: const Icon(
                                           Icons.edit,
                                           color: Colors.redAccent,
                                           size: 18,
@@ -300,7 +299,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 20,
                               ),
                               OtpPinField(

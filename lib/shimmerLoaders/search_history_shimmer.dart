@@ -18,7 +18,7 @@ class SearchHistoryShimmer extends StatelessWidget {
         child: AnimatedList(
           shrinkWrap: true,
           initialItemCount: 10,
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           itemBuilder: (context, index, animation) {
             return buildItem(
                 animation, index, myLoading.isDark); // Build each list item

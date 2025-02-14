@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -438,7 +437,7 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                 child: Text(
                                   discountPrice == '0.0'
                                       ? '₹ 0/-'
-                                      : '₹ ${discountPrice}/-',
+                                      : '₹ $discountPrice/-',
                                   textAlign: TextAlign.start,
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,

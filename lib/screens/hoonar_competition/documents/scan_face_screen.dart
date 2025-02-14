@@ -293,7 +293,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                   fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
@@ -305,7 +305,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             InkWell(
@@ -328,7 +328,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(
+                    side: const BorderSide(
                       strokeAlign: BorderSide.strokeAlignOutside,
                       color: Colors.black,
                     ),
@@ -371,7 +371,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                     child: Stack(
                       children: [
                         if (isLoading) ...[
-                          Opacity(
+                          const Opacity(
                             opacity: 0.5,
                             child: ModalBarrier(
                                 dismissible: false, color: Colors.black),
@@ -387,7 +387,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CameraPreview(_cameraController),
-                            SizedBox(
+                            const SizedBox(
                               height: 30,
                             ),
                             Padding(
@@ -395,7 +395,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                                 child: ElevatedButton(
                                   onPressed: _captureAndProcessFace,
                                   child: _isProcessing
-                                      ? CircularProgressIndicator(
+                                      ? const CircularProgressIndicator(
                                           color: Colors.black,
                                         )
                                       : Text(
@@ -446,7 +446,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                     ),
                   );
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
               },
             ),

@@ -244,18 +244,18 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                             ),
                             contestProvider.isSoundLoading ||
                                     contestProvider.soundListModel == null
-                                ? FollowingListShimmer()
+                                ? const FollowingListShimmer()
                                 : contestProvider.soundListModel!.data ==
                                             null ||
                                         contestProvider
                                             .soundListModel!.data!.isEmpty
-                                    ? DataNotFound()
+                                    ? const DataNotFound()
                                     : ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: contestProvider
                                             .soundListModel!.data!.length,
                                         physics:
-                                            NeverScrollableScrollPhysics(),
+                                            const NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
                                           return buildSoundItem(
                                             contestProvider
@@ -305,9 +305,9 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
               Duration(minutes: minutes, seconds: seconds);
 
           if (parsedDuration1 > duration2) {
-            File _localMusic = await _downloadAudio(model.sound ?? '');
+            File localMusic = await _downloadAudio(model.sound ?? '');
 
-            _openTrimBottomSheet(context, _localMusic.path,
+            _openTrimBottomSheet(context, localMusic.path,
                 double.parse(widget.duration!).toInt(), model);
           } else {
             if (mounted) {
@@ -366,7 +366,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                     Text(
@@ -403,7 +403,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                     size: 25,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 InkWell(
@@ -461,13 +461,13 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           ListView.builder(
               shrinkWrap: true,
               itemCount: model.soundList!.length,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index1) {
                 return soundItem(
                     model.soundList![index1], index1, isDarkMode, index);

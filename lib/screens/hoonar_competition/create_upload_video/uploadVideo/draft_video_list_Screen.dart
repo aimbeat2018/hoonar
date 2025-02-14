@@ -99,13 +99,13 @@ class _DraftVideoListScreenState extends State<DraftVideoListScreen> {
               backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
               body: contestProvider.isDraftFeedLoading ||
                       contestProvider.draftFeedListModel == null
-                  ? GridShimmer()
+                  ? const GridShimmer()
                   : contestProvider.draftFeedListModel!.data == null ||
                           contestProvider.draftFeedListModel!.data!.drafts ==
                               null ||
                           contestProvider
                               .draftFeedListModel!.data!.drafts!.isEmpty
-                      ? DataNotFound()
+                      ? const DataNotFound()
                       : GridView.builder(
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8),

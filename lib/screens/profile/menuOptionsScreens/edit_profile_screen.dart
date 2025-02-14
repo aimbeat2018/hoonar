@@ -101,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (age < 15 ||
           (age == 15 &&
               DateTime.now()
-                  .isBefore(datePicked.add(Duration(days: 15 * 365))))) {
+                  .isBefore(datePicked.add(const Duration(days: 15 * 365))))) {
         // Show an error message or prevent the user from proceeding
         SnackbarUtil.showSnackBar(
           context,
@@ -142,7 +142,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Column(
                               children: [
                                 buildAppbar(context, myLoading.isDark),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 GradientText(
@@ -177,14 +177,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         authProvider.profileNotifier,
                                     builder: (context, profile, child) {
                                       if (profile == null) {
-                                        return LoaderDialog();
+                                        return const LoaderDialog();
                                       } else if (profile.message ==
                                           'Unauthorized Access!') {
                                         Future.microtask(() {
                                           Navigator.pushAndRemoveUntil(
                                               context,
                                               SlideRightRoute(
-                                                  page: LoginScreen()),
+                                                  page: const LoginScreen()),
                                               (route) => false);
                                         });
                                       }
@@ -499,7 +499,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                       onChanged: (value) {},
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     height: 20,
                                                   ),
                                                   Padding(
@@ -926,7 +926,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         ],
                                       );
                                     }),
-                                SizedBox(
+                                const SizedBox(
                                   height: 50,
                                 ),
                                 InkWell(
@@ -976,7 +976,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                 ),
                                 InkWell(
@@ -1023,13 +1023,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ],
                             ),
                             authProvider.isProfileLoading
-                                ? Positioned(
+                                ? const Positioned(
                                     left: 0,
                                     right: 0,
                                     bottom: 0,
                                     top: 0,
                                     child: LoaderDialog())
-                                : SizedBox.shrink(),
+                                : const SizedBox.shrink(),
                           ],
                         ),
                       ),
@@ -1068,7 +1068,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           SnackbarUtil.showSnackBar(
               context, authProvider.profileSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });

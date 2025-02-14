@@ -33,7 +33,6 @@ import '../../constants/no_internet_screen.dart';
 import '../../constants/slide_right_route.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
-import '../../providers/home_provider.dart';
 import '../../providers/user_provider.dart';
 import '../auth_screen/login_screen.dart';
 
@@ -118,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SnackbarUtil.showSnackBar(
               context, authProvider.profileSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -156,7 +155,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SnackbarUtil.showSnackBar(
               context, authProvider.userBlockUnblockedModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
 
@@ -227,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CustomScrollView(
                         controller: controller,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         slivers: [
                           SliverToBoxAdapter(
                             child: Padding(
@@ -808,7 +807,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   builder: (context, profile, child) {
                                     if (profile == null ||
                                         authProvider.isProfileLoading) {
-                                      return GridShimmer();
+                                      return const GridShimmer();
                                     }
                                     /* else if (profile.message ==
                                   'Unauthorized Access!') {
@@ -860,7 +859,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       if (isBlockLoading)
-                        Center(
+                        const Center(
                           child: CircularProgressIndicator(
                             color: Colors.white,
                           ),
@@ -1109,7 +1108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CupertinoDialogAction(
               child: Provider.of<AuthProvider>(context, listen: false)
                       .isLogoutLoading
-                  ? Center(
+                  ? const Center(
                       child: CircularProgressIndicator(),
                     )
                   : Text(

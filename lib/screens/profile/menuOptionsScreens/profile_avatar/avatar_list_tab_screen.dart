@@ -5,10 +5,6 @@ import 'package:hoonar/screens/profile/menuOptionsScreens/profile_avatar/avatar_
 import 'package:provider/provider.dart';
 
 import '../../../../constants/my_loading/my_loading.dart';
-import '../../../../providers/user_provider.dart';
-import '../../widget/followers_screen.dart';
-import '../../widget/following_screen.dart';
-import '../../widget/votes_screen.dart';
 
 class AvatarListTabScreen extends StatefulWidget {
   const AvatarListTabScreen({super.key});
@@ -34,7 +30,7 @@ class _AvatarListTabScreenState extends State<AvatarListTabScreen> {
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
-        backgroundColor: myLoading.isDark ? Color(0xFF373737) : Colors.white,
+        backgroundColor: myLoading.isDark ? const Color(0xFF373737) : Colors.white,
         body: SafeArea(
           child: Container(
             width: double.infinity,
@@ -159,17 +155,17 @@ class _AvatarListTabScreenState extends State<AvatarListTabScreen> {
                 ),
                 Expanded(
                   child: currentTab == 0
-                      ? AvatarListScreen(
+                      ? const AvatarListScreen(
                           key: ValueKey("male"), // Unique key for each type
                           type: "male",
                         )
                       : currentTab == 1
-                          ? AvatarListScreen(
+                          ? const AvatarListScreen(
                               key: ValueKey(
                                   "female"), // Unique key for each type
                               type: "female",
                             )
-                          : AvatarListScreen(
+                          : const AvatarListScreen(
                               key:
                                   ValueKey("other"), // Unique key for each type
                               type: "other",

@@ -32,8 +32,8 @@ class LevelShimmer extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(
                       horizontal: 25.0, vertical: 30),
                 ),
               ),

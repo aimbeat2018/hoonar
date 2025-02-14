@@ -75,7 +75,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.devicesListModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -167,15 +167,15 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                       settingProvider.isDevicesLoading ||
                               settingProvider.devicesListModel == null ||
                               settingProvider.devicesListModel!.data == null
-                          ? DevicesListShimmer()
+                          ? const DevicesListShimmer()
                           : ValueListenableBuilder<DevicesListModel?>(
                               valueListenable:
                                   settingProvider.deviceListNotifier,
                               builder: (context, deviceData, child) {
                                 if (deviceData == null) {
-                                  return DevicesListShimmer();
+                                  return const DevicesListShimmer();
                                 } else if (deviceData.data!.isEmpty) {
-                                  return DataNotFound();
+                                  return const DataNotFound();
                                 }
 
                                 return AnimatedList(
@@ -224,7 +224,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
             width: 25,
             color: isDarkMode ? Colors.white : Colors.black,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Expanded(

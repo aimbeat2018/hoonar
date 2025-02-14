@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/theme.dart';
@@ -72,7 +71,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                   )
 
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Padding(
@@ -103,7 +102,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                                     ? Colors.white
                                     : Colors.black,
                               )
-                            : SizedBox()
+                            : const SizedBox()
                       ],
                     ),
                   ),
@@ -112,7 +111,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                   color: myLoading.isDark ? Colors.white60 : Colors.grey,
                   thickness: 1,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Padding(
@@ -143,7 +142,7 @@ class _ChangeThemeScreenState extends State<ChangeThemeScreen> {
                                     ? Colors.white
                                     : Colors.black,
                               )
-                            : SizedBox()
+                            : const SizedBox()
                       ],
                     ),
                   ),

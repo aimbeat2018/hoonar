@@ -11,7 +11,7 @@ class CityListModel {
     if (json['data'] != null) {
       data = <CityListData>[];
       json['data'].forEach((v) {
-        data!.add(new CityListData.fromJson(v));
+        data!.add(CityListData.fromJson(v));
       });
     }
   }

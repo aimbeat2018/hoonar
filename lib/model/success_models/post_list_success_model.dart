@@ -13,7 +13,7 @@ class PostListSuccessModel {
     if (json['data'] != null) {
       data = <PostsListData>[];
       json['data'].forEach((v) {
-        data!.add(new PostsListData.fromJson(v));
+        data!.add(PostsListData.fromJson(v));
       });
     }
   }

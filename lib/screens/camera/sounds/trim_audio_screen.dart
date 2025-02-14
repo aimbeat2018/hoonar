@@ -14,11 +14,10 @@ class TrimAudioScreen extends StatefulWidget {
   final SoundList model;
 
   const TrimAudioScreen(
-      {Key? key,
+      {super.key,
       required this.audioFilePath,
       required this.selectedDuration,
-      required this.model})
-      : super(key: key);
+      required this.model});
 
   @override
   _TrimAudioScreenState createState() => _TrimAudioScreenState();
@@ -160,7 +159,7 @@ class _TrimAudioScreenState extends State<TrimAudioScreen> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 3,
                                       ),
                                       Text(

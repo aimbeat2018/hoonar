@@ -105,7 +105,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
   @override
   Widget build(BuildContext context) {
     if (!cameraInit) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: SizedBox(
               height: 30, width: 30, child: CircularProgressIndicator()),
@@ -172,7 +172,7 @@ class _CustomCameraScreenState extends State<CustomCameraScreen> {
                             right: 0,
                             left: 0,
                             child: IconButton(
-                              icon: Icon(Icons.camera,
+                              icon: const Icon(Icons.camera,
                                   size: 60,
                                   color: /*myLoading.isDark
                                   ? Colors.white

@@ -6,7 +6,6 @@ import 'package:hoonar/screens/profile/widget/votes_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../constants/my_loading/my_loading.dart';
-import '../../constants/text_constants.dart';
 import '../../providers/user_provider.dart';
 
 class FollowersTabScreen extends StatefulWidget {
@@ -29,17 +28,13 @@ class _FollowersTabScreenState extends State<FollowersTabScreen>
     currentTab = widget.currentTabFrom ?? 0;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return Scaffold(
-        backgroundColor: myLoading.isDark ? Color(0xFF373737) : Colors.white,
+        backgroundColor: myLoading.isDark ? const Color(0xFF373737) : Colors.white,
         body: SafeArea(
           child: Container(
             width: double.infinity,

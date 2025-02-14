@@ -163,8 +163,8 @@ class _VideoShareOptionsScreenState extends State<VideoShareOptionsScreen> {
                       ),
                       Expanded(
                         child: currentTab == 0
-                            ? HoonarStarVideoListScreen()
-                            : YourFeedVideoListScreen(
+                            ? const HoonarStarVideoListScreen()
+                            : const YourFeedVideoListScreen(
                                 from: 'share',
                               ),
                       )

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoonar/shimmerLoaders/slider_page_shimmer.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart' as CS;
 import '../constants/my_loading/my_loading.dart';
 
 class HomeSliderShimmers extends StatefulWidget {
-  HomeSliderShimmers({super.key});
+  const HomeSliderShimmers({super.key});
 
   @override
   State<HomeSliderShimmers> createState() => _HomeSliderShimmersState();
@@ -42,8 +41,8 @@ class _HomeSliderShimmersState extends State<HomeSliderShimmers> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: _currentIndex == index
-                      ? BoxDecoration(
-                          gradient: const LinearGradient(
+                      ? const BoxDecoration(
+                          gradient: LinearGradient(
                             begin: Alignment(0.00, 1.00),
                             end: Alignment(0, -1),
                             colors: [
@@ -52,7 +51,7 @@ class _HomeSliderShimmersState extends State<HomeSliderShimmers> {
                               Color(0xFF636363)
                             ],
                           ),
-                          borderRadius: const BorderRadius.only(
+                          borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(7.96),
                             topRight: Radius.circular(7.96),
                           ),

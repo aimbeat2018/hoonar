@@ -54,7 +54,7 @@ class ContestProvider extends ChangeNotifier {
   bool _isSavedSoundLoading = false;
   bool _isDraftFeedLoading = false;
   bool _isBankDetailsLoading = false;
-  bool _isAddBankDetailsLoading = false;
+  final bool _isAddBankDetailsLoading = false;
   bool _isApplyCouponCodeLoading = false;
   String? _errorMessage;
 

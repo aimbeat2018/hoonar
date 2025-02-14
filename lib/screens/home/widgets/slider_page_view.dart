@@ -35,7 +35,7 @@ class _SliderPageViewState extends State<SliderPageView>
   bool isLoading = false;
   bool isFollowLoading = false;
   List<Widget> children = [];
-  bool _isPaused = false;
+  final bool _isPaused = false;
 
   @override
   void initState() {
@@ -118,7 +118,7 @@ class _SliderPageViewState extends State<SliderPageView>
       String initials) {
     return Container(
       width: 250,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black,
       ),
       child: Stack(

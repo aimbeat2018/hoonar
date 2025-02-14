@@ -138,7 +138,7 @@ class _ReportPostScreenState extends State<ReportPostScreen> {
                       ? const SearchListShimmer()
                       : homeProvider.reportReasonsModel!.data == null ||
                               homeProvider.reportReasonsModel!.data!.isEmpty
-                          ? DataNotFound()
+                          ? const DataNotFound()
                           : ListView.separated(
                               itemCount: homeProvider.reportReasonsModel!.data!
                                   .length /*+
@@ -313,7 +313,7 @@ class _ReportPostScreenState extends State<ReportPostScreen> {
                     height: 20,
                   ),
                   homeProvider.isReportPostLoading
-                      ? Center(
+                      ? const Center(
                           child: CircularProgressIndicator(),
                         )
                       : InkWell(

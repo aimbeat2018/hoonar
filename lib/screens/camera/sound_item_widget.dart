@@ -12,12 +12,12 @@ class SoundItemWidget extends StatefulWidget {
   final int index1;
 
   const SoundItemWidget({
-    Key? key,
+    super.key,
     required this.model,
     required this.isDarkMode,
     required this.index,
     required this.index1,
-  }) : super(key: key);
+  });
 
   @override
   State<SoundItemWidget> createState() => _SoundItemWidgetState();

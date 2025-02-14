@@ -59,7 +59,7 @@ class _SignupScreenState extends State<SignupScreen> {
   ScrollController scrollController = ScrollController();
   String selectedStateId = "", selectedCityId = "";
   Timer? _debounce;
-  final Duration debounceDuration = Duration(seconds: 3);
+  final Duration debounceDuration = const Duration(seconds: 3);
 
   @override
   void initState() {
@@ -1168,7 +1168,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (age < 15 ||
           (age == 15 &&
               DateTime.now()
-                  .isBefore(datePicked.add(Duration(days: 15 * 365))))) {
+                  .isBefore(datePicked.add(const Duration(days: 15 * 365))))) {
         // Show an error message or prevent the user from proceeding
         SnackbarUtil.showSnackBar(
           context,

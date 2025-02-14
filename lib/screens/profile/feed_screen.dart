@@ -69,7 +69,7 @@ class _FeedScreenState extends State<FeedScreen> {
         }
       }
     });
-    await Future.delayed(Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 2), () {
       // Navigator.pop(context);
       // Navigator.pop(context);
       Navigator.pop(context);
@@ -130,7 +130,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
     return widget.feedsList.isEmpty
-        ? SizedBox(height: 120, child: DataNotFound())
+        ? const SizedBox(height: 120, child: DataNotFound())
         : SingleChildScrollView(
             controller: widget.controller,
             child: GridView.builder(
@@ -147,7 +147,7 @@ class _FeedScreenState extends State<FeedScreen> {
               itemCount: /*homeProvider
                                           .postListSuccessModel!.data!*/
                   widget.feedsList.length,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return InkWell(
                   onLongPress: widget.from == 'main'
@@ -170,11 +170,11 @@ class _FeedScreenState extends State<FeedScreen> {
                   child: CachedNetworkImage(
                     imageUrl: widget.feedsList[index].postImage ?? '',
 
-                    placeholder: (context, url) => Center(
+                    placeholder: (context, url) => const Center(
                       child: SizedBox(
                           height: 15,
                           width: 15,
-                          child: const CircularProgressIndicator()),
+                          child: CircularProgressIndicator()),
                     ),
                     errorWidget: (context, url, error) =>
                         buildInitialsAvatar('No Image', fontSize: 12),

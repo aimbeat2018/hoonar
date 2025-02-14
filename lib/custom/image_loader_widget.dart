@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ImageLoaderWidget extends StatefulWidget {
   final String imageUrl;
 
-  const ImageLoaderWidget({Key? key, required this.imageUrl}) : super(key: key);
+  const ImageLoaderWidget({super.key, required this.imageUrl});
 
   @override
   _ImageLoaderWidgetState createState() => _ImageLoaderWidgetState();
@@ -20,7 +20,7 @@ class _ImageLoaderWidgetState extends State<ImageLoaderWidget> {
 
   void _loadImage() {
     final ImageStream stream =
-        NetworkImage(widget.imageUrl).resolve(ImageConfiguration());
+        NetworkImage(widget.imageUrl).resolve(const ImageConfiguration());
     stream.addListener(
       ImageStreamListener(
         (image, synchronousCall) {

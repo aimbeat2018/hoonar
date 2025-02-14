@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,11 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/common_widgets.dart';
-import 'package:hoonar/constants/custom_dialog.dart';
-import 'package:hoonar/model/request_model/check_user_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/providers/auth_provider.dart';
-import 'package:hoonar/screens/auth_screen/login_screen.dart';
 import 'package:hoonar/screens/auth_screen/signup_screen.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:provider/provider.dart';
@@ -104,7 +100,7 @@ class _CheckMobileNumberScreenState extends State<CheckMobileNumberScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildAppbar(context, myLoading.isDark),
-                        SizedBox(
+                        const SizedBox(
                           height: 50,
                         ),
                         Center(
@@ -129,7 +125,7 @@ class _CheckMobileNumberScreenState extends State<CheckMobileNumberScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   Padding(
@@ -289,7 +285,7 @@ class _CheckMobileNumberScreenState extends State<CheckMobileNumberScreen> {
                                               isOtpSent = !isOtpSent;
                                             });
                                           },
-                                          child: Icon(
+                                          child: const Icon(
                                             Icons.edit,
                                             color: Colors.redAccent,
                                             size: 18,
@@ -299,7 +295,7 @@ class _CheckMobileNumberScreenState extends State<CheckMobileNumberScreen> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                 ),
                                 OtpPinField(

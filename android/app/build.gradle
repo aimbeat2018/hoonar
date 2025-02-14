@@ -36,6 +36,7 @@ android {
 //    }
 
     defaultConfig {
+//        must update version in yaml file also keep gradle and yaml file version same
         applicationId = "com.hoonar.hoonar"
         minSdk = 24
         targetSdk = 34

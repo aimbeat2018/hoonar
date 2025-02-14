@@ -4,7 +4,7 @@ class ConstRes {
   static const String hoonarCamera = 'bubbly_camera';
   static const bool isDialog = false;
 
-  static final String camera = '';
+  static const String camera = '';
 }
 
 // max Video upload limit in MB

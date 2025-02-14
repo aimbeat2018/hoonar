@@ -208,7 +208,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                     : Colors.grey.shade700
                               ]),
                         )),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         ValueListenableBuilder<int?>(
@@ -243,13 +243,13 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                               context,
                                               SlideRightRoute(
                                                   page:
-                                                      UploadDocumentsScreen()),
+                                                      const UploadDocumentsScreen()),
                                             );
                                           } else if (index == 1) {
                                             Navigator.push(
                                               context,
                                               SlideRightRoute(
-                                                  page: KycScreen()),
+                                                  page: const KycScreen()),
                                             );
                                           }
                                           // }
@@ -293,7 +293,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                                 height: 50,
                                                 width: 50,
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 20,
                                               ),
                                               Text(
@@ -313,7 +313,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                       );
                                     },
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 50,
                                   ),
                                   userKycStatus == 1
@@ -351,7 +351,7 @@ class _DocumentsOptionScreenState extends State<DocumentsOptionScreen> {
                                                 ),
                                               ),
                                             )
-                                          : SizedBox()
+                                          : const SizedBox()
                                 ],
                               );
                             }),

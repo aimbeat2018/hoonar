@@ -165,10 +165,10 @@ class _YourRankScreenState extends State<YourRankScreen> {
                             )),
                             contestProvider.isUserRankLoading ||
                                     contestProvider.userRankSuccessModel == null
-                                ? UserRankShimmer()
+                                ? const UserRankShimmer()
                                 : contestProvider.userRankSuccessModel!.data ==
                                         null
-                                    ? DataNotFound()
+                                    ? const DataNotFound()
                                     : Column(
                                         children: [
                                           Container(

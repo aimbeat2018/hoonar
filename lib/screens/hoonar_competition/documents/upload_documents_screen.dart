@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/session_manager.dart';
@@ -145,7 +144,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           uploadDocument(context, requestModel);
         } else {
           SnackbarUtil.showSnackBar(context,
-              'Selected file is too big. Minimum size is ${minSizeInKB} KB.');
+              'Selected file is too big. Minimum size is $minSizeInKB KB.');
         }
 
         // Further code to handle the selected file

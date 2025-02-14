@@ -8,7 +8,7 @@ class BankDetailsModel {
   BankDetailsModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
-    data = json['data'] != null ? new BankDetails.fromJson(json['data']) : null;
+    data = json['data'] != null ? BankDetails.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {

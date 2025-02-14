@@ -205,16 +205,16 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
                       ),
                       contestProvider.isSavedSoundListLoading ||
                               contestProvider.savedSoundListModel == null
-                          ? FollowingListShimmer()
+                          ? const FollowingListShimmer()
                           : contestProvider.savedSoundListModel!.data == null ||
                                   contestProvider
                                       .savedSoundListModel!.data!.isEmpty
-                              ? DataNotFound()
+                              ? const DataNotFound()
                               : AnimatedList(
                                   shrinkWrap: true,
                                   initialItemCount: contestProvider
                                       .savedSoundListModel!.data!.length,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index, animation) {
                                     return buildSoundItem(
                                       contestProvider
@@ -264,9 +264,9 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
               Duration(minutes: minutes, seconds: seconds);
 
           if (parsedDuration1 > duration2) {
-            File _localMusic = await _downloadAudio(model.sound ?? '');
+            File localMusic = await _downloadAudio(model.sound ?? '');
 
-            _openTrimBottomSheet(context, _localMusic.path,
+            _openTrimBottomSheet(context, localMusic.path,
                 double.parse(widget.duration!).toInt(), model);
           } else {
             Navigator.pop(context, model);
@@ -323,7 +323,7 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                     Text(
@@ -360,7 +360,7 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
                     size: 25,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 8,
                 ),
                 InkWell(
@@ -418,7 +418,7 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           ListView.builder(

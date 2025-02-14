@@ -96,7 +96,7 @@ class _ReelsListScreenState extends State<ReelsListScreen> {
                           Navigator.pop(context);
                         },
                         child: Padding(
-                          padding: EdgeInsets.only(left: 13, top: 15),
+                          padding: const EdgeInsets.only(left: 13, top: 15),
                           child: Image.asset(
                             'assets/images/back_image.png',
                             height: 28,

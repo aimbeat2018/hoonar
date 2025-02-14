@@ -22,7 +22,7 @@ class ContestCategoryShimmer extends StatelessWidget {
             myLoading.isDark ? Colors.grey.shade700 : Colors.grey.shade400,
         child: GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 15),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,

@@ -21,7 +21,6 @@ import '../../../model/success_models/level_list_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../../shimmerLoaders/home_slider_shimmers.dart';
 import '../../auth_screen/login_screen.dart';
-import '../../home/widgets/slider_page_view.dart';
 
 class HoonarStarsScreen extends StatefulWidget {
   final int? categoryId;
@@ -142,12 +141,12 @@ class _HoonarStarsScreenState extends State<HoonarStarsScreen> {
                   child: Column(children: [
                     contestProvider.isHoonarStarLoading ||
                             contestProvider.hoonarStarSuccessModel == null
-                        ? HomeSliderShimmers()
+                        ? const HomeSliderShimmers()
                         : contestProvider.hoonarStarSuccessModel!.data ==
                                     null ||
                                 contestProvider
                                     .hoonarStarSuccessModel!.data!.isEmpty
-                            ? DataNotFound()
+                            ? const DataNotFound()
                             : SizedBox(
                                 height: screenHeight * 0.58,
                                 child: CarouselPageView(
@@ -157,7 +156,7 @@ class _HoonarStarsScreenState extends State<HoonarStarsScreen> {
                                   isDarkMode: myLoading.isDark,
                                 )),
                     contestProvider.isLevelLoading
-                        ? Center(
+                        ? const Center(
                             child: CircularProgressIndicator(),
                           )
                         : Padding(

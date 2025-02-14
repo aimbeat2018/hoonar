@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/model/slider_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:provider/provider.dart';
 
 import '../../../constants/session_manager.dart';
-import '../../../constants/slide_right_route.dart';
-import '../../../custom/snackbar_util.dart';
-import '../../../model/request_model/list_common_request_model.dart';
 import '../../../model/success_models/home_post_success_model.dart';
-import '../../../providers/home_provider.dart';
-import '../../auth_screen/login_screen.dart';
 
 class OptionsScreen extends StatefulWidget {
   final PostsListData? model;
 
-  OptionsScreen({Key? key, this.model}) : super(key: key);
+  const OptionsScreen({super.key, this.model});
 
   @override
   State<OptionsScreen> createState() => _OptionsScreenState();
@@ -89,7 +82,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     height: 20,
                     width: 20,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
                   Text(
@@ -102,7 +95,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Column(
@@ -113,7 +106,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                        /* : 'assets/images/like.png'*/,
                     scale: 7,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
                   Text(
@@ -126,7 +119,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Column(
@@ -135,7 +128,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     'assets/images/comment.png',
                     scale: 7,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
                   Text(
@@ -150,7 +143,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Column(
@@ -159,7 +152,7 @@ class _OptionsScreenState extends State<OptionsScreen> {
                     'assets/images/share.png',
                     scale: 7,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
                   Text(

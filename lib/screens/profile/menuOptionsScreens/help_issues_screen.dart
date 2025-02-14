@@ -67,7 +67,7 @@ class _HelpIssuesScreenState extends State<HelpIssuesScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.helpIssuesListModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -125,7 +125,7 @@ class _HelpIssuesScreenState extends State<HelpIssuesScreen> {
             child: settingProvider.isDevicesLoading ||
                     settingProvider.helpIssuesListModel == null ||
                     settingProvider.helpIssuesListModel!.data == null
-                ? DevicesListShimmer()
+                ? const DevicesListShimmer()
                 : ListView.separated(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     itemCount:
@@ -157,7 +157,7 @@ class _HelpIssuesScreenState extends State<HelpIssuesScreen> {
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
+                      return const Divider();
                     },
                   ),
           ),

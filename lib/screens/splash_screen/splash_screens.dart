@@ -1,14 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gif/gif.dart';
-import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
-import '../../dummy_screen.dart';
 import '../main_screen/main_screen.dart';
 
 class SplashScreens extends StatefulWidget {
@@ -60,7 +57,7 @@ class _SplashScreensState extends State<SplashScreens>
           accessToken == "") {
         Navigator.pushAndRemoveUntil(
           context,
-          SlideRightRoute(page: LoginScreen()),
+          SlideRightRoute(page: const LoginScreen()),
           (Route<dynamic> route) => false,
         );
       } else {
@@ -108,12 +105,12 @@ class _SplashScreensState extends State<SplashScreens>
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Gif(
-                image: AssetImage("assets/light_mode_icons/splash_dark.gif"),
+                image: const AssetImage("assets/light_mode_icons/splash_dark.gif"),
                 controller: _controller,
                 // if duration and fps is null, original gif fps will be used.
                 // fps: 15,
                 // Reduce FPS to speed up loading time
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
                 // Adjust the duration as needed
                 autostart: Autostart.no,
                 // placeholder: (context) => const Text('Loading...'),

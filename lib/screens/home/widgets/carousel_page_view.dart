@@ -47,7 +47,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
       String initials) {
     return Container(
       width: 250,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black,
       ),
       child: Stack(

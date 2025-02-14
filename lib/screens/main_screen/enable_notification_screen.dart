@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:notification_permissions/notification_permissions.dart' as np;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/my_loading/my_loading.dart';
 
@@ -62,12 +61,12 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
               Center(
                 child: Container(
                   color: myLoading.isDark ? Colors.black : Colors.white,
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Image.asset(
@@ -77,7 +76,7 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
                         height: 150,
                         width: 150,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Text(
@@ -89,7 +88,7 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 3,
                       ),
                       Text(
@@ -136,7 +135,7 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       InkWell(

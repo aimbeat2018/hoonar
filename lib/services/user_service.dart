@@ -8,8 +8,6 @@ import 'package:hoonar/model/request_model/sign_in_request_model.dart';
 import 'package:hoonar/model/request_model/signup_request_model.dart';
 import 'package:hoonar/model/request_model/update_profile_request_model.dart';
 import 'package:hoonar/model/success_models/avatar_list_model.dart';
-import 'package:hoonar/model/success_models/avatar_list_model.dart';
-import 'package:hoonar/model/success_models/avatar_list_model.dart';
 import 'package:hoonar/model/success_models/check_user_success_model.dart';
 import 'package:hoonar/model/success_models/city_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';

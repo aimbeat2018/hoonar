@@ -150,13 +150,13 @@ class _KycScreenState extends State<KycScreen> {
                                     : Colors.grey.shade700
                               ]),
                         )),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
                           decoration: BoxDecoration(
                               border: Border.all(
@@ -208,7 +208,7 @@ class _KycScreenState extends State<KycScreen> {
                                               Navigator.push(
                                                 context,
                                                 SlideRightRoute(
-                                                    page: ScanFaceScreen()),
+                                                    page: const ScanFaceScreen()),
                                               );
                                             },
                                       child: Container(
@@ -267,7 +267,7 @@ class _KycScreenState extends State<KycScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         ValueListenableBuilder<int?>(
@@ -330,7 +330,7 @@ class _KycScreenState extends State<KycScreen> {
                                                     ),
                                                   ),
                                                 )
-                                              : SizedBox()
+                                              : const SizedBox()
                                 ],
                               );
                             }),

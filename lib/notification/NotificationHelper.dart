@@ -39,10 +39,10 @@ class NotificationHelper {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      String? _title;
-      String? _body;
-      String? _image;
-      int? msg_flag;
+      String? title;
+      String? body;
+      String? image;
+      int? msgFlag;
       print("onOpenApp: App opened");
       try {
         Map<String, dynamic> demo = message.toMap();
@@ -65,7 +65,7 @@ class NotificationHelper {
       // Map<String, dynamic> data = jsonDecode(payload);
       GlobalVariable.navKey.currentState?.push(
         MaterialPageRoute(
-          builder: (context) => NotificationListScreen(),
+          builder: (context) => const NotificationListScreen(),
         ),
       );
     } catch (e) {
@@ -75,31 +75,31 @@ class NotificationHelper {
 
   static Future<void> showNotification(RemoteMessage message,
       FlutterLocalNotificationsPlugin fln, bool data) async {
-    String? _title;
-    String? _body;
-    String? _image;
+    String? title;
+    String? body;
+    String? image;
     if (data) {
       Map<String, dynamic> demo = message.toMap();
       if (demo['data'] != null) {
         Map<String, dynamic> data = demo['data'];
         print(data);
 
-        _title = data['title'];
-        _body = data['body'];
-        _image = data['image'];
+        title = data['title'];
+        body = data['body'];
+        image = data['image'];
       } else {
-        _title = message.from;
-        _body = message.messageId;
+        title = message.from;
+        body = message.messageId;
         // orderID = message.notification!.titleLocKey;
         if (Platform.isAndroid) {
-          _image = (message.notification!.android!.imageUrl != null &&
+          image = (message.notification!.android!.imageUrl != null &&
                   message.notification!.android!.imageUrl!.isNotEmpty)
               ? message.notification!.android!.imageUrl!.startsWith('http')
                   ? message.notification!.android!.imageUrl
                   : message.notification!.android!.imageUrl
               : null;
         } else if (Platform.isIOS) {
-          _image = (message.notification!.apple!.imageUrl != null &&
+          image = (message.notification!.apple!.imageUrl != null &&
                   message.notification!.apple!.imageUrl!.isNotEmpty)
               ? message.notification!.apple!.imageUrl!.startsWith('http')
                   ? message.notification!.apple!.imageUrl
@@ -107,24 +107,24 @@ class NotificationHelper {
               : null;
         }
       }
-      if (_image != null && _image.isNotEmpty) {
+      if (image != null && image.isNotEmpty) {
         try {
           await showBigPictureNotificationHiddenLargeIcon(
-              _title!, _body!, _image, fln);
+              title!, body!, image, fln);
         } catch (e) {
-          await showBigTextNotification(_title!, _body!, fln);
+          await showBigTextNotification(title!, body!, fln);
         }
       } else {
-        await showBigTextNotification(_title!, _body!, fln);
+        await showBigTextNotification(title!, body!, fln);
       }
     }
   }
 }
 
 Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
-  String? _title;
-  String? _body;
-  String? _image;
+  String? title;
+  String? body0;
+  String? image;
   Map<String, dynamic> demo = message.toMap();
   if (demo['data'] != null) {
     String str = json.encode(demo['data']['data']);
@@ -139,18 +139,18 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
     // _body = mainNotificationModel.message;
     // _image = mainNotificationModel.image;
   } else {
-    _title = message.from;
-    _body = message.messageId;
+    title = message.from;
+    body0 = message.messageId;
     // orderID = message.notification!.titleLocKey;
     if (Platform.isAndroid) {
-      _image = (message.notification!.android!.imageUrl != null &&
+      image = (message.notification!.android!.imageUrl != null &&
               message.notification!.android!.imageUrl!.isNotEmpty)
           ? message.notification!.android!.imageUrl!.startsWith('http')
               ? message.notification!.android!.imageUrl
               : message.notification!.android!.imageUrl
           : null;
     } else if (Platform.isIOS) {
-      _image = (message.notification!.apple!.imageUrl != null &&
+      image = (message.notification!.apple!.imageUrl != null &&
               message.notification!.apple!.imageUrl!.isNotEmpty)
           ? message.notification!.apple!.imageUrl!.startsWith('http')
               ? message.notification!.apple!.imageUrl
@@ -158,25 +158,25 @@ Future<dynamic> myBackgroundMessageHandler(RemoteMessage message) async {
           : null;
     }
   }
-  if (_image != null && _image.isNotEmpty) {
+  if (image != null && image.isNotEmpty) {
     try {
       await showBigPictureNotificationHiddenLargeIcon(
-          _title!, _body!, _image, flutterLocalNotificationsPlugin!);
+          title!, body0!, image, flutterLocalNotificationsPlugin!);
     } catch (e) {
       await showBigTextNotification(
-          _title!, _body!, flutterLocalNotificationsPlugin!);
+          title!, body0!, flutterLocalNotificationsPlugin!);
     }
   } else {
     await showBigTextNotification(
-        _title!, _body!, flutterLocalNotificationsPlugin!);
+        title!, body0!, flutterLocalNotificationsPlugin!);
   }
 }
 
 Future<void> showBigPictureNotificationHiddenLargeIcon(String title,
-    String body, String _image, FlutterLocalNotificationsPlugin fln) async {
-  final String largeIconPath = await _downloadAndSaveFile(_image, 'largeIcon');
+    String body, String image, FlutterLocalNotificationsPlugin fln) async {
+  final String largeIconPath = await _downloadAndSaveFile(image, 'largeIcon');
   final String bigPicturePath =
-      await _downloadAndSaveFile(_image, 'bigPicture');
+      await _downloadAndSaveFile(image, 'bigPicture');
   final BigPictureStyleInformation bigPictureStyleInformation =
       BigPictureStyleInformation(
     FilePathAndroidBitmap(bigPicturePath),
@@ -203,7 +203,7 @@ Future<void> showBigPictureNotificationHiddenLargeIcon(String title,
     );
   } else {
     final String bigPicturePath =
-        await _downloadAndSaveFile(_image, 'largeIcon');
+        await _downloadAndSaveFile(image, 'largeIcon');
     iOSPlatformChannelSpecifics = DarwinNotificationDetails(
         attachments: <DarwinNotificationAttachment>[
           DarwinNotificationAttachment(bigPicturePath)

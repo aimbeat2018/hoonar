@@ -67,7 +67,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
         SnackbarUtil.showSnackBar(
             context, homeProvider.categoryListSuccessModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+            context, SlideRightRoute(page: const LoginScreen()), (route) => false);
       }
     }
 
@@ -139,20 +139,20 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         homeProvider.isCategoryLoading ||
                                 homeProvider.categoryListSuccessModel == null
-                            ? ContestCategoryShimmer()
+                            ? const ContestCategoryShimmer()
                             : homeProvider.categoryListSuccessModel!.data ==
                                         null ||
                                     homeProvider
                                         .categoryListSuccessModel!.data!.isEmpty
-                                ? DataNotFound()
+                                ? const DataNotFound()
                                 : GridView.builder(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 15),
                                     gridDelegate:
@@ -227,12 +227,12 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                                                         .data![index]
                                                         .darkImageUrl!,
                                                 placeholder: (context, url) =>
-                                                    Center(
+                                                    const Center(
                                                   child: SizedBox(
                                                       height: 15,
                                                       width: 15,
                                                       child:
-                                                          const CircularProgressIndicator()),
+                                                          CircularProgressIndicator()),
                                                 ),
                                                 errorWidget:
                                                     (context, url, error) =>
@@ -243,7 +243,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                                                 height: 120,
                                                 width: 150,
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               Text(

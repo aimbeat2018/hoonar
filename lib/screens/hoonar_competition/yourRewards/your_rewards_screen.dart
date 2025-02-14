@@ -223,11 +223,11 @@ class _YourRewardsScreenState extends State<YourRewardsScreen> {
                           ),
                           contestProvider.isRewardsLoading ||
                                   contestProvider.rewardListModel == null
-                              ? GridShimmer()
+                              ? const GridShimmer()
                               : contestProvider.rewardListModel!.data == null ||
                                       contestProvider
                                           .rewardListModel!.data!.isEmpty
-                                  ? DataNotFound()
+                                  ? const DataNotFound()
                                   : GridView.builder(
                                       shrinkWrap: true,
                                       padding: const EdgeInsets.symmetric(
@@ -283,12 +283,12 @@ class _YourRewardsScreenState extends State<YourRewardsScreen> {
 
                                                           placeholder:
                                                               (context, url) =>
-                                                                  Center(
+                                                                  const Center(
                                                             child: SizedBox(
                                                                 height: 15,
                                                                 width: 15,
                                                                 child:
-                                                                    const CircularProgressIndicator()),
+                                                                    CircularProgressIndicator()),
                                                           ),
                                                           errorWidget: (context,
                                                                   url, error) =>

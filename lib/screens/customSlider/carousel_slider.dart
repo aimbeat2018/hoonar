@@ -9,11 +9,11 @@ class CarouselSlider extends StatelessWidget {
   late double sliderLength;
 
   CarouselSlider({
-    Key? key,
+    super.key,
     required this.position,
     required this.isDarkMode,
     required this.amount,
-  }) : super(key: key) {
+  }) {
     // sliderLength = properties.trackbarLength / amount;
   }
 

@@ -5,8 +5,8 @@ import '../constants/utils.dart';
 
 class CommonApiMethods {
   final Dio dio = Dio(BaseOptions(
-    connectTimeout: Duration(minutes: 10), // 10 seconds
-    receiveTimeout: Duration(minutes: 10),
+    connectTimeout: const Duration(minutes: 10), // 10 seconds
+    receiveTimeout: const Duration(minutes: 10),
   ));
   final SessionManager sessionManager = SessionManager();
 

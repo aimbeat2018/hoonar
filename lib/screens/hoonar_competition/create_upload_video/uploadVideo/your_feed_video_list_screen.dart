@@ -7,7 +7,6 @@ import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../constants/common_widgets.dart';
 import '../../../../constants/internet_connectivity.dart';
 import '../../../../constants/key_res.dart';
 import '../../../../constants/my_loading/my_loading.dart';
@@ -104,13 +103,13 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
               backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
               body: contestProvider.isDraftFeedLoading ||
                       contestProvider.draftFeedListModel == null
-                  ? GridShimmer()
+                  ? const GridShimmer()
                   : contestProvider.draftFeedListModel!.data == null ||
                           contestProvider.draftFeedListModel!.data!.yourFeed ==
                               null ||
                           contestProvider
                               .draftFeedListModel!.data!.yourFeed!.isEmpty
-                      ? DataNotFound()
+                      ? const DataNotFound()
                       : GridView.builder(
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8),

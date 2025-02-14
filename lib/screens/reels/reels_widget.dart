@@ -650,7 +650,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                       // _getLocation(widget.model.postId!);
                                     },
                                     child: isAddVoteLoading
-                                        ? Center(
+                                        ? const Center(
                                             child: SizedBox(
                                                 height: 25,
                                                 width: 25,
@@ -772,10 +772,10 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                   sessionManager.getString(
                                               SessionManager.userId) ==
                                           widget.model.userId.toString()
-                                      ? SizedBox(
+                                      ? const SizedBox(
                                           height: 65,
                                         )
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                 ],
                               ),
                             ),
@@ -806,7 +806,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                       ],
                                     ),
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
                           ],
                         ),
                       ),

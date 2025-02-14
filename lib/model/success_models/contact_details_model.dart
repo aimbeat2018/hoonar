@@ -9,7 +9,7 @@ class ContactDetailsModel {
     status = json['status'];
     message = json['message'];
     data = json['data'] != null
-        ? new ContactDetailsData.fromJson(json['data'])
+        ? ContactDetailsData.fromJson(json['data'])
         : null;
   }
 

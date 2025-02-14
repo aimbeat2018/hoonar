@@ -27,7 +27,7 @@ class _HoonarStarScreenState extends State<HoonarStarScreen> {
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
 
     return widget.hoonarStarList.isEmpty
-        ? SizedBox(height: 120, child: DataNotFound())
+        ? const SizedBox(height: 120, child: DataNotFound())
         : SingleChildScrollView(
             controller: widget.controller,
             child: GridView.builder(
@@ -44,7 +44,7 @@ class _HoonarStarScreenState extends State<HoonarStarScreen> {
               itemCount: /*homeProvider
                                           .postListSuccessModel!.data!*/
                   widget.hoonarStarList.length,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return InkWell(
                   onTap: () {
@@ -60,11 +60,11 @@ class _HoonarStarScreenState extends State<HoonarStarScreen> {
                   child: CachedNetworkImage(
                     imageUrl: widget.hoonarStarList[index].postImage ?? '',
 
-                    placeholder: (context, url) => Center(
+                    placeholder: (context, url) => const Center(
                       child: SizedBox(
                           height: 15,
                           width: 15,
-                          child: const CircularProgressIndicator()),
+                          child: CircularProgressIndicator()),
                     ),
                     errorWidget: (context, url, error) =>
                         buildInitialsAvatar('No Image', fontSize: 12),

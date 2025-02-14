@@ -36,7 +36,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setSelectedItem(int selectedItem) {
-    this._selectedItem = selectedItem;
+    _selectedItem = selectedItem;
     notifyListeners();
   }
 
@@ -45,7 +45,7 @@ class MyLoading extends ChangeNotifier {
   int get getProfilePageIndex => _profilePageIndex;
 
   setProfilePageIndex(int profilePageIndex) {
-    this._profilePageIndex = profilePageIndex;
+    _profilePageIndex = profilePageIndex;
     notifyListeners();
   }
 
@@ -56,7 +56,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setNotificationPageIndex(int notificationPageIndex) {
-    this._notificationPageIndex = notificationPageIndex;
+    _notificationPageIndex = notificationPageIndex;
     notifyListeners();
   }
 
@@ -67,7 +67,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setSearchPageIndex(int searchPageIndex) {
-    this._searchPageIndex = searchPageIndex;
+    _searchPageIndex = searchPageIndex;
     notifyListeners();
   }
 
@@ -78,7 +78,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setFollowerPageIndex(int searchPageIndex) {
-    this._followerPageIndex = searchPageIndex;
+    _followerPageIndex = searchPageIndex;
     notifyListeners();
   }
 
@@ -89,7 +89,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setMusicPageIndex(int searchPageIndex) {
-    this._musicPageIndex = searchPageIndex;
+    _musicPageIndex = searchPageIndex;
     notifyListeners();
   }
 
@@ -188,7 +188,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   setIsUserBlockOrNot(bool isDownloadClick) {
-    this.isUserBlockOrNot = isDownloadClick;
+    isUserBlockOrNot = isDownloadClick;
     notifyListeners();
   }
 
@@ -199,7 +199,7 @@ class MyLoading extends ChangeNotifier {
   }
 
   void setIsHomeDialogOpen(bool isHomeDialog) {
-    this.isHomeDialogOpen = isHomeDialog;
+    isHomeDialogOpen = isHomeDialog;
     notifyListeners();
   }
 
@@ -225,7 +225,7 @@ class MyLoading extends ChangeNotifier {
   void getPrefData() {
     _isDark =
         sessionManager.getIsDarkMode(KeyRes.themeLoading, _isDark) ?? _isDark;
-    print(_isDark);
+
     _languageCode =
         sessionManager.giveString(KeyRes.languageCode) ?? byDefaultLanguage;
     notifyListeners();

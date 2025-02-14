@@ -363,7 +363,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           SnackbarUtil.showSnackBar(
               context, authProvider.sendOtpSuccessModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         } else {
           SnackbarUtil.showSnackBar(
               context, authProvider.sendOtpSuccessModel?.message! ?? '');
@@ -391,7 +391,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
             SnackbarUtil.showSnackBar(
                 context, authProvider.signupSuccessModel?.message! ?? '');
             Navigator.pushAndRemoveUntil(context,
-                SlideRightRoute(page: LoginScreen()), (route) => false);
+                SlideRightRoute(page: const LoginScreen()), (route) => false);
           } else {
             SnackbarUtil.showSnackBar(
                 context, authProvider.signupSuccessModel?.message! ?? '');

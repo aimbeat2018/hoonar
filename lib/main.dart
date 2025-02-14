@@ -15,8 +15,6 @@ import 'package:hoonar/providers/contest_provider.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/providers/setting_provider.dart';
 import 'package:hoonar/providers/user_provider.dart';
-import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_success_screen.dart';
-import 'package:hoonar/screens/notification/notification_list_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/crop_image_screen.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
 import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.dart';
@@ -88,7 +86,7 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-void requestNotificationPermission() async {
+/*void requestNotificationPermission() async {
   PermissionStatus status =
       await NotificationPermissions.requestNotificationPermissions(
     iosSettings: const NotificationSettingsIos(
@@ -97,7 +95,7 @@ void requestNotificationPermission() async {
       alert: true,
     ),
   );
-}
+}*/
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -121,35 +119,28 @@ class MyApp extends StatelessWidget {
                 ? SystemUiOverlayStyle.light
                 : SystemUiOverlayStyle.dark,
           );
-          return UpgradeAlert(
-            barrierDismissible: false,
-            dialogStyle: UpgradeDialogStyle.cupertino,
-            upgrader: Upgrader(
-              durationUntilAlertAgain: const Duration(microseconds: 5),
-            ),
-            child: MaterialApp(
-              navigatorKey: GlobalVariable.navKey,
-              debugShowCheckedModeBanner: false,
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                AppLocalizations.delegate,
-              ],
-              supportedLocales: supportedLocales,
-              locale: Locale(myLoading.languageCode),
-              theme: myLoading.isDark
-                  ? ThemeUtils.darkTheme(context)
-                  : ThemeUtils.lightTheme(context),
-              routes: {
-                'CropImageScreen': (context) =>
-                    CropImageScreen(selectedImageFile: null),
-                'CameraScreen': (context) => CustomCameraScreen(),
-                'EditProfileScreen': (context) => EditProfileScreen()
-              },
-              home: SplashScreens(),
-              // home: ContestJoinSuccessScreen(),
-            ),
+          return MaterialApp(
+            navigatorKey: GlobalVariable.navKey,
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              AppLocalizations.delegate,
+            ],
+            supportedLocales: supportedLocales,
+            locale: Locale(myLoading.languageCode),
+            theme: myLoading.isDark
+                ? ThemeUtils.darkTheme(context)
+                : ThemeUtils.lightTheme(context),
+            routes: {
+              'CropImageScreen': (context) =>
+                  const CropImageScreen(selectedImageFile: null),
+              'CameraScreen': (context) => const CustomCameraScreen(),
+              'EditProfileScreen': (context) => const EditProfileScreen()
+            },
+            home: const SplashScreens(),
+            // home: ContestJoinSuccessScreen(),
           );
         },
       ),

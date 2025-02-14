@@ -70,7 +70,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: Colors.black, // header background color
               onPrimary: Colors.white, // header text color
               onSurface: Colors.black, // body text color
@@ -193,7 +193,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                       : Colors.grey.shade700
                                 ]),
                           )),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           Row(
@@ -205,7 +205,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                   _pickDate(context);
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 8),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
@@ -227,7 +227,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 40,
                                       ),
                                       Icon(
@@ -245,7 +245,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: UpcomingEventsScreen()),
+                                        page: const UpcomingEventsScreen()),
                                   );
                                 },
                                 child: Column(
@@ -260,7 +260,7 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                       height: 20,
                                       width: 20,
                                     ),
-                                    SizedBox(height: 3),
+                                    const SizedBox(height: 3),
                                     Text(
                                       AppLocalizations.of(context)!
                                           .upcomingEvents,
@@ -284,17 +284,17 @@ class _NewsAndEventsScreenState extends State<NewsAndEventsScreen> {
                                           null ||
                                       contestProvider
                                           .newsEventSuccessModel!.data!.isEmpty
-                                  ? DataNotFound()
+                                  ? const DataNotFound()
                                   : ListView.builder(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 15),
                                       shrinkWrap: true,
                                       itemCount: contestProvider
                                           .newsEventSuccessModel!.data!.length,
-                                      physics: NeverScrollableScrollPhysics(),
+                                      physics: const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
                                         return Container(
-                                          margin: EdgeInsets.symmetric(
+                                          margin: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           decoration: BoxDecoration(
                                               borderRadius:

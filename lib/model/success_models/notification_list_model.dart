@@ -1,5 +1,4 @@
 import 'package:hoonar/model/success_models/home_post_success_model.dart';
-import 'package:hoonar/model/success_models/post_list_success_model.dart';
 
 class NotificationListModel {
   String? status;

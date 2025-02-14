@@ -22,7 +22,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
     },
     {
       "name": "Sepia",
-      "filter": ColorFilter.matrix([
+      "filter": const ColorFilter.matrix([
         0.393, 0.769, 0.189, 0, 0, //
         0.349, 0.686, 0.168, 0, 0, //
         0.272, 0.534, 0.131, 0, 0, //
@@ -37,7 +37,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
     },
     {
       "name": "Grayscale",
-      "filter": ColorFilter.matrix([
+      "filter": const ColorFilter.matrix([
         0.2126, 0.7152, 0.0722, 0, 0, //
         0.2126, 0.7152, 0.0722, 0, 0, //
         0.2126, 0.7152, 0.0722, 0, 0, //
@@ -52,7 +52,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
     },
     {
       "name": "Invert",
-      "filter": ColorFilter.matrix([
+      "filter": const ColorFilter.matrix([
         -1, 0, 0, 0, 255, //
         0, -1, 0, 0, 255, //
         0, 0, -1, 0, 255, //
@@ -109,7 +109,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                           ),
                           child: ColorFiltered(
                             colorFilter: filter['filter'] ??
-                                ColorFilter.mode(
+                                const ColorFilter.mode(
                                     Colors.transparent, BlendMode.multiply),
                             child: Image.asset(placeholderImage,
                                 fit: BoxFit.cover),

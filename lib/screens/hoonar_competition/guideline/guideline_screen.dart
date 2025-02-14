@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/key_res.dart';
@@ -75,7 +74,7 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.guidelinesModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -159,13 +158,13 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                                       : Colors.grey.shade700
                                 ]),
                           )),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           contestProvider.isGuidelinesLoading ||
                                   contestProvider.guidelinesModel == null ||
                                   contestProvider.guidelinesModel!.data == null
-                              ? PageContentShimmer()
+                              ? const PageContentShimmer()
                               : Html(
                                   data: contestProvider.guidelinesModel!.data ??
                                       '',

@@ -13,7 +13,7 @@ PreferredSizeWidget buildAppbar(BuildContext context, bool isDarkMode) {
         Navigator.pop(context);
       },
       child: Padding(
-        padding: EdgeInsets.only(left: 13),
+        padding: const EdgeInsets.only(left: 13),
         child: Image.asset(
           'assets/images/back_image.png',
           height: 28,

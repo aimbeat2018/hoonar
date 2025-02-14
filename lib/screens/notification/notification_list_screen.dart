@@ -208,7 +208,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                                       : Colors.grey.shade700
                                 ]),
                           )),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           ValueListenableBuilder<NotificationListModel?>(
@@ -216,16 +216,16 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                                   homeProvider.notificationListNotifier,
                               builder: (context, commentData, child) {
                                 if (commentData == null) {
-                                  return NewsEventListShimmer();
+                                  return const NewsEventListShimmer();
                                 } else if (commentData.data == null ||
                                     commentData.data!.isEmpty) {
-                                  return DataNotFound();
+                                  return const DataNotFound();
                                 } else {
                                   notificationData = commentData.data!;
                                 }
                                 return ListView.separated(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: notificationData.length,
                                   itemBuilder: (context, index) {
                                     return _buildNotificationData(
@@ -235,7 +235,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                                   },
                                   separatorBuilder:
                                       (BuildContext context, int index) {
-                                    return Divider();
+                                    return const Divider();
                                   },
                                 );
                               }),
@@ -332,7 +332,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         }
       }
     });
-    await Future.delayed(Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 2), () {
       // Navigator.pop(context);
       // Navigator.pop(context);
       Navigator.pop(context);
@@ -354,7 +354,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         if (model.type == 'competition') {
           Navigator.push(
             context,
-            SlideRightRoute(page: SelectCategoryScreen()),
+            SlideRightRoute(page: const SelectCategoryScreen()),
           );
         } else if (model.type == 'follow') {
           Navigator.push(
@@ -412,7 +412,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                   ),
                 ),
               ),
-            SizedBox(
+            const SizedBox(
               width: 10,
             ),
             Expanded(
@@ -428,7 +428,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 3,
                   ),
                   /*Text(

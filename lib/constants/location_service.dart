@@ -1,10 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart'; // No alias needed for geocoding package
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart' as loc;
@@ -27,12 +27,15 @@ class LocationService {
   /// ✅ Check and request location permission
   Future<bool> checkPermissions(BuildContext context) async {
     loc.PermissionStatus permissionGranted = await _location.hasPermission();
+
     if (permissionGranted == loc.PermissionStatus.denied) {
       permissionGranted = await _location.requestPermission();
     }
 
     if (permissionGranted == loc.PermissionStatus.deniedForever) {
-      _showPermissionDialog(context);
+      if (context.mounted) {
+        _showPermissionDialog(context);
+      }
       return false;
     }
 
@@ -71,7 +74,9 @@ class LocationService {
                 bool opened = await openAppSettings();
                 if (opened) {
                   Future.delayed(const Duration(seconds: 2), () {
-                    checkPermissions(context);
+                    if (context.mounted) {
+                      checkPermissions(context);
+                    }
                   });
                 }
               },
@@ -89,37 +94,49 @@ class LocationService {
 
   /// ✅ Fetch user location (if permission is granted)
   Future<loc.LocationData?> getLocation(BuildContext context) async {
-    if (await checkLocationService() && await checkPermissions(context)) {
-      try {
-        return await _location.getLocation();
-      } catch (e) {
-        print('Error getting location: $e');
-      }
+    if (!await checkLocationService()) return null;
+
+    if (!context.mounted) return null; // ✅ Ensure context is still valid
+
+    if (!await checkPermissions(context)) return null;
+
+    if (!context.mounted) return null; // ✅ Double-check before using context
+
+    try {
+      return await _location.getLocation();
+    } catch (e) {
+      log('Error getting location: $e');
+      return null;
     }
-    return null;
   }
 
   /// ✅ Get city and state based on user’s location
   Future<Map<String, String>?> getCityAndState(BuildContext context) async {
     try {
-      if (await checkLocationService() && await checkPermissions(context)) {
-        loc.LocationData locationData = await _location.getLocation();
+      if (!await checkLocationService()) return null;
 
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          locationData.latitude!,
-          locationData.longitude!,
-        );
+      if (!context.mounted) return null; // ✅ Ensure context is valid
 
-        if (placemarks.isNotEmpty) {
-          Placemark place = placemarks[0];
-          return {
-            'city': place.locality ?? 'Unknown City',
-            'state': place.administrativeArea ?? 'Unknown State',
-          };
-        }
+      if (!await checkPermissions(context)) return null;
+
+      if (!context.mounted) return null; // ✅ Double-check before proceeding
+
+      loc.LocationData locationData = await _location.getLocation();
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        locationData.latitude!,
+        locationData.longitude!,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks.first;
+        return {
+          'city': place.locality ?? 'Unknown City',
+          'state': place.administrativeArea ?? 'Unknown State',
+        };
       }
     } catch (e) {
-      print('Error fetching city/state: $e');
+      log('Error fetching city/state: $e');
     }
     return null; // Return null instead of defaulting to 'Unknown'
   }
@@ -157,7 +174,7 @@ class LocationService {
       final wifiIP = await info.getWifiIP();
       return wifiIP ?? 'Unable to fetch IP';
     } catch (e) {
-      print('Error fetching IP: $e');
+      log('Error fetching IP: $e');
       return 'Error';
     }
   }
@@ -167,13 +184,13 @@ class LocationService {
     try {
       if (Platform.isAndroid) {
         AndroidDeviceInfo androidInfo = await _deviceInfoPlugin.androidInfo;
-        return androidInfo.id ?? 'Not available';
+        return androidInfo.id;
       } else if (Platform.isIOS) {
         IosDeviceInfo iosInfo = await _deviceInfoPlugin.iosInfo;
         return iosInfo.identifierForVendor ?? 'Not available';
       }
     } catch (e) {
-      print('Error fetching device ID: $e');
+      log('Error fetching device ID: $e');
     }
     return 'Error';
   }
@@ -184,7 +201,7 @@ class LocationService {
     // Check location first
     Map<String, String>? locationData = await getCityAndState(context);
     if (locationData == null) {
-      print('Location permission denied or unavailable');
+      log('Location permission denied or unavailable');
       return {};
     }
 

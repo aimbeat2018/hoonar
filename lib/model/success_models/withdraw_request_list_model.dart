@@ -11,7 +11,7 @@ class WithdrawRequestListModel {
     if (json['data'] != null) {
       data = <WithdrawRequestList>[];
       json['data'].forEach((v) {
-        data!.add(new WithdrawRequestList.fromJson(v));
+        data!.add(WithdrawRequestList.fromJson(v));
       });
     }
   }

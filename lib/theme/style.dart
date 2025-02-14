@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hoonar/constants/color_constants.dart';
 
 // Additional text themes
 TextStyle boldCaptionStyle(BuildContext context) => Theme.of(context)
@@ -46,7 +45,6 @@ class ThemeUtils {
       focusColor: Colors.transparent,
       colorScheme: ColorScheme(
         primary: Colors.grey.withOpacity(0.4),
-        onBackground: Colors.grey.shade100,
         error: Colors.red,
         brightness: Brightness.light,
         surface: Colors.grey.shade100,
@@ -54,15 +52,14 @@ class ThemeUtils {
         onSurface: Colors.black,
         onSecondary: Colors.white,
         onPrimary: Colors.grey.shade100,
-        background: Colors.transparent,
         onError: Colors.red,
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         bodyLarge: TextStyle(color: Colors.black),
         bodyMedium: TextStyle(color: Colors.black),
         labelLarge: TextStyle(color: Colors.black),
       ),
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: const IconThemeData(color: Colors.black),
       useMaterial3: false,
     );
   }
@@ -77,7 +74,6 @@ class ThemeUtils {
       focusColor: Colors.transparent,
       colorScheme: ColorScheme(
           primary: Colors.white,
-          onBackground: Colors.lightBlue,
           error: Colors.red,
           brightness: Brightness.dark,
           surface: Colors.white,
@@ -85,14 +81,13 @@ class ThemeUtils {
           secondary: Colors.white,
           onSecondary: Colors.blue,
           onPrimary: Colors.red,
-          background: Colors.transparent,
           onError: Colors.red),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         bodyLarge: TextStyle(color: Colors.white),
         bodyMedium: TextStyle(color: Colors.white),
         labelLarge: TextStyle(color: Colors.white),
       ),
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
       useMaterial3: false,
     );
   }

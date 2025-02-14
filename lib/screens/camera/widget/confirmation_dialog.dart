@@ -2,18 +2,16 @@ import 'dart:ui';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoonar/constants/text_constants.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   const ConfirmationDialog(
-      {Key? key,
+      {super.key,
       required this.title1,
       required this.title2,
       required this.onPositiveTap,
       required this.aspectRatio,
       this.positiveText,
-      this.isDarkMode})
-      : super(key: key);
+      this.isDarkMode});
 
   final String title1;
   final String title2;
@@ -56,7 +54,7 @@ class ConfirmationDialog extends StatelessWidget {
                       height: 10,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Text(
                         title2,
                         style: GoogleFonts.poppins(

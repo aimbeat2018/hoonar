@@ -53,7 +53,7 @@ class FaqListShimmer extends StatelessWidget {
                   color: isDarkMode ? Colors.black : Colors.white,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Container(
                 width: 30,
                 height: 30,
@@ -63,7 +63,7 @@ class FaqListShimmer extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 3,
           ),
           Container(
@@ -73,7 +73,7 @@ class FaqListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 3,
           ),
           Container(
@@ -83,7 +83,7 @@ class FaqListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 3,
           ),
           Container(
@@ -93,7 +93,7 @@ class FaqListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 3,
           ),
           Container(

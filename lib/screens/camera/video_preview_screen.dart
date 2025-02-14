@@ -26,12 +26,12 @@ class VideoPreviewScreen extends StatefulWidget {
   final String from;
 
   const VideoPreviewScreen({
-    Key? key,
+    super.key,
     required this.videoFile,
     this.selectedMusic,
     this.duration,
     required this.from,
-  }) : super(key: key);
+  });
 
   @override
   _VideoPreviewScreenState createState() => _VideoPreviewScreenState();
@@ -201,7 +201,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                             _videoController.pause();
                           }
                         },
-                        key: Key('key1' + widget.videoFile.path),
+                        key: Key('key1${widget.videoFile.path}'),
                         child: SizedBox.expand(
                           child: FittedBox(
                             fit: (_videoController.value.size.width ?? 0) <
@@ -241,9 +241,9 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                         activeTrackColor: Colors.white,
                         trackHeight: 5,
                         thumbShape:
-                            RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                            const RoundSliderThumbShape(enabledThumbRadius: 0.0),
                         overlayShape:
-                            RoundSliderOverlayShape(overlayRadius: 0.0),
+                            const RoundSliderOverlayShape(overlayRadius: 0.0),
                       ),
                       child: Builder(builder: (context) {
                         return Slider(
@@ -283,7 +283,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                         width: 25,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     InkWell(
@@ -403,7 +403,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Spacer(),
+                  const Spacer(),
                   // InkWell(
                   //   onTap: () {},
                   //   child: Image.asset(
@@ -432,7 +432,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white),

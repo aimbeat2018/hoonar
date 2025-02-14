@@ -13,7 +13,6 @@ import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
 import '../../constants/utils.dart';
 import '../../custom/snackbar_util.dart';
-import '../../model/comment.dart';
 import '../../model/request_model/list_common_request_model.dart';
 import '../../model/success_models/profile_success_model.dart';
 import '../../model/success_models/video_comment_list_model.dart';
@@ -234,7 +233,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                     valueListenable: homeProvider.commentListNotifier,
                     builder: (context, commentData, child) {
                       if (commentData == null) {
-                        return VoteListShimmer();
+                        return const VoteListShimmer();
                       } else {
                         /* if (commentData.data!.isNotEmpty) {
                           commentDataList += commentData.data!;
@@ -345,7 +344,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                           ),
                         ),
                         homeProvider.isSearchLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(),

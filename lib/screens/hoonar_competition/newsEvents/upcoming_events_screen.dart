@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -158,7 +157,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                       : Colors.grey.shade700
                                 ]),
                           )),
-                          SizedBox(
+                          const SizedBox(
                             height: 15,
                           ),
                           contestProvider.isNewsLoading ||
@@ -173,7 +172,7 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                           .upcomingNewsEventSuccessModel!
                                           .data!
                                           .isEmpty
-                                  ? DataNotFound()
+                                  ? const DataNotFound()
                                   : ListView.builder(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 15),
@@ -182,10 +181,10 @@ class _UpcomingEventsScreenState extends State<UpcomingEventsScreen> {
                                           .upcomingNewsEventSuccessModel!
                                           .data!
                                           .length,
-                                      physics: NeverScrollableScrollPhysics(),
+                                      physics: const NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
                                         return Container(
-                                          margin: EdgeInsets.symmetric(
+                                          margin: const EdgeInsets.symmetric(
                                               vertical: 10),
                                           decoration: BoxDecoration(
                                               borderRadius:

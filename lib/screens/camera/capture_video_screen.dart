@@ -57,7 +57,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   double currentSecond = 0;
   double currentPercentage = 0;
   bool _permissionNotGranted = false;
-  List<String> _videoSegments = []; // Stores paths of video segments
+  final List<String> _videoSegments = []; // Stores paths of video segments
   String? _mergedVideoPath;
   bool _isMerging = false;
   AudioPlayer? _audioPlayer;
@@ -207,7 +207,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       if (_controller.value.isRecordingPaused) {
         await _controller.resumeVideoRecording();
         await Future.delayed(
-            Duration(milliseconds: 500)); // Small delay to stabilize
+            const Duration(milliseconds: 500)); // Small delay to stabilize
       }
       final file = await _controller.stopVideoRecording();
       _videoSegments.add(file.path); // Save the final segment
@@ -277,7 +277,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       final outputFilePath = '${tempDir.path}/merged_video_$timestamp.mp4';
 
       final mergeCommand =
-          '-y -i "${_mergedVideoPath}" -i "${_localMusic!.path}" -map 0:v -map 1:a -c:v copy -shortest "$outputFilePath"';
+          '-y -i "$_mergedVideoPath" -i "${_localMusic!.path}" -map 0:v -map 1:a -c:v copy -shortest "$outputFilePath"';
 
       await FFmpegKit.execute(mergeCommand);
 
@@ -635,7 +635,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                   fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Text(
@@ -647,7 +647,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             InkWell(
@@ -670,7 +670,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(
+                    side: const BorderSide(
                       strokeAlign: BorderSide.strokeAlignOutside,
                       color: Colors.black,
                     ),

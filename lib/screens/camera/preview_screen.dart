@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/color_constants.dart';
@@ -12,8 +11,8 @@ class PreviewScreen extends StatefulWidget {
   final String? soundId;
   final int duration;
 
-  PreviewScreen(
-      {this.postVideo,
+  const PreviewScreen(
+      {super.key, this.postVideo,
       this.thumbNail,
       this.sound,
       this.soundId,
@@ -58,7 +57,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
             Container(
                 height: 0.3,
                 color: Colors.blue,
-                margin: EdgeInsets.only(bottom: 0)),
+                margin: const EdgeInsets.only(bottom: 0)),
             Expanded(
               child: Stack(
                 alignment: Alignment.center,
@@ -74,11 +73,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       child: Container(
                           height: 50,
                           width: 50,
-                          margin: EdgeInsets.all(20),
-                          decoration: BoxDecoration(
+                          margin: const EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
                               shape: BoxShape.circle, color: buttonBlueColor),
                           child:
-                              Icon(Icons.check_rounded, color: Colors.white)),
+                              const Icon(Icons.check_rounded, color: Colors.white)),
                     ),
                   ),
                 ],
@@ -130,14 +129,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void navigateScreen() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(15),
         ),
       ),
       isScrollControlled: true,
       builder: (context) {
-        return SizedBox();
+        return const SizedBox();
         // return UploadScreen(
         //     postVideo: widget.postVideo,
         //     thumbNail: widget.thumbNail,

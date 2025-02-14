@@ -30,7 +30,7 @@ class SearchListShimmer extends StatelessWidget {
   Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
     return Row(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Expanded(
@@ -59,7 +59,7 @@ class SearchListShimmer extends StatelessWidget {
                         color: isDarkMode ? Colors.black : Colors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 3,
                     ),
                     Container(

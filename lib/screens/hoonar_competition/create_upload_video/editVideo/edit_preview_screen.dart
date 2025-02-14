@@ -24,8 +24,7 @@ class EditPreviewScreen extends StatefulWidget {
   final String? duration;
 
   const EditPreviewScreen(
-      {Key? key, required this.videoFile, this.selectedMusic, this.duration})
-      : super(key: key);
+      {super.key, required this.videoFile, this.selectedMusic, this.duration});
 
   @override
   _EditPreviewScreenState createState() => _EditPreviewScreenState();
@@ -187,7 +186,7 @@ class _EditPreviewScreenState extends State<EditPreviewScreen> {
                         width: 25,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     InkWell(
@@ -333,7 +332,7 @@ class _EditPreviewScreenState extends State<EditPreviewScreen> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white),

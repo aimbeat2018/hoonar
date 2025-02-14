@@ -171,7 +171,17 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
             context, homeProvider.addPostModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(context,
             SlideRightRoute(page: const LoginScreen()), (route) => false);
-      } /*else if (homeProvider.addPostModel?.status == '201')*/ {
+      }
+      /*else if (homeProvider.addPostModel?.status == '201')*/
+      {
+        if (mounted) {
+          setState(() {
+            KeyRes.selectedLevelId = -1;
+            KeyRes.selectedCategoryId = -1;
+            KeyRes.selectedCategoryName = '';
+          });
+        }
+
         SnackbarUtil.showSnackBar(
             context, homeProvider.addPostModel?.message! ?? '');
       }
@@ -243,7 +253,17 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
             context, homeProvider.addPostModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(context,
             SlideRightRoute(page: const LoginScreen()), (route) => false);
-      } else if (homeProvider.addPostModel?.status == '201') {
+      }
+      /*else if (homeProvider.addPostModel?.status == '201') */
+      {
+        if (mounted) {
+          setState(() {
+            KeyRes.selectedLevelId = -1;
+            KeyRes.selectedCategoryId = -1;
+            KeyRes.selectedCategoryName = '';
+          });
+        }
+
         SnackbarUtil.showSnackBar(
             context, homeProvider.addPostModel?.message! ?? '');
       }

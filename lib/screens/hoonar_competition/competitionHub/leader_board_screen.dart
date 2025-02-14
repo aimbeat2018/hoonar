@@ -104,7 +104,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       child: TextField(
                         onChanged: (value) {
                           contestProvider.filterLeaderboard(value);
@@ -115,10 +115,10 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                             fontSize: 14),
                         decoration: InputDecoration(
                           filled: true,
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 10),
                           fillColor: myLoading.isDark
-                              ? Color(0xFF2A2A2A)
+                              ? const Color(0xFF2A2A2A)
                               : Colors.white70,
                           hintText:
                               AppLocalizations.of(context)!.searchContestant,
@@ -153,9 +153,9 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                       child: Hero(
                         tag: 'your_rank',
                         child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 10),
+                          margin: const EdgeInsets.symmetric(vertical: 10),
                           padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: contBlueColor1),
@@ -167,7 +167,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                                 height: 28,
                                 width: 28,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
                               Flexible(
@@ -184,7 +184,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -227,21 +227,21 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                     ),
                     contestProvider.isLeaderboardLoading ||
                             contestProvider.leaderboardListModel == null
-                        ? LeaderboardListShimmer()
+                        ? const LeaderboardListShimmer()
                         : contestProvider.filteredLeaderboardList.isEmpty
-                            ? DataNotFound()
+                            ? const DataNotFound()
                             : ListView.builder(
                                 itemCount: /* contestProvider
                               .leaderboardListModel!.data!.length*/
                                     contestProvider
                                         .filteredLeaderboardList.length,
                                 shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   final contestant = contestProvider
                                       .filteredLeaderboardList[index];
                                   return Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
                                     child: Row(
                                       children: [
                                         Expanded(

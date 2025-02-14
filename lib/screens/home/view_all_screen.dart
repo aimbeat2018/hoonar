@@ -68,7 +68,7 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
         SnackbarUtil.showSnackBar(
             context, homeProvider.homePageOtherViewAllModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+            context, SlideRightRoute(page: const LoginScreen()), (route) => false);
       }
     }
 
@@ -102,12 +102,12 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
                     children: [
                       homeProvider.isPostLoading ||
                               homeProvider.homePageOtherViewAllModel == null
-                          ? GridShimmer()
+                          ? const GridShimmer()
                           : homeProvider.homePageOtherViewAllModel!.data ==
                                       null ||
                                   homeProvider
                                       .homePageOtherViewAllModel!.data!.isEmpty
-                              ? DataNotFound()
+                              ? const DataNotFound()
                               : GridView.builder(
                                   shrinkWrap: true,
                                   padding: const EdgeInsets.all(8),
@@ -143,12 +143,12 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
                                                 .postImage ??
                                             '',
 
-                                        placeholder: (context, url) => Center(
+                                        placeholder: (context, url) => const Center(
                                           child: SizedBox(
                                               height: 15,
                                               width: 15,
                                               child:
-                                                  const CircularProgressIndicator()),
+                                                  CircularProgressIndicator()),
                                         ),
                                         errorWidget: (context, url, error) =>
                                             buildInitialsAvatar('No Image',

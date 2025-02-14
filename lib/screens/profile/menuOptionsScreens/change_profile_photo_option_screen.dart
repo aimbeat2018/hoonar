@@ -1,12 +1,9 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/customCameraAndCrop/custom_camera_screen.dart';
-import 'package:hoonar/screens/profile/customCameraAndCrop/custom_gallery_screen.dart';
-import 'package:hoonar/screens/profile/menuOptionsScreens/profile_avatar/avatar_list_tab_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../constants/slide_right_route.dart';
@@ -54,7 +51,7 @@ class _ChangeProfilePhotoOptionScreenState
                   Navigator.pop(context);
                   Navigator.push(
                     context,
-                    SlideRightRoute(page: CustomCameraScreen()),
+                    SlideRightRoute(page: const CustomCameraScreen()),
                   );
                 },
                 child: Column(

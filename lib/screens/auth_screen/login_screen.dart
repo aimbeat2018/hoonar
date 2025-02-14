@@ -12,7 +12,6 @@ import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/model/request_model/sign_in_request_model.dart';
 import 'package:hoonar/screens/auth_screen/check_mobile_number_screen.dart';
 import 'package:hoonar/screens/auth_screen/forgot_password_screen.dart';
-import 'package:hoonar/screens/auth_screen/signup_screen.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -221,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             end: Alignment.bottomCenter,
                                           ),
                                         ),
-                                        contentPadding: EdgeInsets.symmetric(
+                                        contentPadding: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 3)),
                                     controller: phoneController,
                                     cursorColor: myLoading.isDark
@@ -367,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onTap: () => Navigator.push(
                                         context,
                                         SlideRightRoute(
-                                            page: ForgotPasswordScreen()),
+                                            page: const ForgotPasswordScreen()),
                                       ),
                                       child: Text(
                                         AppLocalizations.of(context)!
@@ -384,9 +383,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 ),
                                 authProvider.isSignUpLoading
-                                    ? Center(
+                                    ? const Center(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(
+                                          padding: EdgeInsets.only(
                                               top: 15, bottom: 5),
                                           child: CircularProgressIndicator(),
                                         ),
@@ -438,7 +437,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onTap: () => Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: CheckMobileNumberScreen()),
+                                        page: const CheckMobileNumberScreen()),
                                   ),
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
@@ -559,7 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             Navigator.pushAndRemoveUntil(
                 context,
-                SlideRightRoute(page: MainScreen(fromIndex: 0)),
+                SlideRightRoute(page: const MainScreen(fromIndex: 0)),
                 (route) => false);
           } else {
             SnackbarUtil.showSnackBar(

@@ -39,7 +39,7 @@ class LeaderboardListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Expanded(
@@ -51,7 +51,7 @@ class LeaderboardListShimmer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Container(

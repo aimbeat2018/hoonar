@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/model/success_models/wallet_transaction_list_model.dart';
 import 'package:hoonar/screens/hoonar_competition/yourRewards/withdraw_request_list_screen.dart';
@@ -116,7 +115,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         .walletTransactionListModel!.walletBalance ==
                     null ||
                 contestProvider.walletTransactionListModel!.walletBalance == "0"
-            ? SizedBox()
+            ? const SizedBox()
             : InkWell(
                 onTap: () {
                   Navigator.push(
@@ -199,7 +198,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               : Colors.grey.shade700
                         ]),
                   )),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   contestProvider.isWalletTransactionLoading ||
@@ -252,9 +251,9 @@ class _WalletScreenState extends State<WalletScreen> {
                               color: myLoading.isDark
                                   ? Colors.grey.shade900
                                   : Colors.grey.shade400,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 15),
-                              margin: EdgeInsets.symmetric(vertical: 10),
+                              margin: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(
                                 children: [
                                   Image.asset(
@@ -262,10 +261,10 @@ class _WalletScreenState extends State<WalletScreen> {
                                     height: 23,
                                     width: 23,
                                     color: myLoading.isDark
-                                        ? Color(0xff7D7D7D)
+                                        ? const Color(0xff7D7D7D)
                                         : Colors.grey.shade900,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
                                   Text(
@@ -275,7 +274,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 14,
                                       color: myLoading.isDark
-                                          ? Color(0xff7D7D7D)
+                                          ? const Color(0xff7D7D7D)
                                           : Colors.grey.shade900,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -287,7 +286,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                         null ||
                                     contestProvider.walletTransactionListModel!
                                         .data!.isEmpty
-                                ? DataNotFound()
+                                ? const DataNotFound()
                                 : ListView.builder(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 15),
@@ -303,7 +302,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                               .data![index];
                                       return Container(
                                         margin:
-                                            EdgeInsets.symmetric(vertical: 10),
+                                            const EdgeInsets.symmetric(vertical: 10),
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),

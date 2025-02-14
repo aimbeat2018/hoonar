@@ -86,7 +86,7 @@ class _VotesScreenState extends State<VotesScreen> {
           'Unauthorized Access!') {
         Future.microtask(() {
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
 
@@ -110,9 +110,9 @@ class _VotesScreenState extends State<VotesScreen> {
           : Scaffold(
               backgroundColor: Colors.transparent,
               body: isLoading == true
-                  ? VoteListShimmer()
+                  ? const VoteListShimmer()
                   : voteList.isEmpty
-                      ? DataNotFound()
+                      ? const DataNotFound()
                       : AnimatedList(
                           initialItemCount: voteList.length,
                           // controller: _scrollController,

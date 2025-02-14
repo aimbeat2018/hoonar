@@ -592,7 +592,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                         ),
                                       ),
                                     ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
                               Padding(
@@ -609,11 +609,11 @@ class _HelpScreenState extends State<HelpScreen> {
                                       },
                                       child: Container(
                                         padding:
-                                            EdgeInsets.symmetric(vertical: 10),
-                                        margin: EdgeInsets.symmetric(
+                                            const EdgeInsets.symmetric(vertical: 10),
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         decoration: ShapeDecoration(
-                                          gradient: LinearGradient(
+                                          gradient: const LinearGradient(
                                             begin: Alignment(1.00, 0.00),
                                             end: Alignment(-1, 0),
                                             colors: [
@@ -637,7 +637,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                               height: 20,
                                               width: 20,
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Text(
@@ -667,11 +667,11 @@ class _HelpScreenState extends State<HelpScreen> {
                                       },
                                       child: Container(
                                         padding:
-                                            EdgeInsets.symmetric(vertical: 10),
-                                        margin: EdgeInsets.symmetric(
+                                            const EdgeInsets.symmetric(vertical: 10),
+                                        margin: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         decoration: ShapeDecoration(
-                                          gradient: LinearGradient(
+                                          gradient: const LinearGradient(
                                             begin: Alignment(1.00, 0.00),
                                             end: Alignment(-1, 0),
                                             colors: [
@@ -695,7 +695,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                               height: 20,
                                               width: 20,
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Text(
@@ -716,7 +716,7 @@ class _HelpScreenState extends State<HelpScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                             ],
@@ -830,7 +830,7 @@ class _HelpScreenState extends State<HelpScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.addHelpRequestModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });

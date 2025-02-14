@@ -261,7 +261,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             null ||
                                         homeProvider.userSearchHistoryModel!
                                             .userSearchHistory!.isEmpty
-                                    ? SizedBox()
+                                    ? const SizedBox()
                                     : Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -371,7 +371,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 : homeProvider.searchListModel!.data == null ||
                                         homeProvider
                                             .searchListModel!.data!.isEmpty
-                                    ? DataNotFound()
+                                    ? const DataNotFound()
                                     : ListView.builder(
                                         itemCount: homeProvider
                                             .searchListModel!.data!.length,
@@ -480,7 +480,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               fontSize: 13),
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 10,
                                                   ),
                                                   Expanded(

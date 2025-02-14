@@ -62,7 +62,7 @@ class UserRankShimmer extends StatelessWidget {
                     color: isDarkMode ? Colors.black : Colors.white,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
@@ -98,7 +98,7 @@ class UserRankShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(
@@ -111,7 +111,7 @@ class UserRankShimmer extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Padding(

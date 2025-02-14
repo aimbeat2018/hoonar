@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/capture_video_screen.dart';
@@ -11,8 +9,8 @@ import 'package:hoonar/screens/search/search_screen.dart';
 import 'package:notification_permissions/notification_permissions.dart' as np;
 
 // import 'package:notification_permissions/notification_permissions.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // import 'package:ve_sdk_flutter/export_result.dart';
@@ -88,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return SafeArea(child: EnableNotificationScreen());
+        return const SafeArea(child: EnableNotificationScreen());
       },
     );
   }
@@ -128,143 +126,155 @@ class _MainScreenState extends State<MainScreen> {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return WillPopScope(
         onWillPop: _onWillPop,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: myLoading.isDark ? Colors.transparent : Colors.white,
-          body: getBody(),
-          floatingActionButton: SizedBox(
-            height: 65, // Set custom height
-            width: 65, // Set custom width
-            child: FloatingActionButton(
-              backgroundColor: myLoading.isDark ? Colors.white : Colors.black,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0)),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  SlideRightRoute(page: SelectCategoryScreen()),
-                );
-              },
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    left: 10,
-                    right: 10,
-                    top: 10,
-                    bottom: 10,
-                    child: Image.asset(
-                      'assets/images/star.png',
-                      color: myLoading.isDark ? Colors.black : Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+        child: UpgradeAlert(
+          barrierDismissible: false,
+          dialogStyle: UpgradeDialogStyle.cupertino,
+          showIgnore: false,
+          showLater: true,
+          upgrader: Upgrader(
+            durationUntilAlertAgain: const Duration(days: 1),
+            debugLogging: true,
+            // debugDisplayAlways: true,
           ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(30)),
-            child: BottomAppBar(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-              height: 60,
-              color: myLoading.isDark ? Colors.white : Colors.black,
-              shape: const CircularNotchedRectangle(),
-              notchMargin: 7.0,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor:
+                myLoading.isDark ? Colors.transparent : Colors.white,
+            body: getBody(),
+            floatingActionButton: SizedBox(
+              height: 65, // Set custom height
+              width: 65, // Set custom width
+              child: FloatingActionButton(
+                backgroundColor: myLoading.isDark ? Colors.white : Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50.0)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    SlideRightRoute(page: const SelectCategoryScreen()),
+                  );
+                },
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          if (selectedIndex == 0) {
-                            setState(() {
-                              selectedIndex = 0;
-                            });
-                          } else {
-                            onTapHandler(0);
-                          }
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/home.png",
-                              height: selectedIndex == 0 ? 25 : 23,
-                              width: selectedIndex == 0 ? 25 : 23,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                            sizedBoxH2,
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          openCameraScreen();
-                          // _startVideoEditorInCameraMode();
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/camera.png",
-                              height: selectedIndex == 1 ? 25 : 23,
-                              width: selectedIndex == 1 ? 25 : 23,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const Expanded(child: SizedBox()), // Handle FAB spacing
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          onTapHandler(1);
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/search.png",
-                              height: selectedIndex == 2 ? 25 : 23,
-                              width: selectedIndex == 2 ? 25 : 23,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          onTapHandler(2);
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              "assets/images/profile.png",
-                              height: selectedIndex == 3 ? 25 : 23,
-                              width: selectedIndex == 3 ? 25 : 23,
-                              color: myLoading.isDark
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
-                          ],
-                        ),
+                    Positioned.fill(
+                      left: 10,
+                      right: 10,
+                      top: 10,
+                      bottom: 10,
+                      child: Image.asset(
+                        'assets/images/star.png',
+                        color: myLoading.isDark ? Colors.black : Colors.white,
                       ),
                     ),
                   ],
+                ),
+              ),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(30)),
+              child: BottomAppBar(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 10.0),
+                height: 60,
+                color: myLoading.isDark ? Colors.white : Colors.black,
+                shape: const CircularNotchedRectangle(),
+                notchMargin: 7.0,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            if (selectedIndex == 0) {
+                              setState(() {
+                                selectedIndex = 0;
+                              });
+                            } else {
+                              onTapHandler(0);
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/home.png",
+                                height: selectedIndex == 0 ? 25 : 23,
+                                width: selectedIndex == 0 ? 25 : 23,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                              sizedBoxH2,
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            openCameraScreen();
+                            // _startVideoEditorInCameraMode();
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/camera.png",
+                                height: selectedIndex == 1 ? 25 : 23,
+                                width: selectedIndex == 1 ? 25 : 23,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: SizedBox()), // Handle FAB spacing
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            onTapHandler(1);
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/search.png",
+                                height: selectedIndex == 2 ? 25 : 23,
+                                width: selectedIndex == 2 ? 25 : 23,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            onTapHandler(2);
+                          },
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                "assets/images/profile.png",
+                                height: selectedIndex == 3 ? 25 : 23,
+                                width: selectedIndex == 3 ? 25 : 23,
+                                color: myLoading.isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

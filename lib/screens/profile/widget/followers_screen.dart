@@ -105,7 +105,7 @@ class _FollowersScreenState extends State<FollowersScreen>
           'Unauthorized Access!') {
         Future.microtask(() {
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
 
@@ -150,13 +150,13 @@ class _FollowersScreenState extends State<FollowersScreen>
           : Scaffold(
               backgroundColor: Colors.transparent,
               body: isLoading == true
-                  ? FollowingListShimmer()
+                  ? const FollowingListShimmer()
                   : followersList.isEmpty
-                      ? DataNotFound()
+                      ? const DataNotFound()
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             ValueListenableBuilder<String?>(
@@ -178,7 +178,7 @@ class _FollowersScreenState extends State<FollowersScreen>
                                     ),
                                   );
                                 }),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                             AnimatedList(

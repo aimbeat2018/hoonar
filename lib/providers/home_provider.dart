@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hoonar/constants/utils.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
-import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_search_data_request_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
@@ -16,9 +13,7 @@ import 'package:hoonar/model/success_models/report_reasons_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/user_search_history_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
-import 'package:hoonar/providers/auth_provider.dart';
 import 'package:hoonar/services/home_page_service.dart';
-import 'package:provider/provider.dart';
 
 import '../model/success_models/category_list_success_model.dart';
 import '../model/success_models/home_page_other_view_all_model.dart';

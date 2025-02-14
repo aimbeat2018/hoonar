@@ -52,7 +52,7 @@ class NewsEventListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -62,7 +62,7 @@ class NewsEventListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -72,7 +72,7 @@ class NewsEventListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -82,7 +82,7 @@ class NewsEventListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -92,7 +92,7 @@ class NewsEventListShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(

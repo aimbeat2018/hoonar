@@ -34,7 +34,7 @@ class WalletTransactionShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 5,
           ),
           Container(
@@ -44,7 +44,7 @@ class WalletTransactionShimmer extends StatelessWidget {
               color: isDarkMode ? Colors.black : Colors.white,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -56,7 +56,7 @@ class WalletTransactionShimmer extends StatelessWidget {
                   color: isDarkMode ? Colors.black : Colors.white,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 5,
               ),
               Container(
@@ -77,7 +77,7 @@ class WalletTransactionShimmer extends StatelessWidget {
             itemCount: 5,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
@@ -107,7 +107,7 @@ class WalletTransactionShimmer extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 30,
                       ),
                       Container(

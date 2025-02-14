@@ -19,7 +19,7 @@ class ListHorizontalShimmer extends StatelessWidget {
         child: ListView.builder(
             itemCount: 3,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (BuildContext context, int index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -46,7 +46,7 @@ class ListHorizontalShimmer extends StatelessWidget {
                                 myLoading.isDark ? Colors.black : Colors.white,
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Container(
                           width: 50,
                           height: 12,
@@ -81,7 +81,7 @@ class ListHorizontalShimmer extends StatelessWidget {
   Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
       BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       width: MediaQuery.of(context).size.width * 0.4,
       decoration: BoxDecoration(
           color: isDarkMode ? Colors.black : Colors.white,

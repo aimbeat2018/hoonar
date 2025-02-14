@@ -109,7 +109,7 @@ class _CategoryWiseVideosListScreenState
         SnackbarUtil.showSnackBar(
             context, homeProvider.categoryListSuccessModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+            context, SlideRightRoute(page: const LoginScreen()), (route) => false);
       }
     }
 
@@ -166,7 +166,7 @@ class _CategoryWiseVideosListScreenState
         SnackbarUtil.showSnackBar(
             context, homeProvider.postListSuccessModel?.message! ?? '');
         Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: LoginScreen()), (route) => false);
+            context, SlideRightRoute(page: const LoginScreen()), (route) => false);
       }
     }
     if (page == 1) {
@@ -260,12 +260,12 @@ class _CategoryWiseVideosListScreenState
                           ),
                           const SizedBox(height: 5),
                           isLoading && postListData.isEmpty
-                              ? GridShimmer()
+                              ? const GridShimmer()
                               : /*homeProvider.postListSuccessModel!.data == null ||
                             homeProvider
                                 .postListSuccessModel!.data!.isEmpty*/
                               postListData.isEmpty
-                                  ? DataNotFound()
+                                  ? const DataNotFound()
                                   : Column(
                                       children: [
                                         GridView.builder(
@@ -283,7 +283,7 @@ class _CategoryWiseVideosListScreenState
                                         .postListSuccessModel!.data!*/
                                               postListData.length,
                                           physics:
-                                              NeverScrollableScrollPhysics(),
+                                              const NeverScrollableScrollPhysics(),
                                           itemBuilder: (context, index) {
                                             return InkWell(
                                               onTap: () {
@@ -308,9 +308,9 @@ class _CategoryWiseVideosListScreenState
                                                             .postImage ??
                                                         '',
                                                 placeholder: (context, url) =>
-                                                    Center(
+                                                    const Center(
                                                   child:
-                                                      const CircularProgressIndicator(),
+                                                      CircularProgressIndicator(),
                                                 ),
                                                 errorWidget:
                                                     (context, url, error) =>
@@ -323,7 +323,7 @@ class _CategoryWiseVideosListScreenState
                                           },
                                         ),
                                         if (isMoreLoading)
-                                          Center(
+                                          const Center(
                                             child: CircularProgressIndicator(),
                                           )
                                       ],
@@ -349,9 +349,9 @@ class _CategoryWiseVideosListScreenState
                           child: Card(
                             color: Colors.white,
                             child: homeProvider.isCategoryLoading
-                                ? CategoryShimmer()
+                                ? const CategoryShimmer()
                                 : Padding(
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                         right: 2, top: 3, bottom: 3),
                                     child: ScrollbarTheme(
                                       data: ScrollbarThemeData(

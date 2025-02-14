@@ -5,6 +5,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../constants/my_loading/my_loading.dart';
 
 class VoteListShimmer extends StatelessWidget {
+  const VoteListShimmer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
@@ -56,7 +58,7 @@ class VoteListShimmer extends StatelessWidget {
                           color: isDarkMode ? Colors.black : Colors.white,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 3,
                       ),
                       Container(

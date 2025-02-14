@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 
 import '../../constants/location_service.dart';
 
@@ -37,21 +36,21 @@ class _LocationCheckScreenState extends State<LocationCheckScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text('Location Required'),
-        content: Text(
+        title: const Text('Location Required'),
+        content: const Text(
             'Location services are required to use this app. Please enable location.'),
         actions: [
           TextButton(
             onPressed: () {
               _checkLocation();
             },
-            child: Text('Retry'),
+            child: const Text('Retry'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('Exit App'),
+            child: const Text('Exit App'),
           ),
         ],
       ),
@@ -61,8 +60,8 @@ class _LocationCheckScreenState extends State<LocationCheckScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Location Check')),
-      body: Center(
+      appBar: AppBar(title: const Text('Location Check')),
+      body: const Center(
         child: Text('Checking location...'),
       ),
     );

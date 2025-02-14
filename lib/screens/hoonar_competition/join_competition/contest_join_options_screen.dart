@@ -304,7 +304,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                         ),
                         GridView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
@@ -322,7 +322,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: CreateUploadOptionsScreen()),
+                                        page: const CreateUploadOptionsScreen()),
                                   );
                                 } else if (index == 1) {
                                   Navigator.push(
@@ -337,23 +337,23 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: NewsAndEventsScreen()),
+                                        page: const NewsAndEventsScreen()),
                                   );
                                 } else if (index == 3) {
                                   Navigator.push(
                                     context,
-                                    SlideRightRoute(page: YourRewardsScreen()),
+                                    SlideRightRoute(page: const YourRewardsScreen()),
                                   );
                                 } else if (index == 4) {
                                   Navigator.push(
                                     context,
-                                    SlideRightRoute(page: GuidelineScreen()),
+                                    SlideRightRoute(page: const GuidelineScreen()),
                                   );
                                 } else if (index == 5) {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: DocumentsOptionScreen()),
+                                        page: const DocumentsOptionScreen()),
                                   );
                                 }
                               },
@@ -378,7 +378,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                       height: 50,
                                       width: 50,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 20,
                                     ),
                                     Text(

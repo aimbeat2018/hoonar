@@ -8,12 +8,12 @@ class ManualScrollingText extends StatefulWidget {
   final double height;
 
   const ManualScrollingText({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.duration = const Duration(seconds: 10),
     this.height = 50.0, // Default height for the scrolling text container
-  }) : super(key: key);
+  });
 
   @override
   _ManualScrollingTextState createState() => _ManualScrollingTextState();
@@ -50,7 +50,7 @@ class _ManualScrollingTextState extends State<ManualScrollingText>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.height,
       child: Row(
         children: [
@@ -68,7 +68,7 @@ class _ManualScrollingTextState extends State<ManualScrollingText>
                         GoogleFonts.poppins(
                             fontSize: 24, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(width: 20), // Gap between the two instances
+                  const SizedBox(width: 20), // Gap between the two instances
                   Text(
                     widget.text,
                     style: widget.textStyle ??

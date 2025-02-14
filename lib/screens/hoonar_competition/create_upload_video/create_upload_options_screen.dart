@@ -319,7 +319,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                     : Colors.grey.shade700
                               ]),
                         )),
-                        SizedBox(
+                        const SizedBox(
                           height: 30,
                         ),
                         // GridView.builder(
@@ -451,7 +451,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                         // ),
                         ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: optionsList.length,
                           itemBuilder: (context, index) {
                             return InkWell(
@@ -487,7 +487,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          SelectSoundListScreen(
+                                          const SelectSoundListScreen(
                                         duration: "0",
                                       ),
                                     ),
@@ -496,7 +496,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: VideoShareOptionsScreen()),
+                                        page: const VideoShareOptionsScreen()),
                                   );
                                 }
                                 // Navigator.push(
@@ -535,7 +535,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                           height: 50,
                                           width: 50,
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 10,
                                         ),
                                         Text(

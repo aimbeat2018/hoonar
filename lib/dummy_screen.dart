@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ZoomCarouselSlider extends StatefulWidget {
+  const ZoomCarouselSlider({super.key});
+
   @override
   _ZoomCarouselSliderState createState() => _ZoomCarouselSliderState();
 }
@@ -42,7 +44,7 @@ class _ZoomCarouselSliderState extends State<ZoomCarouselSlider> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Zoom Carousel Slider')),
+      appBar: AppBar(title: const Text('Zoom Carousel Slider')),
       body: Center(
         child: Column(
           children: [
@@ -76,7 +78,7 @@ class _ZoomCarouselSliderState extends State<ZoomCarouselSlider> {
                       child: Transform.translate(
                         offset: Offset(offset, 0),
                         child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 0),
+                          margin: const EdgeInsets.symmetric(horizontal: 0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
                             image: DecorationImage(
@@ -98,7 +100,7 @@ class _ZoomCarouselSliderState extends State<ZoomCarouselSlider> {
                 return Container(
                   width: 8,
                   height: 8,
-                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: _currentIndex == index ? Colors.blue : Colors.grey,

@@ -13,7 +13,7 @@ import 'my_loading/my_loading.dart';
 class NoInternetScreen extends StatefulWidget {
   final Function? onTapRetry;
 
-  const NoInternetScreen({Key? key, this.onTapRetry}) : super(key: key);
+  const NoInternetScreen({super.key, this.onTapRetry});
 
   @override
   NoInternetScreenState createState() => NoInternetScreenState();

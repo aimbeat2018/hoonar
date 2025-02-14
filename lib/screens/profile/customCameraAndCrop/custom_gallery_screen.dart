@@ -34,7 +34,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
   int _pageIndex = 0; // Initial page index for pagination
   final int _pageSize = 80; // Number of items per page
 
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -148,7 +148,7 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 Icon(
@@ -284,10 +284,10 @@ class _CustomGalleryScreenState extends State<CustomGalleryScreen> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return Container(
-          margin: EdgeInsets.only(top: 55),
+          margin: const EdgeInsets.only(top: 55),
           decoration: BoxDecoration(
             color: isDarkMode ? Colors.black : Colors.white,
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),

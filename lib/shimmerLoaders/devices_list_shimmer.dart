@@ -5,6 +5,8 @@ import 'package:shimmer/shimmer.dart';
 import '../../constants/my_loading/my_loading.dart';
 
 class DevicesListShimmer extends StatelessWidget {
+  const DevicesListShimmer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
@@ -66,7 +68,7 @@ class DevicesListShimmer extends StatelessWidget {
                           color: isDarkMode ? Colors.black : Colors.white,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 3,
                       ),
                       Container(

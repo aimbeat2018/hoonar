@@ -70,7 +70,7 @@ class _FaqScreenState extends State<FaqScreen> {
           SnackbarUtil.showSnackBar(
               context, contestProvider.faqListModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: LoginScreen()), (route) => false);
+              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -127,15 +127,15 @@ class _FaqScreenState extends State<FaqScreen> {
                       )),
                       settingProvider.isFaqLoading ||
                               settingProvider.faqListModel == null
-                          ? FaqListShimmer()
+                          ? const FaqListShimmer()
                           : settingProvider.faqListModel!.data == null ||
                                   settingProvider.faqListModel!.data!.isEmpty
-                              ? DataNotFound()
+                              ? const DataNotFound()
                               : AnimatedList(
                                   initialItemCount: settingProvider
                                       .faqListModel!.data!.length,
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index, animation) {
                                     return buildItem(
                                         animation,
@@ -188,7 +188,7 @@ class _FaqScreenState extends State<FaqScreen> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 5,
                 ),
                 InkWell(
@@ -214,7 +214,7 @@ class _FaqScreenState extends State<FaqScreen> {
                         Divider(
                           color: isDarkMode ? Colors.white : Colors.black,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         Text(
@@ -228,7 +228,7 @@ class _FaqScreenState extends State<FaqScreen> {
                       ],
                     ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
       ),

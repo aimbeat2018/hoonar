@@ -30,7 +30,7 @@ class ConnectShareScreen extends StatefulWidget {
 
 class _ConnectShareScreenState extends State<ConnectShareScreen> {
   final _share = CustomSocialShare();
-  var _onlyInstalled = false;
+  final _onlyInstalled = false;
   var _installedApps = <ShareWith>[];
 
   String _connectionStatus = 'unKnown';
@@ -207,7 +207,7 @@ class _ConnectShareScreenState extends State<ConnectShareScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             InkWell(

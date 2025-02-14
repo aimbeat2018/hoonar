@@ -6,7 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
 import 'package:hoonar/constants/session_manager.dart';
-import 'package:hoonar/constants/text_constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import '../../../constants/color_constants.dart';
@@ -61,7 +60,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             SnackbarUtil.showSnackBar(
                 context, authProvider.changePasswordModel?.message! ?? '');
             Navigator.pushAndRemoveUntil(context,
-                SlideRightRoute(page: LoginScreen()), (route) => false);
+                SlideRightRoute(page: const LoginScreen()), (route) => false);
           }
         }
       });

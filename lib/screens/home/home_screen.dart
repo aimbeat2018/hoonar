@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         homeProvider.isHomeLoading ||
                                 homeProvider.homePostSuccessModel == null ||
                                 homeProvider.homePostSuccessModel!.data == null
-                            ? HomeSliderShimmers()
+                            ? const HomeSliderShimmers()
                             : Column(
                                 children: [
                                   CS.CarouselSlider.builder(

@@ -14,7 +14,6 @@ import '../../constants/slide_right_route.dart';
 import '../../custom/data_not_found.dart';
 import '../../custom/snackbar_util.dart';
 import '../../model/request_model/list_common_request_model.dart';
-import '../../../../model/success_models/sound_list_model.dart';
 import '../../model/success_models/home_post_success_model.dart';
 import '../../providers/home_provider.dart';
 import '../auth_screen/login_screen.dart';
@@ -78,7 +77,7 @@ class _DraftsScreenState extends State<DraftsScreen> {
         }
       }
     });
-    await Future.delayed(Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 2), () {
       // Navigator.pop(context);
       // Navigator.pop(context);
       Navigator.pop(context);
@@ -162,7 +161,7 @@ class _DraftsScreenState extends State<DraftsScreen> {
 
     int crossAxisCount = screenWidth < 600 ? 3 : 4;
     return widget.draftList.isEmpty
-        ? SizedBox(height: 120, child: DataNotFound())
+        ? const SizedBox(height: 120, child: DataNotFound())
         : SingleChildScrollView(
             controller: widget.controller,
             child: GridView.builder(
@@ -179,7 +178,7 @@ class _DraftsScreenState extends State<DraftsScreen> {
               itemCount: /*homeProvider
                                           .postListSuccessModel!.data!*/
                   widget.draftList.length,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return InkWell(
                   onLongPress: widget.from == 'main'
@@ -205,11 +204,11 @@ class _DraftsScreenState extends State<DraftsScreen> {
                       CachedNetworkImage(
                         imageUrl: widget.draftList[index].postImage ?? '',
 
-                        placeholder: (context, url) => Center(
+                        placeholder: (context, url) => const Center(
                           child: SizedBox(
                               height: 15,
                               width: 15,
-                              child: const CircularProgressIndicator()),
+                              child: CircularProgressIndicator()),
                         ),
                         errorWidget: (context, url, error) =>
                             buildInitialsAvatar('No Image', fontSize: 12),
@@ -254,14 +253,14 @@ class _DraftsScreenState extends State<DraftsScreen> {
                             );
                           },
                           child: Container(
-                            padding: EdgeInsets.all(5),
-                            margin: EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(5),
+                            margin: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: Colors.black
                                   .withAlpha(96), // Background color
                               shape: BoxShape.circle, // Circular shape
                             ),
-                            child: Icon(Icons.edit, color: Colors.white),
+                            child: const Icon(Icons.edit, color: Colors.white),
                           ),
                         ),
                       ),

@@ -17,7 +17,6 @@ import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/slide_right_route.dart';
 import '../../../custom/snackbar_util.dart';
 import '../../auth_screen/login_screen.dart';
-import '../menuOptionsScreens/edit_profile_screen.dart';
 
 class CropImageScreen extends StatefulWidget {
   final XFile? selectedImageFile;
@@ -234,7 +233,7 @@ class _CropImageScreenState extends State<CropImageScreen> {
                 child: Container(
                   color: Colors.black.withOpacity(0.5),
                   // semi-transparent background
-                  child: Center(
+                  child: const Center(
                     child: CircularProgressIndicator(),
                   ),
                 ),

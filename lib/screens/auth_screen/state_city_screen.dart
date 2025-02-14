@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
+import 'package:hoonar/model/success_models/state_list_model.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../constants/color_constants.dart';
@@ -229,7 +229,7 @@ class _StateCityScreenState extends State<StateCityScreen> {
                               },
                               separatorBuilder:
                                   (BuildContext context, int index) {
-                                return Divider();
+                                return const Divider();
                               },
                             ),
                 ),

@@ -13,7 +13,7 @@ class SnackbarUtil {
           fontSize: 14,
         ),
       ),
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       /* action: SnackBarAction(
         label: 'Undo',
         onPressed: () {
@@ -40,7 +40,7 @@ class Validation {
 class LoaderDialog extends StatelessWidget {
   final double strokeWidth;
 
-  LoaderDialog({this.strokeWidth = 4});
+  const LoaderDialog({super.key, this.strokeWidth = 4});
 
   @override
   Widget build(BuildContext context) {

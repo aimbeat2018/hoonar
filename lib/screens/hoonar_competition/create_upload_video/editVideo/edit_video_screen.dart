@@ -136,12 +136,12 @@ class _EditVideoScreenState extends State<EditVideoScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.music_note,
                                 color: Colors.white,
                                 size: 20,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Flexible(
@@ -191,10 +191,10 @@ class _EditVideoScreenState extends State<EditVideoScreen>
                                   ),
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 8,
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 color: Colors.white,
                                 size: 20,

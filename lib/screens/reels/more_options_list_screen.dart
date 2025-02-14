@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttermoji/fluttermojiCircleAvatar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/session_manager.dart';
-import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/providers/home_provider.dart';
 import 'package:hoonar/screens/reels/report_post_screen.dart';
 import 'package:provider/provider.dart';
@@ -111,7 +109,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
         }
       }
     });
-    await Future.delayed(Duration(seconds: 2), () {
+    await Future.delayed(const Duration(seconds: 2), () {
       Navigator.pop(context);
       Navigator.pop(context);
       Navigator.pop(context);
@@ -198,7 +196,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             widget.userId != widget.postUserId.toString()
@@ -223,7 +221,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                     ? Colors.white60
                                     : Colors.grey,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(
@@ -237,7 +235,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 size: 15,
@@ -249,7 +247,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                           ),
                         ),
                       ),
-                      Divider(),
+                      const Divider(),
                       if (widget.followStatus == "0")
                         Padding(
                           padding: const EdgeInsets.symmetric(
@@ -268,7 +266,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                       ? Colors.white60
                                       : Colors.grey,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(
@@ -282,7 +280,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 Icon(
                                   Icons.arrow_forward_ios_rounded,
                                   size: 15,
@@ -294,7 +292,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                             ),
                           ),
                         ),
-                      if (widget.followStatus == "0") Divider(),
+                      if (widget.followStatus == "0") const Divider(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 5.0, horizontal: 15),
@@ -320,7 +318,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                 color:
                                     myLoading.isDark ? Colors.red : Colors.red,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(
@@ -334,7 +332,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 size: 15,
@@ -370,7 +368,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                         ? Colors.white60
                                         : Colors.grey,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
                                   Text(
@@ -384,7 +382,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Icon(
                                     Icons.arrow_forward_ios_rounded,
                                     size: 15,
@@ -398,7 +396,7 @@ class _MoreOptionsListScreenState extends State<MoreOptionsListScreen>
                           ),
                         ],
                       )
-                    : SizedBox(),
+                    : const SizedBox(),
           ],
         ),
       );

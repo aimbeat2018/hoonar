@@ -162,8 +162,8 @@ class _UploadVideoOptionsScreenState extends State<UploadVideoOptionsScreen> {
                       ),
                       Expanded(
                         child: currentTab == 0
-                            ? DraftVideoListScreen()
-                            : YourFeedVideoListScreen(
+                            ? const DraftVideoListScreen()
+                            : const YourFeedVideoListScreen(
                                 from: 'upload',
                               ),
                       )

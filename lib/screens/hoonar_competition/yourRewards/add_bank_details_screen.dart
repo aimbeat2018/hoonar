@@ -255,7 +255,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                           : Colors.grey.shade700
                                     ]),
                               )),
-                              SizedBox(
+                              const SizedBox(
                                 height: 30,
                               ),
                               Padding(
@@ -280,7 +280,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                 : Colors.black,
                                             fontSize: 14),
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           labelText:
                                               AppLocalizations.of(context)!
@@ -316,7 +316,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   width: 1)),
                                         ),
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       TextFormField(
                                         validator: (v) {
                                           if (v!.trim().isEmpty) {
@@ -333,7 +333,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                 : Colors.black,
                                             fontSize: 14),
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           labelText:
                                               AppLocalizations.of(context)!
@@ -369,7 +369,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   width: 1)),
                                         ),
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       TextFormField(
                                         validator: (v) {
                                           if (v!.trim().isEmpty) {
@@ -385,7 +385,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                 : Colors.black,
                                             fontSize: 14),
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           labelText:
                                               AppLocalizations.of(context)!
@@ -421,7 +421,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   width: 1)),
                                         ),
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       DropdownButtonFormField<String>(
                                         value: selectedAccountType,
                                         style: GoogleFonts.poppins(
@@ -430,7 +430,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                 : Colors.black,
                                             fontSize: 14),
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           labelText:
                                               AppLocalizations.of(context)!
@@ -478,7 +478,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                           });
                                         },
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       TextFormField(
                                         validator: (v) {
                                           if (v!.trim().isEmpty) {
@@ -494,7 +494,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                 : Colors.black,
                                             fontSize: 14),
                                         decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           labelText:
                                               AppLocalizations.of(context)!
@@ -530,7 +530,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   width: 1)),
                                         ),
                                       ),
-                                      SizedBox(height: 25),
+                                      const SizedBox(height: 25),
                                       TextFormField(
                                         validator: (v) {
                                           if (v!.trim().isEmpty) {
@@ -554,7 +554,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   ? Colors.white
                                                   : Colors.black,
                                               fontSize: 14),
-                                          contentPadding: EdgeInsets.symmetric(
+                                          contentPadding: const EdgeInsets.symmetric(
                                               horizontal: 15),
                                           border: OutlineInputBorder(
                                               borderRadius:
@@ -582,7 +582,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                                                   width: 1)),
                                         ),
                                       ),
-                                      SizedBox(height: 32),
+                                      const SizedBox(height: 32),
                                       InkWell(
                                         onTap: () {
                                           if (_formKey.currentState!
@@ -648,7 +648,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
                               child: Container(
                                 color: Colors.black.withOpacity(0.5),
                                 // semi-transparent background
-                                child: Center(
+                                child: const Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               ),

@@ -15,7 +15,7 @@ class CustomTabClipper extends CustomPainter {
     path.lineTo(size.width, 0);  // Line to top-right
     path.lineTo(size.width, size.height);  // Line to bottom-right
     path.lineTo(30, size.height);  // Line to bottom-left
-    path.arcToPoint(Offset(1, 0), radius: Radius.circular(10), clockwise: false);  // Rounded left side
+    path.arcToPoint(const Offset(1, 0), radius: const Radius.circular(10), clockwise: false);  // Rounded left side
 
     canvas.drawPath(path, paint);  // Draw the shape
   }

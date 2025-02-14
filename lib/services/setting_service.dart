@@ -1,19 +1,9 @@
 import 'package:hoonar/model/request_model/add_help_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/success_models/contact_details_model.dart';
-import 'package:hoonar/model/success_models/contact_details_model.dart';
-import 'package:hoonar/model/success_models/contact_details_model.dart';
-import 'package:hoonar/model/success_models/devices_list_model.dart';
-import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/devices_list_model.dart';
 import 'package:hoonar/model/success_models/faq_list_model.dart';
-import 'package:hoonar/model/success_models/faq_list_model.dart';
-import 'package:hoonar/model/success_models/faq_list_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
-import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
-import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
-import 'package:hoonar/model/success_models/help_issues_list_model.dart';
-import 'package:hoonar/model/success_models/help_issues_list_model.dart';
 import 'package:hoonar/model/success_models/help_issues_list_model.dart';
 import 'package:hoonar/model/success_models/page_content_model.dart';
 
