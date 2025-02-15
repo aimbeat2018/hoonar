@@ -48,6 +48,14 @@
         android:theme="@style/LaunchTheme"
         android:usesCleartextTraffic="true">
 
+        <!-- Branch.io Configuration -->
+        <meta-data
+            android:name="io.branch.sdk.BranchKey"
+            android:value="key_live_crdZFe70pTpAyThMLJdMcmeeDsfvAemE"/>
+        <meta-data
+            android:name="io.branch.sdk.TestMode"
+            android:value="false"/>
+
         <!-- Main Activity -->
         <activity
             android:name="com.hoonar.hoonar.MainActivity"
@@ -67,6 +75,18 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Branch.io Deep Linking -->
+            <intent-filter>
+                <data android:scheme="https"
+                    android:host="hoonarstar.app.link" />
+                <data android:scheme="https"
+                    android:host="hoonarstar-alternate.app.link" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+
         </activity>
 
         <!-- UCrop Activity -->

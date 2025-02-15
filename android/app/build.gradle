@@ -18,8 +18,8 @@ configurations.configureEach {
 
 android {
     namespace = "com.hoonar.hoonar"
-//    compileSdk = flutter.compileSdkVersion
-    compileSdk = 34
+    compileSdk = flutter.compileSdkVersion
+//    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -39,7 +39,7 @@ android {
 //        must update version in yaml file also keep gradle and yaml file version same
         applicationId = "com.hoonar.hoonar"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = flutter.compileSdkVersion
         versionCode = 9
         versionName = '1.0.8'
         multiDexEnabled true

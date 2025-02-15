@@ -217,7 +217,7 @@ class _SliderPageViewState extends State<SliderPageView>
                 ),
               ),
               const SizedBox(width: 5),
-              buildFollowButton(data, userProvider),
+              // buildFollowButton(data, userProvider),
             ],
           ),
         ),
@@ -225,41 +225,41 @@ class _SliderPageViewState extends State<SliderPageView>
     );
   }
 
-  Widget buildFollowButton(PostsListData data, UserProvider userProvider) {
-    return Flexible(
-      child: ValueListenableBuilder<int?>(
-        valueListenable: userProvider.followStatusNotifier,
-        builder: (context, followStatus, child) {
-          final isFollowing = data.followOrNot == 1 || followStatus == 1;
-
-          return Container(
-            margin: const EdgeInsets.only(left: 5),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: isFollowing ? Colors.white : Colors.transparent,
-                width: 1,
-              ),
-              color: isFollowing ? Colors.transparent : Colors.white,
-            ),
-            child: isFollowLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Text(
-                    isFollowing
-                        ? AppLocalizations.of(context)!.unfollow
-                        : AppLocalizations.of(context)!.follow,
-                    style: GoogleFonts.poppins(
-                      fontSize: 8,
-                      color: isFollowing ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-          );
-        },
-      ),
-    );
-  }
+  // Widget buildFollowButton(PostsListData data, UserProvider userProvider) {
+  //   return Flexible(
+  //     child: ValueListenableBuilder<int?>(
+  //       valueListenable: userProvider.followStatusNotifier,
+  //       builder: (context, followStatus, child) {
+  //         final isFollowing = data.followOrNot == 1 || followStatus == 1;
+  //
+  //         return Container(
+  //           margin: const EdgeInsets.only(left: 5),
+  //           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(15),
+  //             border: Border.all(
+  //               color: isFollowing ? Colors.white : Colors.transparent,
+  //               width: 1,
+  //             ),
+  //             color: isFollowing ? Colors.transparent : Colors.white,
+  //           ),
+  //           child: isFollowLoading
+  //               ? const Center(child: CircularProgressIndicator())
+  //               : Text(
+  //                   isFollowing
+  //                       ? AppLocalizations.of(context)!.unfollow
+  //                       : AppLocalizations.of(context)!.follow,
+  //                   style: GoogleFonts.poppins(
+  //                     fontSize: 8,
+  //                     color: isFollowing ? Colors.white : Colors.black,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   @override
   void dispose() {

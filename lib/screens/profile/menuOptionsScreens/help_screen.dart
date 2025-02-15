@@ -608,8 +608,8 @@ class _HelpScreenState extends State<HelpScreen> {
                                         }
                                       },
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         decoration: ShapeDecoration(
@@ -666,8 +666,8 @@ class _HelpScreenState extends State<HelpScreen> {
                                         }
                                       },
                                       child: Container(
-                                        padding:
-                                            const EdgeInsets.symmetric(vertical: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         decoration: ShapeDecoration(
@@ -825,12 +825,14 @@ class _HelpScreenState extends State<HelpScreen> {
       } else {
         if (contestProvider.addHelpRequestModel?.status == '200') {
           Navigator.pop(context);
+          SnackbarUtil.showSnackBar(
+              context, contestProvider.addHelpRequestModel?.message! ?? '');
         } else if (contestProvider.addHelpRequestModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, contestProvider.addHelpRequestModel?.message! ?? '');
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });

@@ -1,5 +1,6 @@
 class ListCommonRequestModel {
   int? userId;
+  int? commonUserId;
   int? notificationId;
   int? start;
   int? limit;
@@ -26,6 +27,7 @@ class ListCommonRequestModel {
 
   ListCommonRequestModel({
     this.userId,
+    this.commonUserId,
     this.reasonId,
     this.notificationId,
     this.start,

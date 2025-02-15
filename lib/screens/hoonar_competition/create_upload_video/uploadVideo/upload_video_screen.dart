@@ -188,7 +188,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
             KeyRes.selectedLevelId = -1;
             KeyRes.selectedCategoryId = -1;
             KeyRes.selectedCategoryName = '';
-          });
+           });
         }
 
         SnackbarUtil.showSnackBar(context,

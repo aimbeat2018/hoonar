@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/profile/profile_screen.dart';
 import 'package:hoonar/screens/reels/more_options_list_screen.dart';
+import 'package:hoonar/screens/reels/share_video_widget.dart';
 import 'package:hoonar/screens/reels/video_comment_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -223,6 +224,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   Future<void> followUnFollowUser(BuildContext context) async {
     ListCommonRequestModel requestModel = ListCommonRequestModel(
       toUserId: widget.model.userId,
+      commonUserId: widget.model.userId,
     );
 
     setState(() {
@@ -441,6 +443,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                           children: [
                             InkWell(
                               onTap: () {
+                                _videoPlayerController.pause();
                                 Navigator.push(
                                   context,
                                   SlideRightRoute(
@@ -512,93 +515,99 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                           ),
                                         ),
                                         Flexible(
-                                          child: ValueListenableBuilder<int?>(
-                                              valueListenable: userProvider
-                                                  .followStatusNotifier,
-                                              builder: (context, followStatus,
-                                                  child) {
-                                                return InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      followUnFollowUser(
-                                                          context);
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 10),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 15,
-                                                        vertical: 5),
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                        border: Border.all(
-                                                            color: widget.model
-                                                                            .followOrNot ==
-                                                                        1 ||
-                                                                    followStatus ==
-                                                                        1
-                                                                ? Colors.white
-                                                                : Colors
-                                                                    .transparent,
-                                                            width: 1),
-                                                        color: widget.model
-                                                                        .followOrNot ==
-                                                                    1 ||
-                                                                followStatus ==
-                                                                    1
-                                                            ? Colors.transparent
-                                                            : Colors.white),
-                                                    child: isFollowLoading
-                                                        ? Center(
-                                                            child: SizedBox(
-                                                                height: 15,
-                                                                width: 15,
-                                                                child:
-                                                                    CircularProgressIndicator(
-                                                                  color: widget.model.followOrNot ==
-                                                                              1 ||
-                                                                          followStatus ==
-                                                                              1
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black,
-                                                                )))
-                                                        : Text(
-                                                            widget.model.followOrNot ==
-                                                                        1 ||
-                                                                    followStatus ==
-                                                                        1
-                                                                ? AppLocalizations.of(
-                                                                        context)!
-                                                                    .unfollow
-                                                                : AppLocalizations.of(
-                                                                        context)!
-                                                                    .follow,
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                              fontSize: 12,
-                                                              color: widget.model
-                                                                              .followOrNot ==
-                                                                          1 ||
-                                                                      followStatus ==
-                                                                          1
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
+                                          child: ValueListenableBuilder<
+                                              Map<int, int?>>(
+                                            valueListenable: userProvider
+                                                .followStatusNotifier,
+                                            builder: (context, followStatusMap,
+                                                child) {
+                                              int userId =
+                                                  widget.model.userId ?? 0;
+                                              int followStatus =
+                                                  followStatusMap[userId] ??
+                                                      widget.model.followOrNot!;
+
+                                              return InkWell(
+                                                onTap: () async {
+                                                  await followUnFollowUser(
+                                                      context); // Call API (returns void)
+
+                                                  // Manually update follow status after API call
+                                                  userProvider
+                                                      .followStatusNotifier
+                                                      .value = {
+                                                    ...userProvider
+                                                        .followStatusNotifier
+                                                        .value,
+                                                    userId: followStatus == 1
+                                                        ? 0
+                                                        : 1,
+                                                  };
+                                                  userProvider
+                                                      .followStatusNotifier
+                                                      .notifyListeners(); // Notify UI
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      left: 10),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 15,
+                                                      vertical: 5),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    border: Border.all(
+                                                      color: followStatus == 1
+                                                          ? Colors.white
+                                                          : Colors.transparent,
+                                                      width: 1,
+                                                    ),
+                                                    color: followStatus == 1
+                                                        ? Colors.transparent
+                                                        : Colors.white,
                                                   ),
-                                                );
-                                              }),
+                                                  child: isFollowLoading
+                                                      ? Center(
+                                                          child: SizedBox(
+                                                              height: 15,
+                                                              width: 15,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                color: followStatus == 1
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .black,
+                                                              )))
+                                                      : Text(
+                                                          followStatus == 1
+                                                              ? AppLocalizations
+                                                                      .of(
+                                                                          context)!
+                                                                  .unfollow
+                                                              : AppLocalizations
+                                                                      .of(context)!
+                                                                  .follow,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 12,
+                                                            color:
+                                                                followStatus ==
+                                                                        1
+                                                                    ? Colors
+                                                                        .white
+                                                                    : Colors
+                                                                        .black,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -748,8 +757,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
                             ),
                             InkWell(
                               onTap: () {
-                                CustomSocialShare()
-                                    .toAll(widget.model.postVideo ?? '');
+                                /*   CustomSocialShare()
+                                    .toAll(widget.model.postVideo ?? '');*/
+
+                                ShareVideoWidget().shareTo(
+                                    widget.model.postVideo ?? '',
+                                    widget.model.postImage ?? '');
                               },
                               child: Column(
                                 children: [
@@ -964,4 +977,6 @@ class _ReelsWidgetState extends State<ReelsWidget>
       },
     );
   }
+
+/* ----------- Share video link through branch io -------*/
 }

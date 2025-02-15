@@ -11,6 +11,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../constants/common_widgets.dart';
 import '../../../model/success_models/home_post_success_model.dart';
+import '../../../providers/home_provider.dart';
 import '../../../providers/user_provider.dart';
 
 class CarouselPageView extends StatefulWidget {
@@ -45,6 +46,15 @@ class _CarouselPageViewState extends State<CarouselPageView>
       /*ChewieController chewieController,
       VideoPlayerController videoController,*/
       String initials) {
+    // Ensure the widget is fully built before calling Provider methods
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final homeProvider = Provider.of<HomeProvider>(context, listen: false);
+
+      // Call the updateFollowStatus method with required parameters
+      homeProvider.updateUserFollowStatus(context, data.userId!,
+          data.followOrNot!); // Replace `userId` and `newStatus` with actual values
+    });
+
     return Container(
       width: 250,
       decoration: const BoxDecoration(
@@ -176,7 +186,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
                 ),
               ),
               const SizedBox(width: 3),
-              buildFollowButton(data, userProvider),
+              // buildFollowButton(data, userProvider),
             ],
           ),
         ),
@@ -184,7 +194,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
     );
   }
 
-  Widget buildFollowButton(PostsListData data, UserProvider userProvider) {
+  /* Widget buildFollowButton(PostsListData data, UserProvider userProvider) {
     return Flexible(
       child: ValueListenableBuilder<int?>(
         valueListenable: userProvider.followStatusNotifier,
@@ -224,7 +234,7 @@ class _CarouselPageViewState extends State<CarouselPageView>
         },
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

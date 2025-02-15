@@ -19,7 +19,9 @@ class UserProvider extends ChangeNotifier {
   ValueNotifier<UserWiseVoteListModel?> userWiseVotesNotifier =
       ValueNotifier(null);
   ValueNotifier<String?> followingCountNotifier = ValueNotifier("0");
-  ValueNotifier<int?> followStatusNotifier = ValueNotifier(0);
+
+  // ValueNotifier<int?> followStatusNotifier = ValueNotifier(0);
+  final ValueNotifier<Map<int, int?>> followStatusNotifier = ValueNotifier({});
 
   bool _isLoading = false;
   bool _isAvatarLoading = false;
@@ -113,13 +115,26 @@ class UserProvider extends ChangeNotifier {
       FollowUnfollowSuccessModel successModel =
           await _userService.followUnfollowUser(requestModel: requestModel);
 
-      followStatusNotifier.value = successModel.followStatus ?? 0;
+      // followStatusNotifier.value = successModel.followStatus ?? 0;
+      updateFollowStatus(
+          requestModel.commonUserId!, successModel.followStatus ?? 0);
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void updateFollowStatus(int userId, int status) {
+    followStatusNotifier.value = {
+      ...followStatusNotifier.value,
+      userId: status,
+    };
+  }
+
+  int? getStatus(int userId) {
+    return followStatusNotifier.value[userId];
   }
 
   Future<void> getVotes(ListCommonRequestModel request) async {

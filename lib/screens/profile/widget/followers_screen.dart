@@ -104,8 +104,8 @@ class _FollowersScreenState extends State<FollowersScreen>
       } else if (authProvider.getFollowersListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
 
@@ -115,9 +115,8 @@ class _FollowersScreenState extends State<FollowersScreen>
   }
 
   Future<void> followUnFollowUser(BuildContext context, int userId) async {
-    ListCommonRequestModel requestModel = ListCommonRequestModel(
-      toUserId: userId,
-    );
+    ListCommonRequestModel requestModel =
+        ListCommonRequestModel(toUserId: userId, commonUserId: userId);
 
     isFollowLoading = true;
     final authProvider = Provider.of<UserProvider>(context, listen: false);
@@ -212,6 +211,8 @@ class _FollowersScreenState extends State<FollowersScreen>
             .join()
             .toUpperCase()
         : '';
+
+    String loginUserId = sessionManager.getString(SessionManager.userId)!;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
@@ -280,14 +281,25 @@ class _FollowersScreenState extends State<FollowersScreen>
               ],
             ),
           ),
-          ValueListenableBuilder<int?>(
+          if (loginUserId != followersList[index].fromUserId.toString())
+            ValueListenableBuilder<Map<int, int?>>(
               valueListenable: userProvider.followStatusNotifier,
-              builder: (context, followStatus, child) {
+              builder: (context, followStatusMap, child) {
+                int userId = followersList[index].fromUserId ?? 0;
+                int followStatus =
+                    followStatusMap[userId] ?? followersList[index].isFollow!;
+
                 return InkWell(
                   onTap: () {
                     setState(() {
-                      followUnFollowUser(
-                          context, followersList[index].fromUserId ?? 0);
+                      followUnFollowUser(context, userId).then((_) {
+                        if (followStatus == 1) {
+                          userProvider.followStatusNotifier.value[userId] = 0;
+                        } else {
+                          userProvider.followStatusNotifier.value[userId] = 1;
+                        }
+                        userProvider.followStatusNotifier.notifyListeners();
+                      });
                     });
                   },
                   child: Container(
@@ -297,34 +309,32 @@ class _FollowersScreenState extends State<FollowersScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: followersList[index].isFollow == 1 ||
-                                followStatus == 1
+                        color: followStatus == 1
                             ? (isDarkMode ? Colors.white : Colors.black)
                             : Colors.transparent,
                         width: 1,
                       ),
-                      color: followersList[index].isFollow == 1 ||
-                              followStatus == 1
+                      color: followStatus == 1
                           ? Colors.transparent
                           : (isDarkMode ? Colors.white : Colors.black),
                     ),
                     child: isFollowLoading
                         ? const Center(
                             child: SizedBox(
-                                height: 10,
-                                width: 10,
-                                child: CircularProgressIndicator(
-                                  color: Colors.grey,
-                                )))
+                              height: 10,
+                              width: 10,
+                              child: CircularProgressIndicator(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
                         : Text(
-                            followersList[index].isFollow == 1 ||
-                                    followStatus == 1
+                            followStatus == 1
                                 ? AppLocalizations.of(context)!.unfollow
                                 : AppLocalizations.of(context)!.follow,
                             style: GoogleFonts.poppins(
                               fontSize: 12,
-                              color: followersList[index].isFollow == 1 ||
-                                      followStatus == 1
+                              color: followStatus == 1
                                   ? (isDarkMode ? Colors.white : Colors.black)
                                   : (isDarkMode ? Colors.black : Colors.white),
                               fontWeight: FontWeight.w600,
@@ -332,7 +342,8 @@ class _FollowersScreenState extends State<FollowersScreen>
                           ),
                   ),
                 );
-              }),
+              },
+            ),
         ],
       ),
     );

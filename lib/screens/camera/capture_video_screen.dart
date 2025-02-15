@@ -429,31 +429,25 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     Map<Permission, PermissionStatus> statuses;
 
     if (Platform.isIOS) {
-      // Request necessary permissions for iOS
       statuses = await [
         Permission.camera,
         Permission.microphone,
-        Permission.photos,
+        Permission.photos, // iOS-specific
       ].request();
     } else {
-      // Request necessary permissions for Android
       statuses = await [
         Permission.camera,
         Permission.microphone,
       ].request();
     }
 
-    /*Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.microphone,
-      Permission.photos,
-    ].request();*/
+    bool cameraGranted = statuses[Permission.camera]?.isGranted ?? false;
+    bool micGranted = statuses[Permission.microphone]?.isGranted ?? false;
+    bool photosGranted = Platform.isIOS
+        ? (statuses[Permission.photos]?.isGranted ?? false)
+        : true;
 
-    print(statuses[Permission.camera]!.isGranted);
-    print(statuses[Permission.microphone]!.isGranted);
-    if (statuses[Permission.camera]!.isGranted &&
-        statuses[Permission.microphone]!.isGranted &&
-        statuses[Permission.photos]!.isGranted) {
+    if (cameraGranted && micGranted && photosGranted) {
       print('Granted');
       if (mounted) {
         setState(() {
@@ -464,34 +458,53 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       _initializeCameras();
       _audioPlayer = AudioPlayer();
     } else {
+      print('Not Granted');
       if (mounted) {
         setState(() {
           _permissionNotGranted = false;
         });
       }
-
-      print('Not Granted');
     }
-    setState(() {});
   }
 
   void requestPermissions() async {
-    // Request camera and microphone permissions
-    PermissionStatus cameraStatus = await Permission.camera.request();
-    PermissionStatus microphoneStatus = await Permission.microphone.request();
+    // Request permissions
+    Map<Permission, PermissionStatus> statuses;
 
-    if (cameraStatus.isGranted && microphoneStatus.isGranted) {
-      // Both permissions granted, initialize the camera
-      setState(() {
-        _permissionNotGranted = true;
-      });
+    if (Platform.isIOS) {
+      statuses = await [
+        Permission.camera,
+        Permission.microphone,
+        Permission.photos, // iOS-specific permission
+      ].request();
+    } else {
+      statuses = await [
+        Permission.camera,
+        Permission.microphone,
+      ].request();
+    }
+
+    // Check granted permissions
+    bool cameraGranted = statuses[Permission.camera]?.isGranted ?? false;
+    bool micGranted = statuses[Permission.microphone]?.isGranted ?? false;
+    bool photosGranted = Platform.isIOS
+        ? (statuses[Permission.photos]?.isGranted ?? false)
+        : true;
+
+    if (cameraGranted && micGranted && photosGranted) {
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = true;
+        });
+      }
       _initializeCameras();
     } else {
-      setState(() {
-        _permissionNotGranted = false;
-      });
+      if (mounted) {
+        setState(() {
+          _permissionNotGranted = false;
+        });
+      }
     }
-    setState(() {});
   }
 
   // Recording
@@ -1100,7 +1113,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      if (!_isRecording)
+                      if (!_isRecording && !_isPaused)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 0.0),
                           child: Row(

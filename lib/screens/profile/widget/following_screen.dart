@@ -106,8 +106,8 @@ class _FollowingScreenState extends State<FollowingScreen>
       } else if (authProvider.getFollowingListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
 
@@ -221,6 +221,9 @@ class _FollowingScreenState extends State<FollowingScreen>
             .join()
             .toUpperCase()
         : '';
+
+    String loginUserId = sessionManager.getString(SessionManager.userId)!;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
@@ -289,14 +292,22 @@ class _FollowingScreenState extends State<FollowingScreen>
               ],
             ),
           ),
-          ValueListenableBuilder<int?>(
+          if (loginUserId == followingList[index].fromUserId.toString())
+            ValueListenableBuilder<Map<int, int?>>(
               valueListenable: userProvider.followStatusNotifier,
-              builder: (context, followStatus, child) {
+              builder: (context, followStatusMap, child) {
+                int userId = followingList[index].toUserId ?? 0;
+                int followStatus =
+                    followStatusMap[userId] ?? followingList[index].isFollow!;
+
                 return InkWell(
                   onTap: () {
-                    setState(() {
-                      followUnFollowUser(
-                          context, followingList[index].toUserId ?? 0, index);
+                    followUnFollowUser(context, userId, index).then((_) {
+                      userProvider.followStatusNotifier.value = {
+                        ...userProvider.followStatusNotifier.value,
+                        userId: followStatus == 1 ? 0 : 1
+                      };
+                      userProvider.followStatusNotifier.notifyListeners();
                     });
                   },
                   child: Container(
@@ -306,34 +317,32 @@ class _FollowingScreenState extends State<FollowingScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: followingList[index].isFollow == 1 ||
-                                followStatus == 1
+                        color: followStatus == 1
                             ? (isDarkMode ? Colors.white : Colors.black)
                             : Colors.transparent,
                         width: 1,
                       ),
-                      color: followingList[index].isFollow == 1 ||
-                              followStatus == 1
+                      color: followStatus == 1
                           ? Colors.transparent
                           : (isDarkMode ? Colors.white : Colors.black),
                     ),
                     child: isFollowLoading
                         ? const Center(
                             child: SizedBox(
-                                height: 10,
-                                width: 10,
-                                child: CircularProgressIndicator(
-                                  color: Colors.grey,
-                                )))
+                              height: 10,
+                              width: 10,
+                              child: CircularProgressIndicator(
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
                         : Text(
-                            followingList[index].isFollow == 1 ||
-                                    followStatus == 1
+                            followStatus == 1
                                 ? AppLocalizations.of(context)!.unfollow
                                 : AppLocalizations.of(context)!.follow,
                             style: GoogleFonts.poppins(
                               fontSize: 12,
-                              color: followingList[index].isFollow == 1 ||
-                                      followStatus == 1
+                              color: followStatus == 1
                                   ? (isDarkMode ? Colors.white : Colors.black)
                                   : (isDarkMode ? Colors.black : Colors.white),
                               fontWeight: FontWeight.w600,
@@ -341,7 +350,8 @@ class _FollowingScreenState extends State<FollowingScreen>
                           ),
                   ),
                 );
-              }),
+              },
+            ),
         ],
       ),
     );

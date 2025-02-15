@@ -74,8 +74,8 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
               context, contestProvider.devicesListModel?.message! ?? '');
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
@@ -181,6 +181,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                                 return AnimatedList(
                                   initialItemCount: deviceData.data!.length,
                                   shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
                                   itemBuilder: (context, index, animation) {
                                     return buildItem(
                                         animation,
@@ -241,7 +242,7 @@ class _ManageDevicesScreenState extends State<ManageDevicesScreen> {
                   ),
                 ),
                 Text(
-                  formatRelativeTime(model.createdAt ?? ''),
+                  formatRelativeTime(model.lastLogin ?? ''),
                   style: GoogleFonts.poppins(
                     color: const Color(0xFF939393),
                     fontSize: 11,

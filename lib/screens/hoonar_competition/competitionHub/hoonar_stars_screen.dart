@@ -107,7 +107,7 @@ class _HoonarStarsScreenState extends State<HoonarStarsScreen> {
       if (contestProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
-        if (contestProvider.hoonarStarSuccessModel?.status == '200') {
+        if (contestProvider.hoonarStarSuccessModel?.status == 200) {
         } else if (contestProvider.hoonarStarSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(

@@ -13,7 +13,10 @@ import 'package:hoonar/model/success_models/report_reasons_model.dart';
 import 'package:hoonar/model/success_models/search_list_model.dart';
 import 'package:hoonar/model/success_models/user_search_history_model.dart';
 import 'package:hoonar/model/success_models/video_comment_list_model.dart';
+import 'package:hoonar/providers/user_provider.dart';
 import 'package:hoonar/services/home_page_service.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 import '../model/success_models/category_list_success_model.dart';
 import '../model/success_models/home_page_other_view_all_model.dart';
@@ -173,6 +176,15 @@ class HomeProvider extends ChangeNotifier {
       _isPostLoading = false;
       notifyListeners();
     }
+  }
+
+  /*------ update follow status when fetches users list --------*/
+  void updateUserFollowStatus(
+      BuildContext context, int userId, int followStatus) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // Map<int, int?> followStatuses = userProvider.followStatusNotifier.value;
+    userProvider.updateFollowStatus(userId, followStatus);
+    // Use followStatuses here...
   }
 
   Future<void> getHomePostList(
