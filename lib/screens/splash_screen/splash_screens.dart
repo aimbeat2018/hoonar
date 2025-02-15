@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:gif/gif.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
@@ -45,6 +48,19 @@ class _SplashScreensState extends State<SplashScreens>
     Future.delayed(const Duration(seconds: 5), () {
       // _controller.reset();
       initSession();
+    });
+  }
+
+  void listenBranchLinks() {
+    StreamSubscription<Map> streamSubscription =
+        FlutterBranchSdk.listSession().listen((data) {
+      if (data.containsKey("+clicked_branch_link") &&
+          data["+clicked_branch_link"] == true) {
+        //Link clicked. Add logic to get link data
+        print('Custom string: ${data["custom_string"]}');
+      }
+    }, onError: (error) {
+      print('listSession error: ${error.toString()}');
     });
   }
 
@@ -105,7 +121,8 @@ class _SplashScreensState extends State<SplashScreens>
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Gif(
-                image: const AssetImage("assets/light_mode_icons/splash_dark.gif"),
+                image:
+                    const AssetImage("assets/light_mode_icons/splash_dark.gif"),
                 controller: _controller,
                 // if duration and fps is null, original gif fps will be used.
                 // fps: 15,
