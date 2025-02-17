@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/capture_video_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
@@ -217,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            openCameraScreen();
+                            showConfirmationDialog(context);
                             // _startVideoEditorInCameraMode();
                           },
                           child: Column(
@@ -299,6 +301,55 @@ class _MainScreenState extends State<MainScreen> {
       )),
     );
   }
+
+  void showConfirmationDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          content: Text(
+            'you are participating in the competition?',
+            style: GoogleFonts.poppins(fontSize: 14),
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                openCameraScreen(); // Call your function to open the camera screen
+              },
+              child: Text(
+                'No',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                // Redirect to SelectCategoryScreen
+                Navigator.push(
+                  context,
+                  SlideRightRoute(page: const SelectCategoryScreen()),
+                );
+              },
+              child: Text(
+                'Yes',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 /*-----Banuba SDK CODE----*/
 /*  Future<void> _startVideoEditorInCameraMode() async {
     // Specify your Config params in the builder below

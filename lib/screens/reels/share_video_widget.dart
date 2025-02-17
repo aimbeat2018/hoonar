@@ -15,7 +15,8 @@ class ShareVideoWidget {
     BranchUniversalObject buo = BranchUniversalObject(
       canonicalIdentifier: 'content/${post.postId}',
       contentDescription: post.postDescription ?? '',
-      imageUrl: post.postImage ?? '',
+      // imageUrl: post.postImage ?? '',
+      imageUrl:  'https://blocks.astratic.com/img/general-img-portrait.png',
       contentMetadata: BranchContentMetaData()
         ..addCustomMetadata("post_id", post.postId),
     );

@@ -1,5 +1,6 @@
 class ListCommonRequestModel {
   int? userId;
+  int? fromUserId;
   int? commonUserId;
   int? notificationId;
   int? start;
@@ -28,6 +29,7 @@ class ListCommonRequestModel {
   ListCommonRequestModel({
     this.userId,
     this.commonUserId,
+    this.fromUserId,
     this.reasonId,
     this.notificationId,
     this.start,
@@ -55,6 +57,7 @@ class ListCommonRequestModel {
 
   ListCommonRequestModel.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
+    fromUserId = json['from_user_id'];
     start = json['start'];
     limit = json['limit'];
     page = json['page'];
@@ -83,6 +86,7 @@ class ListCommonRequestModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['user_id'] = userId;
+    data['from_user_id'] = fromUserId;
     data['start'] = start;
     data['limit'] = limit;
     data['page'] = page;

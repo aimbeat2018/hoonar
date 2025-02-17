@@ -1,9 +1,10 @@
-
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/list_common_request_model.dart';
 import 'package:hoonar/model/request_model/store_search_data_request_model.dart';
 import 'package:hoonar/model/success_models/category_list_success_model.dart';
 import 'package:hoonar/model/success_models/follow_unfollow_success_model.dart';
+import 'package:hoonar/model/success_models/get_post_details_model.dart';
+import 'package:hoonar/model/success_models/get_post_details_model.dart';
 import 'package:hoonar/model/success_models/hash_tag_list_model.dart';
 import 'package:hoonar/model/success_models/home_page_other_data_model.dart';
 import 'package:hoonar/model/success_models/home_page_other_view_all_model.dart';
@@ -56,6 +57,17 @@ class HomePageService {
       method: 'POST',
       data: requestModel.toJson(),
       fromJson: (data) => HomePageOtherDataModel.fromJson(data),
+    );
+  }
+
+  Future<GetPostDetailsModel> getSinglePostDetails(
+      ListCommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<GetPostDetailsModel>(
+      '$baseUrl$getSinglePostDetailsUrl',
+      accessToken: accessToken,
+      method: 'POST',
+      data: requestModel.toJson(),
+      fromJson: (data) => GetPostDetailsModel.fromJson(data),
     );
   }
 

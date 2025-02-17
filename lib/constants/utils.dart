@@ -23,6 +23,7 @@ const String getUsersVotes = 'Post/getLevelWiseVotes';
 const String getPostList = 'Post/getPostListByCategory';
 const String getHomePostList = 'Post/getPostList';
 const String getHomePagePostList = 'Post/getHomePagePostList';
+const String getSinglePostDetailsUrl = 'Post/getpostByID';
 const String likeUnlike = 'Post/LikeUnlikePost';
 const String addVoteUrl = 'Post/addVotes';
 const String addCommentUrl = 'Post/addComment';

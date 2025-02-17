@@ -36,6 +36,8 @@ import 'notification/NotificationHelper.dart';
 SessionManager sessionManager = SessionManager();
 String selectedLanguage = byDefaultLanguage;
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 final FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin =
     (Platform.isAndroid || Platform.isIOS)
         ? FlutterLocalNotificationsPlugin()
@@ -46,7 +48,7 @@ Future<void> main() async {
 
   /*---- initialize branch io ------*/
   FlutterBranchSdk.init();
-  // await FlutterBranchSdk.init(enableLogging: false, branchAttributionLevel: BranchAttributionLevel.FULL);
+  // await FlutterBranchSdk.init(enableLogging: true, branchAttributionLevel: BranchAttributionLevel.FULL);
   // FlutterBranchSdk.validateSDKIntegration();
 
   setupServiceLocator();

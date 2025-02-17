@@ -7,8 +7,11 @@ import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:gif/gif.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
+import 'package:hoonar/screens/reels/reels_list_screen.dart';
+import 'package:hoonar/screens/reels/single_post_screen.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/global_key.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
 import '../../model/success_models/home_post_success_model.dart';
@@ -33,95 +36,100 @@ class _SplashScreensState extends State<SplashScreens>
     super.initState();
     _controller = GifController(vsync: this);
 
-    // animation = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(seconds: 3),
-    // );
-    // _fadeInFadeOut = Tween<double>(begin: 0.0, end: 0.5).animate(animation);
-    //
-    // animation.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     animation.reverse();
-    //   } else if (status == AnimationStatus.dismissed) {
-    //     animation.forward();
-    //   }
-    // });
-    // animation.forward();
-
-    listenBranchLinks();
     Future.delayed(const Duration(seconds: 5), () {
-      // _controller.reset();
-      initSession();
+      if (mounted) {
+        initSession();
+      }
     });
   }
 
   void listenBranchLinks() {
     FlutterBranchSdk.listSession().listen((data) {
+      log('Deep Link Data: $data');
 
       if (data.containsKey('+clicked_branch_link') &&
           data['+clicked_branch_link'] == true) {
-        log('Deep Link Data: $data');
-
-        if (data.containsKey('metadata')) {
+        if (data.containsKey('post_id')) {
           try {
-            String encodedMetadata = data['metadata'];
-            Map<String, dynamic> decodedMetadata = jsonDecode(encodedMetadata);
+            String encodedMetadata = data['post_id'];
+            log('Navigating to Post ID: $encodedMetadata');
 
-            // Extract post details
-            String? postId = decodedMetadata['post_id'];
-            String? videoUrl = decodedMetadata['video_url'];
-            String? title = decodedMetadata['title'];
-            String? description = decodedMetadata['description'];
-            String? thumbnail = decodedMetadata['thumbnail'];
-
-            if (postId != null && videoUrl != null) {
-              PostsListData post = PostsListData(
-                postId: int.tryParse(postId) ?? 0,
-                postVideo: videoUrl,
-                postDescription: description ?? 'Watch this amazing clip!',
-                postImage: thumbnail ?? '',
+            // if (mounted) {
+            /*GlobalVariable.navKey.currentState?.pushAndRemoveUntil(
+                context,
+                SlideRightRoute(
+                  page: SinglePostScreen(postId: encodedMetadata),
+                ),
+                    (route) => false,
               );
-
-              log('Decoded Post Model: ${jsonEncode(post)}');
-
-              // Navigate to post details screen
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)));
-            } else {
-              log('Invalid metadata structure');
-            }
+*/
+            GlobalVariable.navKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => SinglePostScreen(postId: encodedMetadata),
+              ),
+              (route) => false,
+            );
+            // }
           } catch (e) {
             log('Error decoding metadata: $e');
           }
         } else {
-          log('No metadata found in deep link');
+          log('No metadata found, redirecting to MainScreen');
+
+          GlobalVariable.navKey.currentState?.pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const MainScreen(
+                fromIndex: 0,
+              ),
+            ),
+            (route) => false,
+          );
         }
+      } else {
+        log('No deep link detected, redirecting to MainScreen');
+
+        GlobalVariable.navKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const MainScreen(
+              fromIndex: 0,
+            ),
+          ),
+          (route) => false,
+        );
       }
+    }, onError: (error) {
+      log('Branch Deep Link Error: $error');
+
+      GlobalVariable.navKey.currentState?.pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const MainScreen(
+            fromIndex: 0,
+          ),
+        ),
+        (route) => false,
+      );
     });
   }
 
-  initSession() async {
-    _controller.dispose();
+  Future<void> initSession() async {
+    if (!mounted) return; // Prevent context access if the widget is unmounted
+
     await sessionManager.initPref().then((onValue) {
-      String accessToken =
-          sessionManager.getString(SessionManager.accessToken)!;
-      if (sessionManager.getString(SessionManager.accessToken) == null ||
-          accessToken == "") {
-        Navigator.pushAndRemoveUntil(
-          context,
-          SlideRightRoute(page: const LoginScreen()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
+      String? accessToken =
+          sessionManager.getString(SessionManager.accessToken);
+
+      if (accessToken == null || accessToken.isEmpty) {
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
             context,
-            SlideRightRoute(page: const MainScreen(fromIndex: 0)),
-            (route) => false);
+            SlideRightRoute(page: const LoginScreen()),
+            (Route<dynamic> route) => false,
+          );
+        }
+      } else {
+        listenBranchLinks();
       }
     });
-    /*Navigator.pushAndRemoveUntil(context,
-            SlideRightRoute(page: PictureSlideShow()), (route) => false);
-      }
-    });*/
   }
 
   // @override

@@ -613,36 +613,29 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                             return InkWell(
                               onTap: () {
                                 if (index == 0) {
-                                  if (isVerified == 1) {
-                                    Navigator.push(
-                                      context,
-                                      SlideRightRoute(
-                                          page: const CaptureVideoScreen(
-                                        from: "level",
-                                      )),
-                                    );
-                                  } else {
-                                    checkKYCStatus(
-                                        context, iDProof, addressProof, face);
-                                  }
-                                  /*if (contestProvider.uploadVideoStatusModel !=
+                                  if (contestProvider.uploadVideoStatusModel !=
                                           null &&
                                       contestProvider
                                               .uploadVideoStatusModel!.status ==
                                           "200") {
-                                    Navigator.push(
-                                      context,
-                                      SlideRightRoute(
-                                          page: const CaptureVideoScreen(
-                                        from: "level",
-                                      )),
-                                    );
+                                    if (isVerified == 1) {
+                                      Navigator.push(
+                                        context,
+                                        SlideRightRoute(
+                                            page: const CaptureVideoScreen(
+                                          from: "level",
+                                        )),
+                                      );
+                                    } else {
+                                      checkKYCStatus(
+                                          context, iDProof, addressProof, face);
+                                    }
                                   } else {
                                     showCompetitionDateDialog(
                                         context,
                                         contestProvider
                                             .uploadVideoStatusModel!.data!);
-                                  }*/
+                                  }
                                 } else if (index == 1) {
                                   Navigator.push(
                                     context,
