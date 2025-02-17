@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
@@ -9,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/session_manager.dart';
+import '../../model/success_models/home_post_success_model.dart';
 import '../main_screen/main_screen.dart';
 
 class SplashScreens extends StatefulWidget {
@@ -52,15 +55,45 @@ class _SplashScreensState extends State<SplashScreens>
   }
 
   void listenBranchLinks() {
-    StreamSubscription<Map> streamSubscription =
-        FlutterBranchSdk.listSession().listen((data) {
-      if (data.containsKey("+clicked_branch_link") &&
-          data["+clicked_branch_link"] == true) {
-        //Link clicked. Add logic to get link data
-        print('Custom string: ${data["custom_string"]}');
+    FlutterBranchSdk.listSession().listen((data) {
+      if (data.containsKey('+clicked_branch_link') &&
+          data['+clicked_branch_link'] == true) {
+        log('Deep Link Data: $data');
+
+        if (data.containsKey('metadata')) {
+          try {
+            String encodedMetadata = data['metadata'];
+            Map<String, dynamic> decodedMetadata = jsonDecode(encodedMetadata);
+
+            // Extract post details
+            String? postId = decodedMetadata['post_id'];
+            String? videoUrl = decodedMetadata['video_url'];
+            String? title = decodedMetadata['title'];
+            String? description = decodedMetadata['description'];
+            String? thumbnail = decodedMetadata['thumbnail'];
+
+            if (postId != null && videoUrl != null) {
+              PostsListData post = PostsListData(
+                postId: int.tryParse(postId) ?? 0,
+                postVideo: videoUrl,
+                postDescription: description ?? 'Watch this amazing clip!',
+                postImage: thumbnail ?? '',
+              );
+
+              log('Decoded Post Model: ${jsonEncode(post)}');
+
+              // Navigate to post details screen
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => PostDetailScreen(post: post)));
+            } else {
+              log('Invalid metadata structure');
+            }
+          } catch (e) {
+            log('Error decoding metadata: $e');
+          }
+        } else {
+          log('No metadata found in deep link');
+        }
       }
-    }, onError: (error) {
-      print('listSession error: ${error.toString()}');
     });
   }
 

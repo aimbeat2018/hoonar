@@ -760,9 +760,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                 /*   CustomSocialShare()
                                     .toAll(widget.model.postVideo ?? '');*/
 
-                                ShareVideoWidget().shareTo(
-                                    widget.model.postVideo ?? '',
-                                    widget.model.postImage ?? '');
+                                ShareVideoWidget().shareTo(widget.model);
                               },
                               child: Column(
                                 children: [

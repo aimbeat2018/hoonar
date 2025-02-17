@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class HomePostSuccessModel {
   String? status;
   String? message;
@@ -193,5 +195,42 @@ class PostsListData {
     data['sound_image'] = soundImage;
     data['sound'] = sound;
     return data;
+  }
+
+  @override
+  String toString() {
+    return jsonEncode({
+      'post_id': postId,
+      'user_id': userId,
+      'full_name': fullName,
+      'user_name': userName,
+      'user_profile': userProfile,
+      'is_verify': isVerify,
+      'is_trending': isTrending,
+      'post_description': postDescription,
+      'post_hash_tag': postHashTag,
+      'post_video': postVideo,
+      'post_image': postImage,
+      'profile_category_id': profileCategoryId,
+      'profile_category_name': profileCategoryName,
+      'post_likes_count': postLikesCount,
+      'post_comments_count': postCommentsCount,
+      'post_view_count': postViewCount,
+      'created_date': createdDate,
+      'video_likes_or_not': videoLikesOrNot,
+      'follow_or_not': followOrNot,
+      'is_bookmark': isBookmark,
+      'can_comment': canComment,
+      'can_duet': canDuet,
+      'can_save': canSave,
+      'can_vote': canVote,
+      'has_voted': hasVoted,
+      'sound_id': soundId,
+      'sound_title': soundTitle,
+      'duration': duration,
+      'singer': singer,
+      'sound_image': soundImage,
+      'sound': sound,
+    });
   }
 }

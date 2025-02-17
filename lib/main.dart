@@ -45,7 +45,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /*---- initialize branch io ------*/
-  FlutterBranchSdk.init();
+  // FlutterBranchSdk.init();
+  await FlutterBranchSdk.init(enableLogging: true, branchAttributionLevel: BranchAttributionLevel.FULL);
+  FlutterBranchSdk.validateSDKIntegration();
+
   setupServiceLocator();
   await Upgrader.clearSavedSettings();
   // await initializeFirebase();

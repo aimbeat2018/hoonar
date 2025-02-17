@@ -1,35 +1,43 @@
+import 'dart:convert';
+
 import 'package:custom_social_share/custom_social_share.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 
+import '../../model/success_models/home_post_success_model.dart';
+
 class ShareVideoWidget {
-  Future<void> shareTo(String videoUrl, String thumb) async {
-    if (videoUrl.isEmpty) {
+  Future<void> shareTo(PostsListData post) async {
+    if (post.postVideo!.isEmpty) {
       print('No video URL provided');
       return;
     }
 
     BranchUniversalObject buo = BranchUniversalObject(
-      canonicalIdentifier: 'content/${DateTime.now().millisecondsSinceEpoch}',
-      title: 'Watch this amazing video!',
-      contentDescription: 'Check out this video!',
-      imageUrl: thumb,
+      canonicalIdentifier: 'content/${post.postId}',
+      contentDescription: post.postDescription ?? '',
+      imageUrl: post.postImage ?? '',
       contentMetadata: BranchContentMetaData()
-        ..addCustomMetadata('video_url', videoUrl),
+        ..addCustomMetadata("post_id", post.postId),
     );
 
-    BranchLinkProperties lp = BranchLinkProperties(
-      channel: 'social',
-      feature: 'sharing',
+    BranchLinkProperties linkProperties = BranchLinkProperties(
+      channel: 'app',
+      feature: 'share',
+      campaign: 'video_sharing',
+      stage: 'new',
     );
 
-    // Generate the short link
-    BranchResponse response =
-        await FlutterBranchSdk.getShortUrl(buo: buo, linkProperties: lp);
+    BranchResponse response = await FlutterBranchSdk.getShortUrl(
+      buo: buo,
+      linkProperties: linkProperties,
+    );
 
     if (response.success) {
-      // Share.share(response.result, subject: 'Check out this video!');
+      String branchLink = response.result ?? '';
+      print('Generated Branch Link: $branchLink');
 
-      CustomSocialShare().toAll(response.result ?? '');
+      // Share the link
+      CustomSocialShare().toAll(branchLink);
     } else {
       print('Error generating Branch link: ${response.errorMessage}');
     }
