@@ -45,9 +45,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /*---- initialize branch io ------*/
-  // FlutterBranchSdk.init();
-  await FlutterBranchSdk.init(enableLogging: true, branchAttributionLevel: BranchAttributionLevel.FULL);
-  FlutterBranchSdk.validateSDKIntegration();
+  FlutterBranchSdk.init();
+  // await FlutterBranchSdk.init(enableLogging: false, branchAttributionLevel: BranchAttributionLevel.FULL);
+  // FlutterBranchSdk.validateSDKIntegration();
 
   setupServiceLocator();
   await Upgrader.clearSavedSettings();

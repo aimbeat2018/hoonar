@@ -48,6 +48,7 @@ class _SplashScreensState extends State<SplashScreens>
     // });
     // animation.forward();
 
+    listenBranchLinks();
     Future.delayed(const Duration(seconds: 5), () {
       // _controller.reset();
       initSession();
@@ -56,6 +57,7 @@ class _SplashScreensState extends State<SplashScreens>
 
   void listenBranchLinks() {
     FlutterBranchSdk.listSession().listen((data) {
+
       if (data.containsKey('+clicked_branch_link') &&
           data['+clicked_branch_link'] == true) {
         log('Deep Link Data: $data');
