@@ -2,17 +2,16 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/join_competition/contest_join_options_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../constants/color_constants.dart';
+
 import '../../../constants/internet_connectivity.dart';
 import '../../../constants/key_res.dart';
 import '../../../constants/my_loading/my_loading.dart';
 import '../../../constants/no_internet_screen.dart';
 import '../../../constants/slide_right_route.dart';
-import '../../../constants/theme.dart';
 
 class ContestJoinSuccessScreen extends StatefulWidget {
   final int? categoryId;
@@ -73,15 +72,18 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                 ),
                 child: SafeArea(
                   child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 30.0),
-                        child: Center(
-                          child: Image.asset(
-                            // 'assets/images/capture.gif',
-                            'assets/images/congrats.gif',
-                            // Replace with your URL
-                            fit: BoxFit.contain,
+                      Positioned.fill(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 30.0),
+                          child: Center(
+                            child: Image.asset(
+                              // 'assets/images/capture.gif',
+                              'assets/images/congrats.gif',
+                              // Replace with your URL
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
                       ),
@@ -109,35 +111,35 @@ class _ContestJoinSuccessScreenState extends State<ContestJoinSuccessScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Center(
-                            child: GradientText(
-                              AppLocalizations.of(context)!.congratulations,
-                              style: GoogleFonts.poppins(
-                                fontSize: 20,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
-                                fontWeight: FontWeight.w400,
-                              ),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.topRight,
-                                  colors: [
-                                    myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    myLoading.isDark
-                                        ? Colors.white
-                                        : Colors.black,
-                                    myLoading.isDark
-                                        ? greyTextColor8
-                                        : Colors.grey.shade700
-                                  ]),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          // Center(
+                          //   child: GradientText(
+                          //     AppLocalizations.of(context)!.congratulations,
+                          //     style: GoogleFonts.poppins(
+                          //       fontSize: 20,
+                          //       color: myLoading.isDark
+                          //           ? Colors.black
+                          //           : Colors.white,
+                          //       fontWeight: FontWeight.w400,
+                          //     ),
+                          //     gradient: LinearGradient(
+                          //         begin: Alignment.topLeft,
+                          //         end: Alignment.topRight,
+                          //         colors: [
+                          //           myLoading.isDark
+                          //               ? Colors.white
+                          //               : Colors.black,
+                          //           myLoading.isDark
+                          //               ? Colors.white
+                          //               : Colors.black,
+                          //           myLoading.isDark
+                          //               ? greyTextColor8
+                          //               : Colors.grey.shade700
+                          //         ]),
+                          //   ),
+                          // ),
+                          // const SizedBox(
+                          //   height: 10,
+                          // ),
                           /*Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 50.0, horizontal: 0),

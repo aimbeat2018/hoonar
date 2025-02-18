@@ -246,6 +246,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                                                 .levelId!;
                                                       });
                                                     }
+
                                                     Navigator.push(
                                                         context,
                                                         SlideRightRoute(
@@ -259,6 +260,20 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
                                                           categoryId:
                                                               widget.categoryId,
                                                         )));
+
+                                                    /*  Navigator.push(
+                                                        context,
+                                                        SlideRightRoute(
+                                                            page:
+                                                            ContestJoinSuccessScreen(
+                                                              levelId: contestProvider
+                                                                  .levelListModel!
+                                                                  .data![index]
+                                                                  .levelId
+                                                                  .toString(),
+                                                              categoryId:
+                                                              widget.categoryId,
+                                                            )));*/
                                                   } else if (contestProvider
                                                               .levelListModel!
                                                               .data![index]

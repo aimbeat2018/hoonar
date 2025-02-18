@@ -388,7 +388,9 @@ class _MainScreenState extends State<MainScreen> {
       return;
     }
 
-    */ /*   // The list of exported video file paths
+    */
+
+/*   // The list of exported video file paths
     debugPrint('Exported video files = ${result.videoSources}');
 
     // Preview as a image file taken by the user. Null - when preview screen is disabled.

@@ -7,6 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:notification_permissions/notification_permissions.dart' as np;
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/my_loading/my_loading.dart';
+import '../../constants/session_manager.dart';
+import '../../custom/snackbar_util.dart';
+import '../../model/request_model/common_request_model.dart';
+import '../../providers/auth_provider.dart';
 
 class EnableNotificationScreen extends StatefulWidget {
   const EnableNotificationScreen({super.key});
@@ -17,6 +21,9 @@ class EnableNotificationScreen extends StatefulWidget {
 }
 
 class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
+  late AuthProvider authProvider;
+  SessionManager sessionManager = SessionManager();
+
   void requestNotificationPermission() async {
     np.PermissionStatus status =
         await np.NotificationPermissions.requestNotificationPermissions(
@@ -37,9 +44,46 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
     } else if (status == np.PermissionStatus.granted) {
       // Handle case when permission is granted
       print('Permission granted');
+
+      enableDisableNotification(context, "1");
     }
 
     // _hasCheckedPermission = true; // Mark permission check as done
+  }
+
+  Future<void> enableDisableNotification(
+      BuildContext context, String notificationStatus) async {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      await authProvider.enableDisableNotification(
+          CommonRequestModel(
+              deviceToken: sessionManager
+                      .getString(SessionManager.accessToken)!
+                      .replaceAll('Bearer', '') ??
+                  '',
+              notificationStatus: notificationStatus),
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else {
+        if (authProvider.unableDisableNotification?.status ==
+            '200') {} /*else if (authProvider.unableDisableNotification?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+            context,
+            authProvider.unableDisableNotification?.message! ?? '',
+          );
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
+            context,
+            SlideRightRoute(page: const LoginScreen()),
+                (route) => false,
+          );
+        }*/
+      }
+    });
   }
 
   // Open app settings using url_launcher
@@ -61,7 +105,8 @@ class _EnableNotificationScreenState extends State<EnableNotificationScreen> {
               Center(
                 child: Container(
                   color: myLoading.isDark ? Colors.black : Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
