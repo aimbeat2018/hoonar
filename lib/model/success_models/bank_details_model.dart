@@ -1,5 +1,5 @@
 class BankDetailsModel {
-  int? status;
+  String? status;
   String? message;
   BankDetails? data;
 

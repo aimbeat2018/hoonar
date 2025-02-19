@@ -431,28 +431,30 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                   const SizedBox(
                     height: 3,
                   ),
-                  /*Text(
-                    model.description ?? '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: isDarkMode ? Colors.white : Colors.black,
-                      fontWeight: FontWeight.normal,
+                  if (model.type == 'competition')
+                    Text(
+                      model.description ?? '',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: isDarkMode ? Colors.white60 : Colors.black,
+                        fontWeight: FontWeight.normal,
+                      ),
                     ),
-                  ),*/
                   // SizedBox(
                   //   height: 3,
                   // ),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: Text(
-                  //     formattedDate,
-                  //     style: GoogleFonts.poppins(
-                  //       fontSize: 12,
-                  //       color: isDarkMode ? Colors.white : Colors.black,
-                  //       fontWeight: FontWeight.normal,
-                  //     ),
-                  //   ),
-                  // )
+                /*  if (model.type == 'competition')
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      formattedDate,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: isDarkMode ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  )*/
                 ],
               ),
             ),

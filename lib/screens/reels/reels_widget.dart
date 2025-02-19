@@ -53,7 +53,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   late Animation<double> _scaleAnimation;
   bool isMute = false;
   double _progress = 0.0;
-  String userId = "";
+  String loginUserId = "";
   bool _isLoading = true;
 
   // Location
@@ -66,10 +66,13 @@ class _ReelsWidgetState extends State<ReelsWidget>
   void initState() {
     super.initState();
     initializePlayer();
-    sessionManager.initPref();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      userId = sessionManager.getString(SessionManager.userId)!;
+      sessionManager.initPref().then((onValue) {
+        setState(() {
+          loginUserId = sessionManager.getString(SessionManager.userId)!;
+        });
+      });
     });
 
     _controller = AnimationController(
@@ -514,101 +517,107 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                             ],
                                           ),
                                         ),
-                                        Flexible(
-                                          child: ValueListenableBuilder<
-                                              Map<int, int?>>(
-                                            valueListenable: userProvider
-                                                .followStatusNotifier,
-                                            builder: (context, followStatusMap,
-                                                child) {
-                                              int userId =
-                                                  widget.model.userId ?? 0;
-                                              int followStatus =
-                                                  followStatusMap[userId] ??
-                                                      widget.model.followOrNot!;
+                                        if (int.parse(loginUserId) !=
+                                            widget.model.userId)
+                                          Flexible(
+                                            child: ValueListenableBuilder<
+                                                Map<int, int?>>(
+                                              valueListenable: userProvider
+                                                  .followStatusNotifier,
+                                              builder: (context,
+                                                  followStatusMap, child) {
+                                                int userId =
+                                                    widget.model.userId ?? 0;
+                                                int followStatus =
+                                                    followStatusMap[userId] ??
+                                                        widget
+                                                            .model.followOrNot!;
 
-                                              return InkWell(
-                                                onTap: () async {
-                                                  await followUnFollowUser(
-                                                      context); // Call API (returns void)
+                                                return InkWell(
+                                                  onTap: () async {
+                                                    await followUnFollowUser(
+                                                        context); // Call API (returns void)
 
-                                                  // Manually update follow status after API call
-                                                  userProvider
-                                                      .followStatusNotifier
-                                                      .value = {
-                                                    ...userProvider
+                                                    // Manually update follow status after API call
+                                                    userProvider
                                                         .followStatusNotifier
-                                                        .value,
-                                                    userId: followStatus == 1
-                                                        ? 0
-                                                        : 1,
-                                                  };
-                                                  userProvider
-                                                      .followStatusNotifier
-                                                      .notifyListeners(); // Notify UI
-                                                },
-                                                child: Container(
-                                                  margin: const EdgeInsets.only(
-                                                      left: 10),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 15,
-                                                      vertical: 5),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    border: Border.all(
+                                                        .value = {
+                                                      ...userProvider
+                                                          .followStatusNotifier
+                                                          .value,
+                                                      userId: followStatus == 1
+                                                          ? 0
+                                                          : 1,
+                                                    };
+                                                    userProvider
+                                                        .followStatusNotifier
+                                                        .notifyListeners(); // Notify UI
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 5),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      border: Border.all(
+                                                        color: followStatus == 1
+                                                            ? Colors.white
+                                                            : Colors
+                                                                .transparent,
+                                                        width: 1,
+                                                      ),
                                                       color: followStatus == 1
-                                                          ? Colors.white
-                                                          : Colors.transparent,
-                                                      width: 1,
+                                                          ? Colors.transparent
+                                                          : Colors.white,
                                                     ),
-                                                    color: followStatus == 1
-                                                        ? Colors.transparent
-                                                        : Colors.white,
-                                                  ),
-                                                  child: isFollowLoading
-                                                      ? Center(
-                                                          child: SizedBox(
-                                                              height: 15,
-                                                              width: 15,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                color: followStatus == 1
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black,
-                                                              )))
-                                                      : Text(
-                                                          followStatus == 1
-                                                              ? AppLocalizations
-                                                                      .of(
-                                                                          context)!
-                                                                  .unfollow
-                                                              : AppLocalizations
-                                                                      .of(context)!
-                                                                  .follow,
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                            fontSize: 12,
-                                                            color:
-                                                                followStatus ==
-                                                                        1
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black,
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                    child: isFollowLoading
+                                                        ? Center(
+                                                            child: SizedBox(
+                                                                height: 15,
+                                                                width: 15,
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: followStatus ==
+                                                                          1
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                                )))
+                                                        : Text(
+                                                            followStatus == 1
+                                                                ? AppLocalizations.of(
+                                                                        context)!
+                                                                    .unfollow
+                                                                : AppLocalizations.of(
+                                                                        context)!
+                                                                    .follow,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  followStatus ==
+                                                                          1
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
                                                           ),
-                                                        ),
-                                                ),
-                                              );
-                                            },
+                                                  ),
+                                                );
+                                              },
+                                            ),
                                           ),
-                                        ),
                                       ],
                                     ),
                                   ),
@@ -646,7 +655,8 @@ class _ReelsWidgetState extends State<ReelsWidget>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.model.canVote == 1)
+                            if (widget.model.canVote == 1 &&
+                                int.parse(loginUserId) != widget.model.userId)
                               Column(
                                 children: [
                                   InkWell(

@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/reels/reels_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -38,6 +39,7 @@ class _ReelsListScreenState extends State<SinglePostScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   bool isLoading = false;
   SessionManager sessionManager = SessionManager();
+  String loginUserId = "";
 
   @override
   void initState() {
@@ -55,8 +57,6 @@ class _ReelsListScreenState extends State<SinglePostScreen> {
             _connectionStatus = value;
           }));
     });
-
-    sessionManager.initPref();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getPostById(context);
@@ -157,10 +157,22 @@ class _ReelsListScreenState extends State<SinglePostScreen> {
                                 : homeProvider.getPostDetailsModel!.status ==
                                         201
                                     ? Center(
-                                        child: Text('You have block this user'),
+                                        child: Text(
+                                          'You have block this user',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
                                       )
                                     : Center(
-                                        child: Text('Post not found'),
+                                        child: Text('Post not found',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.normal,
+                                            )),
                                       )
                             : const Positioned.fill(
                                 child: Center(

@@ -308,7 +308,7 @@ class _MainScreenState extends State<MainScreen> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           content: Text(
-            'you are participating in the competition?',
+            'Are you participating in the competition?',
             style: GoogleFonts.poppins(fontSize: 14),
           ),
           actions: <Widget>[
