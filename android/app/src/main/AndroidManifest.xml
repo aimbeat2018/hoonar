@@ -51,7 +51,7 @@
         <!-- Branch.io Configuration -->
         <meta-data
             android:name="io.branch.sdk.BranchKey"
-            android:value="key_live_crdZFe70pTpAyThMLJdMcmeeDsfvAemE"/>
+            android:value=""/>
         <meta-data
             android:name="io.branch.sdk.TestMode"
             android:value="false"/>
@@ -85,7 +85,6 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

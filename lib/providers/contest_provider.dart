@@ -455,8 +455,7 @@ class ContestProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      WalletTransactionListModel successModel =
-          await _contestService.getWalletTransaction(requestModel, accessToken);
+      WalletTransactionListModel successModel = await _contestService.getWalletTransaction(requestModel, accessToken);
       _walletTransactionListModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();

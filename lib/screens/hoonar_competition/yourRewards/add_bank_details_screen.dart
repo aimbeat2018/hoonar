@@ -79,7 +79,7 @@ class _AddBankDetailsScreenState extends State<AddBankDetailsScreen> {
       if (contestProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
-        if (contestProvider.bankModel?.status == 200) {
+        if (contestProvider.bankModel?.status == "200") {
           setState(() {
             accountHolderNameController.text =
                 contestProvider.bankModel?.data?.accHolderName ?? '';

@@ -73,6 +73,10 @@ class _WalletScreenState extends State<WalletScreen> {
       } else {
         if (contestProvider.walletTransactionListModel?.status == '200') {
           setState(() {});
+        } else if(contestProvider.walletTransactionListModel?.status == '404'){
+          setState(() {
+
+          });
         } else if (contestProvider.walletTransactionListModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -103,8 +107,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    final contestProvider =
-        Provider.of<ContestProvider>(context, listen: false);
+    final contestProvider = Provider.of<ContestProvider>(context, listen: false);
 
     return Consumer<MyLoading>(builder: (context, myLoading, child) {
       return _connectionStatus == KeyRes.connectivityCheck
@@ -112,7 +115,7 @@ class _WalletScreenState extends State<WalletScreen> {
           : Scaffold(
         backgroundColor: Colors.transparent,
         bottomNavigationBar: contestProvider
-                        .walletTransactionListModel!.walletBalance ==
+                        .walletTransactionListModel ==
                     null ||
                 contestProvider.walletTransactionListModel!.walletBalance == "0"
             ? const SizedBox()
