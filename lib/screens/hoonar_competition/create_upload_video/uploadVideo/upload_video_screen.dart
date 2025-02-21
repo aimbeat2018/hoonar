@@ -172,24 +172,24 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
         Navigator.pushAndRemoveUntil(context,
             SlideRightRoute(page: const LoginScreen()), (route) => false);
       } else if (homeProvider.addPostModel?.status == '201') {
-        if (mounted) {
+        /* if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
             KeyRes.selectedCategoryId = -1;
             KeyRes.selectedCategoryName = '';
           });
-        }
+        }*/
 
         SnackbarUtil.showSnackBar(
             context, homeProvider.addPostModel?.message! ?? '');
       } else {
-        if (mounted) {
+        /* if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
             KeyRes.selectedCategoryId = -1;
             KeyRes.selectedCategoryName = '';
            });
-        }
+        }*/
 
         SnackbarUtil.showSnackBar(context,
             'Something went wrong.. please try again later in sometime');
@@ -746,22 +746,23 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                             onTap: () {
                                               AddPostRequestModel requestModel = AddPostRequestModel(
                                                   saveAsDraft: "1",
-                                                  userId: int.parse(
-                                                      sessionManager.getString(
-                                                          SessionManager
-                                                              .userId)!),
-                                                  categoryId:
-                                                      KeyRes.selectedCategoryId == -1
+                                                  userId: int.parse(sessionManager.getString(
+                                                      SessionManager.userId)!),
+                                                  categoryId: widget.from !=
+                                                          'normal'
+                                                      ? (KeyRes.selectedCategoryId == -1
                                                           ? ""
                                                           : KeyRes
                                                               .selectedCategoryId
-                                                              .toString(),
-                                                  levelId:
-                                                      KeyRes.selectedLevelId == -1
+                                                              .toString())
+                                                      : "",
+                                                  levelId: widget.from != 'normal'
+                                                      ? (KeyRes.selectedLevelId == -1
                                                           ? ""
                                                           : KeyRes
                                                               .selectedLevelId
-                                                              .toString(),
+                                                              .toString())
+                                                      : "",
                                                   postDescription:
                                                       captionController.text,
                                                   postHashTag:
@@ -837,20 +838,25 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                             sessionManager.getString(
                                                                 SessionManager
                                                                     .userId)!),
-                                                        categoryId: KeyRes
-                                                                    .selectedCategoryId ==
-                                                                -1
-                                                            ? ""
-                                                            : KeyRes
-                                                                .selectedCategoryId
-                                                                .toString(),
-                                                        levelId: KeyRes
-                                                                    .selectedLevelId ==
-                                                                -1
-                                                            ? ""
-                                                            : KeyRes
-                                                                .selectedLevelId
-                                                                .toString(),
+                                                        categoryId: widget
+                                                                    .from !=
+                                                                'normal'
+                                                            ? (KeyRes.selectedCategoryId ==
+                                                                    -1
+                                                                ? ""
+                                                                : KeyRes
+                                                                    .selectedCategoryId
+                                                                    .toString())
+                                                            : "",
+                                                        levelId: widget.from !=
+                                                                'normal'
+                                                            ? (KeyRes.selectedLevelId ==
+                                                                    -1
+                                                                ? ""
+                                                                : KeyRes
+                                                                    .selectedLevelId
+                                                                    .toString())
+                                                            : "",
                                                         postDescription:
                                                             captionController
                                                                 .text,
@@ -867,23 +873,25 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                               sessionManager.getString(
                                                                   SessionManager
                                                                       .userId)!),
-                                                          categoryId: KeyRes.selectedCategoryId == -1
-                                                              ? ""
-                                                              : KeyRes.selectedCategoryId
-                                                                  .toString(),
-                                                          levelId: KeyRes.selectedLevelId == -1
-                                                              ? ""
-                                                              : KeyRes.selectedLevelId
-                                                                  .toString(),
+                                                          categoryId: widget.from != 'normal'
+                                                              ? (KeyRes.selectedCategoryId == -1
+                                                                  ? ""
+                                                                  : KeyRes.selectedCategoryId
+                                                                      .toString())
+                                                              : "",
+                                                          levelId: widget.from != 'normal'
+                                                              ? (KeyRes.selectedLevelId == -1
+                                                                  ? ""
+                                                                  : KeyRes
+                                                                      .selectedLevelId
+                                                                      .toString())
+                                                              : "",
                                                           postDescription:
                                                               captionController
                                                                   .text,
-                                                          postHashTag: hashTags
-                                                              .join(', '),
-                                                          postImagePath: widget
-                                                              .videoThumbnail
-                                                              .replaceAll(
-                                                                  'file://', ''),
+                                                          postHashTag:
+                                                              hashTags.join(', '),
+                                                          postImagePath: widget.videoThumbnail.replaceAll('file://', ''),
                                                           postVideoPath: widget.videoUrl!);
 
                                                       if (widget
@@ -947,24 +955,26 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                                 sessionManager.getString(
                                                                     SessionManager
                                                                         .userId)!),
-                                                            categoryId: KeyRes.selectedCategoryId == -1
-                                                                ? ""
-                                                                : KeyRes.selectedCategoryId
-                                                                    .toString(),
-                                                            levelId: KeyRes.selectedLevelId == -1
-                                                                ? ""
-                                                                : KeyRes
-                                                                    .selectedLevelId
-                                                                    .toString(),
+                                                            categoryId: widget.from !=
+                                                                    'normal'
+                                                                ? (KeyRes.selectedCategoryId == -1
+                                                                    ? ""
+                                                                    : KeyRes
+                                                                        .selectedCategoryId
+                                                                        .toString())
+                                                                : "",
+                                                            levelId: widget.from !=
+                                                                    'normal'
+                                                                ? (KeyRes.selectedLevelId == -1
+                                                                    ? ""
+                                                                    : KeyRes
+                                                                        .selectedLevelId
+                                                                        .toString())
+                                                                : "",
                                                             postDescription:
-                                                                captionController
-                                                                    .text,
-                                                            postHashTag: hashTags
-                                                                .join(', '),
-                                                            postImagePath: widget
-                                                                .videoThumbnail
-                                                                .replaceAll(
-                                                                    'file://', ''),
+                                                                captionController.text,
+                                                            postHashTag: hashTags.join(', '),
+                                                            postImagePath: widget.videoThumbnail.replaceAll('file://', ''),
                                                             postVideoPath: widget.videoUrl!);
 
                                                         if (widget
