@@ -515,7 +515,7 @@ class _SelectContestLevelState extends State<SelectContestLevel> {
           ),
           child: FractionallySizedBox(
             heightFactor:
-                MediaQuery.of(context).viewInsets.bottom == 0 ? 0.5 : 0.6,
+                MediaQuery.of(context).viewInsets.bottom == 0 ? 0.6 : 0.7,
             child: MakeLevelPaymentScreen(
               isDarkMode: isDarkMode,
               index: index,

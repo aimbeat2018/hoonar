@@ -82,7 +82,6 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
             for (var data in zoneLevelsList) {
               if (data.levelId == int.parse(widget.levelId!)) {
                 selectedLevel = data;
-                // getHoonarStarsList(context, selectedLevel!.levelId!);
                 getLeaderboardList(context, selectedLevel!.levelId!);
               }
             }

@@ -78,9 +78,13 @@ class _HoonarStarsScreenState extends State<HoonarStarsScreen> {
         if (contestProvider.levelListModel?.status == '200') {
           setState(() {
             zoneLevelsList = contestProvider.levelListModel!.data!;
-            selectedLevel =
-                zoneLevelsList.isNotEmpty ? zoneLevelsList[0] : null;
-            getHoonarStarsList(context, selectedLevel!.levelId!);
+
+            for (var data in zoneLevelsList) {
+              if (data.levelId == int.parse(widget.levelId!)) {
+                selectedLevel = data;
+                getHoonarStarsList(context, selectedLevel!.levelId!);
+              }
+            }
           });
         } else if (contestProvider.levelListModel?.message ==
             'Unauthorized Access!') {

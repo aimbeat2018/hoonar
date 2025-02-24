@@ -55,11 +55,11 @@ class _YourRankScreenState extends State<YourRankScreen> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getLeaderboardList(context);
+      getUserRankList(context);
     });
   }
 
-  Future<void> getLeaderboardList(BuildContext context) async {
+  Future<void> getUserRankList(BuildContext context) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 

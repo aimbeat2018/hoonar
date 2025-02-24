@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hoonar/screens/auth_screen/login_screen.dart';
@@ -264,15 +265,17 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Text(
-                      widget.model.description ?? '',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w400,
-                      ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Html(
+                      data: widget.model.description ?? '',
+                      style: {
+                        "p": Style(
+                          fontSize: FontSize(14),
+                          fontFamily: 'poppins',
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      },
                     ),
                   ),
                   const SizedBox(
