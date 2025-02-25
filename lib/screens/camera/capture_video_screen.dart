@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -409,6 +410,7 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     final pickedFile =
         await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
+      // log("picked file = $pickedFile");
       setState(() {
         _videoFile = File(pickedFile.path);
       });
@@ -441,41 +443,50 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       ].request();
     }
 
+    // Check Permissions
     bool cameraGranted = statuses[Permission.camera]?.isGranted ?? false;
     bool micGranted = statuses[Permission.microphone]?.isGranted ?? false;
+
     bool photosGranted = Platform.isIOS
-        ? (statuses[Permission.photos]?.isGranted ?? false)
+        ? (statuses[Permission.photos]?.isGranted ?? false) ||
+            (await Permission.photos.isLimited) // ✅ Handle Limited Access
         : true;
 
     if (cameraGranted && micGranted && photosGranted) {
-      print('Granted');
+      log('Granted (initPermission)');
       if (mounted) {
         setState(() {
           _permissionNotGranted = true;
         });
       }
-
       _initializeCameras();
       _audioPlayer = AudioPlayer();
     } else {
-      print('Not Granted');
+      log('Not Granted (initPermission)');
       if (mounted) {
         setState(() {
           _permissionNotGranted = false;
         });
       }
+
+      if (Platform.isIOS && await Permission.photos.isLimited) {
+        log('Limited Photo Access Detected (initPermission)');
+        await Permission.photos.request(); // Re-request for full access
+      } else {
+        openAppSettings(); // Redirect to app settings
+      }
     }
   }
 
+  /// ✅ Method 2: Manual Permission Request
   void requestPermissions() async {
-    // Request permissions
     Map<Permission, PermissionStatus> statuses;
 
     if (Platform.isIOS) {
       statuses = await [
         Permission.camera,
         Permission.microphone,
-        Permission.photos, // iOS-specific permission
+        Permission.photos, // iOS-specific
       ].request();
     } else {
       statuses = await [
@@ -484,25 +495,37 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       ].request();
     }
 
-    // Check granted permissions
+    // Check Permissions
     bool cameraGranted = statuses[Permission.camera]?.isGranted ?? false;
     bool micGranted = statuses[Permission.microphone]?.isGranted ?? false;
+
     bool photosGranted = Platform.isIOS
-        ? (statuses[Permission.photos]?.isGranted ?? false)
+        ? (statuses[Permission.photos]?.isGranted ?? false) ||
+            (await Permission.photos.isLimited) // ✅ Handle Limited Access
         : true;
 
     if (cameraGranted && micGranted && photosGranted) {
+      log('Granted (requestPermissions)');
       if (mounted) {
         setState(() {
           _permissionNotGranted = true;
         });
       }
       _initializeCameras();
+      _audioPlayer = AudioPlayer();
     } else {
+      log('Not Granted (requestPermissions)');
       if (mounted) {
         setState(() {
           _permissionNotGranted = false;
         });
+      }
+
+      if (Platform.isIOS && await Permission.photos.isLimited) {
+        log('Limited Photo Access Detected (requestPermissions)');
+        await Permission.photos.request(); // Re-request for full access
+      } else {
+        openAppSettings(); // Redirect to app settings
       }
     }
   }
@@ -1194,8 +1217,8 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     return /*shouldShowGallery
         ? */
         InkWell(
-      onTap: () {
-        _selectVideoFromGallery();
+      onTap: () async {
+        await _selectVideoFromGallery();
       },
       child: Image.asset(
         'assets/images/reel_gallery.png',

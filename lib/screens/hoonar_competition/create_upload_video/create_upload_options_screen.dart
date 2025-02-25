@@ -250,20 +250,32 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
       BuildContext context, int? iDProof, int? addressProof, int? face) {
     String title = "KYC Status";
     List<String> pending = [];
+    List<String> uploaded = [];
     List<String> rejected = [];
 
-    // Identify pending and rejected KYC sections
-    if (iDProof == 3) pending.add("ID Proof");
-    if (addressProof == 3) pending.add("Address Proof");
-    if (face == 3) pending.add("Face Verification");
+    // Identify pending
+    if (iDProof == 0) pending.add("ID Proof");
+    if (addressProof == 0) pending.add("Address Proof");
+    if (face == 0) pending.add("Face Verification");
 
+    // Identify pending but no action taken from admin side
+    if (iDProof == 3) pending.add("ID Proof");
+    if (addressProof == 3) uploaded.add("Address Proof");
+    if (face == 3) uploaded.add("Face Verification");
+
+    // Identify rejected KYC sections
     if (iDProof == 2) rejected.add("ID Proof");
     if (addressProof == 2) rejected.add("Address Proof");
     if (face == 2) rejected.add("Face Verification");
 
     String message = "";
 
-    if (pending.isNotEmpty) {
+    if (uploaded.isNotEmpty) {
+      message += "Your KYC is pending for: ${pending.join(", ")}.\n\n"
+          "Please submit the required documents to complete verification.\n\n";
+    }
+
+    if (uploaded.isNotEmpty) {
       message += "Your KYC is pending for: ${pending.join(", ")}.\n\n"
           "Please submit the required documents to complete verification.\n\n";
     }
@@ -273,9 +285,9 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
           "Please re-upload the correct documents to proceed.\n\n";
     }
 
-    if (message.isEmpty) {
+    /*if (message.isEmpty) {
       message = "Congratulations! Your KYC has been successfully approved.";
-    }
+    }*/
 
     // Show CupertinoDialog with styled text
     showCupertinoDialog(
