@@ -259,7 +259,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
     if (face == 0) pending.add("Face Verification");
 
     // Identify pending but no action taken from admin side
-    if (iDProof == 3) pending.add("ID Proof");
+    if (iDProof == 3) uploaded.add("ID Proof");
     if (addressProof == 3) uploaded.add("Address Proof");
     if (face == 3) uploaded.add("Face Verification");
 
@@ -270,17 +270,12 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
 
     String message = "";
 
-    if (uploaded.isNotEmpty) {
-      message += "Your KYC is pending for: ${pending.join(", ")}.\n\n"
+    if (pending.isNotEmpty) {
+      message += "Your document is not uploaded for: ${pending.join(", ")}.\n\n"
           "Please submit the required documents to complete verification.\n\n";
-    }
-
-    if (uploaded.isNotEmpty) {
-      message += "Your KYC is pending for: ${pending.join(", ")}.\n\n"
-          "Please submit the required documents to complete verification.\n\n";
-    }
-
-    if (rejected.isNotEmpty) {
+    } else if (uploaded.isNotEmpty) {
+      message += "Your KYC is in review.";
+    } else if (rejected.isNotEmpty) {
       message += "Your KYC verification failed for: ${rejected.join(", ")}.\n\n"
           "Please re-upload the correct documents to proceed.\n\n";
     }
@@ -371,6 +366,47 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
             ],
           );
         });
+      },
+    );
+  }
+
+  void competitionNotFoundDialog() {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(
+            'Competition Not found',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          content: Text(
+            'Competition not created yet. please check after some time..',
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(
+                "OK",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -642,6 +678,13 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                       checkKYCStatus(
                                           context, iDProof, addressProof, face);
                                     }
+                                  } else if (contestProvider
+                                              .uploadVideoStatusModel !=
+                                          null &&
+                                      contestProvider
+                                              .uploadVideoStatusModel!.status ==
+                                          "201") {
+                                    competitionNotFoundDialog();
                                   } else {
                                     showCompetitionDateDialog(
                                         context,

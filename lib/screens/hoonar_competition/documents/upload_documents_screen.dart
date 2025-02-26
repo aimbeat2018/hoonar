@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -66,11 +67,18 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
   }
 
   // Method to capture an image with the camera
-  void pickImageCamera() async {
+  Future<void> pickImageCamera() async {
     _pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
 
     if (_pickedFile != null) {
       await cropImage(_pickedFile!.path);
+
+      // UploadKycDocumentRequestModel requestModel =
+      //     UploadKycDocumentRequestModel(
+      //         documentName: isIdProofClick ? 'ID Proof' : 'Address Proof',
+      //         document: File(_pickedFile!.path));
+
+      // uploadDocument(context, requestModel);
     }
   }
 
@@ -111,6 +119,7 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
           UploadKycDocumentRequestModel(
               documentName: isIdProofClick ? 'ID Proof' : 'Address Proof',
               document: File(_pickedFile!.path));
+
       uploadDocument(context, requestModel);
 
       setState(() {});
@@ -200,8 +209,8 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
               title: Text('Camera',
                   style: GoogleFonts.notoSans(color: Colors.black)),
               onTap: () async {
-                pickImageCamera();
                 Navigator.pop(context);
+                await pickImageCamera();
               },
             ),
             ListTile(
@@ -256,6 +265,10 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
             contestProvider.addressProofStatusNotifier.value = 1;
           }
           // Navigator.pop(context);
+        } else if (contestProvider.uploadDocumentSuccessModel?.status ==
+            '401') {
+          SnackbarUtil.showSnackBar(context,
+              contestProvider.uploadDocumentSuccessModel?.message! ?? '');
         } else if (contestProvider.uploadDocumentSuccessModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(context,
@@ -427,6 +440,9 @@ class _UploadDocumentsScreenState extends State<UploadDocumentsScreen> {
                                               selectImageDialog(context);
                                             }
                                           : null,
+                                      /* onTap: () {
+                                        selectImageDialog(context);
+                                      },*/
                                       child: Container(
                                         margin: const EdgeInsets.only(top: 10),
                                         padding: const EdgeInsets.symmetric(
