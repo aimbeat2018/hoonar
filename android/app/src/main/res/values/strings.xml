@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="facebook_app_id">1129421471997632</string>
+    <string name="facebook_client_token">7889bca7548db56ec0d3382d12fe0d3a</string>
+    <string name="fb_login_protocol_scheme">fb1129421471997632</string>
+    <string name="app_name">Hoonarstar</string>
+</resources>

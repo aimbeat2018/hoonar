@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_social_share/custom_social_share.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -62,9 +63,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
   String city = 'Fetching...';
   String state = 'Fetching...';
 
+  FacebookAppEvents facebookAppEvents = FacebookAppEvents();
+
   @override
   void initState() {
     super.initState();
+
     initializePlayer();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,6 +94,19 @@ class _ReelsWidgetState extends State<ReelsWidget>
         parent: _controller,
         curve: Curves.easeOut,
       ),
+    );
+
+    logReelViewEvent();
+  }
+
+  void logReelViewEvent() {
+    facebookAppEvents.logEvent(
+      name: 'View content',
+      parameters: {
+        'video_id': widget.model.postId ?? 0,
+        'desc': widget.model.postDescription ?? '',
+        'video_type': 'reel'
+      },
     );
   }
 

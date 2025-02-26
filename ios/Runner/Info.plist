@@ -43,7 +43,7 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
 
-<key>NSPhotoLibraryAddUsageDescription</key>
+    <key>NSPhotoLibraryAddUsageDescription</key>
     <string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
 
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -89,5 +89,21 @@
     <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
+
+    <key>CFBundleURLTypes</key>
+    <array>
+      <dict>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>fb1129421471997632</string>
+      </array>
+      </dict>
+    </array>
+    <key>FacebookAppID</key>
+    <string>1129421471997632</string>
+    <key>FacebookClientToken</key>
+    <string>7889bca7548db56ec0d3382d12fe0d3a</string>
+    <key>FacebookDisplayName</key>
+    <string>Hoonarstar</string>
 </dict>
 </plist>

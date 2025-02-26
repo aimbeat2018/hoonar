@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,6 +39,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 
   @override
   void initState() {
@@ -59,6 +61,15 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
+  void logSearchEvent(String username) {
+    facebookAppEvents.logEvent(
+      name: 'Search',
+      parameters: {
+        'user_name': username,
+      },
+    );
+  }
+
   Future<void> searchUser(BuildContext context, String searchKey) async {
     final homeProvider = Provider.of<HomeProvider>(context, listen: false);
 
@@ -71,6 +82,10 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       if (homeProvider.searchListModel?.status == '200') {
         userSearchHistory(context);
+
+        /*Log search event*/
+        logSearchEvent(searchKey);
+
       } else if (homeProvider.searchListModel?.message ==
           'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
@@ -223,7 +238,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                       keyboardType: TextInputType.text,
                                       onChanged: (value) {
                                         if (value.isNotEmpty) {
+
                                           searchUser(context, value);
+
+
+
                                         }
                                       },
                                     ),

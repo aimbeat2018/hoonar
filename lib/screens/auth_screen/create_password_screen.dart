@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,6 +44,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   ScrollController scrollController = ScrollController();
   bool newPasswordVisibility = true, confirmNewPasswordVisibility = true;
   final GlobalKey<FormState> _formKey = GlobalKey();
+  FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 
   @override
   void initState() {
@@ -362,14 +364,18 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
         if (authProvider.sendOtpSuccessModel?.status == '200') {
           SnackbarUtil.showSnackBar(
               context, authProvider.sendOtpSuccessModel?.message! ?? '');
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         } else {
           SnackbarUtil.showSnackBar(
               context, authProvider.sendOtpSuccessModel?.message! ?? '');
         }
       }
     }
+  }
+
+  void logCompleteRegistration() {
+    facebookAppEvents.logCompletedRegistration(registrationMethod: 'mobile');
   }
 
   Future<void> callRegisterApi(BuildContext context) async {
@@ -390,6 +396,9 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
           if (authProvider.signupSuccessModel?.status == '200') {
             SnackbarUtil.showSnackBar(
                 context, authProvider.signupSuccessModel?.message! ?? '');
+
+            logCompleteRegistration();
+
             Navigator.pushAndRemoveUntil(context,
                 SlideRightRoute(page: const LoginScreen()), (route) => false);
           } else {

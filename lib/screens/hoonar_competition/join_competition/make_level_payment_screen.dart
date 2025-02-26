@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:facebook_app_events/facebook_app_events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,6 +52,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
+  FacebookAppEvents facebookAppEvents = FacebookAppEvents();
 
   Future<void> storePayment(
       BuildContext context, StorePaymentRequestModel requestModel) async {
@@ -140,6 +143,18 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
     });
   }
 
+  void initiateCheckoutEvent(double price) {
+    facebookAppEvents.logInitiatedCheckout(
+        contentId: (widget.model.levelId ?? 0).toString(),
+        contentType: 'competition for ${widget.model.levelName ?? ''}',
+        currency: 'INR',
+        totalPrice: price);
+  }
+
+  void initiatePurchaseEvent(double price) {
+    facebookAppEvents.logPurchase(currency: 'INR', amount: price);
+  }
+
   void handlePaymentErrorResponse(PaymentFailureResponse response) {
     SnackbarUtil.showSnackBar(context,
         "Payment Failed: Code: ${response.code}\nDescription: ${response.message}}");
@@ -160,6 +175,9 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             // transactionId will change when payment gateway received
             paymentStatus:
                 'failed' /*(e.g., 'completed', 'pending', 'failed')*/));
+
+    /*log checkout event*/
+    initiateCheckoutEvent(double.parse(widget.model.fees.toString()));
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
@@ -180,6 +198,9 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
             // transactionId will change when payment gateway received
             paymentStatus:
                 'completed' /*(e.g., 'completed', 'pending', 'failed')*/));
+
+    /*log purchase event*/
+    initiatePurchaseEvent(double.parse(widget.model.fees.toString()));
   }
 
   void handleExternalWalletSelected(ExternalWalletResponse response) {

@@ -501,6 +501,7 @@
 				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = H99LC2H2UF;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=*]" = armv7;
 				FLUTTER_APPLICATION_PATH = /Users/aimbeat/StudioProjects/hoonar;
 				FLUTTER_BUILD_DIR = build;
 				FLUTTER_BUILD_NAME = 1.0.12;
@@ -703,6 +704,7 @@
 				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = H99LC2H2UF;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=*]" = armv7;
 				FLUTTER_APPLICATION_PATH = /Users/aimbeat/StudioProjects/hoonar;
 				FLUTTER_BUILD_DIR = build;
 				FLUTTER_BUILD_NAME = 1.0.12;
@@ -741,6 +743,7 @@
 				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = H99LC2H2UF;
 				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=*]" = armv7;
 				FLUTTER_APPLICATION_PATH = /Users/aimbeat/StudioProjects/hoonar;
 				FLUTTER_BUILD_DIR = build;
 				FLUTTER_BUILD_NAME = 1.0.12;
