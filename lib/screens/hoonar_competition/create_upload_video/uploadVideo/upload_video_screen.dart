@@ -145,7 +145,10 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
       // Handle API response
       if (homeProvider.errorMessage != null) {
-        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+        // SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+
+        SnackbarUtil.showSnackBar(context,
+            'Something went wrong.. please try later');
       } else if (homeProvider.addPostModel?.status == '200') {
         setState(() {
           progressPercentage = 1.0; // Set progress to 100%
@@ -192,7 +195,7 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
         }*/
 
         SnackbarUtil.showSnackBar(context,
-            'Something went wrong.. please try again later in sometime');
+            'Something went wrong.. please try later');
       }
     } finally {
       setState(() {

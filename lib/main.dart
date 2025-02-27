@@ -1,5 +1,8 @@
 // import 'package:face_camera/face_camera.dart';
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:crypto/crypto.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -94,6 +97,7 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
+
 
 /*void requestNotificationPermission() async {
   PermissionStatus status =
