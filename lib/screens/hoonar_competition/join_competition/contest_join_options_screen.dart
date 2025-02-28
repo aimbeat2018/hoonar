@@ -322,7 +322,8 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(
-                                        page: const CreateUploadOptionsScreen()),
+                                        page:
+                                            const CreateUploadOptionsScreen()),
                                   );
                                 } else if (index == 1) {
                                   Navigator.push(
@@ -342,12 +343,14 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                 } else if (index == 3) {
                                   Navigator.push(
                                     context,
-                                    SlideRightRoute(page: const YourRewardsScreen()),
+                                    SlideRightRoute(
+                                        page: const YourRewardsScreen()),
                                   );
                                 } else if (index == 4) {
                                   Navigator.push(
                                     context,
-                                    SlideRightRoute(page: const GuidelineScreen()),
+                                    SlideRightRoute(
+                                        page: const GuidelineScreen()),
                                   );
                                 } else if (index == 5) {
                                   Navigator.push(

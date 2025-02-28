@@ -98,7 +98,6 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-
 /*void requestNotificationPermission() async {
   PermissionStatus status =
       await NotificationPermissions.requestNotificationPermissions(

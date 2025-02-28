@@ -4,7 +4,8 @@ import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+
+// import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:hoonar/constants/common_widgets.dart';
 import 'package:hoonar/constants/session_manager.dart';
 import 'package:hoonar/custom/snackbar_util.dart';
@@ -33,7 +34,8 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   late CameraController _cameraController;
   late Future<void> _initializeControllerFuture;
   bool _isProcessing = false;
-  late FaceDetector _faceDetector;
+
+  // late FaceDetector _faceDetector;
   bool isLoading = false;
   SessionManager sessionManager = SessionManager();
   bool _isCameraInitialized = false;
@@ -61,12 +63,12 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
       initPermission();
     });
 
-    _faceDetector = FaceDetector(
-      options: FaceDetectorOptions(
-        enableContours: true,
-        enableLandmarks: true,
-      ),
-    );
+    // _faceDetector = FaceDetector(
+    //   options: FaceDetectorOptions(
+    //     enableContours: true,
+    //     enableLandmarks: true,
+    //   ),
+    // );
   }
 
   void initPermission() async {
@@ -172,7 +174,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     try {
       await _initializeControllerFuture;
       final image = await _cameraController.takePicture();
-      if (Platform.isAndroid) {
+      /*  if (Platform.isAndroid) {
         final faceImagePath = await _detectAndCropFace(image.path);
         if (faceImagePath != null) {
           // ScaffoldMessenger.of(context).showSnackBar(
@@ -183,12 +185,12 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
                   document: File(faceImagePath), documentName: 'Face');
           uploadFace(context, requestModel);
         }
-      } else {
-        UploadKycDocumentRequestModel requestModel =
-            UploadKycDocumentRequestModel(
-                document: File(image.path), documentName: 'Face');
-        uploadFace(context, requestModel);
-      }
+      } else {*/
+      UploadKycDocumentRequestModel requestModel =
+          UploadKycDocumentRequestModel(
+              document: File(image.path), documentName: 'Face');
+      uploadFace(context, requestModel);
+      // }
     } catch (e) {
       print("Error: $e");
     }
@@ -198,36 +200,36 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
     });
   }
 
-  Future<String?> _detectAndCropFace(String imagePath) async {
-    final inputImage = InputImage.fromFilePath(imagePath);
-    final faces = await _faceDetector.processImage(inputImage);
-
-    if (faces.isEmpty) {
-      SnackbarUtil.showSnackBar(
-          context, AppLocalizations.of(context)!.faceNotRecognized);
-      return null;
-    }
-
-    final face = faces.first;
-    final boundingBox = face.boundingBox;
-
-    final originalImage = img.decodeImage(File(imagePath).readAsBytesSync());
-    if (originalImage == null) return null;
-
-    final faceImage = img.copyCrop(
-      originalImage,
-      x: boundingBox.left.toInt(),
-      y: boundingBox.top.toInt(),
-      width: boundingBox.width.toInt(),
-      height: boundingBox.height.toInt(),
-    );
-
-    final directory = await getApplicationDocumentsDirectory();
-    final faceImagePath = '${directory.path}/face_capture.png';
-    File(faceImagePath).writeAsBytesSync(img.encodePng(faceImage));
-
-    return faceImagePath;
-  }
+  // Future<String?> _detectAndCropFace(String imagePath) async {
+  //   final inputImage = InputImage.fromFilePath(imagePath);
+  //   final faces = await _faceDetector.processImage(inputImage);
+  //
+  //   if (faces.isEmpty) {
+  //     SnackbarUtil.showSnackBar(
+  //         context, AppLocalizations.of(context)!.faceNotRecognized);
+  //     return null;
+  //   }
+  //
+  //   final face = faces.first;
+  //   final boundingBox = face.boundingBox;
+  //
+  //   final originalImage = img.decodeImage(File(imagePath).readAsBytesSync());
+  //   if (originalImage == null) return null;
+  //
+  //   final faceImage = img.copyCrop(
+  //     originalImage,
+  //     x: boundingBox.left.toInt(),
+  //     y: boundingBox.top.toInt(),
+  //     width: boundingBox.width.toInt(),
+  //     height: boundingBox.height.toInt(),
+  //   );
+  //
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   final faceImagePath = '${directory.path}/face_capture.png';
+  //   File(faceImagePath).writeAsBytesSync(img.encodePng(faceImage));
+  //
+  //   return faceImagePath;
+  // }
 
   Future<void> uploadFace(
       BuildContext context, UploadKycDocumentRequestModel requestModel) async {
@@ -273,7 +275,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
   @override
   void dispose() {
     _cameraController.dispose();
-    _faceDetector.close();
+    // _faceDetector.close();
     _connectivitySubscription.cancel();
     super.dispose();
   }
