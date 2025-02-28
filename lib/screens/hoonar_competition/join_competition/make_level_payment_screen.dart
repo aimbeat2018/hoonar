@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,6 +55,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
   FacebookAppEvents facebookAppEvents = FacebookAppEvents();
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   Future<void> storePayment(
       BuildContext context, StorePaymentRequestModel requestModel) async {
@@ -143,16 +146,36 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
     });
   }
 
-  void initiateCheckoutEvent(double price) {
+  Future<void> initiateCheckoutEvent(double price) async {
     facebookAppEvents.logInitiatedCheckout(
         contentId: (widget.model.levelId ?? 0).toString(),
         contentType: 'competition for ${widget.model.levelName ?? ''}',
         currency: 'INR',
         totalPrice: price);
+
+    /*google analytics*/
+    await analytics.logBeginCheckout(
+      currency: 'INR',
+      value: price,
+      parameters: {
+        'contentId': (widget.model.levelId ?? 0).toString(),
+        'contentType': 'competition for ${widget.model.levelName ?? ''}',
+      },
+    );
   }
 
-  void initiatePurchaseEvent(double price) {
+  Future<void> initiatePurchaseEvent(double price) async {
     facebookAppEvents.logPurchase(currency: 'INR', amount: price);
+
+    /*google analytics*/
+    await analytics.logPurchase(
+      currency: 'INR',
+      value: price,
+      parameters: {
+        'contentId': (widget.model.levelId ?? 0).toString(),
+        'contentType': 'competition for ${widget.model.levelName ?? ''}',
+      },
+    );
   }
 
   void handlePaymentErrorResponse(PaymentFailureResponse response) {

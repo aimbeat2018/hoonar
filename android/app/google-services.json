@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "458800452771",
-    "project_id": "hoonar-db73e",
-    "storage_bucket": "hoonar-db73e.firebasestorage.app"
+    "project_number": "146778887661",
+    "project_id": "hoonarstar-9bbe6",
+    "storage_bucket": "hoonarstar-9bbe6.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:458800452771:android:a35d10f82ff6c25d279b16",
+        "mobilesdk_app_id": "1:146778887661:android:087395449320c85e9b43e4",
         "android_client_info": {
           "package_name": "com.hoonar.hoonar"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c"
+          "current_key": "AIzaSyD5PA0Fe9ExpwhV0ymHNRQjyuH1eGtVKLg"
         }
       ],
       "services": {

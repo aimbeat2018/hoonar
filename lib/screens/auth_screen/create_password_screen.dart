@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,6 +46,7 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   bool newPasswordVisibility = true, confirmNewPasswordVisibility = true;
   final GlobalKey<FormState> _formKey = GlobalKey();
   FacebookAppEvents facebookAppEvents = FacebookAppEvents();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -374,8 +376,13 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
     }
   }
 
-  void logCompleteRegistration() {
+  Future<void> logCompleteRegistration() async {
     facebookAppEvents.logCompletedRegistration(registrationMethod: 'mobile');
+
+    await analytics.logEvent(
+      name: 'registration_complete',
+      parameters: {'registrationMethod': 'mobile'},
+    );
   }
 
   Future<void> callRegisterApi(BuildContext context) async {

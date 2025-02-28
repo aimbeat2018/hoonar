@@ -3,14 +3,14 @@ plugins {
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
     id "kotlin-parcelize"
+    id "com.google.gms.google-services"
 }
 
 configurations.configureEach {
     resolutionStrategy {
         eachDependency {
             if ((requested.group == "org.jetbrains.kotlin") && (requested.name.startsWith("kotlin-stdlib"))) {
-                useVersion("1.9.23")
-//                useVersion("1.8.22")
+                useVersion("1.8.22") // Keep the version consistent
             }
         }
     }
@@ -19,7 +19,6 @@ configurations.configureEach {
 android {
     namespace = "com.hoonar.hoonar"
     compileSdk = flutter.compileSdkVersion
-//    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -28,41 +27,25 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8"
     }
 
-//    kotlinOptions {
-//        jvmTarget = JavaVersion.VERSION_1_8
-//    }
-
     defaultConfig {
-//        must update version in yaml file also keep gradle and yaml file version same
         applicationId = "com.hoonar.hoonar"
         minSdk = 24
         targetSdk = flutter.compileSdkVersion
         versionCode = 14
         versionName = '1.0.13'
         multiDexEnabled true
-
-//        ndk {
-//            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86-64'
-//        }
     }
 
     packagingOptions {
-//        pickFirst '**/libbanuba-ve-yuv.so'
-
         jniLibs {
             useLegacyPackaging = true
         }
     }
 
     buildTypes {
-        /* release {
-             // TODO: Add your own signing config for the release build.
-             // Signing with the debug keys for now, so `flutter run --release` works.
-             signingConfig = signingConfigs.debug
-         }*/
         release {
             minifyEnabled true
             shrinkResources false
@@ -71,39 +54,39 @@ android {
     }
 
     rootProject.buildscript {
-        ext.kotlin_version = '1.8.22'
+//        ext.kotlin_version = '1.8.22'
+        ext.kotlin_version = '2.1.0'
         repositories {
             google()
             mavenCentral()
         }
-
         dependencies {
             classpath 'com.android.tools.build:gradle:8.1.2'
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+            classpath 'com.google.gms:google-services:4.3.15'
         }
     }
-
 }
-
 
 flutter {
     source = "../.."
 }
 
 dependencies {
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    //Firebase
-//    implementation platform('com.google.firebase:firebase-bom:33.0.0')
-//    implementation 'com.google.firebase:firebase-analytics'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    // ExoPlayer Dependencies
     implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
     implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.18.1'
+
+    // Camera Dependencies
     implementation "androidx.camera:camera-core:1.4.0"
-//    implementation "androidx.camera:camera2:1.4.0"
     implementation "androidx.camera:camera-lifecycle:1.4.0"
     implementation "androidx.camera:camera-view:1.4.0"
     implementation "androidx.camera:camera-extensions:1.4.0"
 
-
+    // Firebase Analytics
+    implementation platform('com.google.firebase:firebase-bom:33.0.0')
+    implementation 'com.google.firebase:firebase-analytics'
 }

@@ -105,5 +105,9 @@
     <string>7889bca7548db56ec0d3382d12fe0d3a</string>
     <key>FacebookDisplayName</key>
     <string>Hoonarstar</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>This identifier will be used to deliver personalized ads to you.</string>
+    <key>FacebookAdvertiserIDCollectionEnabled</key>
+    <true/>
 </dict>
 </plist>

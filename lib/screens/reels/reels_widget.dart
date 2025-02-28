@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_social_share/custom_social_share.dart';
 import 'package:facebook_app_events/facebook_app_events.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +55,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   late Animation<double> _scaleAnimation;
   bool isMute = false;
   double _progress = 0.0;
-  String loginUserId = "";
+  String loginUserId = "0";
   bool _isLoading = true;
 
   // Location
@@ -64,6 +65,7 @@ class _ReelsWidgetState extends State<ReelsWidget>
   String state = 'Fetching...';
 
   FacebookAppEvents facebookAppEvents = FacebookAppEvents();
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   void initState() {
@@ -99,9 +101,20 @@ class _ReelsWidgetState extends State<ReelsWidget>
     logReelViewEvent();
   }
 
-  void logReelViewEvent() {
+  Future<void> logReelViewEvent() async {
+    /*Facebook events*/
     facebookAppEvents.logEvent(
       name: 'View content',
+      parameters: {
+        'video_id': widget.model.postId ?? 0,
+        'desc': widget.model.postDescription ?? '',
+        'video_type': 'reel'
+      },
+    );
+
+    /*google analytics*/
+    await analytics.logEvent(
+      name: 'view_content',
       parameters: {
         'video_id': widget.model.postId ?? 0,
         'desc': widget.model.postDescription ?? '',

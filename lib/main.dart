@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:crypto/crypto.dart';
-
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -60,12 +60,13 @@ Future<void> main() async {
 
   if (Platform.isAndroid) {
     await Firebase.initializeApp(
+      name: 'default',
       options: const FirebaseOptions(
-        apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-        appId: '1:458800452771:android:a35d10f82ff6c25d279b16',
-        messagingSenderId: '458800452771',
-        projectId: 'hoonar-db73e',
-        storageBucket: 'hoonar-db73e.appspot.com',
+        apiKey: 'AIzaSyCgPWQkhaaiVRYaab30-3AivHxjW9fifGc',
+        appId: '1:146778887661:android:087395449320c85e9b43e4',
+        messagingSenderId: '146778887661',
+        projectId: 'hoonarstar-9bbe6',
+        storageBucket: 'hoonarstar-9bbe6.firebasestorage.app',
       ),
     );
   } else {
@@ -73,11 +74,11 @@ Future<void> main() async {
         // name: 'hoonarstar',
         name: 'default',
         options: const FirebaseOptions(
-          apiKey: 'AIzaSyAJo-EkjSOgOgtwH4hkDmVlxrV6tQDrS9c',
-          appId: '1:458800452771:ios:2f3016d02bbef45d279b16',
-          messagingSenderId: '458800452771',
-          projectId: 'hoonar-db73e',
-          storageBucket: 'hoonar-db73e.appspot.com',
+          apiKey: 'AIzaSyCgPWQkhaaiVRYaab30-3AivHxjW9fifGc',
+          appId: '1:146778887661:ios:0803e284992e89ca9b43e4',
+          messagingSenderId: '146778887661',
+          projectId: 'hoonarstar-9bbe6',
+          storageBucket: 'hoonarstar-9bbe6.firebasestorage.app',
           iosBundleId: 'com.hoonar.hoonarstar',
         ));
   }
@@ -95,7 +96,7 @@ Future<void> main() async {
     FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
   } catch (e) {}
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 /*void requestNotificationPermission() async {
@@ -108,9 +109,10 @@ Future<void> main() async {
     ),
   );
 }*/
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +153,9 @@ class MyApp extends StatelessWidget {
               'CameraScreen': (context) => const CustomCameraScreen(),
               'EditProfileScreen': (context) => const EditProfileScreen()
             },
+            navigatorObservers: [
+              FirebaseAnalyticsObserver(analytics: analytics),
+            ],
             home: const SplashScreens(),
             // home: ContestJoinSuccessScreen(),
           );
