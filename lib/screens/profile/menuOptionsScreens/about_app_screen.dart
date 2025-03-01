@@ -60,6 +60,10 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
 
     sessionManager.initPref();
     _getAppVersion();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUserProfile(context);
+    });
   }
 
   Future<void> _getAppVersion() async {
@@ -106,6 +110,49 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
         }
       }
     });
+  }
+
+  Future<void> getUserProfile(BuildContext context) async {
+    sessionManager.initPref().then((onValue) async {
+      CommonRequestModel requestModel = CommonRequestModel();
+
+      String myUserId = sessionManager.getString(SessionManager.userId)!;
+
+      requestModel.userId = myUserId;
+
+      requestModel.myUserId = myUserId;
+      requestModel.deviceToken = sessionManager
+          .getString(SessionManager.accessToken)!
+          .replaceAll("Bearer", "");
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      await authProvider.getProfile(
+          requestModel, sessionManager.getString(SessionManager.accessToken)!);
+
+      if (authProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
+      } else {
+        if (authProvider.profileSuccessModel?.status == '200') {
+          if (authProvider.profileSuccessModel != null) {
+            setState(() {
+              if (authProvider.profileSuccessModel!.data!.isNotification == 1) {
+                enableNotification = true;
+              } else {
+                enableNotification = false;
+              }
+            });
+          }
+        } else if (authProvider.profileSuccessModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(
+              context, authProvider.profileSuccessModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+    setState(() {});
   }
 
   Future<void> enableDisableNotification(
@@ -229,7 +276,7 @@ class _AboutAppScreenState extends State<AboutAppScreen> {
                           myLoading.isDark,
                           icon: 'assets/images/contact_email.png',
                           title: AppLocalizations.of(context)!.contactEmail,
-                          subtitle: 'customercare@hoonarstar.com',
+                          subtitle: 'support.hoonarstar@lionaireinfotech.com',
                         ),
                         _buildDivider(),
                         _buildSection(context, myLoading.isDark,

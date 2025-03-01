@@ -14,6 +14,7 @@ import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -147,8 +148,8 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
       if (homeProvider.errorMessage != null) {
         // SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
 
-        SnackbarUtil.showSnackBar(context,
-            'Something went wrong.. please try later');
+        SnackbarUtil.showSnackBar(
+            context, 'Something went wrong.. please try later');
       } else if (homeProvider.addPostModel?.status == '200') {
         setState(() {
           progressPercentage = 1.0; // Set progress to 100%
@@ -194,8 +195,8 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
            });
         }*/
 
-        SnackbarUtil.showSnackBar(context,
-            'Something went wrong.. please try later');
+        SnackbarUtil.showSnackBar(
+            context, 'Something went wrong.. please try later');
       }
     } finally {
       setState(() {
@@ -361,8 +362,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
     try {
       // Get app's document directory to save the video
+      String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
       final directory = await getApplicationDocumentsDirectory();
-      final outputPath = '${directory.path}/converted_video.mp4';
+      final outputPath = '${directory.path}/converted_video${timestamp}.mp4';
 
       // FFmpeg command to download and convert M3U8 to MP4
       // final command = '-i $url -c copy -bsf:a aac_adtstoasc $outputPath';

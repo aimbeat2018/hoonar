@@ -301,6 +301,9 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
       applyFilterToVideo(
           mergedFile.path, outputFilePath, selectedFilter['filterStr']);
     } else {*/
+    if (_audioPlayer != null) {
+      _audioPlayer!.stop();
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -469,12 +472,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         });
       }
 
-      if (Platform.isIOS && await Permission.photos.isLimited) {
-        log('Limited Photo Access Detected (initPermission)');
-        await Permission.photos.request(); // Re-request for full access
-      } else {
-        openAppSettings(); // Redirect to app settings
-      }
+      // if (Platform.isIOS && await Permission.photos.isLimited) {
+      //   log('Limited Photo Access Detected (initPermission)');
+      //   await Permission.photos.request(); // Re-request for full access
+      // } else {
+      //   openAppSettings(); // Redirect to app settings
+      // }
     }
   }
 
@@ -521,12 +524,12 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
         });
       }
 
-      if (Platform.isIOS && await Permission.photos.isLimited) {
-        log('Limited Photo Access Detected (requestPermissions)');
-        await Permission.photos.request(); // Re-request for full access
-      } else {
-        openAppSettings(); // Redirect to app settings
-      }
+      // if (Platform.isIOS && await Permission.photos.isLimited) {
+      //   log('Limited Photo Access Detected (requestPermissions)');
+      //   await Permission.photos.request(); // Re-request for full access
+      // } else {
+      //   openAppSettings(); // Redirect to app settings
+      // }
     }
   }
 

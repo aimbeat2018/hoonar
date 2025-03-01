@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import Firebase
 import FirebaseMessaging
+import FirebaseCore
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, MessagingDelegate {  // Conform to MessagingDelegate

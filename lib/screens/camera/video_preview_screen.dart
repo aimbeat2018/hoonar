@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -154,7 +155,10 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
         isThumbnailLoading = false;
       });
     } else if (Platform.isIOS) {
-      final convertedVideoPath = '${tempDir.path}/converted_video.mp4';
+
+      String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+      final convertedVideoPath =
+          '${tempDir.path}/${timestamp}_converted_video.mp4';
       await FFmpegKit.execute(
           '-i ${widget.videoFile.path} -vcodec h264 $convertedVideoPath');
 
@@ -195,10 +199,12 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                       child: VisibilityDetector(
                         onVisibilityChanged: (VisibilityInfo info) {
                           var visiblePercentage = info.visibleFraction * 100;
-                          if (visiblePercentage > 50) {
-                            _videoController.play();
-                          } else {
-                            _videoController.pause();
+                          if (_videoController != null) {
+                            if (visiblePercentage > 50) {
+                              _videoController.play();
+                            } else {
+                              _videoController.pause();
+                            }
                           }
                         },
                         key: Key('key1${widget.videoFile.path}'),
@@ -240,8 +246,8 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                       data: SliderTheme.of(context).copyWith(
                         activeTrackColor: Colors.white,
                         trackHeight: 5,
-                        thumbShape:
-                            const RoundSliderThumbShape(enabledThumbRadius: 0.0),
+                        thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 0.0),
                         overlayShape:
                             const RoundSliderOverlayShape(overlayRadius: 0.0),
                       ),
@@ -431,8 +437,8 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
                       }
                     },
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white),

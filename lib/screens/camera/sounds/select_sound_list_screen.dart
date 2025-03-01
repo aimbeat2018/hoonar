@@ -7,11 +7,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/screens/camera/sounds/local_video_selected_screen.dart';
 import 'package:hoonar/screens/camera/sounds/trim_audio_screen.dart';
 import 'package:hoonar/shimmerLoaders/following_list_shimmer.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -42,9 +44,10 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  TextEditingController searchController = TextEditingController();
 
   SessionManager sessionManager = SessionManager();
-  bool isAudioPlaying = false;
+  bool isAudioPlaying = false, isLoading = false;
   late AudioPlayer audioPlayer;
   int selectedIndex = -1;
 
@@ -162,109 +165,186 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
           ? const NoInternetScreen()
           : WillPopScope(
               onWillPop: _onWillPop,
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                body: Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(myLoading.isDark
-                          ? 'assets/images/screens_back.png'
-                          : 'assets/dark_mode_icons/white_screen_back.png'),
-                      fit: BoxFit.cover,
+              child: AbsorbPointer(
+                // Absorbs all UI interactions when loading
+                absorbing: isLoading,
+                child: Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(myLoading.isDark
+                            ? 'assets/images/screens_back.png'
+                            : 'assets/dark_mode_icons/white_screen_back.png'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: SafeArea(
-                    child: SingleChildScrollView(
+                    child: SafeArea(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 5),
-                        child: Column(
+                        child: Stack(
                           children: [
-                            Row(
+                            Column(
                               children: [
-                                InkWell(
-                                  onTap: () async {
-                                    if (isAudioPlaying) {
-                                      await audioPlayer.stop();
-                                      setState(() {
-                                        isAudioPlaying = false;
-                                      });
-                                    }
-
-                                    Navigator.pop(context);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 13),
-                                    child: Image.asset(
-                                      'assets/images/back_image.png',
-                                      height: 28,
-                                      width: 28,
-                                      color: myLoading.isDark
-                                          ? Colors.white
-                                          : Colors.black,
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () async {
+                                        if (isAudioPlaying) {
+                                          await audioPlayer.stop();
+                                          setState(() {
+                                            isAudioPlaying = false;
+                                          });
+                                        }
+                                        Navigator.pop(context);
+                                      },
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 13),
+                                        child: Image.asset(
+                                          'assets/images/back_image.png',
+                                          height: 28,
+                                          width: 28,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
                                     ),
+                                    Expanded(
+                                      child: Center(
+                                        child: GradientText(
+                                          AppLocalizations.of(context)!
+                                              .musicLibrary,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 20,
+                                            color: myLoading.isDark
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.topRight,
+                                            colors: [
+                                              myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              myLoading.isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              myLoading.isDark
+                                                  ? greyTextColor8
+                                                  : Colors.grey.shade700,
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: menuItemsWidget(myLoading.isDark),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 15),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      hintText: 'search song by name',
+                                      hintStyle: GoogleFonts.poppins(
+                                        color: hintGreyColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                      border: GradientOutlineInputBorder(
+                                        width: 1,
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            myLoading.isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            greyTextColor4
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 20),
+                                    ),
+                                    controller: searchController,
+                                    cursorColor: Colors.white,
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.white),
+                                    keyboardType: TextInputType.text,
+                                    onChanged: (value) {},
                                   ),
                                 ),
-                                Expanded(
-                                  child: Center(
-                                      child: GradientText(
-                                    AppLocalizations.of(context)!.musicLibrary,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20,
-                                      color: myLoading.isDark
-                                          ? Colors.black
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.topRight,
-                                        colors: [
-                                          myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          myLoading.isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                          myLoading.isDark
-                                              ? greyTextColor8
-                                              : Colors.grey.shade700
-                                        ]),
-                                  )),
+                                SizedBox(
+                                  height: 15,
                                 ),
-                                Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: menuItemsWidget(myLoading.isDark))
+                                SizedBox(
+                                  height: 50, // Adjust height as needed
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: contestProvider
+                                            .soundListModel?.data?.length ??
+                                        0,
+                                    itemBuilder: (context, index) {
+                                      return buildCategoryItem(
+                                        contestProvider
+                                            .soundListModel!.data![index],
+                                        index,
+                                        myLoading.isDark,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 10,),
+                                Expanded(
+                                  // Makes the list scrollable properly
+                                  child: contestProvider.isSoundLoading ||
+                                          contestProvider.soundListModel == null
+                                      ? const FollowingListShimmer()
+                                      : contestProvider.soundListModel!.data ==
+                                                  null ||
+                                              contestProvider
+                                                  .soundListModel!.data!.isEmpty
+                                          ? const DataNotFound()
+                                          : ListView.builder(
+                                              itemCount: contestProvider
+                                                  .soundListModel!.data!.length,
+                                              itemBuilder: (context, index) {
+                                                return buildSoundItem(
+                                                  contestProvider
+                                                      .soundListModel!
+                                                      .data![index],
+                                                  index,
+                                                  myLoading.isDark,
+                                                );
+                                              },
+                                            ),
+                                ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            contestProvider.isSoundLoading ||
-                                    contestProvider.soundListModel == null
-                                ? const FollowingListShimmer()
-                                : contestProvider.soundListModel!.data ==
-                                            null ||
-                                        contestProvider
-                                            .soundListModel!.data!.isEmpty
-                                    ? const DataNotFound()
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: contestProvider
-                                            .soundListModel!.data!.length,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index) {
-                                          return buildSoundItem(
-                                            contestProvider
-                                                .soundListModel!.data![index],
-                                            index,
-                                            myLoading.isDark,
-                                          ); // Build each list item
-                                        },
-                                      ),
+                            if (isLoading)
+                              Positioned.fill(
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.5),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -277,9 +357,13 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
   }
 
   Future<File> _downloadAudio(String url) async {
+    setState(() {
+      isLoading = true;
+    });
     final response = await http.get(Uri.parse(url));
     final directory = await getTemporaryDirectory();
-    final filePath = '${directory.path}/temp_audio.mp3';
+    String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+    final filePath = '${directory.path}/${timestamp}_temp_audio.mp3';
     final file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return file;
@@ -443,13 +527,41 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     );
   }
 
+  Widget buildCategoryItem(SoundListData model, int index, bool isDarkMode) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            width: 0.80,
+            strokeAlign: BorderSide.strokeAlignOutside,
+            color: isDarkMode ? Colors.white : Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(6.19),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          model.soundCategoryName ?? '',
+          textAlign: TextAlign.end,
+          style: GoogleFonts.montserrat(
+            fontSize: 14,
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildSoundItem(SoundListData model, int index, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
+       /*   Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               model.soundCategoryName ?? '',
@@ -463,7 +575,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
           ),
           const SizedBox(
             height: 10,
-          ),
+          ),*/
           ListView.builder(
               shrinkWrap: true,
               itemCount: model.soundList!.length,
@@ -548,6 +660,11 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
 
   void _openTrimBottomSheet(BuildContext context, String audioFilePath,
       int trimSecs, SoundList model) {
+    setState(() {
+      isLoading = false;
+      isAudioPlaying = false;
+    });
+    audioPlayer.stop();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

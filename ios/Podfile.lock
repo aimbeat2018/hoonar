@@ -80,7 +80,7 @@ PODS:
   - firebase_core (3.12.1):
     - Firebase/CoreOnly (= 11.8.0)
     - Flutter
-  - firebase_messaging (15.1.6):
+  - firebase_messaging (15.2.4):
     - Firebase/Messaging (= 11.8.0)
     - firebase_core
     - Flutter
@@ -303,6 +303,9 @@ DEPENDENCIES:
   - facebook_app_events (from `.symlinks/plugins/facebook_app_events/ios`)
   - ffmpeg_kit_flutter (from `.symlinks/plugins/ffmpeg_kit_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - Firebase/Analytics
+  - Firebase/Core
+  - Firebase/Messaging
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -468,7 +471,7 @@ SPEC CHECKSUMS:
   Firebase: d80354ed7f6df5f9aca55e9eb47cc4b634735eaf
   firebase_analytics: e3b6782e70e32b7fa18f7cd233e3201975dd86aa
   firebase_core: ac395f994af4e28f6a38b59e05a88ca57abeb874
-  firebase_messaging: 882f8e95b40e3d8b25f5a57b4d6c2ed4aa2ae505
+  firebase_messaging: 7e223f4ee7ca053bf4ce43748e84a6d774ec9728
   FirebaseAnalytics: 4fd42def128146e24e480e89f310e3d8534ea42b
   FirebaseCore: 99fe0c4b44a39f37d99e6404e02009d2db5d718d
   FirebaseCoreInternal: df24ce5af28864660ecbd13596fc8dd3a8c34629
@@ -521,6 +524,6 @@ SPEC CHECKSUMS:
   video_thumbnail: c4e2a3c539e247d4de13cd545344fd2d26ffafd1
   wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
 
-PODFILE CHECKSUM: 7cd61ab78886aa713425dc8b7698a9868071e10b
+PODFILE CHECKSUM: 1c2e33b5200fa5f079385152b4374ec361a195d2
 
 COCOAPODS: 1.16.2

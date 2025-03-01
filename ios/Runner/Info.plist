@@ -22,8 +22,25 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1129421471997632</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<true/>
+	<key>FacebookAppID</key>
+	<string>1129421471997632</string>
+	<key>FacebookClientToken</key>
+	<string>7889bca7548db56ec0d3382d12fe0d3a</string>
+	<key>FacebookDisplayName</key>
+	<string>Hoonarstar</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
@@ -34,33 +51,34 @@
 	<true/>
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
-    <string>This app requires access to the camera to allow users to capture photos for profile and videos for participating in competitions and uploading media content.</string>
-
-    <key>NSMicrophoneUsageDescription</key>
-    <string>his app requires access to the microphone to record audio when capturing videos for competitions and media uploads.</string>
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
-
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
-
+	<string>This app requires access to the camera to allow users to capture photos for profile and videos for participating in competitions and uploading media content.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>his app requires access to the microphone to record audio when capturing videos for competitions and media uploads.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library so you can upload photos and videos for competition entries and profile customization.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized ads to you.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>fetch</string>
 	</array>
-    <key>branch_app_domain</key>
-    <string>hoonarstar.app.link</string>
-    <key>branch_universal_link_domains</key>
-    <array>
-        <string>hoonarstar.app.link</string>
-    </array>
-    <key>branch_key</key>
-    <string>key_live_crdZFe70pTpAyThMLJdMcmeeDsfvAemE</string>
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -78,36 +96,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-      <key>NSAllowsArbitraryLoads</key>
-      <true/>
-    </dict>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app requires access to your location while it is in use to provide location-based services and improve your experience.</string>
-
-    <key>CFBundleURLTypes</key>
-    <array>
-      <dict>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>fb1129421471997632</string>
-      </array>
-      </dict>
-    </array>
-    <key>FacebookAppID</key>
-    <string>1129421471997632</string>
-    <key>FacebookClientToken</key>
-    <string>7889bca7548db56ec0d3382d12fe0d3a</string>
-    <key>FacebookDisplayName</key>
-    <string>Hoonarstar</string>
-    <key>NSUserTrackingUsageDescription</key>
-    <string>This identifier will be used to deliver personalized ads to you.</string>
-    <key>FacebookAdvertiserIDCollectionEnabled</key>
-    <true/>
+	<key>branch_app_domain</key>
+	<string>hoonarstar.app.link</string>
+	<key>branch_key</key>
+	<string>key_live_crdZFe70pTpAyThMLJdMcmeeDsfvAemE</string>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>hoonarstar.app.link</string>
+	</array>
 </dict>
 </plist>
