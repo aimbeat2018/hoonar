@@ -9,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_borders/input_borders/gradient_outline_input_border.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/model/success_models/sound_category_list_model.dart';
 import 'package:hoonar/screens/camera/sounds/local_video_selected_screen.dart';
 import 'package:hoonar/screens/camera/sounds/trim_audio_screen.dart';
 import 'package:hoonar/shimmerLoaders/following_list_shimmer.dart';
@@ -27,6 +28,7 @@ import '../../../constants/slide_right_route.dart';
 import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
+import '../../../model/success_models/sound_by_category_list_model.dart';
 import '../../../model/success_models/sound_list_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../auth_screen/login_screen.dart';
@@ -45,11 +47,16 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   TextEditingController searchController = TextEditingController();
-
+  ScrollController soundListScrollController = ScrollController();
   SessionManager sessionManager = SessionManager();
-  bool isAudioPlaying = false, isLoading = false;
+  bool isAudioPlaying = false, isLoading = false, isMoreLoading = false;
   late AudioPlayer audioPlayer;
   int selectedIndex = -1;
+  int page = 1, searchPage = 1;
+  bool? isSearching = false;
+  String? selectedCategoryId = "";
+  List<SoundByCategoryListData> soundListData = [];
+  List<SoundByCategoryListData> newSoundListData = [];
 
   @override
   void initState() {
@@ -70,11 +77,96 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     audioPlayer = AudioPlayer();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getSoundList(context);
+      getSoundCategoryList(context);
     });
+
+    soundListScrollController.addListener(loadMore);
   }
 
-  Future<void> getSoundList(BuildContext context) async {
+  loadMore() {
+    if (soundListScrollController.position.maxScrollExtent ==
+        soundListScrollController.position.pixels) {
+      if (!isLoading) {
+        setState(() {
+          isMoreLoading = true;
+          page++;
+        });
+
+        getSoundList(context, selectedCategoryId!);
+      }
+    }
+  }
+
+  Future<void> getSoundList(BuildContext context, String categoryId) async {
+    setState(() {
+      if (page == 1) {
+        isLoading = true;
+      } else {
+        isMoreLoading = true;
+      }
+    });
+
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      CommonRequestModel requestModel =
+          CommonRequestModel(soundCategoryId: categoryId, start: page);
+
+      await contestProvider.getSoundByCategoryList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.soundByCategoryListModel?.status == '200') {
+          if (contestProvider.soundByCategoryListModel != null ||
+              contestProvider.soundByCategoryListModel!.data != null ||
+              contestProvider.soundByCategoryListModel!.data!.isNotEmpty) {
+            if (page == 1) {
+              soundListData = contestProvider.soundByCategoryListModel!.data!;
+            } else {
+              newSoundListData = [];
+              newSoundListData =
+                  contestProvider.soundByCategoryListModel!.data!;
+
+              if (newSoundListData.isNotEmpty) {
+                soundListData.addAll(newSoundListData);
+                soundListData = soundListData.toSet().toList();
+              }
+            }
+          }
+        } else if (contestProvider.soundByCategoryListModel?.status == '401') {
+          if (page == 1) {
+            soundListData = contestProvider.soundByCategoryListModel!.data!;
+          } else {
+            newSoundListData = [];
+            newSoundListData = contestProvider.soundByCategoryListModel!.data!;
+
+            if (newSoundListData.isNotEmpty) {
+              soundListData.addAll(newSoundListData);
+              soundListData = soundListData.toSet().toList();
+            }
+          }
+        } else if (contestProvider.soundByCategoryListModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(context,
+              contestProvider.soundByCategoryListModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+
+    if (page == 1) {
+      isLoading = false;
+    } else {
+      isMoreLoading = false;
+    }
+    setState(() {});
+  }
+
+  Future<void> getSoundCategoryList(BuildContext context) async {
     final contestProvider =
         Provider.of<ContestProvider>(context, listen: false);
 
@@ -82,22 +174,107 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
       CommonRequestModel requestModel =
           CommonRequestModel(/*date: _selectedDate*/);
 
-      await contestProvider.getSoundList(requestModel,
+      await contestProvider.getSoundCategoryList(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
 
       if (contestProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
       } else {
-        if (contestProvider.soundListModel?.status == '200') {
-        } else if (contestProvider.soundListModel?.message ==
+        if (contestProvider.soundCategoryListModel?.status == '200') {
+          if (mounted) {
+            setState(() {
+              selectedCategoryId = contestProvider
+                  .soundCategoryListModel?.data?[0].soundCategoryId
+                  .toString();
+            });
+
+            getSoundList(context, selectedCategoryId!);
+          }
+        } else if (contestProvider.soundCategoryListModel?.message ==
             'Unauthorized Access!') {
           SnackbarUtil.showSnackBar(
-              context, contestProvider.soundListModel?.message! ?? '');
+              context, contestProvider.soundCategoryListModel?.message! ?? '');
           Navigator.pushAndRemoveUntil(context,
               SlideRightRoute(page: const LoginScreen()), (route) => false);
         }
       }
     });
+  }
+
+  Future<void> searchSound(BuildContext context, String searchKey) async {
+    setState(() {
+      if (searchPage == 1) {
+        isLoading = true;
+      } else {
+        isMoreLoading = true;
+      }
+    });
+
+    final contestProvider =
+        Provider.of<ContestProvider>(context, listen: false);
+
+    sessionManager.initPref().then((onValue) async {
+      CommonRequestModel requestModel = CommonRequestModel(
+          soundCategoryId: selectedCategoryId,
+          start: searchPage,
+          searchTerm: searchKey);
+
+      await contestProvider.getSoundSearchList(requestModel,
+          sessionManager.getString(SessionManager.accessToken) ?? '');
+
+      if (contestProvider.errorMessage != null) {
+        SnackbarUtil.showSnackBar(context, contestProvider.errorMessage ?? '');
+      } else {
+        if (contestProvider.searchSoundByCategoryListModel?.status == '200') {
+          if (contestProvider.searchSoundByCategoryListModel != null ||
+              contestProvider.searchSoundByCategoryListModel!.data != null ||
+              contestProvider
+                  .searchSoundByCategoryListModel!.data!.isNotEmpty) {
+            if (searchPage == 1) {
+              soundListData =
+                  contestProvider.searchSoundByCategoryListModel!.data!;
+            } else {
+              newSoundListData = [];
+              newSoundListData =
+                  contestProvider.searchSoundByCategoryListModel!.data!;
+
+              if (newSoundListData.isNotEmpty) {
+                soundListData.addAll(newSoundListData);
+                soundListData = soundListData.toSet().toList();
+              }
+            }
+          }
+        } else if (contestProvider.searchSoundByCategoryListModel?.status ==
+            '401') {
+          if (searchPage == 1) {
+            soundListData =
+                contestProvider.searchSoundByCategoryListModel!.data!;
+          } else {
+            newSoundListData = [];
+            newSoundListData =
+                contestProvider.searchSoundByCategoryListModel!.data!;
+
+            if (newSoundListData.isNotEmpty) {
+              soundListData.addAll(newSoundListData);
+              soundListData = soundListData.toSet().toList();
+            }
+          }
+        } else if (contestProvider.searchSoundByCategoryListModel?.message ==
+            'Unauthorized Access!') {
+          SnackbarUtil.showSnackBar(context,
+              contestProvider.searchSoundByCategoryListModel?.message! ?? '');
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
+        }
+      }
+    });
+
+    if (searchPage == 1) {
+      isLoading = false;
+    } else {
+      isMoreLoading = false;
+    }
+    setState(() {});
   }
 
   Future<void> saveSound(
@@ -251,7 +428,33 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 15),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: SizedBox(
+                                    height: 40, // Adjust height as needed
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: contestProvider
+                                              .soundCategoryListModel
+                                              ?.data
+                                              ?.length ??
+                                          0,
+                                      itemBuilder: (context, index) {
+                                        return buildCategoryItem(
+                                          contestProvider
+                                              .soundCategoryListModel!
+                                              .data![index],
+                                          index,
+                                          myLoading.isDark,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15.0),
@@ -286,54 +489,66 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
                                     style: const TextStyle(
                                         fontSize: 14, color: Colors.white),
                                     keyboardType: TextInputType.text,
-                                    onChanged: (value) {},
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 15,
-                                ),
-                                SizedBox(
-                                  height: 50, // Adjust height as needed
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: contestProvider
-                                            .soundListModel?.data?.length ??
-                                        0,
-                                    itemBuilder: (context, index) {
-                                      return buildCategoryItem(
-                                        contestProvider
-                                            .soundListModel!.data![index],
-                                        index,
-                                        myLoading.isDark,
-                                      );
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        if (value.length > 5) {
+                                          setState(() {
+                                            isSearching = true;
+                                            searchPage = 1;
+                                          });
+                                          searchSound(context, value);
+                                        }
+                                      } else {
+                                        setState(() {
+                                          isSearching = false;
+                                          page = 1;
+                                        });
+                                        getSoundList(
+                                            context, selectedCategoryId!);
+                                      }
                                     },
                                   ),
                                 ),
-                                SizedBox(height: 10,),
+                                SizedBox(
+                                  height: 10,
+                                ),
                                 Expanded(
                                   // Makes the list scrollable properly
-                                  child: contestProvider.isSoundLoading ||
-                                          contestProvider.soundListModel == null
+                                  child: isLoading && soundListData.isEmpty
                                       ? const FollowingListShimmer()
-                                      : contestProvider.soundListModel!.data ==
-                                                  null ||
-                                              contestProvider
-                                                  .soundListModel!.data!.isEmpty
+                                      : soundListData.isEmpty
                                           ? const DataNotFound()
                                           : ListView.builder(
-                                              itemCount: contestProvider
-                                                  .soundListModel!.data!.length,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              controller:
+                                                  soundListScrollController,
+                                              itemCount: soundListData.length,
                                               itemBuilder: (context, index) {
-                                                return buildSoundItem(
+                                                /*return buildSoundItem(
                                                   contestProvider
-                                                      .soundListModel!
+                                                      .soundByCategoryListModel!
                                                       .data![index],
                                                   index,
                                                   myLoading.isDark,
-                                                );
+                                                );*/
+
+                                                return soundItem(
+                                                    soundListData[index],
+                                                    index,
+                                                    myLoading.isDark,
+                                                    index);
                                               },
                                             ),
                                 ),
+                                if (isMoreLoading)
+                                  Center(
+                                    child: CircularProgressIndicator(
+                                      color: myLoading.isDark
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  )
                               ],
                             ),
                             if (isLoading)
@@ -369,7 +584,8 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     return file;
   }
 
-  Widget soundItem(SoundList model, int index, bool isDarkMode, int index1) {
+  Widget soundItem(
+      SoundByCategoryListData model, int index, bool isDarkMode, int index1) {
     // int selectedSoundId = -1;
     // final AudioPlayer audioPlayer = AudioPlayer();
 
@@ -527,55 +743,57 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
     );
   }
 
-  Widget buildCategoryItem(SoundListData model, int index, bool isDarkMode) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-      margin: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
-      decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 0.80,
-            strokeAlign: BorderSide.strokeAlignOutside,
-            color: isDarkMode ? Colors.white : Colors.black,
-          ),
-          borderRadius: BorderRadius.circular(6.19),
-        ),
-      ),
-      child: Center(
-        child: Text(
-          model.soundCategoryName ?? '',
-          textAlign: TextAlign.end,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            color: isDarkMode ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
+  Widget buildCategoryItem(
+      SoundCategoryData model, int index, bool isDarkMode) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            selectedCategoryId = model.soundCategoryId.toString();
+          });
+
+          getSoundList(context, selectedCategoryId!);
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Text(
+                model.soundCategoryName ?? '',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            if (selectedCategoryId == model.soundCategoryId.toString())
+              Column(
+                children: [
+                  const SizedBox(height: 5),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.20,
+                    height: 1.5,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ],
+              ), // Space between text and divider
+          ],
         ),
       ),
     );
   }
 
-  Widget buildSoundItem(SoundListData model, int index, bool isDarkMode) {
+  /* Widget buildSoundItem(
+      SoundByCategoryListData model, int index, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-       /*   Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              model.soundCategoryName ?? '',
-              textAlign: TextAlign.end,
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
-                color: isDarkMode ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),*/
           ListView.builder(
               shrinkWrap: true,
               itemCount: model.soundList!.length,
@@ -583,17 +801,17 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
               itemBuilder: (context, index1) {
                 return soundItem(
                     model.soundList![index1], index1, isDarkMode, index);
-                /* return SoundItemWidget(
+                */ /* return SoundItemWidget(
                     model: model.soundList![index1],
                     index: index1,
                     isDarkMode: isDarkMode,
-                    index1: index);*/
+                    index1: index);*/ /*
               })
         ],
       ),
     );
   }
-
+*/
   Widget menuItemsWidget(bool isDarkMode) {
     return PopupMenuButton(
       padding: EdgeInsets.zero,
@@ -659,7 +877,7 @@ class _SelectSoundListScreenState extends State<SelectSoundListScreen> {
   }
 
   void _openTrimBottomSheet(BuildContext context, String audioFilePath,
-      int trimSecs, SoundList model) {
+      int trimSecs, SoundByCategoryListData model) {
     setState(() {
       isLoading = false;
       isAudioPlaying = false;

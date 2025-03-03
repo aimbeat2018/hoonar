@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: myLoading.isDark ? Colors.black : Colors.white,
                 title: Row(
                   children: [
-                    InkWell(
+                    RepaintBoundary(
                       child: Image.asset(
                         'assets/images/small_logo.png',
                         height: 30,

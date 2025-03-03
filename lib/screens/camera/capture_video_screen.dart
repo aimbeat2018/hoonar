@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/key_res.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/camera/filters_screen.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
@@ -63,7 +64,8 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
   bool _isMerging = false;
   AudioPlayer? _audioPlayer;
 
-  SoundList? _selectedMusic;
+  // SoundList? _selectedMusic;
+  SoundByCategoryListData? _selectedMusic;
   File? _localMusic;
   Map<String, dynamic> selectedFilter = {
     "name": "Original",

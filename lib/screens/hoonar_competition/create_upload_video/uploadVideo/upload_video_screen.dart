@@ -13,6 +13,7 @@ import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/key_res.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,7 +39,8 @@ class UploadVideoScreen extends StatefulWidget {
   final String from;
   final String? caption;
   final String? hashTag;
-  final SoundList? selectedMusic;
+  // final SoundList? selectedMusic;
+  final SoundByCategoryListData? selectedMusic;
 
   const UploadVideoScreen(
       {super.key,

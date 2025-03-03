@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:hoonar/shimmerLoaders/grid_shimmer.dart';
 import 'package:provider/provider.dart';
@@ -122,7 +123,7 @@ class _DraftVideoListScreenState extends State<DraftVideoListScreen> {
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
-                                SoundList soundListModel = SoundList(
+                                SoundByCategoryListData soundListModel = SoundByCategoryListData(
                                     soundTitle: contestProvider
                                             .draftFeedListModel!
                                             .data!

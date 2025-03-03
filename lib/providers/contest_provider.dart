@@ -14,6 +14,8 @@ import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_category_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/upload_video_status_model.dart';
@@ -50,6 +52,7 @@ class ContestProvider extends ChangeNotifier {
   bool _isAddWithdrawLoading = false;
   bool _isClaimRewardsLoading = false;
   bool _isSoundLoading = false;
+  bool _isSoundCategoryLoading = false;
   bool _isSavedSoundListLoading = false;
   bool _isSavedSoundLoading = false;
   bool _isDraftFeedLoading = false;
@@ -76,6 +79,9 @@ class ContestProvider extends ChangeNotifier {
   KycStatusModel? _kycStatusModel;
   RewardListModel? _rewardListModel;
   SoundListModel? _soundListModel;
+  SoundCategoryListModel? _soundCategoryListModel;
+  SoundByCategoryListModel? _soundByCategoryListModel;
+  SoundByCategoryListModel? _searchSoundByCategoryListModel;
   SoundListModel? _savedSoundListModel;
   DraftFeedListModel? _draftFeedListModel;
   UploadVideoStatusModel? _uploadVideoStatusModel;
@@ -124,6 +130,8 @@ class ContestProvider extends ChangeNotifier {
 
   bool get isSoundLoading => _isSoundLoading;
 
+  bool get isSoundCategoryLoading => _isSoundCategoryLoading;
+
   bool get isUploadStatusLoading => _isUploadStatusLoading;
 
   String? get errorMessage => _errorMessage;
@@ -155,6 +163,14 @@ class ContestProvider extends ChangeNotifier {
   RewardListModel? get rewardListModel => _rewardListModel;
 
   SoundListModel? get soundListModel => _soundListModel;
+
+  SoundCategoryListModel? get soundCategoryListModel => _soundCategoryListModel;
+
+  SoundByCategoryListModel? get soundByCategoryListModel =>
+      _soundByCategoryListModel;
+
+  SoundByCategoryListModel? get searchSoundByCategoryListModel =>
+      _searchSoundByCategoryListModel;
 
   UploadVideoStatusModel? get uploadVideoStatusModel => _uploadVideoStatusModel;
 
@@ -455,7 +471,8 @@ class ContestProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      WalletTransactionListModel successModel = await _contestService.getWalletTransaction(requestModel, accessToken);
+      WalletTransactionListModel successModel =
+          await _contestService.getWalletTransaction(requestModel, accessToken);
       _walletTransactionListModel = successModel;
     } catch (e) {
       _errorMessage = e.toString();
@@ -518,6 +535,60 @@ class ContestProvider extends ChangeNotifier {
       _errorMessage = e.toString();
     } finally {
       _isSoundLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getSoundCategoryList(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isSoundCategoryLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SoundCategoryListModel successModel =
+          await _contestService.getSoundCategory(requestModel, accessToken);
+      _soundCategoryListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSoundCategoryLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getSoundByCategoryList(
+      CommonRequestModel requestModel, String accessToken) async {
+    _isSoundLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SoundByCategoryListModel successModel =
+          await _contestService.getSoundByCategory(requestModel, accessToken);
+      _soundByCategoryListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isSoundLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getSoundSearchList(
+      CommonRequestModel requestModel, String accessToken) async {
+    // _isSoundLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      SoundByCategoryListModel successModel =
+          await _contestService.searchSound(requestModel, accessToken);
+      _searchSoundByCategoryListModel = successModel;
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      // _isSoundLoading = false;
       notifyListeners();
     }
   }

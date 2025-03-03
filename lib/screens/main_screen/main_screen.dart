@@ -203,13 +203,15 @@ class _MainScreenState extends State<MainScreen> {
                           },
                           child: Column(
                             children: [
-                              Image.asset(
-                                "assets/images/home.png",
-                                height: selectedIndex == 0 ? 25 : 23,
-                                width: selectedIndex == 0 ? 25 : 23,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
+                              RepaintBoundary(
+                                child: Image.asset(
+                                  "assets/images/home.png",
+                                  height: selectedIndex == 0 ? 25 : 23,
+                                  width: selectedIndex == 0 ? 25 : 23,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                               sizedBoxH2,
                             ],
@@ -224,13 +226,15 @@ class _MainScreenState extends State<MainScreen> {
                           },
                           child: Column(
                             children: [
-                              Image.asset(
-                                "assets/images/camera.png",
-                                height: selectedIndex == 1 ? 25 : 23,
-                                width: selectedIndex == 1 ? 25 : 23,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
+                              RepaintBoundary(
+                                child: Image.asset(
+                                  "assets/images/camera.png",
+                                  height: selectedIndex == 1 ? 25 : 23,
+                                  width: selectedIndex == 1 ? 25 : 23,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                             ],
                           ),
@@ -244,13 +248,15 @@ class _MainScreenState extends State<MainScreen> {
                           },
                           child: Column(
                             children: [
-                              Image.asset(
-                                "assets/images/search.png",
-                                height: selectedIndex == 2 ? 25 : 23,
-                                width: selectedIndex == 2 ? 25 : 23,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
+                              RepaintBoundary(
+                                child: Image.asset(
+                                  "assets/images/search.png",
+                                  height: selectedIndex == 2 ? 25 : 23,
+                                  width: selectedIndex == 2 ? 25 : 23,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                             ],
                           ),
@@ -263,13 +269,15 @@ class _MainScreenState extends State<MainScreen> {
                           },
                           child: Column(
                             children: [
-                              Image.asset(
-                                "assets/images/profile.png",
-                                height: selectedIndex == 3 ? 25 : 23,
-                                width: selectedIndex == 3 ? 25 : 23,
-                                color: myLoading.isDark
-                                    ? Colors.black
-                                    : Colors.white,
+                              RepaintBoundary(
+                                child: Image.asset(
+                                  "assets/images/profile.png",
+                                  height: selectedIndex == 3 ? 25 : 23,
+                                  width: selectedIndex == 3 ? 25 : 23,
+                                  color: myLoading.isDark
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                             ],
                           ),

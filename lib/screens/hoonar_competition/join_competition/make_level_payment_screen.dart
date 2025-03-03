@@ -549,7 +549,8 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                         'amount': amountPaid,
                                         'name': widget.model.levelName,
                                         // name of the product
-                                        'description': widget.model.description,
+                                        'description':
+                                            'Payment for ${widget.model.levelName} competition',
                                         // description of the product
                                         'retry': {
                                           'enabled': true,

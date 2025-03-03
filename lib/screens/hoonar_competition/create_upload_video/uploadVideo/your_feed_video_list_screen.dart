@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:provider/provider.dart';
@@ -146,34 +147,35 @@ class _YourFeedVideoListScreenState extends State<YourFeedVideoListScreen> {
                                     )),
                                   );
                                 } else {
-                                  SoundList soundListModel = SoundList(
-                                      soundTitle: contestProvider
-                                              .draftFeedListModel!
-                                              .data!
-                                              .yourFeed![index]
-                                              .soundTitle ??
-                                          '',
-                                      duration: contestProvider
-                                              .draftFeedListModel!
-                                              .data!
-                                              .yourFeed![index]
-                                              .duration ??
-                                          '',
-                                      soundImage: contestProvider
-                                              .draftFeedListModel!
-                                              .data!
-                                              .yourFeed![index]
-                                              .soundImage ??
-                                          '',
-                                      soundId: contestProvider
+                                  SoundByCategoryListData soundListModel =
+                                      SoundByCategoryListData(
+                                          soundTitle: contestProvider
                                                   .draftFeedListModel!
                                                   .data!
                                                   .yourFeed![index]
-                                                  .soundId !=
-                                              ""
-                                          ? int.parse(contestProvider.draftFeedListModel!.data!.yourFeed![index].soundId!)
-                                          : -1,
-                                      sound: contestProvider.draftFeedListModel!.data!.yourFeed![index].sound ?? '');
+                                                  .soundTitle ??
+                                              '',
+                                          duration: contestProvider
+                                                  .draftFeedListModel!
+                                                  .data!
+                                                  .yourFeed![index]
+                                                  .duration ??
+                                              '',
+                                          soundImage: contestProvider
+                                                  .draftFeedListModel!
+                                                  .data!
+                                                  .yourFeed![index]
+                                                  .soundImage ??
+                                              '',
+                                          soundId: contestProvider
+                                                      .draftFeedListModel!
+                                                      .data!
+                                                      .yourFeed![index]
+                                                      .soundId !=
+                                                  ""
+                                              ? int.parse(contestProvider.draftFeedListModel!.data!.yourFeed![index].soundId!)
+                                              : -1,
+                                          sound: contestProvider.draftFeedListModel!.data!.yourFeed![index].sound ?? '');
                                   Navigator.push(
                                     context,
                                     SlideRightRoute(

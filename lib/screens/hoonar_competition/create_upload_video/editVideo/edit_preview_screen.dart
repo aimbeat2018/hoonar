@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,7 @@ import '../uploadVideo/upload_video_screen.dart';
 
 class EditPreviewScreen extends StatefulWidget {
   final File videoFile;
-  final SoundList? selectedMusic;
+  final SoundByCategoryListData? selectedMusic;
   final String? duration;
 
   const EditPreviewScreen(
@@ -35,7 +36,7 @@ class _EditPreviewScreenState extends State<EditPreviewScreen> {
   ColorFilter? _currentFilter;
   bool _isMerging = false, isThumbnailLoading = false;
   String? _thumbnailPath;
-  SoundList? _selectedMusic;
+  SoundByCategoryListData? _selectedMusic;
   File? _localMusic;
   File? _videoFile;
 

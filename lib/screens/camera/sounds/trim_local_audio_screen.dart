@@ -9,22 +9,22 @@ import '../../../constants/my_loading/my_loading.dart';
 import '../../../model/success_models/sound_by_category_list_model.dart';
 import '../../../model/success_models/sound_list_model.dart';
 
-class TrimAudioScreen extends StatefulWidget {
+class TrimLocalAudioScreen extends StatefulWidget {
   final String audioFilePath;
   final int selectedDuration;
-  final SoundByCategoryListData model;
+  final SoundList model;
 
-  const TrimAudioScreen(
+  const TrimLocalAudioScreen(
       {super.key,
       required this.audioFilePath,
       required this.selectedDuration,
       required this.model});
 
   @override
-  _TrimAudioScreenState createState() => _TrimAudioScreenState();
+  _TrimLocalAudioScreenState createState() => _TrimLocalAudioScreenState();
 }
 
-class _TrimAudioScreenState extends State<TrimAudioScreen> {
+class _TrimLocalAudioScreenState extends State<TrimLocalAudioScreen> {
   final Trimmer _trimmer = Trimmer();
   double _startValue = 0.0;
   double _endValue = 0.0;

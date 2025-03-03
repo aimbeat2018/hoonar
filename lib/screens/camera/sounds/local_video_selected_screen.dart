@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/camera/sounds/trim_audio_screen.dart';
+import 'package:hoonar/screens/camera/sounds/trim_local_audio_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -445,7 +446,7 @@ class _LocalVideoSelectedScreenState extends State<LocalVideoSelectedScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return TrimAudioScreen(
+        return TrimLocalAudioScreen(
           audioFilePath: audioFilePath,
           selectedDuration: trimSecs,
           model: model,

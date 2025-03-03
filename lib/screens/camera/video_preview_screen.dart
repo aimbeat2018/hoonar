@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/screens/camera/sounds/select_sound_list_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/uploadVideo/upload_video_screen.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +23,8 @@ import '../../model/success_models/sound_list_model.dart';
 
 class VideoPreviewScreen extends StatefulWidget {
   final File videoFile;
-  final SoundList? selectedMusic;
+  final SoundByCategoryListData? selectedMusic;
+  // final SoundList? selectedMusic;
   final String? duration;
   final String from;
 
@@ -43,7 +45,8 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   ColorFilter? _currentFilter;
   bool _isMerging = false, isThumbnailLoading = false;
   String? _thumbnailPath = "";
-  SoundList? _selectedMusic;
+  // SoundList? _selectedMusic;
+  SoundByCategoryListData? _selectedMusic;
   File? _localMusic;
   File? _videoFile;
   double _progress = 0.0;

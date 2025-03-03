@@ -12,6 +12,12 @@ import 'package:hoonar/model/success_models/leaderboard_list_model.dart';
 import 'package:hoonar/model/success_models/level_list_model.dart';
 import 'package:hoonar/model/success_models/news_event_success_model.dart';
 import 'package:hoonar/model/success_models/reward_list_model.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_category_list_model.dart';
+import 'package:hoonar/model/success_models/sound_category_list_model.dart';
 import 'package:hoonar/model/success_models/sound_list_model.dart';
 import 'package:hoonar/model/success_models/store_payment_success_model.dart';
 import 'package:hoonar/model/success_models/upload_video_status_model.dart';
@@ -212,6 +218,39 @@ class ContestService {
       accessToken: accessToken,
       // data: requestModel.toJson(),
       fromJson: (data) => SoundListModel.fromJson(data),
+    );
+  }
+
+  Future<SoundCategoryListModel> getSoundCategory(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<SoundCategoryListModel>(
+      '$baseUrl$getSoundsCategoryUrl',
+      // method: 'POST',
+      accessToken: accessToken,
+      // data: requestModel.toJson(),
+      fromJson: (data) => SoundCategoryListModel.fromJson(data),
+    );
+  }
+
+  Future<SoundByCategoryListModel> getSoundByCategory(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<SoundByCategoryListModel>(
+      '$baseUrl$getSoundsCategoryListUrl',
+      method: 'POST',
+      accessToken: accessToken,
+      data: requestModel.toJson(),
+      fromJson: (data) => SoundByCategoryListModel.fromJson(data),
+    );
+  }
+
+  Future<SoundByCategoryListModel> searchSound(
+      CommonRequestModel requestModel, String accessToken) async {
+    return apiMethods.sendRequest<SoundByCategoryListModel>(
+      '$baseUrl$searchSoundUrl',
+      method: 'POST',
+      accessToken: accessToken,
+      data: requestModel.toJson(),
+      fromJson: (data) => SoundByCategoryListModel.fromJson(data),
     );
   }
 

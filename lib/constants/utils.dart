@@ -82,6 +82,9 @@ const String reportPostUrl = 'Post/reportPost';
 const String deletePostUrl = 'Post/deletePost';
 const String applyCouponCodeUrl = 'User/applyCoupon';
 const String deleteNotificationUrl = 'User/deleteNotification';
+const String getSoundsCategoryUrl = 'Post/getSoundCategories';
+const String getSoundsCategoryListUrl = 'Post/getSoundByCategory';
+const String searchSoundUrl = 'Post/searchSoundList';
 
 const String headerUniqueKey = "dev123";
 const int paginationLimit = 10;
