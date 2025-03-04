@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
 import 'package:hoonar/screens/camera/capture_video_screen.dart';
 import 'package:hoonar/screens/home/home_screen.dart';
@@ -316,24 +317,11 @@ class _MainScreenState extends State<MainScreen> {
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           content: Text(
-            'Are you participating in the competition?',
+            'Do you want to participate in the competition?',
             style: GoogleFonts.poppins(fontSize: 14),
           ),
           actions: <Widget>[
-            CupertinoDialogAction(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-                openCameraScreen(); // Call your function to open the camera screen
-              },
-              child: Text(
-                'No',
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                ),
-              ),
-            ),
+
             CupertinoDialogAction(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
@@ -344,11 +332,26 @@ class _MainScreenState extends State<MainScreen> {
                 );
               },
               child: Text(
-                'Yes',
+                'Yes, I want to participate',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                openCameraScreen(); // Call your function to open the camera screen
+              },
+              child: Text(
+                'No, use regular camera',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
                 ),
               ),
             ),
