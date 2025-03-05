@@ -44,6 +44,8 @@ class _FollowingScreenState extends State<FollowingScreen>
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  bool isMoreLoading = false;
+  int page = 1, clickedPosition = -1;
 
   @override
   void initState() {
@@ -60,26 +62,38 @@ class _FollowingScreenState extends State<FollowingScreen>
     });
 
     sessionManager.initPref();
-    _scrollController.addListener(
-      () {
-        if (_scrollController.position.maxScrollExtent ==
-            _scrollController.position.pixels) {
-          if (!isLoading) {
-            getFollowingList(context);
-          }
-        }
-      },
-    );
+
+    _scrollController.addListener(loadMore);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getFollowingList(context);
     });
   }
 
-  Future<void> getFollowingList(BuildContext context) async {
-    sessionManager.initPref().then((onValue) async {
-      // String userId = sessionManager.getString(SessionManager.userId)!;
+  loadMore() {
+    if (_scrollController.position.maxScrollExtent ==
+        _scrollController.position.pixels) {
+      if (!isLoading) {
+        setState(() {
+          isMoreLoading = true;
+          page++;
+        });
 
+        getFollowingList(context);
+      }
+    }
+  }
+
+  Future<void> getFollowingList(BuildContext context) async {
+    setState(() {
+      if (page == 1) {
+        isLoading = true;
+      } else {
+        isMoreLoading = true;
+      }
+    });
+
+    sessionManager.initPref().then((onValue) async {
       String userId = "";
       if (widget.userId == "") {
         userId = sessionManager.getString(SessionManager.userId)!;
@@ -88,12 +102,8 @@ class _FollowingScreenState extends State<FollowingScreen>
       }
 
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(userId),
-          start: followingList.length == 10 ? followingList.length : 0,
-          limit: paginationLimit);
+          userId: int.parse(userId), start: page, limit: paginationLimit);
 
-      isLoading = true;
-      setState(() {});
       final authProvider = Provider.of<UserProvider>(context, listen: false);
 
       await authProvider.getFollowing(requestModel);
@@ -101,26 +111,46 @@ class _FollowingScreenState extends State<FollowingScreen>
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
       } else if (authProvider.getFollowingListModel!.status == "200") {
-        followingList.clear();
-        followingList.addAll(authProvider.getFollowingListModel!.data!);
-      } else if (authProvider.getFollowingListModel!.message ==
+        if (authProvider.getFollowingListModel?.data != null &&
+            authProvider.getFollowingListModel!.data!.isNotEmpty) {
+          if (page == 1) {
+            followingList = authProvider.getFollowingListModel!.data!;
+          } else {
+            followingList.addAll(authProvider.getFollowingListModel!.data!);
+            followingList = followingList.toSet().toList(); // Remove duplicates
+          }
+        }
+      } else if (authProvider.getFollowingListModel?.status == '401') {
+        if (authProvider.getFollowingListModel?.data != null &&
+            authProvider.getFollowingListModel!.data!.isNotEmpty) {
+          if (page == 1) {
+            followingList = authProvider.getFollowingListModel!.data!;
+          } else {
+            followingList.addAll(authProvider.getFollowingListModel!.data!);
+            followingList = followingList.toSet().toList(); // Remove duplicates
+          }
+        }
+      } else if (authProvider.getFollowersListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
           Navigator.pushAndRemoveUntil(context,
               SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
-
-      isLoading = false;
-      setState(() {});
     });
+
+    if (page == 1) {
+      isLoading = false;
+    } else {
+      isMoreLoading = false;
+    }
+    setState(() {});
   }
 
   Future<void> followUnFollowUser(
       BuildContext context, int userId, int index) async {
-    ListCommonRequestModel requestModel = ListCommonRequestModel(
-      toUserId: userId,
-    );
+    ListCommonRequestModel requestModel =
+        ListCommonRequestModel(toUserId: userId, commonUserId: userId);
 
     isFollowLoading = true;
     final authProvider = Provider.of<UserProvider>(context, listen: false);
@@ -129,16 +159,19 @@ class _FollowingScreenState extends State<FollowingScreen>
 
     if (authProvider.errorMessage != null) {
       SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
-    } else if (authProvider.getFollowingListModel!.status == "200") {
+    }
+    /* else if (authProvider.getFollowingListModel!.status == "200") {
       SnackbarUtil.showSnackBar(
           context, authProvider.getFollowingListModel!.message ?? '');
-      setState(() {
-        followingList.removeAt(index);
-      });
-    }
 
-    isFollowLoading = false;
-    setState(() {});
+
+    }*/
+    setState(() {
+      followingList.removeAt(index);
+      isFollowLoading = false;
+    });
+
+    // setState(() {});
   }
 
   @override
@@ -158,58 +191,68 @@ class _FollowingScreenState extends State<FollowingScreen>
           ? const NoInternetScreen()
           : Scaffold(
               backgroundColor: Colors.transparent,
-              body: isLoading == true
-                  ? const FollowingListShimmer()
-                  : followingList.isEmpty
-                      ? const DataNotFound()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ValueListenableBuilder<String?>(
-                                valueListenable:
-                                    userProvider.followingCountNotifier,
-                                builder: (context, followingCount, child) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 15.0),
-                                    child: Text(
-                                      '$followingCount ${AppLocalizations.of(context)!.following}',
-                                      textAlign: TextAlign.end,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w600,
+              body: SingleChildScrollView(
+                controller: _scrollController,
+                child: isLoading == true
+                    ? const FollowingListShimmer()
+                    : followingList.isEmpty
+                        ? const DataNotFound()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ValueListenableBuilder<String?>(
+                                  valueListenable:
+                                      userProvider.followingCountNotifier,
+                                  builder: (context, followingCount, child) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 15.0),
+                                      child: Text(
+                                        '$followingCount ${AppLocalizations.of(context)!.following}',
+                                        textAlign: TextAlign.end,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            AnimatedList(
-                              shrinkWrap: true,
-                              initialItemCount: followingList.length,
-                              controller: _scrollController,
-                              itemBuilder: (context, index, animation) {
-                                return buildItem(
-                                    animation,
-                                    index,
-                                    myLoading.isDark,
-                                    userProvider); // Build each list item
-                              },
-                            ),
-                          ],
-                        ),
+                                    );
+                                  }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: followingList.length,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return buildItem(index, myLoading.isDark,
+                                      userProvider); // Build each list item
+                                },
+                              ),
+                              // if (isMoreLoading)
+                              //   Center(
+                              //     child: CircularProgressIndicator(
+                              //       color: myLoading.isDark
+                              //           ? Colors.white
+                              //           : Colors.black,
+                              //     ),
+                              //   )
+                              //
+                            ],
+                          ),
+              ),
             );
     });
   }
 
-  Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
-      UserProvider userProvider) {
+  Widget buildItem(int index, bool isDarkMode, UserProvider userProvider) {
     String initials = followingList[index].fullName != null ||
             followingList[index].fullName != ""
         ? followingList[index]
@@ -302,6 +345,10 @@ class _FollowingScreenState extends State<FollowingScreen>
 
                 return InkWell(
                   onTap: () {
+                    setState(() {
+                      clickedPosition = index;
+                    });
+
                     followUnFollowUser(context, userId, index).then((_) {
                       userProvider.followStatusNotifier.value = {
                         ...userProvider.followStatusNotifier.value,
@@ -326,7 +373,7 @@ class _FollowingScreenState extends State<FollowingScreen>
                           ? Colors.transparent
                           : (isDarkMode ? Colors.white : Colors.black),
                     ),
-                    child: isFollowLoading
+                    child: isFollowLoading && clickedPosition == index
                         ? const Center(
                             child: SizedBox(
                               height: 10,

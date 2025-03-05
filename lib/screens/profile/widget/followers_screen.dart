@@ -38,8 +38,8 @@ class _FollowersScreenState extends State<FollowersScreen>
   final ScrollController _scrollController = ScrollController();
   SessionManager sessionManager = SessionManager();
   List<FollowersData> followersList = [];
-  bool isLoading = false;
-
+  bool isLoading = false, isMoreLoading = false;
+  int page = 1, clickedPosition = -1;
   bool isFollowLoading = false;
   String _connectionStatus = 'unKnown';
   final Connectivity _connectivity = Connectivity();
@@ -60,23 +60,36 @@ class _FollowersScreenState extends State<FollowersScreen>
           }));
     });
 
-    _scrollController.addListener(
-      () {
-        if (_scrollController.position.maxScrollExtent ==
-            _scrollController.position.pixels) {
-          if (!isLoading) {
-            getFollowerList(context);
-          }
-        }
-      },
-    );
+    _scrollController.addListener(loadMore);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getFollowerList(context);
     });
   }
 
+  loadMore() {
+    if (_scrollController.position.maxScrollExtent ==
+        _scrollController.position.pixels) {
+      if (!isLoading) {
+        setState(() {
+          isMoreLoading = true;
+          page++;
+        });
+
+        getFollowerList(context);
+      }
+    }
+  }
+
   Future<void> getFollowerList(BuildContext context) async {
+    setState(() {
+      if (page == 1) {
+        isLoading = true;
+      } else {
+        isMoreLoading = true;
+      }
+    });
+
     sessionManager.initPref().then((onValue) async {
       String userId = "";
       if (widget.userId == "") {
@@ -86,12 +99,8 @@ class _FollowersScreenState extends State<FollowersScreen>
       }
 
       ListCommonRequestModel requestModel = ListCommonRequestModel(
-          userId: int.parse(userId),
-          start: followersList.length,
-          limit: paginationLimit);
+          userId: int.parse(userId), start: page, limit: paginationLimit);
 
-      isLoading = true;
-      setState(() {});
       final authProvider = Provider.of<UserProvider>(context, listen: false);
 
       await authProvider.getFollowers(requestModel);
@@ -99,8 +108,25 @@ class _FollowersScreenState extends State<FollowersScreen>
       if (authProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, authProvider.errorMessage ?? '');
       } else if (authProvider.getFollowersListModel!.status == "200") {
-        followersList.clear();
-        followersList.addAll(authProvider.getFollowersListModel!.data!);
+        if (authProvider.getFollowersListModel?.data != null &&
+            authProvider.getFollowersListModel!.data!.isNotEmpty) {
+          if (page == 1) {
+            followersList = authProvider.getFollowersListModel!.data!;
+          } else {
+            followersList.addAll(authProvider.getFollowersListModel!.data!);
+            followersList = followersList.toSet().toList(); // Remove duplicates
+          }
+        }
+      } else if (authProvider.getFollowersListModel?.status == '401') {
+        if (authProvider.getFollowersListModel?.data != null &&
+            authProvider.getFollowersListModel!.data!.isNotEmpty) {
+          if (page == 1) {
+            followersList = authProvider.getFollowersListModel!.data!;
+          } else {
+            followersList.addAll(authProvider.getFollowersListModel!.data!);
+            followersList = followersList.toSet().toList(); // Remove duplicates
+          }
+        }
       } else if (authProvider.getFollowersListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
@@ -108,10 +134,14 @@ class _FollowersScreenState extends State<FollowersScreen>
               SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
-
-      isLoading = false;
-      setState(() {});
     });
+
+    if (page == 1) {
+      isLoading = false;
+    } else {
+      isMoreLoading = false;
+    }
+    setState(() {});
   }
 
   Future<void> followUnFollowUser(BuildContext context, int userId) async {
@@ -148,58 +178,66 @@ class _FollowersScreenState extends State<FollowersScreen>
           ? const NoInternetScreen()
           : Scaffold(
               backgroundColor: Colors.transparent,
-              body: isLoading == true
-                  ? const FollowingListShimmer()
-                  : followersList.isEmpty
-                      ? const DataNotFound()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ValueListenableBuilder<String?>(
-                                valueListenable:
-                                    userProvider.followersCountNotifier,
-                                builder: (context, followersCount, child) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 15.0),
-                                    child: Text(
-                                      '$followersCount ${AppLocalizations.of(context)!.followers}',
-                                      textAlign: TextAlign.end,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: myLoading.isDark
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w600,
+              body: SingleChildScrollView(
+                controller: _scrollController,
+                child: isLoading == true
+                    ? const FollowingListShimmer()
+                    : followersList.isEmpty
+                        ? const DataNotFound()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ValueListenableBuilder<String?>(
+                                  valueListenable:
+                                      userProvider.followersCountNotifier,
+                                  builder: (context, followersCount, child) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 15.0),
+                                      child: Text(
+                                        '$followersCount ${AppLocalizations.of(context)!.followers}',
+                                        textAlign: TextAlign.end,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: myLoading.isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            AnimatedList(
-                              shrinkWrap: true,
-                              initialItemCount: followersList.length,
-                              controller: _scrollController,
-                              itemBuilder: (context, index, animation) {
-                                return buildItem(
-                                    animation,
-                                    index,
-                                    myLoading.isDark,
-                                    userProvider); // Build each list item
-                              },
-                            ),
-                          ],
-                        ),
+                                    );
+                                  }),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: followersList.length,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return buildItem(index, myLoading.isDark,
+                                      userProvider); // Build each list item
+                                },
+                              ),
+                              if (isMoreLoading)
+                                Center(
+                                  child: CircularProgressIndicator(
+                                    color: myLoading.isDark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                )
+                            ],
+                          ),
+              ),
             );
     });
   }
 
-  Widget buildItem(Animation<double> animation, int index, bool isDarkMode,
-      UserProvider userProvider) {
+  Widget buildItem(int index, bool isDarkMode, UserProvider userProvider) {
     String initials = followersList[index].fullName != null ||
             followersList[index].fullName != ""
         ? followersList[index]
@@ -292,13 +330,16 @@ class _FollowersScreenState extends State<FollowersScreen>
                 return InkWell(
                   onTap: () {
                     setState(() {
+                      setState(() {
+                        clickedPosition = index;
+                      });
                       followUnFollowUser(context, userId).then((_) {
                         if (followStatus == 1) {
                           userProvider.followStatusNotifier.value[userId] = 0;
                         } else {
                           userProvider.followStatusNotifier.value[userId] = 1;
                         }
-                        userProvider.followStatusNotifier.notifyListeners();
+                        // userProvider.followStatusNotifier.notifyListeners();
                       });
                     });
                   },
@@ -318,7 +359,7 @@ class _FollowersScreenState extends State<FollowersScreen>
                           ? Colors.transparent
                           : (isDarkMode ? Colors.white : Colors.black),
                     ),
-                    child: isFollowLoading
+                    child: isFollowLoading && clickedPosition == index
                         ? const Center(
                             child: SizedBox(
                               height: 10,

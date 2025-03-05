@@ -256,5 +256,6 @@
   "areYouSureYouWantToDelete": "کیا آپ واقعی اسے حذف کرنا چاہتے ہیں؟",
   "block": "بلاک",
   "unBlock": "ان بلاک",
-  "enterValidOtp": "درست OTP درج کریں"
+  "enterValidOtp": "درست OTP درج کریں",
+  "kycUploadNote": "براہ کرم اوپر دی گئی تصدیقی عمل کو مکمل کریں تاکہ شناخت کی تصدیق کی جا سکے۔"
 }

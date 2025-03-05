@@ -183,6 +183,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                       }
                                       return null;
                                     },
+
                                     maxLines: 1,
                                     decoration: InputDecoration(
                                       filled: true,
@@ -216,7 +217,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                           : Colors.black,
                                       fontSize: 14,
                                     ),
-                                    keyboardType: TextInputType.name,
+                                    keyboardType: TextInputType.text,
                                     onChanged: (value) {},
                                   ),
                                 ),

@@ -257,5 +257,6 @@
   "areYouSureYouWantToDelete": "Are you sure you want to delete?",
   "block": "Block",
   "unBlock": "Unblock",
-  "enterValidOtp": "Enter Valid Otp"
+  "enterValidOtp": "Enter Valid Otp",
+  "kycUploadNote": "Please complete the above verification to proceed with your identity validation."
 }

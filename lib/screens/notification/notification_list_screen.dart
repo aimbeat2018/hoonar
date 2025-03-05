@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/my_loading/my_loading.dart';
 import 'package:hoonar/constants/slide_right_route.dart';
@@ -432,18 +433,21 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                     height: 3,
                   ),
                   if (model.type == 'competition')
-                    Text(
-                      model.description ?? '',
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: isDarkMode ? Colors.white60 : Colors.black,
-                        fontWeight: FontWeight.normal,
-                      ),
+                    Html(
+                      data: model.description ?? '',
+                      style: {
+                        "body": Style(
+                          fontSize: FontSize(11.0),
+                          color: isDarkMode ? Colors.white60 : Colors.black,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: GoogleFonts.poppins().fontFamily,
+                        ),
+                      },
                     ),
                   // SizedBox(
                   //   height: 3,
                   // ),
-                /*  if (model.type == 'competition')
+                  /*  if (model.type == 'competition')
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(

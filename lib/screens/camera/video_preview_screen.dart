@@ -64,18 +64,32 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   }
 
   void _initializeVideoController(File videoFile) {
-    _videoController = VideoPlayerController.file(videoFile)
-      ..initialize().then((_) {
+    _videoController = VideoPlayerController.file(videoFile);
+
+    try {
+      _videoController.initialize().then((_) {
+        _videoController.setLooping(false);
+        if (!mounted) return;
+
         setState(() {});
+
         _videoController.play();
 
         _videoController.addListener(() {
+          if (!mounted) return;
+
           setState(() {
             _progress =
                 _videoController.value.position.inMilliseconds.toDouble();
           });
         });
+      }).catchError((error) {
+        debugPrint("Video initialization error: $error");
       });
+    } catch (e) {
+      debugPrint("Exception in video initialization: $e");
+    }
+
   }
 
   @override

@@ -252,6 +252,7 @@ class _ScanFaceScreenState extends State<ScanFaceScreen> {
             '200') {
           SnackbarUtil.showSnackBar(context,
               contestProvider.uploadDocumentSuccessModel?.message! ?? '');
+          contestProvider.faceStatusNotifier.value = 1;
           Navigator.pop(context);
         } else if (contestProvider.uploadDocumentSuccessModel?.status ==
             '401') {

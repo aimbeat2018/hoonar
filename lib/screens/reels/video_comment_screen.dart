@@ -428,9 +428,10 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
                       Row(
                         children: [
                           Text(
-                            comment.userName ?? '',
+                            comment.fullName ?? '',
                             style: GoogleFonts.poppins(
                               color: isDarkMode ? Colors.white : Colors.black,
+                              fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

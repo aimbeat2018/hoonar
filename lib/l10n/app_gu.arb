@@ -256,5 +256,6 @@
   "areYouSureYouWantToDelete": "શું તમે ખરેખર આ ડિલીટ કરવા માંગો છો?",
   "block": "બ્લોક",
   "unBlock": "અનબ્લોક",
-  "enterValidOtp": "માન્ય OTP દાખલ કરો"
+  "enterValidOtp": "માન્ય OTP દાખલ કરો",
+  "kycUploadNote": "કૃપા કરીને ઉપરની ચકાસણી પ્રક્રિયા પૂર્ણ કરો જેથી ઓળખ માન્યતા પ્રાપ્ત થઈ શકે।"
 }

@@ -388,7 +388,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                         fontSize: 14,
                                                       ),
                                                       keyboardType:
-                                                          TextInputType.name,
+                                                          TextInputType.text,
                                                       onChanged: (value) {},
                                                     ),
                                                   ),

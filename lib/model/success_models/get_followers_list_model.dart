@@ -1,6 +1,8 @@
 class GetFollowersListModel {
   String? status;
   String? message;
+  int? totalFollowingCount;
+  int? totalFollowersCount;
   List<FollowersData>? data;
 
   GetFollowersListModel({this.status, this.message, this.data});
@@ -8,6 +10,8 @@ class GetFollowersListModel {
   GetFollowersListModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
+    totalFollowingCount = json['total_following_count'];
+    totalFollowersCount = json['total_followers_count'];
     if (json['data'] != null) {
       data = <FollowersData>[];
       json['data'].forEach((v) {
@@ -20,6 +24,8 @@ class GetFollowersListModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['message'] = message;
+    data['total_following_count'] = totalFollowingCount;
+    data['total_followers_count'] = totalFollowersCount;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }

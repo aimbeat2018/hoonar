@@ -256,5 +256,6 @@
   "areYouSureYouWantToDelete": "क्या आप वाकई इसे हटाना चाहते हैं?",
   "block": "ब्लॉक",
   "unBlock": "अनब्लॉक",
-  "enterValidOtp": "मान्य OTP दर्ज करें"
+  "enterValidOtp": "मान्य OTP दर्ज करें",
+  "kycUploadNote": "कृपया ऊपर दी गई सत्यापन प्रक्रिया पूरी करें ताकि पहचान सत्यापित की जा सके।"
 }

@@ -70,7 +70,7 @@ class UserProvider extends ChangeNotifier {
       if (_followersList!.isNotEmpty) {
         followersListModel.data != null
             ? followersCountNotifier.value =
-                followersListModel.data!.length.toString()
+                followersListModel.totalFollowersCount.toString()
             : "0";
       }
     } catch (e) {
@@ -95,7 +95,7 @@ class UserProvider extends ChangeNotifier {
       if (_followingList!.isNotEmpty) {
         followersListModel.data != null
             ? followingCountNotifier.value =
-                followersListModel.data!.length.toString()
+                followersListModel.totalFollowingCount.toString()
             : "0";
       }
     } catch (e) {

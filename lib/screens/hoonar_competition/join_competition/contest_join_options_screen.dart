@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/screens/hoonar_competition/competitionHub/competition_hub_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/create_upload_video/create_upload_options_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/documents/documents_option_screen.dart';
+import 'package:hoonar/screens/hoonar_competition/documents/upload_documents_screen.dart';
 import 'package:hoonar/screens/hoonar_competition/guideline/guideline_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -353,10 +354,16 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                         page: const GuidelineScreen()),
                                   );
                                 } else if (index == 5) {
-                                  Navigator.push(
+                                 /* Navigator.push(
                                     context,
                                     SlideRightRoute(
                                         page: const DocumentsOptionScreen()),
+                                  );*/
+
+                                  Navigator.push(
+                                    context,
+                                    SlideRightRoute(
+                                        page: const UploadDocumentsScreen()),
                                   );
                                 }
                               },

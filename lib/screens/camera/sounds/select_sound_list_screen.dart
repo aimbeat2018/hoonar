@@ -29,7 +29,6 @@ import '../../../constants/theme.dart';
 import '../../../custom/data_not_found.dart';
 import '../../../custom/snackbar_util.dart';
 import '../../../model/success_models/sound_by_category_list_model.dart';
-import '../../../model/success_models/sound_list_model.dart';
 import '../../../providers/contest_provider.dart';
 import '../../auth_screen/login_screen.dart';
 

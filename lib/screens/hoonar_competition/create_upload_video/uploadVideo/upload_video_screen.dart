@@ -39,6 +39,7 @@ class UploadVideoScreen extends StatefulWidget {
   final String from;
   final String? caption;
   final String? hashTag;
+
   // final SoundList? selectedMusic;
   final SoundByCategoryListData? selectedMusic;
 
@@ -109,9 +110,9 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     hashTagController.addListener(() {
       setState(() {});
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getKycStatus(context, CommonRequestModel());
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   getKycStatus(context, CommonRequestModel());
+    // });
   }
 
   Future<void> addPost(
@@ -832,129 +833,113 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                         builder:
                                             (context, userKycStatus, child) {
                                           return InkWell(
-                                            onTap: userKycStatus == 1 &&
+                                            onTap: /*userKycStatus == 1 &&
                                                     widget.from != "normal"
-                                                ? () {
-                                                    if (widget.from == 'feed') {
-                                                      AddPostRequestModel
-                                                          requestModel =
-                                                          AddPostRequestModel(
-                                                        postId: widget.postId!,
-                                                        saveAsDraft: "0",
-                                                        userId: int.parse(
-                                                            sessionManager.getString(
-                                                                SessionManager
-                                                                    .userId)!),
-                                                        categoryId: widget
-                                                                    .from !=
-                                                                'normal'
-                                                            ? (KeyRes.selectedCategoryId ==
-                                                                    -1
-                                                                ? ""
-                                                                : KeyRes
-                                                                    .selectedCategoryId
-                                                                    .toString())
-                                                            : "",
-                                                        levelId: widget.from !=
-                                                                'normal'
-                                                            ? (KeyRes.selectedLevelId ==
-                                                                    -1
-                                                                ? ""
-                                                                : KeyRes
-                                                                    .selectedLevelId
-                                                                    .toString())
-                                                            : "",
-                                                        postDescription:
-                                                            captionController
-                                                                .text,
-                                                        postHashTag:
-                                                            hashTags.join(', '),
-                                                      );
+                                                ? */
+                                                () {
+                                              if (widget.from == 'feed') {
+                                                AddPostRequestModel
+                                                    requestModel =
+                                                    AddPostRequestModel(
+                                                  postId: widget.postId!,
+                                                  saveAsDraft: "0",
+                                                  userId: int.parse(
+                                                      sessionManager.getString(
+                                                          SessionManager
+                                                              .userId)!),
+                                                  categoryId: widget.from !=
+                                                          'normal'
+                                                      ? (KeyRes.selectedCategoryId ==
+                                                              -1
+                                                          ? ""
+                                                          : KeyRes
+                                                              .selectedCategoryId
+                                                              .toString())
+                                                      : "",
+                                                  levelId: widget.from !=
+                                                          'normal'
+                                                      ? (KeyRes.selectedLevelId ==
+                                                              -1
+                                                          ? ""
+                                                          : KeyRes
+                                                              .selectedLevelId
+                                                              .toString())
+                                                      : "",
+                                                  postDescription:
+                                                      captionController.text,
+                                                  postHashTag:
+                                                      hashTags.join(', '),
+                                                );
 
-                                                      updatePost(context,
-                                                          requestModel);
-                                                    } else {
-                                                      AddPostRequestModel requestModel = AddPostRequestModel(
-                                                          saveAsDraft: "0",
-                                                          userId: int.parse(
-                                                              sessionManager.getString(
-                                                                  SessionManager
-                                                                      .userId)!),
-                                                          categoryId: widget.from != 'normal'
-                                                              ? (KeyRes.selectedCategoryId == -1
-                                                                  ? ""
-                                                                  : KeyRes.selectedCategoryId
-                                                                      .toString())
-                                                              : "",
-                                                          levelId: widget.from != 'normal'
-                                                              ? (KeyRes.selectedLevelId == -1
-                                                                  ? ""
-                                                                  : KeyRes
-                                                                      .selectedLevelId
-                                                                      .toString())
-                                                              : "",
-                                                          postDescription:
-                                                              captionController
-                                                                  .text,
-                                                          postHashTag:
-                                                              hashTags.join(', '),
-                                                          postImagePath: widget.videoThumbnail.replaceAll('file://', ''),
-                                                          postVideoPath: widget.videoUrl!);
+                                                updatePost(
+                                                    context, requestModel);
+                                              } else {
+                                                AddPostRequestModel requestModel = AddPostRequestModel(
+                                                    saveAsDraft: "0",
+                                                    userId: int.parse(
+                                                        sessionManager.getString(
+                                                            SessionManager
+                                                                .userId)!),
+                                                    categoryId: widget.from != 'normal'
+                                                        ? (KeyRes.selectedCategoryId == -1
+                                                            ? ""
+                                                            : KeyRes.selectedCategoryId
+                                                                .toString())
+                                                        : "",
+                                                    levelId: widget.from != 'normal'
+                                                        ? (KeyRes.selectedLevelId == -1
+                                                            ? ""
+                                                            : KeyRes.selectedLevelId
+                                                                .toString())
+                                                        : "",
+                                                    postDescription:
+                                                        captionController.text,
+                                                    postHashTag:
+                                                        hashTags.join(', '),
+                                                    postImagePath: widget
+                                                        .videoThumbnail
+                                                        .replaceAll('file://', ''),
+                                                    postVideoPath: widget.videoUrl!);
 
-                                                      if (widget
-                                                              .selectedMusic !=
-                                                          null) {
-                                                        if (widget.selectedMusic!
-                                                                    .isLocalSong !=
-                                                                null ||
-                                                            widget.selectedMusic!
-                                                                    .isLocalSong ==
-                                                                "0") {
-                                                          requestModel
-                                                                  .isOrignalSound =
-                                                              "1";
-                                                          requestModel
-                                                                  .postSound =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .trimAudioPath!;
-                                                          requestModel
-                                                                  .soundImage =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .soundImage!;
-                                                          requestModel
-                                                                  .soundTitle =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .soundTitle!;
-                                                          requestModel
-                                                                  .duration =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .duration!;
-                                                          requestModel.singer =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .singer!;
-                                                        } else {
-                                                          requestModel
-                                                                  .isOrignalSound =
-                                                              "0";
-                                                          // requestModel.postSound = widget.selectedMusic!.sound!;
-                                                          requestModel.soundId =
-                                                              widget
-                                                                  .selectedMusic!
-                                                                  .soundId!
-                                                                  .toString();
-                                                        }
-                                                      }
-
-                                                      addPost(context,
-                                                          requestModel);
-                                                    }
+                                                if (widget.selectedMusic !=
+                                                    null) {
+                                                  if (widget.selectedMusic!
+                                                              .isLocalSong !=
+                                                          null ||
+                                                      widget.selectedMusic!
+                                                              .isLocalSong ==
+                                                          "0") {
+                                                    requestModel
+                                                        .isOrignalSound = "1";
+                                                    requestModel.postSound =
+                                                        widget.selectedMusic!
+                                                            .trimAudioPath!;
+                                                    requestModel.soundImage =
+                                                        widget.selectedMusic!
+                                                            .soundImage!;
+                                                    requestModel.soundTitle =
+                                                        widget.selectedMusic!
+                                                            .soundTitle!;
+                                                    requestModel.duration =
+                                                        widget.selectedMusic!
+                                                            .duration!;
+                                                    requestModel.singer = widget
+                                                        .selectedMusic!.singer!;
+                                                  } else {
+                                                    requestModel
+                                                        .isOrignalSound = "0";
+                                                    // requestModel.postSound = widget.selectedMusic!.sound!;
+                                                    requestModel.soundId =
+                                                        widget.selectedMusic!
+                                                            .soundId!
+                                                            .toString();
                                                   }
-                                                : widget.from == "normal"
+                                                }
+
+                                                addPost(context, requestModel);
+                                              }
+                                            }
+                                            /*: widget.from == "normal"
                                                     ? () {
                                                         AddPostRequestModel requestModel = AddPostRequestModel(
                                                             saveAsDraft: "0",
@@ -1042,7 +1027,8 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                                         SnackbarUtil.showSnackBar(
                                                             context,
                                                             'Your KYC not completed');
-                                                      },
+                                                      }*/
+                                            ,
                                             child: Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -1051,12 +1037,14 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
                                               margin: const EdgeInsets.only(
                                                   top: 15, bottom: 5),
                                               decoration: ShapeDecoration(
-                                                color: userKycStatus == 1 &&
+                                                color: /*userKycStatus == 1 &&
                                                         widget.from != "normal"
-                                                    ? buttonBlueColor1
-                                                    : widget.from == "normal"
+                                                    ?*/
+                                                    buttonBlueColor1
+                                                /*  : widget.from == "normal"
                                                         ? buttonBlueColor1
-                                                        : greyTextColor8,
+                                                        : greyTextColor8*/
+                                                ,
                                                 shape: RoundedRectangleBorder(
                                                   side: const BorderSide(
                                                     strokeAlign: BorderSide

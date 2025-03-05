@@ -99,7 +99,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
       if (mounted) {
         setState(() {});
       }
-      getKycStatus(context, CommonRequestModel());
+      // getKycStatus(context, CommonRequestModel());
       getUploadVideoStatus(context);
       showInfoDialog(context);
     });
@@ -666,7 +666,7 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                       contestProvider
                                               .uploadVideoStatusModel!.status ==
                                           "200") {
-                                    if (isVerified == 1) {
+                                    // if (isVerified == 1) {
                                       Navigator.push(
                                         context,
                                         SlideRightRoute(
@@ -674,10 +674,10 @@ class _CreateUploadOptionsScreenState extends State<CreateUploadOptionsScreen> {
                                           from: "level",
                                         )),
                                       );
-                                    } else {
-                                      checkKYCStatus(
-                                          context, iDProof, addressProof, face);
-                                    }
+                                    // } else {
+                                    //   checkKYCStatus(
+                                    //       context, iDProof, addressProof, face);
+                                    // }
                                   } else if (contestProvider
                                               .uploadVideoStatusModel !=
                                           null &&
