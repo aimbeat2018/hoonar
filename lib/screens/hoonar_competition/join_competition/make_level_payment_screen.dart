@@ -536,10 +536,14 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                                         discountPrice != '0.0') {
                                       Razorpay razorpay = Razorpay();
 
-                                      int amountPaid = 100 *
-                                          int.parse(discountPrice == ''
-                                              ? widget.model.fees.toString()
-                                              : discountPrice);
+                                      int amountPaid = (100 *
+                                              (discountPrice.isEmpty
+                                                  ? double.parse(widget
+                                                      .model.fees
+                                                      .toString()) // Convert safely
+                                                  : double.parse(
+                                                      discountPrice)))
+                                          .toInt();
 
                                       // int amountPaid = 100 * 1;
 

@@ -85,8 +85,8 @@ class _VotesScreenState extends State<VotesScreen> {
       } else if (authProvider.userWiseVoteListModel!.message ==
           'Unauthorized Access!') {
         Future.microtask(() {
-          Navigator.pushAndRemoveUntil(
-              context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              SlideRightRoute(page: const LoginScreen()), (route) => false);
         });
       }
 
@@ -113,19 +113,32 @@ class _VotesScreenState extends State<VotesScreen> {
                   ? const VoteListShimmer()
                   : voteList.isEmpty
                       ? const DataNotFound()
-                      : AnimatedList(
-                          initialItemCount: voteList.length,
-                          // controller: _scrollController,
-                          itemBuilder: (context, index, animation) {
-                            return buildItem(animation, index,
-                                myLoading.isDark); // Build each list item
-                          },
+                      : SingleChildScrollView(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: voteList.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return buildItem(
+                                index,
+                                myLoading.isDark,
+                              ); // Build each list item
+                            },
+                          ),
                         ),
+              /* AnimatedList(
+                initialItemCount: voteList.length,
+                // controller: _scrollController,
+                itemBuilder: (context, index, animation) {
+                  return buildItem(animation, index,
+                      myLoading.isDark); // Build each list item
+                },
+              ),*/
             );
     });
   }
 
-  Widget buildItem(Animation<double> animation, int index, bool isDarkMode) {
+  Widget buildItem(int index, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),

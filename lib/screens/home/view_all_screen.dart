@@ -67,8 +67,8 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
           'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
             context, homeProvider.homePageOtherViewAllModel?.message! ?? '');
-        Navigator.pushAndRemoveUntil(
-            context, SlideRightRoute(page: const LoginScreen()), (route) => false);
+        Navigator.pushAndRemoveUntil(context,
+            SlideRightRoute(page: const LoginScreen()), (route) => false);
       }
     }
 
@@ -111,6 +111,7 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
                               : GridView.builder(
                                   shrinkWrap: true,
                                   padding: const EdgeInsets.all(8),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: crossAxisCount,
@@ -143,7 +144,8 @@ class _ViewAllScreenState extends State<ViewAllScreen> {
                                                 .postImage ??
                                             '',
 
-                                        placeholder: (context, url) => const Center(
+                                        placeholder: (context, url) =>
+                                            const Center(
                                           child: SizedBox(
                                               height: 15,
                                               width: 15,

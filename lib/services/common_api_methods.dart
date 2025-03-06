@@ -42,7 +42,8 @@ class CommonApiMethods {
       case DioExceptionType.connectionError:
         return 'Network error: ${e.message}. Please check your internet connection.';
       default:
-        return 'An unexpected error occurred: ${e.message}';
+        // return 'Bad Internet connection';
+        return 'Something went wrong. Please try again later.';
     }
   }
 
@@ -96,6 +97,9 @@ class CommonApiMethods {
           bearerToken: sessionManager.getString(SessionManager.accessToken) ??
               accessToken,
           contentType: 'multipart/form-data',
+        )..copyWith(
+          sendTimeout: const Duration(minutes: 10),
+          receiveTimeout: const Duration(seconds: 60),
         ),
         onSendProgress: onProgress,
       );

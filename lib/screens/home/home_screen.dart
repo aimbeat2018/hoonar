@@ -362,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                     options: CS.CarouselOptions(
-                                      height: 50.0,
+                                      height: 53.0,
                                       autoPlay: false,
                                       enlargeCenterPage: true,
                                       aspectRatio: 4 / 3,

@@ -38,14 +38,13 @@
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
-
+<!-- android:launchMode="singleTask"-->
     <!-- Application -->
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="Hoonarstar"
         android:largeHeap="true"
-        android:launchMode="singleTask"
         android:theme="@style/LaunchTheme"
         android:usesCleartextTraffic="true">
 
@@ -64,12 +63,12 @@
         <!-- Main Activity -->
         <activity
             android:name="com.hoonar.hoonar.MainActivity"
+            android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:persistableMode="persistAcrossReboots"
             android:enableOnBackInvokedCallback="true"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:launchMode="singleTask"
-            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:windowSoftInputMode="adjustResize">
             <meta-data

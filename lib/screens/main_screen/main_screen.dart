@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoonar/constants/color_constants.dart';
 import 'package:hoonar/constants/sizedbox_constants.dart';
@@ -23,6 +27,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../constants/key_res.dart';
 import '../../constants/my_loading/my_loading.dart';
 import '../../constants/slide_right_route.dart';
+import '../reels/single_post_screen.dart';
 // import '../camera/camera_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -34,10 +39,12 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   Widget? screen1, screen2, screen3, screen4;
   int selectedIndex = 0;
-
+  StreamSubscription<Map>? _branchSubscription;
+  bool _sessionInitialized = false; // Prevent multiple init calls
+  bool _isNavigating = false; // Prevent multiple navigation triggers
   // final _veSdkFlutterPlugin = VeSdkFlutter();
   // String _errorMessage = '';
   // final _licenseToken =
@@ -46,7 +53,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
+    listenBranchLinks();
     checkNotificationPermission();
 
     if (widget.fromIndex != null) {
@@ -61,6 +69,62 @@ class _MainScreenState extends State<MainScreen> {
     screen1 = const HomeScreen();
     screen2 = const SearchScreen();
     screen3 = const ProfileScreen(from: 'main');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      log("App moved to background");
+    } else if (state == AppLifecycleState.resumed) {
+      log("App resumed");
+      listenBranchLinks();
+
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _branchSubscription?.cancel(); // Cancel stream to prevent memory leaks
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void listenBranchLinks() {
+    _branchSubscription = FlutterBranchSdk.listSession().listen((data) {
+      log('Deep Link Data: $data');
+
+      if (!mounted || _isNavigating) return; // Prevent multiple navigations
+
+      if (data.containsKey('+clicked_branch_link') &&
+          data['+clicked_branch_link'] == true) {
+        _isNavigating = true; // Mark as navigating
+
+        if (data.containsKey('post_id')) {
+          try {
+            String encodedMetadata = data['post_id'];
+            log('Navigating to Post ID: $encodedMetadata');
+            Navigator.push(
+              context,
+              SlideRightRoute(page: SinglePostScreen(postId: encodedMetadata)),
+            );
+            // navigateToScreen(SinglePostScreen(postId: encodedMetadata));
+          } catch (e) {
+            log('Error decoding metadata: $e');
+            // navigateToScreen(const MainScreen(fromIndex: 0)); // Fallback
+          }
+        } else {
+          log('No metadata found, redirecting to MainScreen');
+          // navigateToScreen(const MainScreen(fromIndex: 0));
+        }
+      } else {
+        log('No deep link detected, redirecting to MainScreen');
+        // navigateToScreen(const MainScreen(fromIndex: 0));
+      }
+    }, onError: (error) {
+      log('Branch Deep Link Error: $error');
+      // navigateToScreen(const MainScreen(fromIndex: 0));
+    });
   }
 
   // Function to check the notification permission status
@@ -136,7 +200,7 @@ class _MainScreenState extends State<MainScreen> {
           showLater: true,
           upgrader: Upgrader(
             durationUntilAlertAgain: const Duration(days: 1),
-            debugLogging: true,
+            // debugLogging: true,
             // debugDisplayAlways: true,
           ),
           child: Scaffold(
@@ -321,7 +385,6 @@ class _MainScreenState extends State<MainScreen> {
             style: GoogleFonts.poppins(fontSize: 14),
           ),
           actions: <Widget>[
-
             CupertinoDialogAction(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
@@ -340,7 +403,6 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
             ),
-
             CupertinoDialogAction(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog

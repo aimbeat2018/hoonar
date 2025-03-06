@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hoonar/model/request_model/add_post_request_model.dart';
@@ -307,6 +309,7 @@ class HomeProvider extends ChangeNotifier {
         accessToken,
         onProgress: (sent, total) {
           _uploadProgress = sent / total; // Update progress
+          log('progress $_uploadProgress');
           notifyListeners();
         },
       );

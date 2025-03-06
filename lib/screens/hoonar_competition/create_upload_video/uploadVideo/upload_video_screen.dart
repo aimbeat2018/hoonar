@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:detectable_text_field/detectable_text_field.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter/return_code.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,8 +13,6 @@ import 'package:hoonar/model/request_model/add_post_request_model.dart';
 import 'package:hoonar/model/request_model/common_request_model.dart';
 import 'package:hoonar/model/success_models/sound_by_category_list_model.dart';
 import 'package:hoonar/screens/main_screen/main_screen.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../constants/internet_connectivity.dart';
@@ -27,7 +23,6 @@ import '../../../../constants/slide_right_route.dart';
 import '../../../../custom/snackbar_util.dart';
 import '../../../../model/request_model/list_common_request_model.dart';
 import '../../../../model/success_models/hash_tag_list_model.dart';
-import '../../../../model/success_models/sound_list_model.dart';
 import '../../../../providers/contest_provider.dart';
 import '../../../../providers/home_provider.dart';
 import '../../../auth_screen/login_screen.dart';
@@ -68,7 +63,6 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
   List<HashTagData>? hashTagList = [];
   bool isLoading = false;
-  double progressPercentage = 0.0; // To track progress
   List<String> hashTags = [];
 
   final hashTagController = DetectableTextEditingController(
@@ -121,43 +115,18 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
     setState(() {
       isLoading = true;
-      progressPercentage = 0.0; // Reset progress
     });
 
     try {
-      // Simulate initialization progress
-      for (int i = 1; i <= 3; i++) {
-        await Future.delayed(const Duration(milliseconds: 200), () {
-          setState(() {
-            progressPercentage = i * 0.1; // Increment by 10% per step
-          });
-        });
-      }
-
       await sessionManager.initPref();
-      setState(() {
-        progressPercentage = 0.4; // Set progress to 40%
-      });
-
       // Simulate API call progress
       await homeProvider.addPost(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
 
-      setState(() {
-        progressPercentage = 0.8; // Set progress to 80%
-      });
-
-      // Handle API response
       if (homeProvider.errorMessage != null) {
-        // SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
+        SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
 
-        SnackbarUtil.showSnackBar(
-            context, 'Something went wrong.. please try later');
       } else if (homeProvider.addPostModel?.status == '200') {
-        setState(() {
-          progressPercentage = 1.0; // Set progress to 100%
-        });
-
         if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
@@ -204,7 +173,6 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     } finally {
       setState(() {
         isLoading = false; // Stop loading indicator
-        progressPercentage = 0.0; // Reset progress
       });
     }
   }
@@ -215,40 +183,18 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
 
     setState(() {
       isLoading = true;
-      progressPercentage = 0.0; // Reset progress
     });
 
     try {
-      // Simulate initialization progress
-      for (int i = 1; i <= 3; i++) {
-        await Future.delayed(const Duration(milliseconds: 200), () {
-          setState(() {
-            progressPercentage = i * 0.1; // Increment by 10% per step
-          });
-        });
-      }
-
       await sessionManager.initPref();
-      setState(() {
-        progressPercentage = 0.4; // Set progress to 40%
-      });
-
       // Simulate API call progress
       await homeProvider.updatePost(requestModel,
           sessionManager.getString(SessionManager.accessToken) ?? '');
-
-      setState(() {
-        progressPercentage = 0.8; // Set progress to 80%
-      });
 
       // Handle API response
       if (homeProvider.errorMessage != null) {
         SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
       } else if (homeProvider.addPostModel?.status == '200') {
-        setState(() {
-          progressPercentage = 1.0; // Set progress to 100%
-        });
-
         if (mounted) {
           setState(() {
             KeyRes.selectedLevelId = -1;
@@ -295,7 +241,6 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
     } finally {
       setState(() {
         isLoading = false; // Stop loading indicator
-        progressPercentage = 0.0; // Reset progress
       });
     }
   }
@@ -356,51 +301,6 @@ class _UploadVideoScreenState extends State<UploadVideoScreen> {
         }
       });
     } finally {}
-  }
-
-  Future<String?> downloadAndConvertM3U8(String url) async {
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      // Get app's document directory to save the video
-      String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
-      final directory = await getApplicationDocumentsDirectory();
-      final outputPath = '${directory.path}/converted_video${timestamp}.mp4';
-
-      // FFmpeg command to download and convert M3U8 to MP4
-      // final command = '-i $url -c copy -bsf:a aac_adtstoasc $outputPath';
-
-      // -c:v libx264 -c:a aac -movflags faststart -preset ultrafast -f mp4
-
-      // final command1 = '-i $url -c:v libx264 -c:a aac -strict experimental $outputPath';
-      final command1 = '-i $url -c copy -f mp4  $outputPath';
-
-      // Execute the FFmpeg command
-      await FFmpegKit.execute(command1).then((session) async {
-        final returnCode = await session.getReturnCode();
-        if (ReturnCode.isSuccess(returnCode)) {
-          // setState(() {
-          //   videoPath = outputPath;
-          // });
-          // Return the converted file path
-          return outputPath;
-        } else {
-          print('Error downloading and converting the video');
-          return null; // Return null if there's an error
-        }
-      });
-    } catch (e) {
-      print('Error: $e');
-      return null; // Return null if there's an exception
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-
-    return null; // Fallback return
   }
 
   @override

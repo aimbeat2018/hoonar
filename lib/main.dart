@@ -1,15 +1,12 @@
 // import 'package:face_camera/face_camera.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:crypto/crypto.dart';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
-
 // import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,7 +22,6 @@ import 'package:hoonar/screens/profile/menuOptionsScreens/edit_profile_screen.da
 import 'package:hoonar/screens/splash_screen/splash_screens.dart';
 import 'package:hoonar/services/service_locator.dart';
 import 'package:hoonar/theme/style.dart';
-import 'package:notification_permissions/notification_permissions.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 
