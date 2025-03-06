@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           margin:
                                               const EdgeInsets.only(bottom: 10),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 0),
+                                              horizontal: 10, vertical: 1),
                                           decoration: _currentIndex == index
                                               ? BoxDecoration(
                                                   color: buttonColor,
@@ -341,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .data![index]
                                                       .categoryName ??
                                                   '',
-                                              textAlign: TextAlign.start,
+                                              textAlign: TextAlign.center,
                                               style: GoogleFonts.poppins(
                                                 color: _currentIndex == index
                                                     ? Colors.black
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ? FontWeight.bold
                                                         : FontWeight.w500,
                                                 fontSize: _currentIndex == index
-                                                    ? 15
+                                                    ? 14
                                                     : 13,
                                               ),
                                             ),
