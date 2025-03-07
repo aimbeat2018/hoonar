@@ -166,11 +166,13 @@ class _ReelsWidgetState extends State<ReelsWidget>
               'Post Unlike Successful') {
             setState(() {
               widget.model.videoLikesOrNot = 0;
+              widget.model.postLikesCount = widget.model.postLikesCount! - 1;
               _showLottie = false; // No animation for unlike
             });
           } else {
             setState(() {
               widget.model.videoLikesOrNot = 1;
+              widget.model.postLikesCount = widget.model.postLikesCount! + 1;
               likeOrVote = 1;
               _showLottie = true;
               // _showLottie = true; // Trigger animation for like
@@ -754,7 +756,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                   height: 3,
                                 ),
                                 Text(
-                                  AppLocalizations.of(context)!.likes,
+                                  /*AppLocalizations.of(context)!.likes*/
+                                  _formatCount(
+                                      widget.model.postLikesCount ?? 0),
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     color: Colors.white,
@@ -782,7 +786,9 @@ class _ReelsWidgetState extends State<ReelsWidget>
                                     height: 3,
                                   ),
                                   Text(
-                                    AppLocalizations.of(context)!.comments,
+                                    // AppLocalizations.of(context)!.comments,
+                                    _formatCount(
+                                        widget.model.postCommentsCount ?? 0),
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: Colors.white,
@@ -976,6 +982,12 @@ class _ReelsWidgetState extends State<ReelsWidget>
               child: VideoCommentScreen(
                 key: _bottomSheetKey,
                 postId: postId,
+                onCommentAdded: () {
+                  setState(() {
+                    widget.model.postCommentsCount =
+                        (widget.model.postCommentsCount ?? 0) + 1;
+                  });
+                },
               ),
             ));
       },
@@ -1014,6 +1026,13 @@ class _ReelsWidgetState extends State<ReelsWidget>
         );
       },
     );
+  }
+
+  String _formatCount(int count) {
+    if (count >= 1000) {
+      return '${(count / 1000).toStringAsFixed(count % 1000 == 0 ? 0 : 1)}K';
+    }
+    return count.toString();
   }
 
 /* ----------- Share video link through branch io -------*/

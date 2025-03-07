@@ -204,7 +204,17 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
   }
 
   void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
-    int amountPaid = 100 * int.parse(widget.model.fees.toString());
+    // int amountPaid = 100 * int.parse(widget.model.fees.toString());
+
+    int amountPaid = (100 *
+        (discountPrice.isEmpty
+            ? double.parse(widget
+            .model.fees
+            .toString()) // Convert safely
+            : double.parse(
+            discountPrice)))
+        .toInt();
+
     // int amountPaid = 100 * 1;
 
     storePayment(
@@ -478,18 +488,20 @@ class _MakeLevelPaymentScreenState extends State<MakeLevelPaymentScreen> {
                         child: Row(
                           children: [
                             if (couponApply)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 25.0, right: 10),
-                                child: Text(
-                                  discountPrice == '0.0'
-                                      ? '₹ 0/-'
-                                      : '₹ $discountPrice/-',
-                                  textAlign: TextAlign.start,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 25.0, right: 10),
+                                  child: Text(
+                                    discountPrice == '0.0'
+                                        ? '₹ 0/-'
+                                        : '₹ $discountPrice/-',
+                                    textAlign: TextAlign.start,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),

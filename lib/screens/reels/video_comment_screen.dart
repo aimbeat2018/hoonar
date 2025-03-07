@@ -22,8 +22,13 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class VideoCommentScreen extends StatefulWidget {
   final int postId;
+  final VoidCallback? onCommentAdded; // Callback function
 
-  const VideoCommentScreen({super.key, required this.postId});
+  const VideoCommentScreen({
+    super.key,
+    required this.postId,
+    this.onCommentAdded,
+  });
 
   @override
   State<VideoCommentScreen> createState() => VideoCommentScreenState();
@@ -131,6 +136,7 @@ class VideoCommentScreenState extends State<VideoCommentScreen>
       SnackbarUtil.showSnackBar(context, homeProvider.errorMessage ?? '');
     } else {
       if (homeProvider.addPostModel?.status == '200') {
+        widget.onCommentAdded?.call();
       } else if (homeProvider.addPostModel?.message == 'Unauthorized Access!') {
         SnackbarUtil.showSnackBar(
             context, homeProvider.addPostModel?.message! ?? '');

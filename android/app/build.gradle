@@ -34,8 +34,8 @@ android {
         applicationId = "com.hoonar.hoonar"
         minSdk = 24
         targetSdk = flutter.compileSdkVersion
-        versionCode = 20
-        versionName = '1.0.19'
+        versionCode = 21
+        versionName = '1.0.20'
         multiDexEnabled true
     }
 

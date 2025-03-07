@@ -170,6 +170,35 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                           }
                         },
                     ),
+                    TextSpan(
+                      text: AppLocalizations.of(context)!
+                          .orContactOn, // Added contact text
+                    ),
+                    TextSpan(
+                      text: '+91 8655728075',
+                      // Replace with your phone number variable
+                      style: GoogleFonts.poppins(
+                        color: Colors.orange,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () async {
+                          final Uri phoneUri =
+                              Uri(scheme: 'tel', path: '+91 8655728075');
+
+                          try {
+                            bool launched = await launchUrl(phoneUri);
+                            if (!launched) {
+                              throw 'Could not launch phone dialer';
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        },
+                    ),
                   ],
                 ),
               ),
@@ -354,7 +383,7 @@ class _ContestJoinOptionsScreenState extends State<ContestJoinOptionsScreen> {
                                         page: const GuidelineScreen()),
                                   );
                                 } else if (index == 5) {
-                                 /* Navigator.push(
+                                  /* Navigator.push(
                                     context,
                                     SlideRightRoute(
                                         page: const DocumentsOptionScreen()),

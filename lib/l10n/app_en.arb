@@ -254,6 +254,7 @@
   "enterCouponCode": "Enter coupon code",
   "apply": "Apply",
   "emailUsOn": "If you have any questions or need assistance, please email us at {emailId}",
+  "orContactOn": "or contact on ",
   "areYouSureYouWantToDelete": "Are you sure you want to delete?",
   "block": "Block",
   "unBlock": "Unblock",
