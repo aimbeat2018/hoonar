@@ -432,6 +432,41 @@ class _CaptureVideoScreenState extends State<CaptureVideoScreen> {
     }
   }
 
+ /* Future<void> _selectVideoFromGallery() async {
+    final pickedFile = await ImagePicker().pickVideo(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File videoFile = File(pickedFile.path);
+      int fileSizeInBytes = videoFile.lengthSync();
+      double fileSizeInMB = fileSizeInBytes / (1024 * 1024); // Convert to MB
+
+      // Check if file size is greater than 10MB
+      if (fileSizeInMB > 50) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Video size should not exceed 50MB.'),
+          ),
+        );
+        return;
+      }
+
+      // If file size is valid, proceed with the logic
+      setState(() {
+        _videoFile = File(pickedFile.path);
+      });
+      print('Selected video: ${_videoFile!.path}');
+
+      if (_selectedMusic == null) {
+        _goToPreviewScreen(_videoFile!);
+      } else {
+        setState(() {
+          _mergedVideoPath = _videoFile!.path;
+        });
+        _mergeAudioWithVideo();
+      }
+    }
+  }*/
+
   void initPermission() async {
     Map<Permission, PermissionStatus> statuses;
 

@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../constants/session_manager.dart';
@@ -5,7 +8,7 @@ import '../constants/utils.dart';
 
 class CommonApiMethods {
   final Dio dio = Dio(BaseOptions(
-    connectTimeout: const Duration(minutes: 10), // 10 seconds
+    connectTimeout: const Duration(minutes: 10),
     receiveTimeout: const Duration(minutes: 10),
   ));
   final SessionManager sessionManager = SessionManager();
@@ -98,9 +101,9 @@ class CommonApiMethods {
               accessToken,
           contentType: 'multipart/form-data',
         )..copyWith(
-          sendTimeout: const Duration(minutes: 10),
-          receiveTimeout: const Duration(seconds: 60),
-        ),
+            sendTimeout: const Duration(minutes: 10),
+            receiveTimeout: const Duration(minutes: 10),
+          ),
         onSendProgress: onProgress,
       );
 
@@ -114,5 +117,129 @@ class CommonApiMethods {
     } catch (e) {
       throw 'Something went wrong. Please try again.';
     }
+  }
+
+  Future<void> uploadVideo({
+    required File videoFile,
+    required String url,
+    required String accessToken,
+    required Function(int progress) onProgress,
+  }) async {
+    const int chunkSize = 5 * 1024 * 1024; // 5MB per chunk
+    int fileSize = videoFile.lengthSync();
+
+    Dio dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(minutes: 5),
+        receiveTimeout: const Duration(minutes: 5),
+        sendTimeout: const Duration(minutes: 5),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+
+    // ✅ Check if file size is less than 5MB
+    if (fileSize <= chunkSize) {
+      // ✅ Upload as a single file
+      FormData formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(videoFile.path,
+            filename: videoFile.path.split('/').last),
+      });
+
+      try {
+        Response response = await dio.post(
+          url,
+          data: formData,
+          onSendProgress: (int sent, int total) {
+            double percentage = ((sent / total) * 100);
+            onProgress(percentage.toInt());
+          },
+        );
+
+        if (response.statusCode == 200) {
+          print('✅ Video uploaded successfully');
+        } else {
+          throw Exception('Failed to upload video');
+        }
+      } catch (e) {
+        print('❌ Error uploading small video: $e');
+        throw Exception('Failed to upload video');
+      }
+    } else {
+      // ✅ Upload in chunks if file size > 5MB
+      await uploadVideoInChunks(
+        videoFile: videoFile,
+        url: url,
+        accessToken: accessToken,
+        chunkSize: chunkSize,
+        onProgress: onProgress,
+      );
+    }
+  }
+
+  /// ✅ Function to Upload Large Videos in Chunks
+  Future<void> uploadVideoInChunks({
+    required File videoFile,
+    required String url,
+    required String accessToken,
+    required int chunkSize,
+    required Function(int progress) onProgress,
+  }) async {
+    int fileSize = videoFile.lengthSync();
+    int totalChunks = (fileSize / chunkSize).ceil();
+
+    Dio dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(minutes: 5),
+        receiveTimeout: const Duration(minutes: 5),
+        sendTimeout: const Duration(minutes: 5),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+
+    // ✅ Split and Upload Chunks
+    for (int i = 0; i < totalChunks; i++) {
+      int start = i * chunkSize;
+      int end = (i + 1) * chunkSize;
+      if (end > fileSize) end = fileSize;
+
+      // ✅ Read the chunk from file
+      List<int> chunkBytes = videoFile.readAsBytesSync().sublist(start, end);
+
+      FormData formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(chunkBytes,
+            filename: videoFile.path.split('/').last),
+        'chunkIndex': i,
+        'totalChunks': totalChunks,
+      });
+
+      try {
+        Response response = await dio.post(
+          url,
+          data: formData,
+          onSendProgress: (int sent, int total) {
+            int totalSent = (i * chunkSize) + sent;
+            double percentage = ((totalSent / fileSize) * 100);
+            onProgress(percentage.toInt());
+          },
+        );
+
+        if (response.statusCode != 200) {
+          throw Exception('Failed to upload chunk $i');
+        }
+
+        print('✅ Uploaded chunk $i of $totalChunks');
+      } catch (e) {
+        print('❌ Failed to upload chunk $i: $e');
+        throw Exception('Failed to upload video');
+      }
+    }
+
+    print('✅ Video uploaded successfully');
   }
 }
